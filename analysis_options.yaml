@@ -1,0 +1,21 @@
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/*.config.dart"
+    - "lib/l10n/**"
+    - "test/**"
+
+linter:
+  rules:
+    prefer_single_quotes: true
+    # Disable pedantic rules that don't fit app (vs library) development
+    public_member_api_docs: false
+    flutter_style_todos: false
+    document_ignores: false
+    unintended_html_in_doc_comment: false
+    sort_pub_dependencies: false
+    one_member_abstracts: false
+    comment_references: false

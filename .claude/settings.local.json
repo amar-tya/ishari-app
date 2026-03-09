@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter create . --org com.ishari --project-name ishari --platforms android,ios)",
+      "Bash(flutter pub get)",
+      "Bash(dart run build_runner build --delete-conflicting-outputs)",
+      "Bash(flutter analyze)",
+      "mcp__mcp-server-supabase__list_projects",
+      "mcp__mcp-server-supabase__get_project_url",
+      "mcp__mcp-server-supabase__get_publishable_keys",
+      "Bash(keytool -list -v -keystore \"$USERPROFILE/.android/debug.keystore\" -alias androiddebugkey -storepass android -keypass android)",
+      "Bash(flutter doctor -v)",
+      "Bash(\"/c/Program Files/Common Files/Oracle/Java/javapath/keytool\" -list -v -keystore \"/c/Users/aamar/.android/debug.keystore\" -alias androiddebugkey -storepass android -keypass android)",
+      "Bash(cmd.exe /c '\"\"C:\\\\Program Files\\\\Java\\\\jdk-21\\\\bin\\\\keytool.exe\"\" -list -v -keystore \"\"C:\\\\Users\\\\aamar\\\\.android\\\\debug.keystore\"\" -alias androiddebugkey -storepass android -keypass android 2>&1')",
+      "Bash(powershell.exe -Command '& \"\"C:\\\\Program Files\\\\Java\\\\jdk-21\\\\bin\\\\keytool.exe\"\" -list -v -keystore \"\"C:\\\\Users\\\\aamar\\\\.android\\\\debug.keystore\"\" -alias androiddebugkey -storepass android -keypass android')",
+      "Bash(powershell.exe -Command \"\\(Get-Content ''C:\\\\Users\\\\aamar\\\\Doc Lokal\\\\git\\\\ishari\\\\ishari-flutter\\\\ios\\\\Runner.xcodeproj\\\\project.pbxproj''\\) -replace ''com\\\\.ishari\\\\.ishari\\\\.RunnerTests'', ''com.ishari.app.RunnerTests'' -replace ''com\\\\.ishari\\\\.ishari'', ''com.ishari.app'' | Set-Content ''C:\\\\Users\\\\aamar\\\\Doc Lokal\\\\git\\\\ishari\\\\ishari-flutter\\\\ios\\\\Runner.xcodeproj\\\\project.pbxproj''\")"
+    ]
+  }
+}
