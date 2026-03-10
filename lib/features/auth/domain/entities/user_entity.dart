@@ -6,7 +6,7 @@ part 'user_entity.freezed.dart';
 ///
 /// Lives in the innermost Clean Architecture ring (Entities).
 @freezed
-class UserEntity with _$UserEntity {
+abstract class UserEntity with _$UserEntity {
   const factory UserEntity({
     required String id,
     required String email,

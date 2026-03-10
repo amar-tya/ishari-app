@@ -30,12 +30,12 @@ GoRouter createRouter(AuthBloc authBloc) {
       GoRoute(
         path: LoginPage.routePath,
         name: 'login',
-        builder: (_, __) => const LoginPage(),
+        builder: (context, state) => const LoginPage(),
       ),
       GoRoute(
         path: HomePage.routePath,
         name: 'home',
-        builder: (_, __) => const HomePage(),
+        builder: (context, state) => const HomePage(),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(

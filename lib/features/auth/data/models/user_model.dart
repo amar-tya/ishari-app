@@ -9,7 +9,7 @@ part 'user_model.g.dart';
 /// Serializes to/from JSON for secure-storage caching.
 /// The domain layer never imports this model.
 @freezed
-class UserModel with _$UserModel {
+abstract class UserModel with _$UserModel {
   const factory UserModel({
     required String id,
     required String email,

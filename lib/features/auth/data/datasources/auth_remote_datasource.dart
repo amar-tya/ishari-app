@@ -21,29 +21,29 @@ abstract interface class AuthRemoteDataSource {
 
 @LazySingleton(as: AuthRemoteDataSource)
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  AuthRemoteDataSourceImpl(this._supabaseClient, this._googleSignIn);
+  AuthRemoteDataSourceImpl(this._supabaseClient);
 
   final SupabaseClient _supabaseClient;
-  final GoogleSignIn _googleSignIn;
 
   @override
   Future<UserModel> signInWithGoogle() async {
     try {
       // Step 1: Trigger Google Sign-In dialog
-      final googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) {
-        throw const ServerException(message: 'Google sign-in was cancelled');
-      }
+      final googleUser = await GoogleSignIn.instance.authenticate(
+        scopeHint: ['email', 'profile'],
+      );
 
-      final googleAuth = await googleUser.authentication;
-      final idToken = googleAuth.idToken;
-      final accessToken = googleAuth.accessToken;
+      final idToken = googleUser.authentication.idToken;
+      final authorization = await googleUser.authorizationClient
+          .authorizationForScopes(['email', 'profile']);
 
-      if (idToken == null || accessToken == null) {
+      if (idToken == null || authorization == null) {
         throw const ServerException(
           message: 'Failed to obtain Google tokens',
         );
       }
+
+      final accessToken = authorization.accessToken;
 
       // Step 2: Exchange Google tokens with Supabase
       final response = await _supabaseClient.auth.signInWithIdToken(
@@ -70,9 +70,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<void> signOut() async {
     try {
-      await Future.wait([
+      await Future.wait<void>([
         _supabaseClient.auth.signOut(),
-        _googleSignIn.signOut(),
+        GoogleSignIn.instance.signOut(),
       ]);
     } catch (e) {
       throw ServerException(message: e.toString());
