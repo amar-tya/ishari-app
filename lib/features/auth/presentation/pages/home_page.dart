@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ishari/core/app_state.dart';
 import 'package:ishari/features/auth/domain/entities/user_entity.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 
@@ -17,19 +18,56 @@ class HomePage extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.logout),
             tooltip: 'Sign out',
-            onPressed: () =>
-                context.read<AuthBloc>().add(const AuthEvent.signOut()),
+            onPressed: () {
+              if (AppState.isGuestMode.value) {
+                AppState.isGuestMode.value = false;
+              } else {
+                context.read<AuthBloc>().add(const AuthEvent.signOut());
+              }
+            },
           ),
         ],
       ),
-      body: BlocBuilder<AuthBloc, AuthState>(
-        builder: (context, state) {
-          return state.maybeWhen(
-            authenticated: (user) => _AuthenticatedBody(user: user),
-            loading: () => const Center(child: CircularProgressIndicator()),
-            orElse: () => const SizedBox.shrink(),
+      body: ValueListenableBuilder<bool>(
+        valueListenable: AppState.isGuestMode,
+        builder: (context, isGuest, _) {
+          if (isGuest) return const _GuestBody();
+          return BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, state) {
+              return state.maybeWhen(
+                authenticated: (user) => _AuthenticatedBody(user: user),
+                loading: () => const Center(child: CircularProgressIndicator()),
+                orElse: () => const SizedBox.shrink(),
+              );
+            },
           );
         },
+      ),
+    );
+  }
+}
+
+class _GuestBody extends StatelessWidget {
+  const _GuestBody();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircleAvatar(
+            radius: 40,
+            child: Icon(Icons.person_outline, size: 40),
+          ),
+          SizedBox(height: 16),
+          Text('Halo, Tamu!', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
+          SizedBox(height: 8),
+          Text(
+            'Mode tamu aktif — bookmark tidak tersimpan.',
+            style: TextStyle(color: Colors.grey),
+          ),
+        ],
       ),
     );
   }

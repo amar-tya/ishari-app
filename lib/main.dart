@@ -43,7 +43,9 @@ class IshariApp extends StatelessWidget {
             title: 'Ishari',
             debugShowCheckedModeBanner: AppEnv.isDevelopment,
             theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
+              colorScheme: ColorScheme.fromSeed(
+                seedColor: const Color(0xFF51C878),
+              ),
               useMaterial3: true,
             ),
             routerConfig: router,

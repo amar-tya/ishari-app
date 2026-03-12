@@ -2,35 +2,42 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ishari/core/app_state.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ishari/features/auth/presentation/pages/home_page.dart';
-import 'package:ishari/features/auth/presentation/pages/login_page.dart';
+import 'package:ishari/features/introduction/presentation/pages/introduction_page.dart';
 
 /// Application router powered by [GoRouter].
 ///
 /// Redirect logic:
-/// - Unauthenticated users are always sent to [LoginPage].
-/// - Authenticated users trying to visit /login are redirected to [HomePage].
+/// - Unauthenticated / non-guest users are sent to [IntroductionPage].
+/// - Authenticated or guest users trying to visit introduction are redirected
+///   to [HomePage].
 GoRouter createRouter(AuthBloc authBloc) {
   return GoRouter(
-    initialLocation: LoginPage.routePath,
-    refreshListenable: GoRouterAuthRefreshStream(authBloc.stream),
+    initialLocation: IntroductionPage.routePath,
+    refreshListenable: Listenable.merge([
+      GoRouterAuthRefreshStream(authBloc.stream),
+      AppState.isGuestMode,
+    ]),
     redirect: (context, state) {
       final isAuthenticated = authBloc.state.maybeWhen(
         authenticated: (_) => true,
         orElse: () => false,
       );
-      final isOnLogin = state.matchedLocation == LoginPage.routePath;
+      final hasAccess = isAuthenticated || AppState.isGuestMode.value;
+      final isOnIntroduction =
+          state.matchedLocation == IntroductionPage.routePath;
 
-      if (!isAuthenticated && !isOnLogin) return LoginPage.routePath;
-      if (isAuthenticated && isOnLogin) return HomePage.routePath;
+      if (!hasAccess && !isOnIntroduction) return IntroductionPage.routePath;
+      if (hasAccess && isOnIntroduction) return HomePage.routePath;
       return null;
     },
     routes: [
       GoRoute(
-        path: LoginPage.routePath,
-        name: 'login',
-        builder: (context, state) => const LoginPage(),
+        path: IntroductionPage.routePath,
+        name: 'introduction',
+        builder: (context, state) => const IntroductionPage(),
       ),
       GoRoute(
         path: HomePage.routePath,
