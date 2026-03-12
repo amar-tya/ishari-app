@@ -1,3 +1,5 @@
+import 'package:ishari/core/env/env.dart';
+
 /// App environment configuration.
 ///
 /// Values are injected at build time via `--dart-define-from-file`.
@@ -9,13 +11,8 @@ abstract final class AppEnv {
   // Environment identifier
   // ---------------------------------------------------------------------------
 
-  static const String _env = String.fromEnvironment(
-    'APP_ENV',
-    defaultValue: 'development',
-  );
-
-  static bool get isDevelopment => _env == 'development';
-  static bool get isProduction => _env == 'production';
+  static bool get isDevelopment => Env.appEnv == 'development';
+  static bool get isProduction => Env.appEnv == 'production';
 
   // ---------------------------------------------------------------------------
   // Supabase
@@ -23,11 +20,10 @@ abstract final class AppEnv {
 
   /// Supabase project URL.
   /// Example: https://xxxxxxxxxxxx.supabase.co
-  static const String supabaseUrl = String.fromEnvironment('SUPABASE_URL');
+  static String get supabaseUrl => Env.supabaseUrl;
 
   /// Supabase anonymous/public key.
-  static const String supabaseAnonKey =
-      String.fromEnvironment('SUPABASE_ANON_KEY');
+  static String get supabaseAnonKey => Env.supabaseAnonKey;
 
   // ---------------------------------------------------------------------------
   // Google Sign-In
@@ -35,8 +31,7 @@ abstract final class AppEnv {
 
   /// Google OAuth Web Client ID for native sign-in.
   /// Used as serverClientId for GoogleSignIn to obtain idToken.
-  static const String googleWebClientId =
-      String.fromEnvironment('GOOGLE_WEB_CLIENT_ID');
+  static String get googleWebClientId => Env.googleWebClientId;
 
   // ---------------------------------------------------------------------------
   // Validation
@@ -47,9 +42,9 @@ abstract final class AppEnv {
   static void validate() {
     final missing = <String>[];
 
-    if (supabaseUrl.isEmpty) missing.add('SUPABASE_URL');
-    if (supabaseAnonKey.isEmpty) missing.add('SUPABASE_ANON_KEY');
-    if (googleWebClientId.isEmpty) missing.add('GOOGLE_WEB_CLIENT_ID');
+    if (Env.supabaseUrl.isEmpty) missing.add('SUPABASE_URL');
+    if (Env.supabaseAnonKey.isEmpty) missing.add('SUPABASE_ANON_KEY');
+    if (Env.googleWebClientId.isEmpty) missing.add('GOOGLE_WEB_CLIENT_ID');
 
     if (missing.isNotEmpty) {
       throw StateError(

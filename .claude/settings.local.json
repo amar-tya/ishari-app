@@ -13,7 +13,16 @@
       "Bash(\"/c/Program Files/Common Files/Oracle/Java/javapath/keytool\" -list -v -keystore \"/c/Users/aamar/.android/debug.keystore\" -alias androiddebugkey -storepass android -keypass android)",
       "Bash(cmd.exe /c '\"\"C:\\\\Program Files\\\\Java\\\\jdk-21\\\\bin\\\\keytool.exe\"\" -list -v -keystore \"\"C:\\\\Users\\\\aamar\\\\.android\\\\debug.keystore\"\" -alias androiddebugkey -storepass android -keypass android 2>&1')",
       "Bash(powershell.exe -Command '& \"\"C:\\\\Program Files\\\\Java\\\\jdk-21\\\\bin\\\\keytool.exe\"\" -list -v -keystore \"\"C:\\\\Users\\\\aamar\\\\.android\\\\debug.keystore\"\" -alias androiddebugkey -storepass android -keypass android')",
-      "Bash(powershell.exe -Command \"\\(Get-Content ''C:\\\\Users\\\\aamar\\\\Doc Lokal\\\\git\\\\ishari\\\\ishari-flutter\\\\ios\\\\Runner.xcodeproj\\\\project.pbxproj''\\) -replace ''com\\\\.ishari\\\\.ishari\\\\.RunnerTests'', ''com.ishari.app.RunnerTests'' -replace ''com\\\\.ishari\\\\.ishari'', ''com.ishari.app'' | Set-Content ''C:\\\\Users\\\\aamar\\\\Doc Lokal\\\\git\\\\ishari\\\\ishari-flutter\\\\ios\\\\Runner.xcodeproj\\\\project.pbxproj''\")"
+      "Bash(powershell.exe -Command \"\\(Get-Content ''C:\\\\Users\\\\aamar\\\\Doc Lokal\\\\git\\\\ishari\\\\ishari-flutter\\\\ios\\\\Runner.xcodeproj\\\\project.pbxproj''\\) -replace ''com\\\\.ishari\\\\.ishari\\\\.RunnerTests'', ''com.ishari.app.RunnerTests'' -replace ''com\\\\.ishari\\\\.ishari'', ''com.ishari.app'' | Set-Content ''C:\\\\Users\\\\aamar\\\\Doc Lokal\\\\git\\\\ishari\\\\ishari-flutter\\\\ios\\\\Runner.xcodeproj\\\\project.pbxproj''\")",
+      "Bash(dart pub deps --json)",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\([p for p in d.get\\(''packages'',[]\\) if ''source_gen'' in p.get\\(''name'',''''\\)]\\)\")",
+      "Bash(flutter pub deps)",
+      "Bash(flutter pub run build_runner build --delete-conflicting-outputs)",
+      "Bash(ls lib/**/*.g.dart)",
+      "Bash(export PATH=\"$PATH:/c/Flutter/bin\")",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__query-docs",
+      "Bash(flutter analyze lib/core/env/)"
     ]
   }
 }

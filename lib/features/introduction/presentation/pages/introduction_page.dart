@@ -48,27 +48,31 @@ class _SlideData {
 const _slides = [
   _SlideData(
     title: 'Baca Shalawat Mudah & Kapanpun',
-    description: 'Ratusan bait shalawat dari kitab Diwan,\nSyaraful Anam, Diba\', dan lainnya',
+    description:
+        'Ratusan bait shalawat dari kitab Diwan,\nSyaraful Anam, Diba\', dan lainnya',
     illustration: _IllustrationType.book,
   ),
   _SlideData(
     title: 'Dengarkan dengan Khidmat',
-    description: 'Nikmati bacaan shalawat dengan audio\nberkualitas dari qori\' terpilih',
+    description:
+        'Nikmati bacaan shalawat dengan audio\nberkualitas dari Pimpinan Shalawat terpilih',
     illustration: _IllustrationType.audio,
   ),
   _SlideData(
     title: 'Simpan Favoritmu',
-    description: 'Tandai shalawat kesukaan dan akses\nkembali kapan saja dengan mudah',
+    description:
+        'Tandai shalawat kesukaan dan akses\nkembali kapan saja dengan mudah',
     illustration: _IllustrationType.bookmark,
   ),
   _SlideData(
-    title: 'Nyaman Dibaca Malam Hari',
-    description: 'Mode malam yang lembut di mata\nmenjaga khusyuk dalam kegelapan',
+    title: 'Mari Lestarikan Budaya Ulama Nusantara',
+    description: 'Mudah didengar, mudah disimpan, dan mudah diakses kapan saja',
     illustration: _IllustrationType.nightMode,
   ),
   _SlideData(
     title: 'Masuk untuk Mulai',
-    description: 'Aktifkan fitur bookmark dan personalisasi\ndengan masuk ke akun Anda',
+    description:
+        'Aktifkan fitur bookmark dan personalisasi\ndengan masuk ke akun Anda',
     illustration: _IllustrationType.key,
   ),
 ];
@@ -125,7 +129,8 @@ class _IntroductionPageState extends State<IntroductionPage> {
               controller: _pageController,
               onPageChanged: _onPageChanged,
               itemCount: _slides.length,
-              itemBuilder: (context, index) => _IntroSlide(slide: _slides[index]),
+              itemBuilder: (context, index) =>
+                  _IntroSlide(slide: _slides[index]),
             ),
 
             // ── Skip button (hidden on last slide) ──────────────────────
@@ -439,12 +444,17 @@ class _GoogleSignInButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
-        final isLoading = state.maybeWhen(loading: () => true, orElse: () => false);
+        final isLoading = state.maybeWhen(
+          loading: () => true,
+          orElse: () => false,
+        );
 
         return GestureDetector(
           onTap: isLoading
               ? null
-              : () => context.read<AuthBloc>().add(const AuthEvent.signInWithGoogle()),
+              : () => context.read<AuthBloc>().add(
+                  const AuthEvent.signInWithGoogle(),
+                ),
           child: Container(
             width: double.infinity,
             height: 52,
