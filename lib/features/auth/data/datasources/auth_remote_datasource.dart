@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:injectable/injectable.dart';
+import 'package:ishari/core/env/app_env.dart';
 import 'package:ishari/core/errors/exceptions.dart';
 import 'package:ishari/features/auth/data/models/user_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -25,27 +27,44 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   final SupabaseClient _supabaseClient;
 
+  // google_sign_in v6: instantiate directly with serverClientId (Web Client ID).
+  // serverClientId is required on Android so that an idToken is included
+  // in the authentication response.
+  final _googleSignIn = GoogleSignIn(
+    serverClientId: AppEnv.googleWebClientId,
+    scopes: ['email', 'profile'],
+  );
+
   @override
   Future<UserModel> signInWithGoogle() async {
     try {
-      // Step 1: Trigger Google Sign-In dialog
-      final googleUser = await GoogleSignIn.instance.authenticate(
-        scopeHint: ['email', 'profile'],
-      );
+      debugPrint('[GoogleSignIn] Starting signIn...');
 
-      final idToken = googleUser.authentication.idToken;
-      final authorization = await googleUser.authorizationClient
-          .authorizationForScopes(['email', 'profile']);
+      // Step 1: Open the Google account picker dialog
+      final googleUser = await _googleSignIn.signIn();
+      debugPrint('[GoogleSignIn] googleUser: $googleUser');
 
-      if (idToken == null || authorization == null) {
+      if (googleUser == null) {
+        throw const ServerException(message: 'Google Sign-In cancelled by user');
+      }
+
+      // Step 2: Get the authentication tokens
+      debugPrint('[GoogleSignIn] Fetching authentication tokens...');
+      final googleAuth = await googleUser.authentication;
+      final idToken = googleAuth.idToken;
+      final accessToken = googleAuth.accessToken;
+
+      debugPrint('[GoogleSignIn] idToken is null: ${idToken == null}');
+      debugPrint('[GoogleSignIn] accessToken is null: ${accessToken == null}');
+
+      if (idToken == null) {
         throw const ServerException(
-          message: 'Failed to obtain Google tokens',
+          message: 'Failed to obtain Google idToken. Ensure serverClientId is set correctly.',
         );
       }
 
-      final accessToken = authorization.accessToken;
-
-      // Step 2: Exchange Google tokens with Supabase
+      // Step 3: Exchange Google tokens with Supabase
+      debugPrint('[GoogleSignIn] Signing in to Supabase with idToken...');
       final response = await _supabaseClient.auth.signInWithIdToken(
         provider: OAuthProvider.google,
         idToken: idToken,
@@ -53,6 +72,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
 
       final user = response.user;
+      debugPrint('[GoogleSignIn] Supabase user: ${user?.email}');
+
       if (user == null) {
         throw const ServerException(
           message: 'Supabase authentication failed — no user returned',
@@ -62,7 +83,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       return UserModel.fromSupabaseUser(user.toJson());
     } on ServerException {
       rethrow;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('[GoogleSignIn] ERROR: $e');
+      debugPrint('[GoogleSignIn] StackTrace: $stackTrace');
       throw ServerException(message: e.toString());
     }
   }
@@ -72,7 +95,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       await Future.wait<void>([
         _supabaseClient.auth.signOut(),
-        GoogleSignIn.instance.signOut(),
+        _googleSignIn.signOut(),
       ]);
     } catch (e) {
       throw ServerException(message: e.toString());

@@ -492,9 +492,10 @@ class _GoogleSignInButton extends StatelessWidget {
                       Container(
                         width: 24,
                         height: 24,
-                        decoration: BoxDecoration(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(5),
+                          shape: BoxShape.circle,
                         ),
                         child: CustomPaint(painter: _GoogleGPainter()),
                       ),
@@ -559,37 +560,43 @@ class _GoogleGPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final cx = size.width / 2;
-    final cy = size.height / 2;
-    final r = size.width * 0.42;
-    final strokeW = size.width * 0.22;
+    final w = size.width;
+    final h = size.height;
+    final center = Offset(w / 2, h / 2);
+    final radius = w * 0.42;
+    final strokeW = w * 0.22;
 
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeW
       ..strokeCap = StrokeCap.butt;
 
-    final rect = Rect.fromCircle(center: Offset(cx, cy), radius: r);
+    final rect = Rect.fromCircle(center: center, radius: radius);
     const deg = 3.14159265 / 180;
 
-    // Red: top-left arc (~225° → ~-45°)
-    canvas.drawArc(rect, 225 * deg, 90 * deg, false, paint..color = _red);
-    // Yellow: bottom-left arc (~315° → 90°)
-    canvas.drawArc(rect, 315 * deg, 90 * deg, false, paint..color = _yellow);
-    // Green: bottom-right arc (~45° → 90°)
+    // Draw the arcs (colored segments)
+    // Red (top)
+    canvas.drawArc(rect, 195 * deg, 105 * deg, false, paint..color = _red);
+    // Yellow (left)
+    canvas.drawArc(rect, 135 * deg, 60 * deg, false, paint..color = _yellow);
+    // Green (bottom)
     canvas.drawArc(rect, 45 * deg, 90 * deg, false, paint..color = _green);
-    // Blue: right arc (~135° → 90°) – shortened so the "G" bar gap is visible
-    canvas.drawArc(rect, 135 * deg, 75 * deg, false, paint..color = _blue);
+    // Blue (right)
+    canvas.drawArc(rect, -45 * deg, 90 * deg, false, paint..color = _blue);
 
-    // Horizontal bar of the "G"
+    // Draw the horizontal bar of the "G"
     final barPaint = Paint()
       ..color = _blue
-      ..strokeWidth = strokeW
-      ..strokeCap = StrokeCap.butt
-      ..style = PaintingStyle.stroke;
-    canvas.drawLine(
-      Offset(cx, cy),
-      Offset(cx + r + strokeW * 0.5, cy),
+      ..style = PaintingStyle.fill;
+
+    // The bar starts from the center and goes slightly past the arc edge
+    canvas.drawRect(
+      Rect.fromLTWH(
+        center.dx,
+        center.dy - (strokeW / 2),
+        radius + (strokeW / 2),
+        strokeW,
+      ),
       barPaint,
     );
   }
