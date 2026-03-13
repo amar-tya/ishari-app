@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:injectable/injectable.dart';
@@ -33,38 +35,55 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final _googleSignIn = GoogleSignIn(
     serverClientId: AppEnv.googleWebClientId,
     scopes: ['email', 'profile'],
+    signInOption: SignInOption.standard,
   );
 
   @override
   Future<UserModel> signInWithGoogle() async {
     try {
-      debugPrint('[GoogleSignIn] Starting signIn...');
+      developer.log('[GoogleSignIn] Starting signIn...', name: 'auth');
 
       // Step 1: Open the Google account picker dialog
       final googleUser = await _googleSignIn.signIn();
-      debugPrint('[GoogleSignIn] googleUser: $googleUser');
+      developer.log('[GoogleSignIn] googleUser: $googleUser', name: 'auth');
 
       if (googleUser == null) {
-        throw const ServerException(message: 'Google Sign-In cancelled by user');
+        throw const ServerException(
+          message: 'Google Sign-In cancelled by user',
+        );
       }
 
-      // Step 2: Get the authentication tokens
-      debugPrint('[GoogleSignIn] Fetching authentication tokens...');
+      // Step 2: Ambil authentication (idToken & accessToken)
+      developer.log(
+        '[GoogleSignIn] Fetching authentication tokens...',
+        name: 'auth',
+      );
       final googleAuth = await googleUser.authentication;
+
       final idToken = googleAuth.idToken;
       final accessToken = googleAuth.accessToken;
 
-      debugPrint('[GoogleSignIn] idToken is null: ${idToken == null}');
-      debugPrint('[GoogleSignIn] accessToken is null: ${accessToken == null}');
+      developer.log(
+        '[GoogleSignIn] idToken: ${idToken != null ? 'ada' : 'NULL'}',
+        name: 'auth',
+      );
+      developer.log(
+        '[GoogleSignIn] accessToken: ${accessToken != null ? 'ada' : 'NULL'}',
+        name: 'auth',
+      );
 
       if (idToken == null) {
         throw const ServerException(
-          message: 'Failed to obtain Google idToken. Ensure serverClientId is set correctly.',
+          message:
+              'Gagal mendapatkan Google idToken. Pastikan serverClientId (Web Client ID) sudah benar di Google Cloud Console.',
         );
       }
 
       // Step 3: Exchange Google tokens with Supabase
-      debugPrint('[GoogleSignIn] Signing in to Supabase with idToken...');
+      developer.log(
+        '[GoogleSignIn] Signing in to Supabase with idToken...',
+        name: 'auth',
+      );
       final response = await _supabaseClient.auth.signInWithIdToken(
         provider: OAuthProvider.google,
         idToken: idToken,
@@ -72,7 +91,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
 
       final user = response.user;
-      debugPrint('[GoogleSignIn] Supabase user: ${user?.email}');
+      developer.log(
+        '[GoogleSignIn] Supabase user: ${user?.email}',
+        name: 'auth',
+      );
 
       if (user == null) {
         throw const ServerException(
