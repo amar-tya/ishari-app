@@ -32,7 +32,16 @@
       "Bash(flutter:*)",
       "Bash(which:*)",
       "Bash(echo:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(git add lib/features/home/presentation/widgets/hadi_section.dart)",
+      "Bash(git commit -m \"refactor: redesign hadi section as vertical list with flat color avatars\")",
+      "Bash(git push)",
+      "Bash(git push --set-upstream origin feature/homepage)",
+      "Bash(git add CLAUDE.md)",
+      "Bash(git add .gitignore)",
+      "Bash(git commit -m \"docs: add CLAUDE.md and ignore devtools_options.yaml\")",
+      "Bash(git add -A)",
+      "Bash(git commit -m \"chore: update generated files and environment configuration\")"
     ]
   }
 }

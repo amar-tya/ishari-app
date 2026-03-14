@@ -10,11 +10,13 @@ class ChapterCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final numberLabel =
-        chapter.number != null ? chapter.number!.toString().padLeft(2, '0') : '';
+    final numberLabel = chapter.number != null
+        ? chapter.number!.toString().padLeft(2, '0')
+        : '';
 
     return GestureDetector(
-      onTap: onTap ??
+      onTap:
+          onTap ??
           () {
             // TODO: navigate to ChapterDetailPage
             ScaffoldMessenger.of(context).showSnackBar(
@@ -74,13 +76,15 @@ class ChapterCard extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // Arabic decorative char
-                  const Text(
-                    '★',
-                    style: TextStyle(
-                      fontSize: 28,
-                      color: Color(0xFFC8E6C9),
+                  Text(
+                    chapter.description,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      color: Color(0xFF51C878),
                       height: 1,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 6),
                   Text(

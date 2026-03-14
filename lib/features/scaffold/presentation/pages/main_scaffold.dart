@@ -111,8 +111,14 @@ class _BottomNavBar extends StatelessWidget {
                   selectedIndex: selectedIndex,
                   onTap: onTap,
                 ),
+                _NavItem(
+                  icon: Icons.person_outline,
+                  label: 'Hadi',
+                  index: 2,
+                  selectedIndex: selectedIndex,
+                  onTap: onTap,
+                ),
                 // Centre placeholder space for the floating Hadi button
-                const Expanded(child: SizedBox()),
                 _NavItem(
                   icon: Icons.bookmark_outline,
                   label: 'Bookmark',
@@ -128,61 +134,6 @@ class _BottomNavBar extends StatelessWidget {
                   onTap: onTap,
                 ),
               ],
-            ),
-            // Floating Hadi centre button
-            Positioned(
-              top: -16,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: GestureDetector(
-                  onTap: () => onTap(2),
-                  behavior: HitTestBehavior.opaque,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 52,
-                        height: 52,
-                        decoration: BoxDecoration(
-                          color: selectedIndex == 2
-                              ? _primaryGreen
-                              : const Color(0xFFF0FAF4),
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: const Color(0xFFC8E6C9),
-                            width: 2,
-                          ),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color(0x33000000),
-                              blurRadius: 12,
-                              offset: Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Icon(
-                          Icons.people_outline,
-                          color:
-                              selectedIndex == 2 ? Colors.white : _inactiveGrey,
-                          size: 24,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        'Hadi',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                          color: selectedIndex == 2
-                              ? _primaryGreen
-                              : _inactiveGrey,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
             ),
           ],
         ),

@@ -12,6 +12,7 @@ abstract class ChapterModel with _$ChapterModel {
     @JsonKey(fromJson: _idToString) required String id,
     required String title,
     required String category,
+    required String description,
     @JsonKey(name: 'total_verses') @Default(0) int verseCount,
     @JsonKey(name: 'chapter_number') int? number,
   }) = _ChapterModel;
@@ -22,10 +23,11 @@ abstract class ChapterModel with _$ChapterModel {
       _$ChapterModelFromJson(json);
 
   ChapterEntity toEntity() => ChapterEntity(
-        id: id,
-        title: title,
-        category: category,
-        verseCount: verseCount,
-        number: number,
-      );
+    id: id,
+    title: title,
+    category: category,
+    description: description,
+    verseCount: verseCount,
+    number: number,
+  );
 }

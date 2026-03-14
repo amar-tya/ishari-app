@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ChapterModel {
 
-@JsonKey(fromJson: _idToString) String get id; String get title; String get category;@JsonKey(name: 'total_verses') int get verseCount;@JsonKey(name: 'chapter_number') int? get number;
+@JsonKey(fromJson: _idToString) String get id; String get title; String get category; String get description;@JsonKey(name: 'total_verses') int get verseCount;@JsonKey(name: 'chapter_number') int? get number;
 /// Create a copy of ChapterModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $ChapterModelCopyWith<ChapterModel> get copyWith => _$ChapterModelCopyWithImpl<C
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChapterModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.category, category) || other.category == category)&&(identical(other.verseCount, verseCount) || other.verseCount == verseCount)&&(identical(other.number, number) || other.number == number));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChapterModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.category, category) || other.category == category)&&(identical(other.description, description) || other.description == description)&&(identical(other.verseCount, verseCount) || other.verseCount == verseCount)&&(identical(other.number, number) || other.number == number));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,category,verseCount,number);
+int get hashCode => Object.hash(runtimeType,id,title,category,description,verseCount,number);
 
 @override
 String toString() {
-  return 'ChapterModel(id: $id, title: $title, category: $category, verseCount: $verseCount, number: $number)';
+  return 'ChapterModel(id: $id, title: $title, category: $category, description: $description, verseCount: $verseCount, number: $number)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $ChapterModelCopyWith<$Res>  {
   factory $ChapterModelCopyWith(ChapterModel value, $Res Function(ChapterModel) _then) = _$ChapterModelCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(fromJson: _idToString) String id, String title, String category,@JsonKey(name: 'total_verses') int verseCount,@JsonKey(name: 'chapter_number') int? number
+@JsonKey(fromJson: _idToString) String id, String title, String category, String description,@JsonKey(name: 'total_verses') int verseCount,@JsonKey(name: 'chapter_number') int? number
 });
 
 
@@ -65,11 +65,12 @@ class _$ChapterModelCopyWithImpl<$Res>
 
 /// Create a copy of ChapterModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? category = null,Object? verseCount = null,Object? number = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? category = null,Object? description = null,Object? verseCount = null,Object? number = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
+as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String,verseCount: null == verseCount ? _self.verseCount : verseCount // ignore: cast_nullable_to_non_nullable
 as int,number: freezed == number ? _self.number : number // ignore: cast_nullable_to_non_nullable
 as int?,
@@ -157,10 +158,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(fromJson: _idToString)  String id,  String title,  String category, @JsonKey(name: 'total_verses')  int verseCount, @JsonKey(name: 'chapter_number')  int? number)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(fromJson: _idToString)  String id,  String title,  String category,  String description, @JsonKey(name: 'total_verses')  int verseCount, @JsonKey(name: 'chapter_number')  int? number)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ChapterModel() when $default != null:
-return $default(_that.id,_that.title,_that.category,_that.verseCount,_that.number);case _:
+return $default(_that.id,_that.title,_that.category,_that.description,_that.verseCount,_that.number);case _:
   return orElse();
 
 }
@@ -178,10 +179,10 @@ return $default(_that.id,_that.title,_that.category,_that.verseCount,_that.numbe
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(fromJson: _idToString)  String id,  String title,  String category, @JsonKey(name: 'total_verses')  int verseCount, @JsonKey(name: 'chapter_number')  int? number)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(fromJson: _idToString)  String id,  String title,  String category,  String description, @JsonKey(name: 'total_verses')  int verseCount, @JsonKey(name: 'chapter_number')  int? number)  $default,) {final _that = this;
 switch (_that) {
 case _ChapterModel():
-return $default(_that.id,_that.title,_that.category,_that.verseCount,_that.number);case _:
+return $default(_that.id,_that.title,_that.category,_that.description,_that.verseCount,_that.number);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -198,10 +199,10 @@ return $default(_that.id,_that.title,_that.category,_that.verseCount,_that.numbe
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(fromJson: _idToString)  String id,  String title,  String category, @JsonKey(name: 'total_verses')  int verseCount, @JsonKey(name: 'chapter_number')  int? number)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(fromJson: _idToString)  String id,  String title,  String category,  String description, @JsonKey(name: 'total_verses')  int verseCount, @JsonKey(name: 'chapter_number')  int? number)?  $default,) {final _that = this;
 switch (_that) {
 case _ChapterModel() when $default != null:
-return $default(_that.id,_that.title,_that.category,_that.verseCount,_that.number);case _:
+return $default(_that.id,_that.title,_that.category,_that.description,_that.verseCount,_that.number);case _:
   return null;
 
 }
@@ -213,12 +214,13 @@ return $default(_that.id,_that.title,_that.category,_that.verseCount,_that.numbe
 @JsonSerializable()
 
 class _ChapterModel extends ChapterModel {
-  const _ChapterModel({@JsonKey(fromJson: _idToString) required this.id, required this.title, required this.category, @JsonKey(name: 'total_verses') this.verseCount = 0, @JsonKey(name: 'chapter_number') this.number}): super._();
+  const _ChapterModel({@JsonKey(fromJson: _idToString) required this.id, required this.title, required this.category, required this.description, @JsonKey(name: 'total_verses') this.verseCount = 0, @JsonKey(name: 'chapter_number') this.number}): super._();
   factory _ChapterModel.fromJson(Map<String, dynamic> json) => _$ChapterModelFromJson(json);
 
 @override@JsonKey(fromJson: _idToString) final  String id;
 @override final  String title;
 @override final  String category;
+@override final  String description;
 @override@JsonKey(name: 'total_verses') final  int verseCount;
 @override@JsonKey(name: 'chapter_number') final  int? number;
 
@@ -235,16 +237,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChapterModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.category, category) || other.category == category)&&(identical(other.verseCount, verseCount) || other.verseCount == verseCount)&&(identical(other.number, number) || other.number == number));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChapterModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.category, category) || other.category == category)&&(identical(other.description, description) || other.description == description)&&(identical(other.verseCount, verseCount) || other.verseCount == verseCount)&&(identical(other.number, number) || other.number == number));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,category,verseCount,number);
+int get hashCode => Object.hash(runtimeType,id,title,category,description,verseCount,number);
 
 @override
 String toString() {
-  return 'ChapterModel(id: $id, title: $title, category: $category, verseCount: $verseCount, number: $number)';
+  return 'ChapterModel(id: $id, title: $title, category: $category, description: $description, verseCount: $verseCount, number: $number)';
 }
 
 
@@ -255,7 +257,7 @@ abstract mixin class _$ChapterModelCopyWith<$Res> implements $ChapterModelCopyWi
   factory _$ChapterModelCopyWith(_ChapterModel value, $Res Function(_ChapterModel) _then) = __$ChapterModelCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(fromJson: _idToString) String id, String title, String category,@JsonKey(name: 'total_verses') int verseCount,@JsonKey(name: 'chapter_number') int? number
+@JsonKey(fromJson: _idToString) String id, String title, String category, String description,@JsonKey(name: 'total_verses') int verseCount,@JsonKey(name: 'chapter_number') int? number
 });
 
 
@@ -272,11 +274,12 @@ class __$ChapterModelCopyWithImpl<$Res>
 
 /// Create a copy of ChapterModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? category = null,Object? verseCount = null,Object? number = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? category = null,Object? description = null,Object? verseCount = null,Object? number = freezed,}) {
   return _then(_ChapterModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
+as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String,verseCount: null == verseCount ? _self.verseCount : verseCount // ignore: cast_nullable_to_non_nullable
 as int,number: freezed == number ? _self.number : number // ignore: cast_nullable_to_non_nullable
 as int?,
