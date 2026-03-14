@@ -41,7 +41,11 @@
       "Bash(git add .gitignore)",
       "Bash(git commit -m \"docs: add CLAUDE.md and ignore devtools_options.yaml\")",
       "Bash(git add -A)",
-      "Bash(git commit -m \"chore: update generated files and environment configuration\")"
+      "Bash(git commit -m \"chore: update generated files and environment configuration\")",
+      "mcp__supabase__list_tables",
+      "mcp__nimbalyst-mcp__excalidraw_clear_all",
+      "mcp__mcp-server-supabase__list_tables",
+      "mcp__mcp-server-supabase__execute_sql"
     ]
   }
 }

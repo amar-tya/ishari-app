@@ -43,6 +43,9 @@ dependencies:
   # Navigation
   go_router: ^17.1.0
 
+  # Audio playback
+  just_audio: ^0.10.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -32,6 +32,14 @@ import 'features/home/domain/usecases/get_chapters_by_category.dart' as _i853;
 import 'features/home/domain/usecases/get_featured_chapter.dart' as _i212;
 import 'features/home/domain/usecases/get_hadi_list.dart' as _i316;
 import 'features/home/presentation/bloc/home_bloc.dart' as _i123;
+import 'features/muhud/data/datasources/muhud_remote_datasource.dart' as _i314;
+import 'features/muhud/data/repositories/muhud_repository_impl.dart' as _i964;
+import 'features/muhud/domain/repositories/muhud_repository.dart' as _i681;
+import 'features/muhud/domain/usecases/get_bookmarked_verse_ids.dart' as _i356;
+import 'features/muhud/domain/usecases/get_chapter_by_id.dart' as _i307;
+import 'features/muhud/domain/usecases/get_verses_by_chapter.dart' as _i1006;
+import 'features/muhud/domain/usecases/toggle_bookmark.dart' as _i718;
+import 'features/muhud/presentation/bloc/muhud_bloc.dart' as _i533;
 import 'injection_container.dart' as _i809;
 
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -48,6 +56,9 @@ _i174.GetIt initDependencies(
   );
   gh.lazySingleton<_i558.FlutterSecureStorage>(
     () => registerModule.secureStorage,
+  );
+  gh.lazySingleton<_i314.MuhudRemoteDataSource>(
+    () => _i314.MuhudRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
   );
   gh.lazySingleton<_i588.AuthRemoteDataSource>(
     () => _i588.AuthRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
@@ -67,6 +78,12 @@ _i174.GetIt initDependencies(
       gh<_i75.NetworkInfo>(),
     ),
   );
+  gh.lazySingleton<_i681.MuhudRepository>(
+    () => _i964.MuhudRepositoryImpl(
+      gh<_i314.MuhudRemoteDataSource>(),
+      gh<_i75.NetworkInfo>(),
+    ),
+  );
   gh.factory<_i853.GetChaptersByCategory>(
     () => _i853.GetChaptersByCategory(gh<_i649.HomeRepository>()),
   );
@@ -83,11 +100,31 @@ _i174.GetIt initDependencies(
       gh<_i75.NetworkInfo>(),
     ),
   );
+  gh.factory<_i356.GetBookmarkedVerseIds>(
+    () => _i356.GetBookmarkedVerseIds(gh<_i681.MuhudRepository>()),
+  );
+  gh.factory<_i307.GetChapterById>(
+    () => _i307.GetChapterById(gh<_i681.MuhudRepository>()),
+  );
+  gh.factory<_i1006.GetVersesByChapter>(
+    () => _i1006.GetVersesByChapter(gh<_i681.MuhudRepository>()),
+  );
+  gh.factory<_i718.ToggleBookmark>(
+    () => _i718.ToggleBookmark(gh<_i681.MuhudRepository>()),
+  );
   gh.factory<_i123.HomeBloc>(
     () => _i123.HomeBloc(
       gh<_i212.GetFeaturedChapter>(),
       gh<_i853.GetChaptersByCategory>(),
       gh<_i316.GetHadiList>(),
+    ),
+  );
+  gh.factory<_i533.MuhudBloc>(
+    () => _i533.MuhudBloc(
+      getVersesByChapter: gh<_i1006.GetVersesByChapter>(),
+      toggleBookmark: gh<_i718.ToggleBookmark>(),
+      getBookmarkedVerseIds: gh<_i356.GetBookmarkedVerseIds>(),
+      getChapterById: gh<_i307.GetChapterById>(),
     ),
   );
   gh.lazySingleton<_i191.GetCurrentUser>(

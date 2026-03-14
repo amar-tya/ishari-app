@@ -6,6 +6,7 @@ import 'package:ishari/core/app_state.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ishari/features/auth/presentation/pages/home_page.dart';
 import 'package:ishari/features/introduction/presentation/pages/introduction_page.dart';
+import 'package:ishari/features/muhud/presentation/pages/chapter_reader_page.dart';
 
 /// Application router powered by [GoRouter].
 ///
@@ -43,6 +44,14 @@ GoRouter createRouter(AuthBloc authBloc) {
         path: HomePage.routePath,
         name: 'home',
         builder: (context, state) => const HomePage(),
+      ),
+      GoRoute(
+        path: ChapterReaderPage.routePath,
+        name: 'chapter-reader',
+        builder: (context, state) {
+          final chapterId = int.parse(state.pathParameters['chapterId'] ?? '0');
+          return ChapterReaderPage(chapterId: chapterId);
+        },
       ),
     ],
     errorBuilder: (context, state) => Scaffold(
