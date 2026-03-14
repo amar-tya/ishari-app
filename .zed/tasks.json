@@ -1,21 +1,14 @@
 [
   {
-    "label": "Flutter: Run (default device)",
-    "command": "flutter run --dart-define-from-file=env/dev.json",
+    "label": "Flutter: Run Dev",
+    "command": "scripts\\use_dev.bat && flutter run",
     "use_new_terminal": true,
     "allow_concurrent_runs": false,
     "reveal": "always",
   },
   {
-    "label": "Flutter: Run Android",
-    "command": "flutter run --dart-define-from-file=env/dev.json -d android",
-    "use_new_terminal": true,
-    "allow_concurrent_runs": false,
-    "reveal": "always",
-  },
-  {
-    "label": "Flutter: Run iOS",
-    "command": "flutter run -d ios",
+    "label": "Flutter: Run Prod",
+    "command": "scripts\\use_prod.bat && flutter run",
     "use_new_terminal": true,
     "allow_concurrent_runs": false,
     "reveal": "always",

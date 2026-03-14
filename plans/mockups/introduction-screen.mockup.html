@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ISHARI — Introduction / Onboarding Screen Mockup</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── MD3 Color Tokens ──────────────────────────────────────────────────────
+       Primary:            #51c878
+       Primary Dark:       #3DAF5E
+       Primary Container:  #E8F8EE
+       Surface:            #FFFFFF
+       On-Primary:         #FFFFFF
+       On-Surface:         #1C1B1F
+       On-Surface-Variant: #49454F
+       Outline:            #79747E
+       Illustration BG:    #F0FAF4 (light mint)
+    ─────────────────────────────────────────────────────────────────────────── */
+
+    body {
+      background: #E8EAED;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 24px 72px;
+      gap: 52px;
+    }
+
+    /* ── Page header ─────────────────────────────────────────────────────── */
+    .page-header {
+      text-align: center;
+    }
+    .page-header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1C1B1F;
+      letter-spacing: -0.3px;
+    }
+    .page-header p {
+      font-size: 13px;
+      color: #78909C;
+      margin-top: 6px;
+      letter-spacing: 0.2px;
+    }
+
+    /* ── Mockup row ──────────────────────────────────────────────────────── */
+    .mockups-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 56px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* ── Phone wrapper + label ───────────────────────────────────────────── */
+    .phone-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    .phone-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: #607D8B;
+      background: #FFFFFF;
+      padding: 4px 14px;
+      border-radius: 100px;
+      border: 1px solid #CFD8DC;
+    }
+
+    /* ── Phone frame (iPhone 14 style) ──────────────────────────────────── */
+    .phone-frame {
+      width: 390px;
+      height: 844px;
+      border-radius: 52px;
+      position: relative;
+      flex-shrink: 0;
+      overflow: hidden;
+      /* Black outer bezel */
+      box-shadow:
+        0 0 0 2px #2A2A2C,
+        0 0 0 11px #1C1C1E,
+        0 0 0 13px #3A3A3C,
+        0 32px 80px rgba(0,0,0,0.50),
+        0 10px 24px rgba(0,0,0,0.28);
+    }
+
+    /* Dynamic Island notch */
+    .phone-frame::before {
+      content: '';
+      position: absolute;
+      top: 13px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 118px;
+      height: 35px;
+      background: #1C1C1E;
+      border-radius: 20px;
+      z-index: 200;
+    }
+
+    /* Side button (right) */
+    .phone-frame::after {
+      content: '';
+      position: absolute;
+      top: 168px;
+      right: -15px;
+      width: 4px;
+      height: 70px;
+      background: #3A3A3C;
+      border-radius: 2px;
+      box-shadow: 0 88px 0 #3A3A3C;
+      z-index: 200;
+    }
+
+    /* ── Screen ──────────────────────────────────────────────────────────── */
+    .screen {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      background: #FFFFFF;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ── Illustration area — top 55% ─────────────────────────────────────── */
+    .illus-area {
+      width: 100%;
+      /* 55% of 844px = ~464px, minus status bar ~58px + appbar ~52px = ~354px for illus */
+      flex-shrink: 0;
+      background: #F0FAF4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      /* Height: ~464px which is 55% of screen */
+      height: 464px;
+    }
+
+    /* Subtle decorative wave at bottom edge of illustration area */
+    .illus-area::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 32px;
+      background: #FFFFFF;
+      border-radius: 50% 50% 0 0 / 32px 32px 0 0;
+    }
+
+    /* ── Status bar (overlays illustration area top) ─────────────────────── */
+    .status-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      height: 58px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 0 28px 10px;
+    }
+    .status-bar .time {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1C1B1F;
+      letter-spacing: 0.2px;
+    }
+    .status-bar .icons {
+      display: flex;
+      gap: 7px;
+      align-items: center;
+    }
+
+    /* App bar — overlays illustration, sits below status bar */
+    .app-bar {
+      position: absolute;
+      top: 52px;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 24px;
+    }
+    .skip-btn {
+      font-size: 15px;
+      font-weight: 500;
+      color: #51c878;
+      padding: 6px 14px;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.72);
+      backdrop-filter: blur(4px);
+      border: none;
+      letter-spacing: 0.1px;
+    }
+
+    /* ── Text / action area — bottom 45% ─────────────────────────────────── */
+    .content-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px 24px 0;
+      gap: 0;
+    }
+
+    .slide-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1C1B1F;
+      text-align: center;
+      line-height: 1.3;
+      letter-spacing: -0.2px;
+      margin-top: 20px;
+    }
+
+    .slide-desc {
+      font-size: 14px;
+      color: #49454F;
+      text-align: center;
+      line-height: 1.65;
+      letter-spacing: 0.1px;
+      margin-top: 10px;
+    }
+
+    /* ── Bottom section ──────────────────────────────────────────────────── */
+    .bottom-section {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 24px 8px;
+      gap: 12px;
+      margin-top: auto;
+    }
+
+    /* Page dots */
+    .page-dots {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 2px 0 4px;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      border: 2px solid #C8E6C9;
+      background: transparent;
+    }
+    .dot.active {
+      width: 24px;
+      border-radius: 100px;
+      background: #51c878;
+      border-color: #51c878;
+    }
+
+    /* MD3 FilledButton */
+    .btn-filled {
+      width: 100%;
+      height: 52px;
+      background: #51c878;
+      border-radius: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow:
+        0 1px 3px rgba(0,0,0,0.14),
+        0 3px 8px rgba(81,200,120,0.30);
+    }
+    .btn-filled .g-badge {
+      width: 24px;
+      height: 24px;
+      background: #FFFFFF;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .btn-filled .btn-label {
+      font-size: 15px;
+      font-weight: 600;
+      color: #FFFFFF;
+      letter-spacing: 0.1px;
+    }
+
+    /* MD3 OutlinedButton */
+    .btn-outlined {
+      width: 100%;
+      height: 52px;
+      background: transparent;
+      border-radius: 100px;
+      border: 1.5px solid #51c878;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-outlined .btn-label {
+      font-size: 15px;
+      font-weight: 600;
+      color: #51c878;
+      letter-spacing: 0.1px;
+    }
+
+    /* Caption */
+    .caption {
+      font-size: 12px;
+      color: #79747E;
+      text-align: center;
+      letter-spacing: 0.3px;
+      margin-top: -4px;
+    }
+
+    /* Home indicator */
+    .home-bar {
+      width: 100%;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .home-bar::after {
+      content: '';
+      width: 134px;
+      height: 5px;
+      background: #1C1B1F;
+      border-radius: 3px;
+      opacity: 0.22;
+    }
+
+    /* ── Spec table ──────────────────────────────────────────────────────── */
+    .spec-card {
+      background: #FFFFFF;
+      border-radius: 20px;
+      padding: 28px 32px;
+      max-width: 860px;
+      width: 100%;
+      box-shadow:
+        0 1px 4px rgba(0,0,0,0.08),
+        0 2px 8px rgba(81,200,120,0.06);
+      border: 1px solid #E8F8EE;
+    }
+    .spec-card h3 {
+      font-size: 12px;
+      font-weight: 700;
+      color: #1C1B1F;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1.5px solid #E8F8EE;
+    }
+    .spec-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 10px 24px;
+    }
+    .spec-row {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .spec-key {
+      font-size: 11px;
+      font-weight: 700;
+      color: #51c878;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+    .spec-val {
+      font-size: 12px;
+      color: #37474F;
+      line-height: 1.5;
+    }
+    .swatch {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 4px;
+      vertical-align: middle;
+      border: 1px solid rgba(0,0,0,0.08);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Page header ─────────────────────────────────────────────────────── -->
+  <div class="page-header">
+    <h1>ISHARI — Introduction / Onboarding Screen</h1>
+    <p>Flat Vector Style &nbsp;·&nbsp; Material Design 3 &nbsp;·&nbsp; Green Seed #51c878</p>
+  </div>
+
+  <!-- ── Two phone mockups ──────────────────────────────────────────────── -->
+  <div class="mockups-row">
+
+    <!-- ═══════════════════════════════════════════
+         PHONE 1 — Slide 1: Baca Shalawat
+         ═══════════════════════════════════════════ -->
+    <div class="phone-wrap">
+      <div class="phone-label">Slide 1 — Baca Shalawat</div>
+      <div class="phone-frame">
+        <div class="screen">
+
+          <!-- ── Illustration area ─────────────────── -->
+          <div class="illus-area">
+
+            <!-- Status bar overlaid on illustration -->
+            <div class="status-bar">
+              <span class="time">9:41</span>
+              <div class="icons">
+                <!-- Signal bars SVG -->
+                <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
+                  <rect x="0" y="7" width="3" height="5" rx="1" fill="#1C1B1F"/>
+                  <rect x="4.5" y="4.5" width="3" height="7.5" rx="1" fill="#1C1B1F"/>
+                  <rect x="9" y="2" width="3" height="10" rx="1" fill="#1C1B1F"/>
+                  <rect x="13.5" y="0" width="3" height="12" rx="1" fill="#1C1B1F"/>
+                </svg>
+                <!-- WiFi SVG -->
+                <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+                  <path d="M8 9.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3z" fill="#1C1B1F"/>
+                  <path d="M2.5 5.8C4 4.2 5.9 3.2 8 3.2s4 1 5.5 2.6" stroke="#1C1B1F" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M0 3C2.2 1 4.9 0 8 0s5.8 1 8 3" stroke="#1C1B1F" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                <!-- Battery SVG -->
+                <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+                  <rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#1C1B1F" stroke-opacity="0.35"/>
+                  <rect x="2" y="2" width="16" height="8" rx="2" fill="#1C1B1F"/>
+                  <path d="M23 4v4a2 2 0 000-4z" fill="#1C1B1F" fill-opacity="0.4"/>
+                </svg>
+              </div>
+            </div>
+
+            <!-- App bar: Skip button -->
+            <div class="app-bar">
+              <div class="skip-btn">Lewati</div>
+            </div>
+
+            <!-- ── BOOK ILLUSTRATION (pure SVG) ─────── -->
+            <svg width="300" height="240" viewBox="0 0 300 240" fill="none" xmlns="http://www.w3.org/2000/svg"
+                 style="position:relative; z-index:10; margin-top:32px;">
+
+              <!-- Shadow beneath book -->
+              <ellipse cx="150" cy="220" rx="90" ry="12" fill="#3DAF5E" fill-opacity="0.12"/>
+
+              <!-- Left page -->
+              <path d="M148 48 C130 50 80 55 52 70 L52 190 C80 178 130 174 148 172 Z"
+                    fill="#FFFFFF" stroke="#C8E6C9" stroke-width="1.5"/>
+
+              <!-- Right page -->
+              <path d="M152 48 C170 50 220 55 248 70 L248 190 C220 178 170 174 152 172 Z"
+                    fill="#FFFFFF" stroke="#C8E6C9" stroke-width="1.5"/>
+
+              <!-- Spine fold shadow — left -->
+              <path d="M148 48 C142 60 140 100 140 130 C140 158 142 172 148 172 Z"
+                    fill="#E0F2E9"/>
+
+              <!-- Spine fold shadow — right -->
+              <path d="M152 48 C158 60 160 100 160 130 C160 158 158 172 152 172 Z"
+                    fill="#E0F2E9"/>
+
+              <!-- Spine center line -->
+              <line x1="150" y1="48" x2="150" y2="172" stroke="#C8E6C9" stroke-width="2.5"/>
+
+              <!-- Cover edge binding top -->
+              <path d="M52 70 C90 58 130 50 148 48 L152 48 C170 50 210 58 248 70"
+                    fill="none" stroke="#51c878" stroke-width="3" stroke-linecap="round"/>
+
+              <!-- Decorative Arabic-style wavy lines — LEFT PAGE -->
+              <!-- Line 1 -->
+              <path d="M68 95 C78 90 92 98 102 93 C112 88 122 95 132 91"
+                    stroke="#51c878" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+              <!-- Line 2 -->
+              <path d="M70 112 C82 107 96 115 108 110 C118 105 128 112 138 108"
+                    stroke="#B2DFDB" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <!-- Line 3 -->
+              <path d="M68 129 C80 124 94 132 106 127 C116 122 127 129 136 126"
+                    stroke="#51c878" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+              <!-- Line 4 short -->
+              <path d="M72 146 C82 141 94 149 108 144"
+                    stroke="#B2DFDB" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <!-- Decorative dot row left -->
+              <circle cx="75" cy="162" r="2.5" fill="#E8F8EE" stroke="#51c878" stroke-width="1.5"/>
+              <circle cx="88" cy="162" r="2.5" fill="#E8F8EE" stroke="#51c878" stroke-width="1.5"/>
+              <circle cx="101" cy="162" r="2.5" fill="#E8F8EE" stroke="#51c878" stroke-width="1.5"/>
+
+              <!-- Decorative Arabic-style wavy lines — RIGHT PAGE -->
+              <!-- Line 1 -->
+              <path d="M168 95 C178 90 192 98 202 93 C212 88 222 95 232 91"
+                    stroke="#51c878" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+              <!-- Line 2 -->
+              <path d="M165 112 C177 107 191 115 203 110 C213 105 223 112 235 108"
+                    stroke="#B2DFDB" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <!-- Line 3 -->
+              <path d="M168 129 C180 124 194 132 206 127 C216 122 227 129 234 126"
+                    stroke="#51c878" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+              <!-- Line 4 short -->
+              <path d="M170 146 C180 141 196 149 210 144"
+                    stroke="#B2DFDB" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <!-- Decorative dot row right -->
+              <circle cx="175" cy="162" r="2.5" fill="#E8F8EE" stroke="#51c878" stroke-width="1.5"/>
+              <circle cx="188" cy="162" r="2.5" fill="#E8F8EE" stroke="#51c878" stroke-width="1.5"/>
+              <circle cx="201" cy="162" r="2.5" fill="#E8F8EE" stroke="#51c878" stroke-width="1.5"/>
+
+              <!-- Small decorative medallion on right page -->
+              <circle cx="210" cy="160" r="12" fill="#E8F8EE" stroke="#51c878" stroke-width="1.5"/>
+              <path d="M210 152 L212 157 L217 157 L213 161 L215 166 L210 163 L205 166 L207 161 L203 157 L208 157 Z"
+                    fill="#51c878" fill-opacity="0.6"/>
+
+              <!-- FLOATING SPARKLES / STARS -->
+              <!-- Star top-left -->
+              <path d="M32 52 L34.5 58 L40 60 L34.5 62 L32 68 L29.5 62 L24 60 L29.5 58 Z"
+                    fill="#FFD54F"/>
+              <!-- Star top-right -->
+              <path d="M268 44 L270 49 L274 50.5 L270 52 L268 57 L266 52 L262 50.5 L266 49 Z"
+                    fill="#FFD54F"/>
+              <!-- Small star upper-right -->
+              <path d="M256 80 L257.5 84 L261 85 L257.5 86 L256 90 L254.5 86 L251 85 L254.5 84 Z"
+                    fill="#FFD54F" fill-opacity="0.7"/>
+              <!-- Tiny dot sparkles -->
+              <circle cx="44" cy="82" r="4" fill="#FFD54F" fill-opacity="0.8"/>
+              <circle cx="260" cy="108" r="3" fill="#FF8A65" fill-opacity="0.7"/>
+              <circle cx="38" cy="140" r="3" fill="#64B5F6" fill-opacity="0.6"/>
+              <!-- Cross sparkle top-center-left -->
+              <line x1="90" y1="28" x2="90" y2="38" stroke="#FFD54F" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="85" y1="33" x2="95" y2="33" stroke="#FFD54F" stroke-width="2.5" stroke-linecap="round"/>
+              <!-- Cross sparkle top-right -->
+              <line x1="220" y1="22" x2="220" y2="30" stroke="#51c878" stroke-width="2" stroke-linecap="round"/>
+              <line x1="216" y1="26" x2="224" y2="26" stroke="#51c878" stroke-width="2" stroke-linecap="round"/>
+              <!-- Small circle outlines (decorative) -->
+              <circle cx="262" cy="134" r="8" fill="none" stroke="#51c878" stroke-width="1.5" stroke-dasharray="3 3"/>
+              <circle cx="36" cy="110" r="6" fill="none" stroke="#B2DFDB" stroke-width="1.5" stroke-dasharray="2.5 2.5"/>
+            </svg>
+          </div><!-- /illus-area -->
+
+          <!-- ── Text content area ──────────────────── -->
+          <div class="content-area">
+            <div class="slide-title">Baca Shalawat Mudah &amp; Kapanpun</div>
+            <div class="slide-desc">
+              Ratusan bait shalawat dari kitab Diwan,<br>
+              Syaraful Anam, Diba', dan lainnya
+            </div>
+          </div>
+
+          <!-- ── Bottom buttons + dots ─────────────── -->
+          <div class="bottom-section">
+            <div class="page-dots">
+              <div class="dot active"></div>
+              <div class="dot"></div>
+              <div class="dot"></div>
+              <div class="dot"></div>
+              <div class="dot"></div>
+            </div>
+            <div class="btn-filled">
+              <span class="btn-label">Selanjutnya &rarr;</span>
+            </div>
+            <!-- Spacer to match slide 5 two-button layout height -->
+            <div style="height: 52px; width: 100%; border-radius: 100px; border: 1.5px dashed #E8F8EE; display:flex; align-items:center; justify-content:center;">
+              <span style="font-size:12px; color:#C8E6C9; letter-spacing:0.3px;">Slide 2 preview area</span>
+            </div>
+            <div class="caption" style="visibility:hidden;">placeholder</div>
+          </div>
+
+          <div class="home-bar"></div>
+        </div>
+      </div>
+    </div><!-- /phone-wrap slide 1 -->
+
+
+    <!-- ═══════════════════════════════════════════
+         PHONE 2 — Slide 5: Masuk untuk Mulai
+         ═══════════════════════════════════════════ -->
+    <div class="phone-wrap">
+      <div class="phone-label">Slide 5 — Masuk untuk Mulai</div>
+      <div class="phone-frame">
+        <div class="screen">
+
+          <!-- ── Illustration area ─────────────────── -->
+          <div class="illus-area">
+
+            <!-- Status bar -->
+            <div class="status-bar">
+              <span class="time">9:41</span>
+              <div class="icons">
+                <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
+                  <rect x="0" y="7" width="3" height="5" rx="1" fill="#1C1B1F"/>
+                  <rect x="4.5" y="4.5" width="3" height="7.5" rx="1" fill="#1C1B1F"/>
+                  <rect x="9" y="2" width="3" height="10" rx="1" fill="#1C1B1F"/>
+                  <rect x="13.5" y="0" width="3" height="12" rx="1" fill="#1C1B1F"/>
+                </svg>
+                <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+                  <path d="M8 9.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3z" fill="#1C1B1F"/>
+                  <path d="M2.5 5.8C4 4.2 5.9 3.2 8 3.2s4 1 5.5 2.6" stroke="#1C1B1F" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M0 3C2.2 1 4.9 0 8 0s5.8 1 8 3" stroke="#1C1B1F" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+                  <rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#1C1B1F" stroke-opacity="0.35"/>
+                  <rect x="2" y="2" width="16" height="8" rx="2" fill="#1C1B1F"/>
+                  <path d="M23 4v4a2 2 0 000-4z" fill="#1C1B1F" fill-opacity="0.4"/>
+                </svg>
+              </div>
+            </div>
+
+            <!-- App bar: no skip on last slide (or grayed) -->
+            <div class="app-bar">
+              <!-- No skip on final slide — intentionally omitted -->
+            </div>
+
+            <!-- ── KEY ILLUSTRATION (pure SVG) ──────── -->
+            <svg width="280" height="240" viewBox="0 0 280 240" fill="none" xmlns="http://www.w3.org/2000/svg"
+                 style="position:relative; z-index:10; margin-top:28px;">
+
+              <!-- Shadow -->
+              <ellipse cx="140" cy="222" rx="80" ry="10" fill="#3DAF5E" fill-opacity="0.14"/>
+
+              <!-- Large background ring / medallion -->
+              <circle cx="140" cy="108" r="82" fill="#E8F8EE"/>
+              <circle cx="140" cy="108" r="82" fill="none" stroke="#C8F0D6" stroke-width="2"/>
+              <!-- Inner ring -->
+              <circle cx="140" cy="108" r="66" fill="none" stroke="#C8F0D6" stroke-width="1.5" stroke-dasharray="5 4"/>
+
+              <!-- KEY BODY ─────────────────────────────
+                   Key head: large circle on the left
+                   Key shank: long horizontal bar to the right
+                   Key teeth: two small rectangular notches
+              ──────────────────────────────────────── -->
+
+              <!-- Key head outer ring -->
+              <circle cx="104" cy="108" r="38" fill="#51c878"/>
+              <!-- Key head inner hole -->
+              <circle cx="104" cy="108" r="22" fill="#3DAF5E"/>
+              <!-- Key head center hole (the hollow) -->
+              <circle cx="104" cy="108" r="13" fill="#F0FAF4"/>
+
+              <!-- Key shank (horizontal bar) -->
+              <rect x="125" y="100" width="110" height="16" rx="8" fill="#51c878"/>
+
+              <!-- Key tooth 1 (pointing down) -->
+              <rect x="196" y="116" width="14" height="20" rx="4" fill="#51c878"/>
+
+              <!-- Key tooth 2 (pointing down, shorter) -->
+              <rect x="220" y="116" width="11" height="14" rx="3.5" fill="#51c878"/>
+
+              <!-- Key shank highlight (top edge gloss) -->
+              <rect x="130" y="101" width="100" height="5" rx="2.5" fill="#3DAF5E" fill-opacity="0.35"/>
+
+              <!-- Key head highlight arc -->
+              <path d="M82 86 A30 30 0 0 1 125 95"
+                    stroke="#3DAF5E" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.4"/>
+
+              <!-- SHIELD icon (center of medallion, bottom area) -->
+              <g transform="translate(118, 148)">
+                <!-- Shield shape -->
+                <path d="M22 4 L38 10 L38 22 C38 30 22 38 22 38 C22 38 6 30 6 22 L6 10 Z"
+                      fill="#51c878"/>
+                <path d="M22 10 L32 14 L32 23 C32 28 22 33 22 33 C22 33 12 28 12 23 L12 14 Z"
+                      fill="#3DAF5E"/>
+                <!-- Checkmark on shield -->
+                <path d="M15 22 L19 26 L29 16"
+                      stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              </g>
+
+              <!-- FLOATING SPARKLES -->
+              <!-- Large star top-right -->
+              <path d="M228 34 L231 42 L238 44 L231 46 L228 54 L225 46 L218 44 L225 42 Z"
+                    fill="#FFD54F"/>
+              <!-- Medium star top-left -->
+              <path d="M46 56 L48.5 62 L54 64 L48.5 66 L46 72 L43.5 66 L38 64 L43.5 62 Z"
+                    fill="#FFD54F" fill-opacity="0.85"/>
+              <!-- Small star lower-right -->
+              <path d="M240 148 L241.8 153 L246 154.5 L241.8 156 L240 161 L238.2 156 L234 154.5 L238.2 153 Z"
+                    fill="#FFD54F" fill-opacity="0.7"/>
+              <!-- Cross sparkle left -->
+              <line x1="34" y1="120" x2="34" y2="132" stroke="#51c878" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="28" y1="126" x2="40" y2="126" stroke="#51c878" stroke-width="2.5" stroke-linecap="round"/>
+              <!-- Cross sparkle top-center -->
+              <line x1="156" y1="20" x2="156" y2="30" stroke="#FFD54F" stroke-width="2.2" stroke-linecap="round"/>
+              <line x1="151" y1="25" x2="161" y2="25" stroke="#FFD54F" stroke-width="2.2" stroke-linecap="round"/>
+              <!-- Dot accents -->
+              <circle cx="50" cy="158" r="5" fill="#FF8A65" fill-opacity="0.65"/>
+              <circle cx="242" cy="80" r="4" fill="#64B5F6" fill-opacity="0.7"/>
+              <circle cx="246" cy="104" r="3" fill="#51c878" fill-opacity="0.5"/>
+              <circle cx="36" cy="90" r="3.5" fill="#B2DFDB" fill-opacity="0.8"/>
+              <!-- Dashed orbit ring (decorative) -->
+              <circle cx="140" cy="108" r="95" fill="none" stroke="#51c878" stroke-width="1"
+                      stroke-dasharray="4 6" stroke-opacity="0.25"/>
+            </svg>
+          </div><!-- /illus-area -->
+
+          <!-- ── Text content area ──────────────────── -->
+          <div class="content-area">
+            <div class="slide-title">Masuk untuk Mulai</div>
+            <div class="slide-desc">
+              Aktifkan fitur bookmark dan personalisasi<br>
+              dengan masuk ke akun Anda
+            </div>
+          </div>
+
+          <!-- ── Bottom: dots + buttons ─────────────── -->
+          <div class="bottom-section">
+            <div class="page-dots">
+              <div class="dot"></div>
+              <div class="dot"></div>
+              <div class="dot"></div>
+              <div class="dot"></div>
+              <div class="dot active"></div>
+            </div>
+
+            <!-- Google FilledButton -->
+            <div class="btn-filled">
+              <!-- Google "G" badge -->
+              <div class="g-badge">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M15.84 8.18c0-.57-.05-1.11-.14-1.64H8v3.1h4.4a3.76 3.76 0 01-1.63 2.47v2.05h2.64c1.55-1.43 2.43-3.53 2.43-5.98z" fill="#4285F4"/>
+                  <path d="M8 16c2.21 0 4.07-.73 5.42-1.98L10.78 12c-.73.49-1.67.78-2.78.78-2.14 0-3.95-1.44-4.6-3.38H.68v2.12A8 8 0 008 16z" fill="#34A853"/>
+                  <path d="M3.4 9.4A4.8 4.8 0 013.17 8c0-.49.08-.97.23-1.4V4.48H.68A8 8 0 000 8c0 1.29.31 2.51.68 3.52L3.4 9.4z" fill="#FBBC05"/>
+                  <path d="M8 3.18c1.21 0 2.29.42 3.15 1.23l2.36-2.36A8 8 0 00.68 4.48L3.4 6.6C4.05 4.66 5.86 3.18 8 3.18z" fill="#EA4335"/>
+                </svg>
+              </div>
+              <span class="btn-label">Masuk dengan Google</span>
+            </div>
+
+            <!-- Guest OutlinedButton -->
+            <div class="btn-outlined">
+              <span class="btn-label">Lanjutkan sebagai Tamu</span>
+            </div>
+
+            <div class="caption">Mode tamu tidak dapat menyimpan bookmark</div>
+          </div>
+
+          <div class="home-bar"></div>
+        </div>
+      </div>
+    </div><!-- /phone-wrap slide 5 -->
+
+  </div><!-- /mockups-row -->
+
+  <!-- ── Design spec card ──────────────────────────────────────────────── -->
+  <div class="spec-card">
+    <h3>Design Specifications — Material Design 3 &amp; Flat Vector</h3>
+    <div class="spec-grid">
+      <div class="spec-row">
+        <span class="spec-key">Screen</span>
+        <span class="spec-val">390 x 844 px (iPhone 14 logical)</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-key">Design System</span>
+        <span class="spec-val">Material Design 3 (Material You)</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-key">Illustration Style</span>
+        <span class="spec-val">Flat vector SVG, solid colors, geometric 2D</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-key">Illus. Area</span>
+        <span class="spec-val">Top 55% (~464px) · BG: #F0FAF4 light mint</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-key">Primary</span>
+        <span class="spec-val"><span class="swatch" style="background:#51c878;"></span>#51c878 — MD3 Green seed</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-key">Primary Dark</span>
+        <span class="spec-val"><span class="swatch" style="background:#3DAF5E;"></span>#3DAF5E</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-key">Primary Container</span>
+        <span class="spec-val"><span class="swatch" style="background:#E8F8EE;"></span>#E8F8EE</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-key">Accent Yellow</span>
+        <span class="spec-val"><span class="swatch" style="background:#FFD54F;"></span>#FFD54F — sparkles</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-key">Accent Orange</span>
+        <span class="spec-val"><span class="swatch" style="background:#FF8A65;"></span>#FF8A65 — dot accents</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-key">Accent Blue</span>
+        <span class="spec-val"><span class="swatch" style="background:#64B5F6;"></span>#64B5F6 — dot accents</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-key">Title</span>
+        <span class="spec-val">22px bold · #1C1B1F · centered</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-key">Description</span>
+        <span class="spec-val">14px · #49454F · centered · lh 1.65</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-key">FilledButton</span>
+        <span class="spec-val">#51c878 fill · white text · r:100px · 52px tall · full width</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-key">OutlinedButton</span>
+        <span class="spec-val">#51c878 border + text · transparent bg · r:100px · 52px</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-key">TextButton</span>
+        <span class="spec-val">"Lewati" · #51c878 · no border · semi-transparent bg pill</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-key">Page Dots</span>
+        <span class="spec-val">Active: 24x8px filled pill #51c878 · Inactive: 8px outlined #C8E6C9</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-key">Spacing</span>
+        <span class="spec-val">24px horizontal margins · 12–16px vertical gaps (MD3)</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-key">Slides</span>
+        <span class="spec-val">1: Book/Shalawat · 2: Audio · 3: Bookmark · 4: Night Mode · 5: Key/Login</span>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

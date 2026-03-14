@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:ishari/core/env/app_env.dart';
 import 'package:ishari/core/router/app_router.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
@@ -11,7 +10,6 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // 1. Validate all required env variables are present.
-  //    Run with: flutter run --dart-define-from-file=env/dev.json
   AppEnv.validate();
 
   // 2. Initialize Supabase using env values
@@ -20,10 +18,7 @@ Future<void> main() async {
     anonKey: AppEnv.supabaseAnonKey,
   );
 
-  // 3. Initialize Google Sign-In singleton (required once before use)
-  await GoogleSignIn.instance.initialize(clientId: AppEnv.googleWebClientId);
-
-  // 4. Register all dependencies via get_it + injectable
+  // 3. Register all dependencies via get_it + injectable
   await configureDependencies();
 
   runApp(const IshariApp());
@@ -43,7 +38,9 @@ class IshariApp extends StatelessWidget {
             title: 'Ishari',
             debugShowCheckedModeBanner: AppEnv.isDevelopment,
             theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
+              colorScheme: ColorScheme.fromSeed(
+                seedColor: const Color(0xFF51C878),
+              ),
               useMaterial3: true,
             ),
             routerConfig: router,

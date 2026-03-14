@@ -25,6 +25,13 @@ import 'features/auth/domain/usecases/get_current_user.dart' as _i191;
 import 'features/auth/domain/usecases/sign_in_with_google.dart' as _i648;
 import 'features/auth/domain/usecases/sign_out.dart' as _i872;
 import 'features/auth/presentation/bloc/auth_bloc.dart' as _i363;
+import 'features/home/data/datasources/home_remote_datasource.dart' as _i400;
+import 'features/home/data/repositories/home_repository_impl.dart' as _i689;
+import 'features/home/domain/repositories/home_repository.dart' as _i649;
+import 'features/home/domain/usecases/get_chapters_by_category.dart' as _i853;
+import 'features/home/domain/usecases/get_featured_chapter.dart' as _i212;
+import 'features/home/domain/usecases/get_hadi_list.dart' as _i316;
+import 'features/home/presentation/bloc/home_bloc.dart' as _i123;
 import 'injection_container.dart' as _i809;
 
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -51,11 +58,36 @@ _i174.GetIt initDependencies(
   gh.lazySingleton<_i1043.AuthLocalDataSource>(
     () => _i1043.AuthLocalDataSourceImpl(gh<_i558.FlutterSecureStorage>()),
   );
+  gh.lazySingleton<_i400.HomeRemoteDataSource>(
+    () => _i400.HomeRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
+  );
+  gh.lazySingleton<_i649.HomeRepository>(
+    () => _i689.HomeRepositoryImpl(
+      gh<_i400.HomeRemoteDataSource>(),
+      gh<_i75.NetworkInfo>(),
+    ),
+  );
+  gh.factory<_i853.GetChaptersByCategory>(
+    () => _i853.GetChaptersByCategory(gh<_i649.HomeRepository>()),
+  );
+  gh.factory<_i212.GetFeaturedChapter>(
+    () => _i212.GetFeaturedChapter(gh<_i649.HomeRepository>()),
+  );
+  gh.factory<_i316.GetHadiList>(
+    () => _i316.GetHadiList(gh<_i649.HomeRepository>()),
+  );
   gh.lazySingleton<_i1015.AuthRepository>(
     () => _i111.AuthRepositoryImpl(
       gh<_i588.AuthRemoteDataSource>(),
       gh<_i1043.AuthLocalDataSource>(),
       gh<_i75.NetworkInfo>(),
+    ),
+  );
+  gh.factory<_i123.HomeBloc>(
+    () => _i123.HomeBloc(
+      gh<_i212.GetFeaturedChapter>(),
+      gh<_i853.GetChaptersByCategory>(),
+      gh<_i316.GetHadiList>(),
     ),
   );
   gh.lazySingleton<_i191.GetCurrentUser>(

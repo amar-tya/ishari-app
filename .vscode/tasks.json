@@ -1,0 +1,31 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "use_dev",
+      "type": "shell",
+      "command": "scripts\\use_dev.bat",
+      "windows": {
+        "command": "scripts\\use_dev.bat"
+      },
+      "group": "build",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "use_prod",
+      "type": "shell",
+      "command": "scripts\\use_prod.bat",
+      "windows": {
+        "command": "scripts\\use_prod.bat"
+      },
+      "group": "build",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      }
+    }
+  ]
+}
