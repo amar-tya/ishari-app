@@ -59,3 +59,4 @@ lib/core/env/env.g.dart
 # Firebase / Google Sign-In config files — contain credentials
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
+devtools_options.yaml

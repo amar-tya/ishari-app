@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ChapterEntity {
 
- String get id; String get title; String get category; int get verseCount; int? get number;
+ String get id; String get title; String get category; String get description; int get verseCount; int? get number;
 /// Create a copy of ChapterEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $ChapterEntityCopyWith<ChapterEntity> get copyWith => _$ChapterEntityCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChapterEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.category, category) || other.category == category)&&(identical(other.verseCount, verseCount) || other.verseCount == verseCount)&&(identical(other.number, number) || other.number == number));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChapterEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.category, category) || other.category == category)&&(identical(other.description, description) || other.description == description)&&(identical(other.verseCount, verseCount) || other.verseCount == verseCount)&&(identical(other.number, number) || other.number == number));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,category,verseCount,number);
+int get hashCode => Object.hash(runtimeType,id,title,category,description,verseCount,number);
 
 @override
 String toString() {
-  return 'ChapterEntity(id: $id, title: $title, category: $category, verseCount: $verseCount, number: $number)';
+  return 'ChapterEntity(id: $id, title: $title, category: $category, description: $description, verseCount: $verseCount, number: $number)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $ChapterEntityCopyWith<$Res>  {
   factory $ChapterEntityCopyWith(ChapterEntity value, $Res Function(ChapterEntity) _then) = _$ChapterEntityCopyWithImpl;
 @useResult
 $Res call({
- String id, String title, String category, int verseCount, int? number
+ String id, String title, String category, String description, int verseCount, int? number
 });
 
 
@@ -62,11 +62,12 @@ class _$ChapterEntityCopyWithImpl<$Res>
 
 /// Create a copy of ChapterEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? category = null,Object? verseCount = null,Object? number = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? category = null,Object? description = null,Object? verseCount = null,Object? number = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
+as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String,verseCount: null == verseCount ? _self.verseCount : verseCount // ignore: cast_nullable_to_non_nullable
 as int,number: freezed == number ? _self.number : number // ignore: cast_nullable_to_non_nullable
 as int?,
@@ -154,10 +155,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String category,  int verseCount,  int? number)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String category,  String description,  int verseCount,  int? number)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ChapterEntity() when $default != null:
-return $default(_that.id,_that.title,_that.category,_that.verseCount,_that.number);case _:
+return $default(_that.id,_that.title,_that.category,_that.description,_that.verseCount,_that.number);case _:
   return orElse();
 
 }
@@ -175,10 +176,10 @@ return $default(_that.id,_that.title,_that.category,_that.verseCount,_that.numbe
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String category,  int verseCount,  int? number)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String category,  String description,  int verseCount,  int? number)  $default,) {final _that = this;
 switch (_that) {
 case _ChapterEntity():
-return $default(_that.id,_that.title,_that.category,_that.verseCount,_that.number);case _:
+return $default(_that.id,_that.title,_that.category,_that.description,_that.verseCount,_that.number);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -195,10 +196,10 @@ return $default(_that.id,_that.title,_that.category,_that.verseCount,_that.numbe
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String category,  int verseCount,  int? number)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String category,  String description,  int verseCount,  int? number)?  $default,) {final _that = this;
 switch (_that) {
 case _ChapterEntity() when $default != null:
-return $default(_that.id,_that.title,_that.category,_that.verseCount,_that.number);case _:
+return $default(_that.id,_that.title,_that.category,_that.description,_that.verseCount,_that.number);case _:
   return null;
 
 }
@@ -210,12 +211,13 @@ return $default(_that.id,_that.title,_that.category,_that.verseCount,_that.numbe
 
 
 class _ChapterEntity implements ChapterEntity {
-  const _ChapterEntity({required this.id, required this.title, required this.category, this.verseCount = 0, this.number});
+  const _ChapterEntity({required this.id, required this.title, required this.category, required this.description, this.verseCount = 0, this.number});
   
 
 @override final  String id;
 @override final  String title;
 @override final  String category;
+@override final  String description;
 @override@JsonKey() final  int verseCount;
 @override final  int? number;
 
@@ -229,16 +231,16 @@ _$ChapterEntityCopyWith<_ChapterEntity> get copyWith => __$ChapterEntityCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChapterEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.category, category) || other.category == category)&&(identical(other.verseCount, verseCount) || other.verseCount == verseCount)&&(identical(other.number, number) || other.number == number));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChapterEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.category, category) || other.category == category)&&(identical(other.description, description) || other.description == description)&&(identical(other.verseCount, verseCount) || other.verseCount == verseCount)&&(identical(other.number, number) || other.number == number));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,category,verseCount,number);
+int get hashCode => Object.hash(runtimeType,id,title,category,description,verseCount,number);
 
 @override
 String toString() {
-  return 'ChapterEntity(id: $id, title: $title, category: $category, verseCount: $verseCount, number: $number)';
+  return 'ChapterEntity(id: $id, title: $title, category: $category, description: $description, verseCount: $verseCount, number: $number)';
 }
 
 
@@ -249,7 +251,7 @@ abstract mixin class _$ChapterEntityCopyWith<$Res> implements $ChapterEntityCopy
   factory _$ChapterEntityCopyWith(_ChapterEntity value, $Res Function(_ChapterEntity) _then) = __$ChapterEntityCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, String category, int verseCount, int? number
+ String id, String title, String category, String description, int verseCount, int? number
 });
 
 
@@ -266,11 +268,12 @@ class __$ChapterEntityCopyWithImpl<$Res>
 
 /// Create a copy of ChapterEntity
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? category = null,Object? verseCount = null,Object? number = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? category = null,Object? description = null,Object? verseCount = null,Object? number = freezed,}) {
   return _then(_ChapterEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
+as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String,verseCount: null == verseCount ? _self.verseCount : verseCount // ignore: cast_nullable_to_non_nullable
 as int,number: freezed == number ? _self.number : number // ignore: cast_nullable_to_non_nullable
 as int?,

@@ -25,13 +25,14 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
             .from('chapters')
             .select()
             .eq('id', lastChapterId)
+            .order('chapter_number', ascending: true)
             .single();
       } else {
         data = await _supabaseClient
             .from('chapters')
             .select()
             .eq('category', 'Diwan')
-            .order('chapter_number')
+            .order('chapter_number', ascending: true)
             .limit(1)
             .single();
       }
@@ -48,7 +49,7 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
           .from('chapters')
           .select()
           .eq('category', category)
-          .order('chapter_number');
+          .order('chapter_number', ascending: true);
       return data.map(ChapterModel.fromJson).toList();
     } catch (e) {
       throw ServerException(message: e.toString());

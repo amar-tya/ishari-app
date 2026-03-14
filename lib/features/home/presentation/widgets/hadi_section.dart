@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:ishari/features/home/domain/entities/hadi_entity.dart';
 
 const _avatarColors = [
-  [Color(0xFF51C878), Color(0xFF3DA85F)],
-  [Color(0xFF42A5F5), Color(0xFF1E88E5)],
-  [Color(0xFFFF8A65), Color(0xFFF4511E)],
-  [Color(0xFFAB47BC), Color(0xFF8E24AA)],
+  Color(0xFF51C878),
+  Color(0xFF42A5F5),
+  Color(0xFFFF8A65),
+  Color(0xFFAB47BC),
 ];
 
-/// Horizontally scrollable row of Pimpinan Shalawat (hadi) avatars.
+/// Vertical list of Pimpinan Shalawat (hadi) cards.
 class HadiSection extends StatelessWidget {
   const HadiSection({super.key, required this.hadiList});
 
@@ -46,11 +46,13 @@ class HadiSection extends StatelessWidget {
         const SizedBox(height: 12),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            children: List.generate(hadiList.length, (i) {
-              final hadi = hadiList[i];
-              return Expanded(child: _HadiItem(hadi: hadi, colorIndex: i));
-            }),
+          child: Column(
+            children: [
+              for (int i = 0; i < hadiList.length; i++) ...[
+                if (i > 0) const SizedBox(height: 12),
+                _HadiItem(hadi: hadiList[i], colorIndex: i),
+              ],
+            ],
           ),
         ),
       ],
@@ -67,61 +69,49 @@ class _HadiItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = _avatarColors[colorIndex % _avatarColors.length];
-    final firstLetter = hadi.name.isNotEmpty ? hadi.name[0].toUpperCase() : '?';
 
     return GestureDetector(
       onTap: () {
         // TODO: navigate to HadiDetailPage
       },
-      child: Column(
-        children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: colors,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x14000000),
+              blurRadius: 8,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: colors,
               ),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x1F000000),
-                  blurRadius: 8,
-                  offset: Offset(0, 2),
+              child: const Icon(Icons.person, color: Colors.white, size: 24),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                hadi.name,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF1C1B1F),
                 ),
-              ],
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-            child: hadi.photoUrl != null
-                ? CircleAvatar(
-                    radius: 30,
-                    backgroundImage: NetworkImage(hadi.photoUrl!),
-                  )
-                : Center(
-                    child: Text(
-                      firstLetter,
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            hadi.name,
-            style: const TextStyle(
-              fontSize: 11,
-              color: Color(0xFF49454F),
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
