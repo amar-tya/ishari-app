@@ -22,7 +22,17 @@
       "Bash(export PATH=\"$PATH:/c/Flutter/bin\")",
       "mcp__context7__resolve-library-id",
       "mcp__context7__query-docs",
-      "Bash(flutter analyze lib/core/env/)"
+      "Bash(flutter analyze lib/core/env/)",
+      "mcp__Supabase__list_tables",
+      "mcp__Supabase__execute_sql",
+      "mcp__nimbalyst-mcp__AskUserQuestion",
+      "Bash(cd:*)",
+      "Bash(find:*)",
+      "Bash(dart:*)",
+      "Bash(flutter:*)",
+      "Bash(which:*)",
+      "Bash(echo:*)",
+      "Bash(ls:*)"
     ]
   }
 }
