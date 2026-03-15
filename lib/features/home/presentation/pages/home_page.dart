@@ -29,7 +29,8 @@ class HomeTab extends StatelessWidget {
           authenticated: (user) => user.id,
           orElse: () => null,
         );
-        return sl<HomeBloc>()..add(HomeEvent.load(userId: isGuest ? null : userId));
+        return sl<HomeBloc>()
+          ..add(HomeEvent.load(userId: isGuest ? null : userId));
       },
       child: const _HomeTabBody(),
     );
@@ -101,7 +102,11 @@ class _ErrorView extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.wifi_off_outlined, size: 48, color: Color(0xFF79747E)),
+                const Icon(
+                  Icons.wifi_off_outlined,
+                  size: 48,
+                  color: Color(0xFF79747E),
+                ),
                 const SizedBox(height: 16),
                 Text(
                   message,
@@ -162,8 +167,8 @@ class _LoadedView extends StatelessWidget {
             context.read<HomeBloc>().add(HomeEvent.refresh(userId: user?.id));
             // Wait until the bloc leaves the loading state
             await context.read<HomeBloc>().stream.firstWhere(
-                  (s) => s.maybeWhen(loading: () => false, orElse: () => true),
-                );
+              (s) => s.maybeWhen(loading: () => false, orElse: () => true),
+            );
           },
           child: CustomScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
@@ -194,11 +199,11 @@ class _LoadedView extends StatelessWidget {
                     const SizedBox(height: 24),
 
                     // 4a. Category section header
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
+                        children: [
                           Text(
                             'Jelajahi Kategori',
                             style: TextStyle(
@@ -241,10 +246,12 @@ class _LoadedView extends StatelessWidget {
                         height: 148,
                         child: ListView.separated(
                           scrollDirection: Axis.horizontal,
-                          padding: const EdgeInsets.symmetric(horizontal: 16)
-                              .copyWith(bottom: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                          ).copyWith(bottom: 4),
                           itemCount: chapters.length,
-                          separatorBuilder: (_, __) => const SizedBox(width: 12),
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(width: 12),
                           itemBuilder: (_, i) => ChapterCard(
                             chapter: chapters[i],
                             onTap: () {

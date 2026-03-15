@@ -1,6 +1,6 @@
 name: ishari
 description: "Ishari app with Clean Architecture, Google Sign-In, and Supabase."
-publish_to: 'none'
+publish_to: "none"
 version: 1.0.0+1
 
 environment:
@@ -46,7 +46,7 @@ dependencies:
   # Audio playback
   just_audio: ^0.10.0
 
-  # Google Fonts (Amiri for Arabic text)
+  # Google Fonts (scheherazadeNew for Arabic text)
   google_fonts: ^6.2.1
 
 dev_dependencies:

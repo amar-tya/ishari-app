@@ -21,7 +21,7 @@ planStatus:
 
 1. Refactor chapter reader UI to match the mockup design (`plans/mockups/muhud-chapter-reader.mockup.html`)
 2. Connect the Muhud bottom nav tab to the chapter reader page
-3. Arabic text use font Amiri from google fonts
+3. Arabic text use font scheherazadeNew from google fonts
 
 ---
 

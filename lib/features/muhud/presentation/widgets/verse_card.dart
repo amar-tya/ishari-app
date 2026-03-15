@@ -159,7 +159,7 @@ class _VerseCardState extends State<VerseCard>
             const SizedBox(height: 14),
             Text(
               widget.verse.verse.arabicText,
-              style: GoogleFonts.amiri(
+              style: GoogleFonts.scheherazadeNew(
                 fontSize: 22,
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFF1C1B1F),
@@ -262,8 +262,7 @@ class _VerseNumberBadge extends StatelessWidget {
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
-                color:
-                    isPlaying ? Colors.white : const Color(0xFF1C1B1F),
+                color: isPlaying ? Colors.white : const Color(0xFF1C1B1F),
               ),
             ),
           ),
@@ -299,9 +298,7 @@ class _ActionButton extends StatelessWidget {
         ),
         child: Icon(
           icon,
-          color: isActive
-              ? const Color(0xFF51C878)
-              : const Color(0xFF79747E),
+          color: isActive ? const Color(0xFF51C878) : const Color(0xFF79747E),
           size: 18,
         ),
       ),

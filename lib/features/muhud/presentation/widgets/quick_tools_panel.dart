@@ -52,8 +52,9 @@ class _QuickToolsPanelState extends State<QuickToolsPanel> {
               height: double.infinity,
               decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius:
-                    BorderRadius.horizontal(left: Radius.circular(16)),
+                borderRadius: BorderRadius.horizontal(
+                  left: Radius.circular(16),
+                ),
               ),
               child: SafeArea(
                 child: Column(
@@ -74,8 +75,10 @@ class _QuickToolsPanelState extends State<QuickToolsPanel> {
                           ),
                           const Spacer(),
                           IconButton(
-                            icon: const Icon(Icons.close_rounded,
-                                color: Color(0xFF79747E)),
+                            icon: const Icon(
+                              Icons.close_rounded,
+                              color: Color(0xFF79747E),
+                            ),
                             onPressed: widget.onClose,
                           ),
                         ],
@@ -84,7 +87,9 @@ class _QuickToolsPanelState extends State<QuickToolsPanel> {
                     // Tab chips
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
@@ -93,24 +98,23 @@ class _QuickToolsPanelState extends State<QuickToolsPanel> {
                             return Padding(
                               padding: const EdgeInsets.only(right: 8),
                               child: GestureDetector(
-                                onTap: () =>
-                                    setState(() => _selectedTab = i),
+                                onTap: () => setState(() => _selectedTab = i),
                                 child: AnimatedContainer(
-                                  duration:
-                                      const Duration(milliseconds: 150),
+                                  duration: const Duration(milliseconds: 150),
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 14, vertical: 7),
+                                    horizontal: 14,
+                                    vertical: 7,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: selected
                                         ? const Color(0xFF51C878)
                                         : const Color(0xFFF5F5F5),
-                                    borderRadius:
-                                        BorderRadius.circular(20),
+                                    borderRadius: BorderRadius.circular(20),
                                     border: selected
                                         ? null
                                         : Border.all(
-                                            color:
-                                                const Color(0xFFE0E0E0)),
+                                            color: const Color(0xFFE0E0E0),
+                                          ),
                                   ),
                                   child: Text(
                                     _tabs[i],
@@ -135,21 +139,21 @@ class _QuickToolsPanelState extends State<QuickToolsPanel> {
                       child: _selectedTab == 0
                           ? _BaitTabContent(
                               showArabic: widget.showArabic,
-                              showTransliteration:
-                                  widget.showTransliteration,
+                              showTransliteration: widget.showTransliteration,
                               showTranslation: widget.showTranslation,
                               arabFontSize: _arabFontSize,
                               translationFontSize: _translationFontSize,
                               onArabFontSizeChanged: (v) =>
                                   setState(() => _arabFontSize = v),
-                              onTranslationFontSizeChanged: (v) => setState(
-                                  () => _translationFontSize = v),
+                              onTranslationFontSizeChanged: (v) =>
+                                  setState(() => _translationFontSize = v),
                             )
                           : Center(
                               child: Text(
                                 '${_tabs[_selectedTab]} — coming soon',
                                 style: const TextStyle(
-                                    color: Color(0xFF79747E)),
+                                  color: Color(0xFF79747E),
+                                ),
                               ),
                             ),
                     ),
@@ -209,8 +213,7 @@ class _BaitTabContent extends StatelessWidget {
         _ToggleRow(
           label: 'Transliterasi',
           value: showTransliteration,
-          onChanged: (_) =>
-              bloc.add(const MuhudEvent.toggleTransliteration()),
+          onChanged: (_) => bloc.add(const MuhudEvent.toggleTransliteration()),
         ),
         _ToggleRow(
           label: 'Terjemahan',
@@ -230,26 +233,29 @@ class _BaitTabContent extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        Row(
+        const Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: const [
+          children: [
             Text(
               'Font Arab',
               style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFF1C1B1F)),
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF1C1B1F),
+              ),
             ),
             Row(
               children: [
                 Text(
-                  'Amiri',
-                  style: TextStyle(
-                      fontSize: 13, color: Color(0xFF51C878)),
+                  'scheherazadeNew',
+                  style: TextStyle(fontSize: 13, color: Color(0xFF51C878)),
                 ),
                 SizedBox(width: 4),
-                Icon(Icons.chevron_right_rounded,
-                    size: 18, color: Color(0xFF79747E)),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  size: 18,
+                  color: Color(0xFF79747E),
+                ),
               ],
             ),
           ],
@@ -261,14 +267,14 @@ class _BaitTabContent extends StatelessWidget {
             const Text(
               'Ukuran Arab',
               style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFF1C1B1F)),
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF1C1B1F),
+              ),
             ),
             Text(
               arabFontSize.round().toString(),
-              style: const TextStyle(
-                  fontSize: 13, color: Color(0xFF51C878)),
+              style: const TextStyle(fontSize: 13, color: Color(0xFF51C878)),
             ),
           ],
         ),
@@ -277,8 +283,7 @@ class _BaitTabContent extends StatelessWidget {
             activeTrackColor: const Color(0xFF51C878),
             thumbColor: const Color(0xFF51C878),
             inactiveTrackColor: const Color(0xFFE0E0E0),
-            overlayColor:
-                const Color(0xFF51C878).withValues(alpha: 0.12),
+            overlayColor: const Color(0xFF51C878).withValues(alpha: 0.12),
           ),
           child: Slider(
             value: arabFontSize,
@@ -295,14 +300,14 @@ class _BaitTabContent extends StatelessWidget {
             const Text(
               'Ukuran Terjemahan',
               style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFF1C1B1F)),
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF1C1B1F),
+              ),
             ),
             Text(
               translationFontSize.round().toString(),
-              style: const TextStyle(
-                  fontSize: 13, color: Color(0xFF51C878)),
+              style: const TextStyle(fontSize: 13, color: Color(0xFF51C878)),
             ),
           ],
         ),
@@ -311,8 +316,7 @@ class _BaitTabContent extends StatelessWidget {
             activeTrackColor: const Color(0xFF51C878),
             thumbColor: const Color(0xFF51C878),
             inactiveTrackColor: const Color(0xFFE0E0E0),
-            overlayColor:
-                const Color(0xFF51C878).withValues(alpha: 0.12),
+            overlayColor: const Color(0xFF51C878).withValues(alpha: 0.12),
           ),
           child: Slider(
             value: translationFontSize,
@@ -349,9 +353,10 @@ class _ToggleRow extends StatelessWidget {
           Text(
             label,
             style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF1C1B1F)),
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF1C1B1F),
+            ),
           ),
           Switch(
             value: value,

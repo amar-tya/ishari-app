@@ -168,7 +168,7 @@ Column(
   crossAxisAlignment: CrossAxisAlignment.stretch,
   children: [
     Text(chapter.description, textAlign: TextAlign.right, textDirection: TextDirection.rtl,
-      style: GoogleFonts.amiri(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white)),
+      style: GoogleFonts.scheherazadeNew(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white)),
     const SizedBox(height: 4),
     Text('${chapter.category} • ${chapter.verseCount} Ayat',
       style: TextStyle(fontSize: 13, color: Colors.white.withOpacity(0.8))),
@@ -200,7 +200,7 @@ ClipRRect(
 #### 2. `chapter_app_bar.dart`
 
 Perubahan kecil:
-- Pastikan font Arabic menggunakan `GoogleFonts.amiri` untuk konsistensi dengan chapter header
+- Pastikan font Arabic menggunakan `GoogleFonts.scheherazadeNew` untuk konsistensi dengan chapter header
 - Title text-align: `TextAlign.right` + `textDirection: TextDirection.rtl`
 
 ---
