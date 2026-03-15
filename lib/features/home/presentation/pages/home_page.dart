@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:ishari/core/app_state.dart';
 import 'package:ishari/features/auth/domain/entities/user_entity.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
@@ -187,7 +186,10 @@ class _LoadedView extends StatelessWidget {
                     FeaturedChapterCard(
                       chapter: featuredChapter,
                       isGuest: isGuest,
-                      onTap: () => context.push('/chapter/${featuredChapter.id}'),
+                      onTap: () {
+                        final id = int.tryParse(featuredChapter.id);
+                        if (id != null) AppState.muhudChapterRequest.value = id;
+                      },
                     ),
                     const SizedBox(height: 24),
 
@@ -245,9 +247,12 @@ class _LoadedView extends StatelessWidget {
                           separatorBuilder: (_, __) => const SizedBox(width: 12),
                           itemBuilder: (_, i) => ChapterCard(
                             chapter: chapters[i],
-                            onTap: () => context.push(
-                              '/chapter/${chapters[i].id}',
-                            ),
+                            onTap: () {
+                              final id = int.tryParse(chapters[i].id);
+                              if (id != null) {
+                                AppState.muhudChapterRequest.value = id;
+                              }
+                            },
                           ),
                         ),
                       ),

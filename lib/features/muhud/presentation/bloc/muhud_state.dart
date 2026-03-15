@@ -17,6 +17,8 @@ sealed class MuhudState with _$MuhudState {
     required bool showTranslation,
     int? playingVerseId,
     @Default(false) bool isAudioLoading,
+    @Default(true) bool showArabic,
+    @Default(true) bool showTransliteration,
   }) = _Loaded;
 
   const factory MuhudState.error({required String message}) = _Error;

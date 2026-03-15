@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:ishari/core/app_state.dart';
 import 'package:ishari/features/home/presentation/pages/home_page.dart';
+import 'package:ishari/features/muhud/presentation/pages/muhud_tab.dart';
 
 /// Root scaffold providing the 5-tab bottom navigation bar.
 ///
@@ -18,9 +19,27 @@ class MainScaffold extends StatefulWidget {
 class _MainScaffoldState extends State<MainScaffold> {
   int _selectedIndex = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    AppState.muhudChapterRequest.addListener(_onMuhudChapterRequest);
+  }
+
+  @override
+  void dispose() {
+    AppState.muhudChapterRequest.removeListener(_onMuhudChapterRequest);
+    super.dispose();
+  }
+
+  void _onMuhudChapterRequest() {
+    if (AppState.muhudChapterRequest.value != null) {
+      setState(() => _selectedIndex = 1);
+    }
+  }
+
   void _onTabSelected(int index) {
     // For guest mode, gate the Bookmark tab
-    if (index == 3 && AppState.isGuestMode.value) {
+    if (index == 4 && AppState.isGuestMode.value) {
       _showBookmarkLockSheet();
       return;
     }
@@ -43,6 +62,7 @@ class _MainScaffoldState extends State<MainScaffold> {
         index: _selectedIndex,
         children: const [
           HomeTab(),
+          MuhudTab(),
           _PlaceholderTab(icon: Icons.menu_book_rounded, label: 'Kitab'),
           _PlaceholderTab(icon: Icons.people_outline, label: 'Hadi'),
           _PlaceholderTab(icon: Icons.bookmark_outline, label: 'Bookmark'),
@@ -106,15 +126,22 @@ class _BottomNavBar extends StatelessWidget {
                 ),
                 _NavItem(
                   icon: Icons.menu_book_rounded,
-                  label: 'Kitab',
+                  label: 'Muhud',
                   index: 1,
+                  selectedIndex: selectedIndex,
+                  onTap: onTap,
+                ),
+                _NavItem(
+                  icon: Icons.menu_book_rounded,
+                  label: 'Kitab',
+                  index: 2,
                   selectedIndex: selectedIndex,
                   onTap: onTap,
                 ),
                 _NavItem(
                   icon: Icons.person_outline,
                   label: 'Hadi',
-                  index: 2,
+                  index: 3,
                   selectedIndex: selectedIndex,
                   onTap: onTap,
                 ),
@@ -122,14 +149,14 @@ class _BottomNavBar extends StatelessWidget {
                 _NavItem(
                   icon: Icons.bookmark_outline,
                   label: 'Bookmark',
-                  index: 3,
+                  index: 4,
                   selectedIndex: selectedIndex,
                   onTap: onTap,
                 ),
                 _NavItem(
                   icon: Icons.person_outline,
                   label: 'Profil',
-                  index: 4,
+                  index: 5,
                   selectedIndex: selectedIndex,
                   onTap: onTap,
                 ),

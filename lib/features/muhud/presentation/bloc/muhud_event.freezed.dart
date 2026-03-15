@@ -55,7 +55,7 @@ extension MuhudEventPatterns on MuhudEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _LoadChapter value)?  loadChapter,TResult Function( _ToggleTranslation value)?  toggleTranslation,TResult Function( _ToggleBookmark value)?  toggleBookmark,TResult Function( _PlayVerse value)?  playVerse,TResult Function( _StopAudio value)?  stopAudio,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _LoadChapter value)?  loadChapter,TResult Function( _ToggleTranslation value)?  toggleTranslation,TResult Function( _ToggleBookmark value)?  toggleBookmark,TResult Function( _PlayVerse value)?  playVerse,TResult Function( _StopAudio value)?  stopAudio,TResult Function( _ToggleArabic value)?  toggleArabic,TResult Function( _ToggleTransliteration value)?  toggleTransliteration,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _LoadChapter() when loadChapter != null:
@@ -63,7 +63,9 @@ return loadChapter(_that);case _ToggleTranslation() when toggleTranslation != nu
 return toggleTranslation(_that);case _ToggleBookmark() when toggleBookmark != null:
 return toggleBookmark(_that);case _PlayVerse() when playVerse != null:
 return playVerse(_that);case _StopAudio() when stopAudio != null:
-return stopAudio(_that);case _:
+return stopAudio(_that);case _ToggleArabic() when toggleArabic != null:
+return toggleArabic(_that);case _ToggleTransliteration() when toggleTransliteration != null:
+return toggleTransliteration(_that);case _:
   return orElse();
 
 }
@@ -81,7 +83,7 @@ return stopAudio(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _LoadChapter value)  loadChapter,required TResult Function( _ToggleTranslation value)  toggleTranslation,required TResult Function( _ToggleBookmark value)  toggleBookmark,required TResult Function( _PlayVerse value)  playVerse,required TResult Function( _StopAudio value)  stopAudio,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _LoadChapter value)  loadChapter,required TResult Function( _ToggleTranslation value)  toggleTranslation,required TResult Function( _ToggleBookmark value)  toggleBookmark,required TResult Function( _PlayVerse value)  playVerse,required TResult Function( _StopAudio value)  stopAudio,required TResult Function( _ToggleArabic value)  toggleArabic,required TResult Function( _ToggleTransliteration value)  toggleTransliteration,}){
 final _that = this;
 switch (_that) {
 case _LoadChapter():
@@ -89,7 +91,9 @@ return loadChapter(_that);case _ToggleTranslation():
 return toggleTranslation(_that);case _ToggleBookmark():
 return toggleBookmark(_that);case _PlayVerse():
 return playVerse(_that);case _StopAudio():
-return stopAudio(_that);}
+return stopAudio(_that);case _ToggleArabic():
+return toggleArabic(_that);case _ToggleTransliteration():
+return toggleTransliteration(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -103,7 +107,7 @@ return stopAudio(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _LoadChapter value)?  loadChapter,TResult? Function( _ToggleTranslation value)?  toggleTranslation,TResult? Function( _ToggleBookmark value)?  toggleBookmark,TResult? Function( _PlayVerse value)?  playVerse,TResult? Function( _StopAudio value)?  stopAudio,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _LoadChapter value)?  loadChapter,TResult? Function( _ToggleTranslation value)?  toggleTranslation,TResult? Function( _ToggleBookmark value)?  toggleBookmark,TResult? Function( _PlayVerse value)?  playVerse,TResult? Function( _StopAudio value)?  stopAudio,TResult? Function( _ToggleArabic value)?  toggleArabic,TResult? Function( _ToggleTransliteration value)?  toggleTransliteration,}){
 final _that = this;
 switch (_that) {
 case _LoadChapter() when loadChapter != null:
@@ -111,7 +115,9 @@ return loadChapter(_that);case _ToggleTranslation() when toggleTranslation != nu
 return toggleTranslation(_that);case _ToggleBookmark() when toggleBookmark != null:
 return toggleBookmark(_that);case _PlayVerse() when playVerse != null:
 return playVerse(_that);case _StopAudio() when stopAudio != null:
-return stopAudio(_that);case _:
+return stopAudio(_that);case _ToggleArabic() when toggleArabic != null:
+return toggleArabic(_that);case _ToggleTransliteration() when toggleTransliteration != null:
+return toggleTransliteration(_that);case _:
   return null;
 
 }
@@ -128,14 +134,16 @@ return stopAudio(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int chapterId)?  loadChapter,TResult Function()?  toggleTranslation,TResult Function( int verseId)?  toggleBookmark,TResult Function( int verseId,  String hadiId,  VerseMediaType recitationType)?  playVerse,TResult Function()?  stopAudio,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int chapterId)?  loadChapter,TResult Function()?  toggleTranslation,TResult Function( int verseId)?  toggleBookmark,TResult Function( int verseId,  String hadiId,  VerseMediaType recitationType)?  playVerse,TResult Function()?  stopAudio,TResult Function()?  toggleArabic,TResult Function()?  toggleTransliteration,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LoadChapter() when loadChapter != null:
 return loadChapter(_that.chapterId);case _ToggleTranslation() when toggleTranslation != null:
 return toggleTranslation();case _ToggleBookmark() when toggleBookmark != null:
 return toggleBookmark(_that.verseId);case _PlayVerse() when playVerse != null:
 return playVerse(_that.verseId,_that.hadiId,_that.recitationType);case _StopAudio() when stopAudio != null:
-return stopAudio();case _:
+return stopAudio();case _ToggleArabic() when toggleArabic != null:
+return toggleArabic();case _ToggleTransliteration() when toggleTransliteration != null:
+return toggleTransliteration();case _:
   return orElse();
 
 }
@@ -153,14 +161,16 @@ return stopAudio();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int chapterId)  loadChapter,required TResult Function()  toggleTranslation,required TResult Function( int verseId)  toggleBookmark,required TResult Function( int verseId,  String hadiId,  VerseMediaType recitationType)  playVerse,required TResult Function()  stopAudio,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int chapterId)  loadChapter,required TResult Function()  toggleTranslation,required TResult Function( int verseId)  toggleBookmark,required TResult Function( int verseId,  String hadiId,  VerseMediaType recitationType)  playVerse,required TResult Function()  stopAudio,required TResult Function()  toggleArabic,required TResult Function()  toggleTransliteration,}) {final _that = this;
 switch (_that) {
 case _LoadChapter():
 return loadChapter(_that.chapterId);case _ToggleTranslation():
 return toggleTranslation();case _ToggleBookmark():
 return toggleBookmark(_that.verseId);case _PlayVerse():
 return playVerse(_that.verseId,_that.hadiId,_that.recitationType);case _StopAudio():
-return stopAudio();}
+return stopAudio();case _ToggleArabic():
+return toggleArabic();case _ToggleTransliteration():
+return toggleTransliteration();}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -174,14 +184,16 @@ return stopAudio();}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int chapterId)?  loadChapter,TResult? Function()?  toggleTranslation,TResult? Function( int verseId)?  toggleBookmark,TResult? Function( int verseId,  String hadiId,  VerseMediaType recitationType)?  playVerse,TResult? Function()?  stopAudio,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int chapterId)?  loadChapter,TResult? Function()?  toggleTranslation,TResult? Function( int verseId)?  toggleBookmark,TResult? Function( int verseId,  String hadiId,  VerseMediaType recitationType)?  playVerse,TResult? Function()?  stopAudio,TResult? Function()?  toggleArabic,TResult? Function()?  toggleTransliteration,}) {final _that = this;
 switch (_that) {
 case _LoadChapter() when loadChapter != null:
 return loadChapter(_that.chapterId);case _ToggleTranslation() when toggleTranslation != null:
 return toggleTranslation();case _ToggleBookmark() when toggleBookmark != null:
 return toggleBookmark(_that.verseId);case _PlayVerse() when playVerse != null:
 return playVerse(_that.verseId,_that.hadiId,_that.recitationType);case _StopAudio() when stopAudio != null:
-return stopAudio();case _:
+return stopAudio();case _ToggleArabic() when toggleArabic != null:
+return toggleArabic();case _ToggleTransliteration() when toggleTransliteration != null:
+return toggleTransliteration();case _:
   return null;
 
 }
@@ -447,6 +459,70 @@ int get hashCode => runtimeType.hashCode;
 @override
 String toString() {
   return 'MuhudEvent.stopAudio()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class _ToggleArabic implements MuhudEvent {
+  const _ToggleArabic();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ToggleArabic);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'MuhudEvent.toggleArabic()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class _ToggleTransliteration implements MuhudEvent {
+  const _ToggleTransliteration();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ToggleTransliteration);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'MuhudEvent.toggleTransliteration()';
 }
 
 

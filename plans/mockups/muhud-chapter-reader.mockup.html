@@ -41,59 +41,78 @@
       width: 3px; height: 64px; background: #2C2C2E; border-radius: 0 2px 2px 0;
     }
 
-    .screen { background: #F6F8F7; border-radius: 38px; overflow: hidden; position: relative; }
+    .screen { background: #51C878; border-radius: 38px; overflow: hidden; position: relative; }
 
     /* Status Bar */
     .notch-bar {
-      background: #F6F8F7; height: 44px; display: flex; align-items: center;
+      background: linear-gradient(135deg, #51C878 0%, #45B868 100%);
+      height: 44px; display: flex; align-items: center;
       justify-content: space-between; padding: 0 20px; position: relative;
     }
     .notch-bar::after {
       content: ''; position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
       width: 120px; height: 28px; background: #1C1B1F; border-radius: 20px;
     }
-    .status-time { font-size: 13px; font-weight: 600; color: #1C1B1F; z-index: 1; }
+    .status-time { font-size: 13px; font-weight: 600; color: #fff; z-index: 1; }
     .status-icons { display: flex; align-items: center; gap: 5px; z-index: 1; }
 
-    /* AppBar */
+    /* AppBar — green */
     .app-bar {
-      background: #fff; height: 56px; display: flex; align-items: center;
-      padding: 0 16px; gap: 12px; border-bottom: 1px solid #E8EAE9;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      background: linear-gradient(135deg, #51C878 0%, #45B868 100%);
+      height: 56px; display: flex; align-items: center;
+      padding: 0 8px; gap: 8px;
     }
-    .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; }
-    .app-bar-center { flex: 1; display: flex; align-items: center; gap: 6px; }
-    .app-bar-title { font-size: 17px; font-weight: 700; color: #1C1B1F; }
-    .app-bar-chevron { color: #79747E; }
+    .app-bar-title {
+      flex: 1; text-align: center; font-size: 18px; font-weight: 700; color: #fff;
+      direction: rtl; text-align: right; padding: 0 8px;
+    }
+    .back-btn, .icon-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+    /* Chapter header — green section */
+    .chapter-header {
+      background: linear-gradient(135deg, #51C878 0%, #45B868 100%);
+      padding: 4px 24px 20px;
+      text-align: left;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      transition: opacity 0.3s ease;
+    }
+    .chapter-header-title { font-size: 24px; font-weight: 800; color: #fff; text-align: right; direction: rtl; }
+    .chapter-header-sub { font-size: 13px; color: rgba(255,255,255,0.8); margin-top: 4px; text-align: left; }
+    .chapter-chips {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      justify-content: center; padding: 14px 0 20px;
+    }
+    .chip {
+      height: 30px; padding: 0 14px; border-radius: 100px;
+      font-size: 12px; font-weight: 600;
+      display: flex; align-items: center; white-space: nowrap;
+    }
+    .chip.active { background: #fff; color: #51C878; }
+    .chip.inactive { background: rgba(255,255,255,0.22); color: rgba(255,255,255,0.92); }
+
+    /* Rounded top clip — white sheet starts here */
+    .rounded-top-clip {
+      background: linear-gradient(135deg, #51C878 0%, #45B868 100%);
+      line-height: 0;
+    }
+    .rounded-top-clip-inner {
+      background: #fff; border-radius: 20px 20px 0 0; height: 20px;
+    }
 
     /* Scroll area */
-    .scroll-area { height: 596px; overflow-y: auto; overflow-x: hidden; background: #F6F8F7; scrollbar-width: none; }
+    .scroll-area { height: 420px; overflow-y: auto; overflow-x: hidden; background: #fff; scrollbar-width: none; position: relative; }
     .scroll-area::-webkit-scrollbar { display: none; }
-
-    /* Chapter Info Card */
-    .chapter-info-card {
-      background: #fff; margin: 12px 16px; border-radius: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 16px;
-      display: flex; align-items: center; gap: 12px;
-    }
-    .chapter-info-text { flex: 1; }
-    .chapter-info-title { font-size: 16px; font-weight: 800; color: #1C1B1F; }
-    .chapter-info-sub { font-size: 12px; color: #79747E; margin-top: 2px; }
-    .chapter-info-meta { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
-    .meta-badge {
-      font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 100px;
-      background: #F0FAF4; color: #51C878;
-    }
-    .chapter-illus {
-      width: 72px; height: 72px; border-radius: 12px;
-      background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; overflow: hidden;
+    .scroll-area::before {
+      content: ''; position: sticky; top: 0; left: 0; right: 0; height: 60px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%);
+      pointer-events: none; z-index: 10;
     }
 
     /* Shalawat calligraphy */
     .shalawat-header {
-      background: #fff; padding: 16px 20px; text-align: center;
+      background: #fff; padding: 14px 20px 16px; text-align: center;
       border-bottom: 1px solid #EEF0EF;
     }
     .shalawat-arabic {
@@ -101,12 +120,11 @@
       font-size: 22px; color: #1C1B1F; direction: rtl; line-height: 1.9; font-weight: 700;
     }
 
-    /* Verse list — flat style like reference */
+    /* Verse list */
     .verse-list { background: #fff; }
     .verse-item { padding: 14px 16px 16px; border-bottom: 1px solid #EEF0EF; }
     .verse-item.playing { background: #FAFFFE; border-left: 3px solid #51C878; padding-left: 13px; }
 
-    /* Verse top row: number + icons */
     .verse-header {
       display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 16px;
@@ -135,7 +153,6 @@
     .action-btn.play-btn { border: 1.5px solid #51C878; }
     .action-btn.play-btn.active { background: #51C878; }
 
-    /* Arabic text — full width, large */
     .arabic-text {
       font-family: 'Noto Sans Arabic', 'Traditional Arabic', 'Arial Unicode MS', serif;
       font-size: 22px; color: #1C1B1F; text-align: right; direction: rtl;
@@ -144,19 +161,6 @@
     .transliteration { font-size: 12px; color: #49454F; font-style: italic; line-height: 1.6; margin-bottom: 6px; }
     .translation-label { font-size: 10px; font-weight: 700; color: #51C878; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 3px; }
     .translation { font-size: 12px; color: #79747E; line-height: 1.6; }
-
-    /* Bottom toolbar */
-    .bottom-toolbar {
-      background: #fff; height: 56px; display: flex; align-items: center;
-      padding: 0 16px; gap: 12px; border-top: 1px solid #E8EAE9;
-      box-shadow: 0 -2px 8px rgba(0,0,0,0.04);
-    }
-    .toolbar-btn {
-      flex: 1; height: 38px; border-radius: 10px; background: #F6F8F7;
-      border: 1px solid #E8EAE9; display: flex; align-items: center;
-      justify-content: center; gap: 7px; font-size: 12px; font-weight: 600; color: #49454F;
-    }
-    .toolbar-btn.active { background: #F0FAF4; border-color: #C8E6C9; color: #51C878; }
 
     /* Bottom Nav */
     .bottom-nav {
@@ -169,13 +173,10 @@
     .nav-active .nav-label { color: #51C878; }
     .nav-inactive .nav-label { color: #79747E; }
 
-    .home-indicator { background: #F6F8F7; height: 26px; display: flex; align-items: center; justify-content: center; }
+    .home-indicator { background: #fff; height: 26px; display: flex; align-items: center; justify-content: center; }
     .home-indicator-bar { width: 120px; height: 4px; background: #1C1B1F; border-radius: 2px; opacity: 0.2; }
 
     /* ── Quick Tools Panel ────────────────────────────────────────── */
-    .qt-overlay {
-      position: absolute; inset: 0; background: rgba(0,0,0,0.35); z-index: 10; border-radius: 38px;
-    }
     .qt-panel {
       position: absolute; top: 0; right: 0; bottom: 0; width: 82%;
       background: #fff; border-radius: 0 38px 38px 0; z-index: 11;
@@ -191,7 +192,6 @@
     }
     .qt-title { font-size: 17px; font-weight: 700; color: #1C1B1F; }
 
-    /* Quick nav tabs */
     .qt-tabs {
       display: flex; padding: 12px 14px 0; gap: 6px; overflow-x: auto; scrollbar-width: none;
     }
@@ -204,14 +204,10 @@
     .qt-tab.active { background: #51C878; color: #fff; }
     .qt-tab.inactive { background: #F6F8F7; color: #79747E; }
 
-    /* Quick Tools content */
     .qt-body { flex: 1; overflow-y: auto; padding: 0 18px 16px; scrollbar-width: none; }
     .qt-body::-webkit-scrollbar { display: none; }
 
-    .qt-section-label {
-      font-size: 14px; font-weight: 700; color: #1C1B1F;
-      padding: 16px 0 10px;
-    }
+    .qt-section-label { font-size: 14px; font-weight: 700; color: #1C1B1F; padding: 16px 0 10px; }
     .qt-row {
       display: flex; align-items: center; justify-content: space-between;
       padding: 12px 0; border-bottom: 1px solid #F0F0F0;
@@ -224,7 +220,6 @@
       padding: 2px 6px; border-radius: 100px; margin-left: 6px; letter-spacing: 0.3px;
     }
 
-    /* Toggle switch */
     .toggle { width: 42px; height: 24px; border-radius: 12px; position: relative; flex-shrink: 0; }
     .toggle.on { background: #51C878; }
     .toggle.off { background: #E0E0E0; }
@@ -236,7 +231,6 @@
     .toggle.on::after { right: 2px; }
     .toggle.off::after { left: 2px; }
 
-    /* Slider */
     .qt-slider-row { padding: 10px 0 14px; border-bottom: 1px solid #F0F0F0; }
     .qt-slider-label { font-size: 13px; color: #1C1B1F; margin-bottom: 10px; display: flex; justify-content: space-between; }
     .qt-slider-val { font-size: 13px; font-weight: 700; color: #51C878; }
@@ -247,7 +241,6 @@
       position: absolute; top: -7px; box-shadow: 0 2px 6px rgba(81,200,120,0.5);
     }
 
-    /* Font row */
     .qt-font-row {
       display: flex; align-items: center; justify-content: space-between;
       padding: 12px 0; border-bottom: 1px solid #F0F0F0;
@@ -263,37 +256,41 @@
   <div class="phone">
     <div class="screen">
 
+      <!-- Status Bar — green -->
       <div class="notch-bar">
         <span class="status-time">9:41</span>
         <div class="status-icons">
-          <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="8" width="3" height="4" rx="1" fill="#1C1B1F"/><rect x="4.5" y="5" width="3" height="7" rx="1" fill="#1C1B1F"/><rect x="9" y="2" width="3" height="10" rx="1" fill="#1C1B1F"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="#1C1B1F" opacity="0.3"/></svg>
-          <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 10.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" fill="#1C1B1F"/><path d="M4.2 7.3A5.3 5.3 0 018 5.9a5.3 5.3 0 013.8 1.4l1.1-1.1A7 7 0 008 4.2a7 7 0 00-4.9 2l1.1 1.1z" fill="#1C1B1F"/><path d="M1.5 4.6A9.5 9.5 0 018 2a9.5 9.5 0 016.5 2.6l1-1A11.1 11.1 0 008 .4 11.1 11.1 0 00.5 3.6l1 1z" fill="#1C1B1F"/></svg>
-          <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="#1C1B1F" stroke-opacity="0.35"/><rect x="1.5" y="1.5" width="17" height="9" rx="2" fill="#1C1B1F"/><path d="M23 4v4a2 2 0 000-4z" fill="#1C1B1F" opacity="0.4"/></svg>
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="8" width="3" height="4" rx="1" fill="#fff"/><rect x="4.5" y="5" width="3" height="7" rx="1" fill="#fff"/><rect x="9" y="2" width="3" height="10" rx="1" fill="#fff"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="#fff" opacity="0.4"/></svg>
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 10.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" fill="#fff"/><path d="M4.2 7.3A5.3 5.3 0 018 5.9a5.3 5.3 0 013.8 1.4l1.1-1.1A7 7 0 008 4.2a7 7 0 00-4.9 2l1.1 1.1z" fill="#fff"/><path d="M1.5 4.6A9.5 9.5 0 018 2a9.5 9.5 0 016.5 2.6l1-1A11.1 11.1 0 008 .4 11.1 11.1 0 00.5 3.6l1 1z" fill="#fff"/></svg>
+          <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="#fff" stroke-opacity="0.5"/><rect x="1.5" y="1.5" width="17" height="9" rx="2" fill="#fff"/><path d="M23 4v4a2 2 0 000-4z" fill="#fff" opacity="0.5"/></svg>
         </div>
       </div>
 
-      <!-- AppBar -->
+      <!-- AppBar — green, with dynamic title, back + quick tools -->
       <div class="app-bar">
         <div class="back-btn">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="#1C1B1F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
-        <div class="app-bar-center">
-          <span class="app-bar-title">Ibtida'</span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" class="app-bar-chevron"><path d="M6 9l6 6 6-6" stroke="#79747E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
+        <div class="app-bar-title">الفاتحة</div>
         <!-- Quick Tools icon -->
         <div class="icon-btn">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M7 12h10M10 18h4" stroke="#49454F" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M7 12h10M10 18h4" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
         </div>
       </div>
 
+      <!-- Chapter Header — green section with title + subtitle + chips -->
+      <div class="chapter-header">
+        <div class="chapter-header-title">الفاتحة</div>
+        <div class="chapter-header-sub">Mekah • 7 Ayat</div>
+      </div>
+
+      <!-- Rounded white top clip -->
+      <div class="rounded-top-clip">
+        <div class="rounded-top-clip-inner"></div>
+      </div>
+
+      <!-- Scroll area — white -->
       <div class="scroll-area">
-
-        <!-- Shalawat Nabi -->
-        <div class="shalawat-header">
-          <div class="shalawat-arabic">اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ<br>وَعَلَى آلِ سَيِّدِنَا مُحَمَّدٍ</div>
-        </div>
-
         <!-- Verse List -->
         <div class="verse-list">
 
@@ -316,10 +313,10 @@
                 </div>
               </div>
             </div>
-            <span class="arabic-text">الْأَلِفُ اوَّلَ الْكَلَامِ يَا مَجِيدُ</span>
-            <div class="transliteration">ālālifu awwala l-kalāmi yā majīdu</div>
+            <span class="arabic-text">ٱلۡحَمۡدُ لِلَّهِ رَبِّ ٱلۡعَٰلَمِينَ</span>
+            <div class="transliteration">alḥamdu lillāhi rabbi l-ʿālamīna</div>
             <div class="translation-label">Terjemahan</div>
-            <div class="translation">Huruf Alif, yang pertama dari kalam, wahai Yang Maha Mulia</div>
+            <div class="translation">Segala puji bagi Allah, Tuhan seluruh alam</div>
           </div>
 
           <!-- VERSE 2 — bookmarked -->
@@ -341,10 +338,10 @@
                 </div>
               </div>
             </div>
-            <span class="arabic-text">الْبَاءُ بِاللَّهِ التَّوْفِيقُ يَا شَهِيدُ</span>
-            <div class="transliteration">ālbā'u billahi t-tawfīqu yā shahīdu</div>
+            <span class="arabic-text">ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ</span>
+            <div class="transliteration">ar-raḥmāni r-raḥīmi</div>
             <div class="translation-label">Terjemahan</div>
-            <div class="translation">Huruf Ba, dengan pertolongan Allah, wahai Yang Maha Menyaksikan</div>
+            <div class="translation">Yang Maha Pengasih, Maha Penyayang</div>
           </div>
 
           <!-- VERSE 3 — playing -->
@@ -366,10 +363,10 @@
                 </div>
               </div>
             </div>
-            <span class="arabic-text">الثَّاءُ تَوَبًا نَصُوحًا يَا رَشِيدُ</span>
-            <div class="transliteration">ālttā'u tawa ban naṣūḥan yā rashīdu</div>
+            <span class="arabic-text">مَٰلِكِ يَوۡمِ ٱلدِّينِ</span>
+            <div class="transliteration">māliki yawmi d-dīni</div>
             <div class="translation-label">Terjemahan</div>
-            <div class="translation">Huruf Tsa, bertaubat dengan taubat yang tulus, wahai Yang Memberi Petunjuk</div>
+            <div class="translation">Pemilik hari pembalasan</div>
           </div>
 
           <!-- VERSE 4 — partial -->
@@ -383,8 +380,8 @@
                 <div class="action-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="5" cy="12" r="1.5" fill="#C0BCC5"/><circle cx="12" cy="12" r="1.5" fill="#C0BCC5"/><circle cx="19" cy="12" r="1.5" fill="#C0BCC5"/></svg></div>
               </div>
             </div>
-            <span class="arabic-text">الثَّاءُ ثَوَابًا جَزِيلًا يَا مُعِيدُ</span>
-            <div class="transliteration">ālththā'u thawaban jazīlan yā mu'īdu</div>
+            <span class="arabic-text">إِيَّاكَ نَعۡبُدُ وَإِيَّاكَ نَسۡتَعِينُ</span>
+            <div class="transliteration">iyyāka naʿbudu wa-iyyāka nastaʿīnu</div>
           </div>
 
         </div>
@@ -428,14 +425,14 @@
 <div class="phone-wrap">
   <div class="screen-label">Screen 2 — Quick Tools</div>
   <div class="phone">
-    <div class="screen" style="position:relative; overflow:hidden;">
+    <div class="screen" style="position:relative; overflow:hidden; background:#fff;">
 
-      <div class="notch-bar">
+      <div class="notch-bar" style="background:#51C878;">
         <span class="status-time">9:41</span>
         <div class="status-icons">
-          <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="8" width="3" height="4" rx="1" fill="#1C1B1F"/><rect x="4.5" y="5" width="3" height="7" rx="1" fill="#1C1B1F"/><rect x="9" y="2" width="3" height="10" rx="1" fill="#1C1B1F"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="#1C1B1F" opacity="0.3"/></svg>
-          <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 10.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" fill="#1C1B1F"/><path d="M4.2 7.3A5.3 5.3 0 018 5.9a5.3 5.3 0 013.8 1.4l1.1-1.1A7 7 0 008 4.2a7 7 0 00-4.9 2l1.1 1.1z" fill="#1C1B1F"/><path d="M1.5 4.6A9.5 9.5 0 018 2a9.5 9.5 0 016.5 2.6l1-1A11.1 11.1 0 008 .4 11.1 11.1 0 00.5 3.6l1 1z" fill="#1C1B1F"/></svg>
-          <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="#1C1B1F" stroke-opacity="0.35"/><rect x="1.5" y="1.5" width="17" height="9" rx="2" fill="#1C1B1F"/><path d="M23 4v4a2 2 0 000-4z" fill="#1C1B1F" opacity="0.4"/></svg>
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="8" width="3" height="4" rx="1" fill="#fff"/><rect x="4.5" y="5" width="3" height="7" rx="1" fill="#fff"/><rect x="9" y="2" width="3" height="10" rx="1" fill="#fff"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="#fff" opacity="0.4"/></svg>
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 10.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" fill="#fff"/><path d="M4.2 7.3A5.3 5.3 0 018 5.9a5.3 5.3 0 013.8 1.4l1.1-1.1A7 7 0 008 4.2a7 7 0 00-4.9 2l1.1 1.1z" fill="#fff"/><path d="M1.5 4.6A9.5 9.5 0 018 2a9.5 9.5 0 016.5 2.6l1-1A11.1 11.1 0 008 .4 11.1 11.1 0 00.5 3.6l1 1z" fill="#fff"/></svg>
+          <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="#fff" stroke-opacity="0.5"/><rect x="1.5" y="1.5" width="17" height="9" rx="2" fill="#fff"/><path d="M23 4v4a2 2 0 000-4z" fill="#fff" opacity="0.5"/></svg>
         </div>
       </div>
 
@@ -443,15 +440,19 @@
       <div style="position:relative; height:858px; overflow:hidden;">
         <div style="filter:blur(1px); opacity:0.3; pointer-events:none;">
           <div class="app-bar">
-            <div class="back-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="#1C1B1F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <div class="app-bar-center"><span class="app-bar-title">Ibtida'</span></div>
+            <div class="back-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           </div>
+          <div class="chapter-header" style="padding-bottom:8px;">
+            <div class="chapter-header-title" style="font-size:20px;">Al-Fatihah</div>
+            <div class="chapter-header-sub">Mekah • 7 Ayat</div>
+          </div>
+          <div style="background:#51C878; line-height:0;"><div style="background:#fff; border-radius:20px 20px 0 0; height:20px;"></div></div>
           <div class="shalawat-header">
-            <div class="shalawat-arabic">اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ</div>
+            <div class="shalawat-arabic">بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ</div>
           </div>
           <div class="verse-list">
-            <div class="verse-item"><span class="arabic-text" style="font-size:18px;">الْأَلِفُ اوَّلَ الْكَلَامِ يَا مَجِيدُ</span></div>
-            <div class="verse-item playing"><span class="arabic-text" style="font-size:18px;">الثَّاءُ تَوَبًا نَصُوحًا يَا رَشِيدُ</span></div>
+            <div class="verse-item"><span class="arabic-text" style="font-size:18px;">ٱلۡحَمۡدُ لِلَّهِ رَبِّ ٱلۡعَٰلَمِينَ</span></div>
+            <div class="verse-item playing"><span class="arabic-text" style="font-size:18px;">مَٰلِكِ يَوۡمِ ٱلدِّينِ</span></div>
           </div>
         </div>
 
@@ -477,7 +478,6 @@
 
           <div class="qt-body">
 
-            <!-- Content Section -->
             <div class="qt-section-label">Konten</div>
 
             <div class="qt-row">
@@ -512,7 +512,6 @@
               <div class="toggle off"></div>
             </div>
 
-            <!-- Font Settings Section -->
             <div class="qt-section-label">Pengaturan Font</div>
 
             <div class="qt-font-row">
@@ -559,14 +558,14 @@
 <div class="phone-wrap">
   <div class="screen-label">Screen 3 — Pusat Pilihan Audio</div>
   <div class="phone">
-    <div class="screen" style="position:relative;">
+    <div class="screen" style="position:relative; background:#fff;">
 
-      <div class="notch-bar">
+      <div class="notch-bar" style="background:#51C878;">
         <span class="status-time">9:41</span>
         <div class="status-icons">
-          <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="8" width="3" height="4" rx="1" fill="#1C1B1F"/><rect x="4.5" y="5" width="3" height="7" rx="1" fill="#1C1B1F"/><rect x="9" y="2" width="3" height="10" rx="1" fill="#1C1B1F"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="#1C1B1F" opacity="0.3"/></svg>
-          <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 10.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" fill="#1C1B1F"/><path d="M4.2 7.3A5.3 5.3 0 018 5.9a5.3 5.3 0 013.8 1.4l1.1-1.1A7 7 0 008 4.2a7 7 0 00-4.9 2l1.1 1.1z" fill="#1C1B1F"/><path d="M1.5 4.6A9.5 9.5 0 018 2a9.5 9.5 0 016.5 2.6l1-1A11.1 11.1 0 008 .4 11.1 11.1 0 00.5 3.6l1 1z" fill="#1C1B1F"/></svg>
-          <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="#1C1B1F" stroke-opacity="0.35"/><rect x="1.5" y="1.5" width="17" height="9" rx="2" fill="#1C1B1F"/><path d="M23 4v4a2 2 0 000-4z" fill="#1C1B1F" opacity="0.4"/></svg>
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="8" width="3" height="4" rx="1" fill="#fff"/><rect x="4.5" y="5" width="3" height="7" rx="1" fill="#fff"/><rect x="9" y="2" width="3" height="10" rx="1" fill="#fff"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="#fff" opacity="0.4"/></svg>
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 10.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" fill="#fff"/><path d="M4.2 7.3A5.3 5.3 0 018 5.9a5.3 5.3 0 013.8 1.4l1.1-1.1A7 7 0 008 4.2a7 7 0 00-4.9 2l1.1 1.1z" fill="#fff"/><path d="M1.5 4.6A9.5 9.5 0 018 2a9.5 9.5 0 016.5 2.6l1-1A11.1 11.1 0 008 .4 11.1 11.1 0 00.5 3.6l1 1z" fill="#fff"/></svg>
+          <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="#fff" stroke-opacity="0.5"/><rect x="1.5" y="1.5" width="17" height="9" rx="2" fill="#fff"/><path d="M23 4v4a2 2 0 000-4z" fill="#fff" opacity="0.5"/></svg>
         </div>
       </div>
 
@@ -574,15 +573,19 @@
       <div style="position:relative; height:858px; overflow:hidden;">
         <div style="filter:blur(1px); opacity:0.3; pointer-events:none;">
           <div class="app-bar">
-            <div class="back-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="#1C1B1F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <div class="app-bar-center"><span class="app-bar-title">Ibtida'</span></div>
+            <div class="back-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           </div>
+          <div class="chapter-header" style="padding-bottom:8px;">
+            <div class="chapter-header-title" style="font-size:20px;">Al-Fatihah</div>
+            <div class="chapter-header-sub">Mekah • 7 Ayat</div>
+          </div>
+          <div style="background:#51C878; line-height:0;"><div style="background:#fff; border-radius:20px 20px 0 0; height:20px;"></div></div>
           <div class="shalawat-header">
-            <div class="shalawat-arabic">اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ</div>
+            <div class="shalawat-arabic">بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ</div>
           </div>
           <div class="verse-list">
-            <div class="verse-item"><span class="arabic-text" style="font-size:18px;">الْأَلِفُ اوَّلَ الْكَلَامِ يَا مَجِيدُ</span></div>
-            <div class="verse-item playing"><span class="arabic-text" style="font-size:18px;">الثَّاءُ تَوَبًا نَصُوحًا يَا رَشِيدُ</span></div>
+            <div class="verse-item"><span class="arabic-text" style="font-size:18px;">ٱلۡحَمۡدُ لِلَّهِ رَبِّ ٱلۡعَٰلَمِينَ</span></div>
+            <div class="verse-item playing"><span class="arabic-text" style="font-size:18px;">مَٰلِكِ يَوۡمِ ٱلدِّينِ</span></div>
           </div>
         </div>
 
@@ -596,29 +599,24 @@
 
           <div style="padding:0 20px;">
             <div style="font-size:19px; font-weight:700; color:#1C1B1F;">Pusat Pilihan Audio</div>
-            <div style="font-size:13px; color:#79747E; margin-top:4px;">Pilih bacaan untuk Ibtida' – Ayat 1</div>
+            <div style="font-size:13px; color:#79747E; margin-top:4px;">Pilih bacaan untuk Al-Fatihah – Ayat 1</div>
 
-            <!-- Hadi Section -->
             <div style="font-size:10px; font-weight:700; color:#51C878; letter-spacing:0.8px; text-transform:uppercase; margin-top:20px; margin-bottom:10px;">Pilih Pimpinan Hadi</div>
             <div style="display:flex; gap:10px; margin-bottom:20px;">
-              <!-- Selected hadi -->
               <div style="flex:1; border:1.5px solid #51C878; background:#F0FAF4; border-radius:12px; padding:12px 8px; display:flex; flex-direction:column; align-items:center; gap:8px;">
                 <div style="width:44px; height:44px; border-radius:50%; background:#C8E6C9; color:#2E7D32; font-size:16px; font-weight:700; display:flex; align-items:center; justify-content:center;">G</div>
                 <div style="font-size:11px; font-weight:600; color:#1C1B1F; text-align:center;">Gus Hadi</div>
               </div>
-              <!-- Inactive hadi -->
               <div style="flex:1; border:1.5px solid #E8EAE9; border-radius:12px; padding:12px 8px; display:flex; flex-direction:column; align-items:center; gap:8px;">
                 <div style="width:44px; height:44px; border-radius:50%; background:#E8EAE9; color:#79747E; font-size:16px; font-weight:700; display:flex; align-items:center; justify-content:center;">A</div>
                 <div style="font-size:11px; font-weight:600; color:#1C1B1F; text-align:center;">Ahmad Hadi</div>
               </div>
-              <!-- Inactive hadi -->
               <div style="flex:1; border:1.5px solid #E8EAE9; border-radius:12px; padding:12px 8px; display:flex; flex-direction:column; align-items:center; gap:8px;">
                 <div style="width:44px; height:44px; border-radius:50%; background:#E8EAE9; color:#79747E; font-size:16px; font-weight:700; display:flex; align-items:center; justify-content:center;">B</div>
                 <div style="font-size:11px; font-weight:600; color:#1C1B1F; text-align:center;">Budi Hadi</div>
               </div>
             </div>
 
-            <!-- Recitation Style Section -->
             <div style="font-size:10px; font-weight:700; color:#51C878; letter-spacing:0.8px; text-transform:uppercase; margin-bottom:10px;">Recitation Style</div>
             <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px;">
               <div style="height:32px; padding:0 16px; border-radius:100px; background:#51C878; color:#fff; font-size:12px; font-weight:600; display:flex; align-items:center;">Joz</div>
@@ -629,7 +627,6 @@
             </div>
           </div>
 
-          <!-- Play Button -->
           <div style="margin:20px 20px 0; background:#51C878; color:#fff; height:50px; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px; font-size:15px; font-weight:700; box-shadow:0 4px 16px rgba(81,200,120,0.4);">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M8 5.5v13L19 12 8 5.5z" fill="#fff"/></svg>
             Putar

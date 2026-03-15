@@ -17,26 +17,35 @@ class ChapterReaderPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => sl<MuhudBloc>()..add(MuhudEvent.loadChapter(chapterId: chapterId)),
-      child: Scaffold(
-        backgroundColor: const Color(0xFFF6F8F7),
-        body: BlocBuilder<MuhudBloc, MuhudState>(
-          builder: (context, state) {
-            return state.when(
-              initial: () => const SizedBox.shrink(),
-              loading: () => const Center(
-                child: CircularProgressIndicator(
-                  color: Color(0xFF51C878),
-                ),
+      child: BlocBuilder<MuhudBloc, MuhudState>(
+        builder: (context, state) {
+          return state.when(
+            initial: () => const Scaffold(
+              backgroundColor: Color(0xFFF6F8F7),
+              body: SizedBox.shrink(),
+            ),
+            loading: () => const Scaffold(
+              backgroundColor: Color(0xFFF6F8F7),
+              body: Center(
+                child: CircularProgressIndicator(color: Color(0xFF51C878)),
               ),
-              loaded: (chapter, verses, bookmarked, showTranslation, playingVerseId, isAudioLoading) =>
-                  ChapterReaderBody(
-                    chapter: chapter,
-                    verses: verses,
-                    bookmarkedVerseIds: bookmarked,
-                    showTranslation: showTranslation,
-                    playingVerseId: playingVerseId,
-                  ),
-              error: (message) => Center(
+            ),
+            loaded: (chapter, verses, bookmarked, showTranslation,
+                    playingVerseId, isAudioLoading, showArabic,
+                    showTransliteration) =>
+                ChapterReaderBody(
+                  chapter: chapter,
+                  verses: verses,
+                  bookmarkedVerseIds: bookmarked,
+                  showTranslation: showTranslation,
+                  showArabic: showArabic,
+                  showTransliteration: showTransliteration,
+                  playingVerseId: playingVerseId,
+                  isEmbeddedInTab: false,
+                ),
+            error: (message) => Scaffold(
+              backgroundColor: const Color(0xFFF6F8F7),
+              body: Center(
                 child: Padding(
                   padding: const EdgeInsets.all(24),
                   child: Column(
@@ -55,8 +64,9 @@ class ChapterReaderPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 24),
                       FilledButton.icon(
-                        onPressed: () =>
-                            context.read<MuhudBloc>().add(MuhudEvent.loadChapter(chapterId: chapterId)),
+                        onPressed: () => context
+                            .read<MuhudBloc>()
+                            .add(MuhudEvent.loadChapter(chapterId: chapterId)),
                         icon: const Icon(Icons.refresh),
                         label: const Text('Coba Lagi'),
                         style: FilledButton.styleFrom(
@@ -67,9 +77,9 @@ class ChapterReaderPage extends StatelessWidget {
                   ),
                 ),
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

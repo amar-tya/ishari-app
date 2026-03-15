@@ -45,7 +45,12 @@
       "mcp__supabase__list_tables",
       "mcp__nimbalyst-mcp__excalidraw_clear_all",
       "mcp__mcp-server-supabase__list_tables",
-      "mcp__mcp-server-supabase__execute_sql"
+      "mcp__mcp-server-supabase__execute_sql",
+      "Bash(where:*)",
+      "Bash(cat:*)",
+      "Bash(sleep:*)",
+      "Bash(mount:*)",
+      "Bash(df:*)"
     ]
   }
 }

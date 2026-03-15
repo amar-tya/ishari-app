@@ -28,6 +28,8 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
         playVerse: (verseId, hadiId, recitationType) =>
             _onPlayVerse(verseId, hadiId, recitationType, emit),
         stopAudio: () => _onStopAudio(emit),
+        toggleArabic: () async => _onToggleArabic(emit),
+        toggleTransliteration: () async => _onToggleTransliteration(emit),
       );
     });
   }
@@ -38,9 +40,11 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
   final GetChapterById getChapterById;
 
   final _audioPlayer = AudioPlayer();
+  StreamSubscription<PlayerState>? _playerStateSubscription;
 
   @override
   Future<void> close() async {
+    await _playerStateSubscription?.cancel();
     await _audioPlayer.dispose();
     return super.close();
   }
@@ -102,6 +106,18 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
     );
   }
 
+  void _onToggleArabic(Emitter<MuhudState> emit) {
+    state.mapOrNull(
+      loaded: (l) => emit(l.copyWith(showArabic: !l.showArabic)),
+    );
+  }
+
+  void _onToggleTransliteration(Emitter<MuhudState> emit) {
+    state.mapOrNull(
+      loaded: (l) => emit(l.copyWith(showTransliteration: !l.showTransliteration)),
+    );
+  }
+
   void _onToggleBookmark(int verseId, Emitter<MuhudState> emit) {
     state.mapOrNull(
       loaded: (l) {
@@ -134,6 +150,17 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
         try {
           await _audioPlayer.stop();
           await _audioPlayer.setUrl(media.mediaUrl);
+
+          // Cancel previous listener dan setup baru
+          await _playerStateSubscription?.cancel();
+          _playerStateSubscription = _audioPlayer.playerStateStream.listen(
+            (playerState) {
+              if (playerState.processingState == ProcessingState.completed) {
+                add(const MuhudEvent.stopAudio());
+              }
+            },
+          );
+
           _audioPlayer.play().ignore();
           emit(l.copyWith(playingVerseId: verseId, isAudioLoading: false));
         } on Exception catch (_) {

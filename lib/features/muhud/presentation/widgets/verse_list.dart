@@ -11,6 +11,8 @@ class VerseList extends StatelessWidget {
     required this.verses,
     required this.bookmarkedVerseIds,
     required this.showTranslation,
+    required this.showArabic,
+    required this.showTransliteration,
     this.playingVerseId,
     super.key,
   });
@@ -18,14 +20,14 @@ class VerseList extends StatelessWidget {
   final List<VerseWithDetailsEntity> verses;
   final Set<int> bookmarkedVerseIds;
   final bool showTranslation;
+  final bool showArabic;
+  final bool showTransliteration;
   final int? playingVerseId;
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+    return SliverList.builder(
       itemCount: verses.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 10),
       itemBuilder: (_, index) {
         final verse = verses[index];
         final isBookmarked = bookmarkedVerseIds.contains(verse.verse.id);
@@ -36,6 +38,8 @@ class VerseList extends StatelessWidget {
           isBookmarked: isBookmarked,
           isPlaying: isPlaying,
           showTranslation: showTranslation,
+          showArabic: showArabic,
+          showTransliteration: showTransliteration,
           onBookmarkToggle: () => context
               .read<MuhudBloc>()
               .add(MuhudEvent.toggleBookmark(verseId: verse.verse.id)),

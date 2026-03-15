@@ -20,4 +20,8 @@ sealed class MuhudEvent with _$MuhudEvent {
   }) = _PlayVerse;
 
   const factory MuhudEvent.stopAudio() = _StopAudio;
+
+  const factory MuhudEvent.toggleArabic() = _ToggleArabic;
+
+  const factory MuhudEvent.toggleTransliteration() = _ToggleTransliteration;
 }
