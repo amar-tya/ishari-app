@@ -16,6 +16,19 @@ class MuhudRepositoryImpl implements MuhudRepository {
   final NetworkInfo _networkInfo;
 
   @override
+  Future<Either<Failure, List<ChapterEntity>>> getAllChapters() async {
+    if (!await _networkInfo.isConnected) {
+      return left(const NetworkFailure());
+    }
+    try {
+      final result = await _remote.getAllChapters();
+      return right(result);
+    } on ServerException catch (e) {
+      return left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
   Future<Either<Failure, ChapterEntity>> getChapterById(int chapterId) async {
     if (!await _networkInfo.isConnected) {
       return left(const NetworkFailure());

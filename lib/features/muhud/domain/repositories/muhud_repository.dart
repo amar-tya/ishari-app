@@ -4,6 +4,9 @@ import 'package:ishari/features/home/domain/entities/chapter_entity.dart';
 import 'package:ishari/features/muhud/domain/entities/verse_with_details_entity.dart';
 
 abstract interface class MuhudRepository {
+  /// Returns all chapters ordered by chapter_number.
+  Future<Either<Failure, List<ChapterEntity>>> getAllChapters();
+
   /// Returns chapter details by id.
   Future<Either<Failure, ChapterEntity>> getChapterById(int chapterId);
 

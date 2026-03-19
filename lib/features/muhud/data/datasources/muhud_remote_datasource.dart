@@ -9,6 +9,7 @@ import 'package:ishari/features/muhud/data/models/verse_with_details_model.dart'
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract interface class MuhudRemoteDataSource {
+  Future<List<ChapterEntity>> getAllChapters();
   Future<ChapterEntity> getChapterById(int chapterId);
   Future<List<VerseWithDetailsModel>> getVersesByChapter(int chapterId);
   Future<bool> toggleBookmark(int verseId, String userId);
@@ -20,6 +21,43 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
   const MuhudRemoteDataSourceImpl(this._supabaseClient);
 
   final SupabaseClient _supabaseClient;
+
+  @override
+  Future<List<ChapterEntity>> getAllChapters() async {
+    try {
+      final data = await _supabaseClient
+          .from('chapters')
+          .select()
+          .order('chapter_number', ascending: true);
+      return (data as List<dynamic>).map((item) {
+        final d = item as Map<String, dynamic>;
+        final chapterNumber = d['chapter_number'];
+        int? number;
+        if (chapterNumber != null) {
+          number = chapterNumber is int
+              ? chapterNumber
+              : int.parse(chapterNumber.toString());
+        }
+        final totalVerses = d['total_verses'];
+        var verseCount = 0;
+        if (totalVerses != null) {
+          verseCount = totalVerses is int
+              ? totalVerses
+              : int.parse(totalVerses.toString());
+        }
+        return ChapterEntity(
+          id: d['id'].toString(),
+          title: d['title'] as String,
+          category: d['category'] as String,
+          description: (d['description'] as String?) ?? '',
+          verseCount: verseCount,
+          number: number,
+        );
+      }).toList();
+    } catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
 
   @override
   Future<ChapterEntity> getChapterById(int chapterId) async {

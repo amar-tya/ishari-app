@@ -8,8 +8,4 @@ class AppState {
   AppState._();
 
   static final ValueNotifier<bool> isGuestMode = ValueNotifier(false);
-
-  /// Set to a chapter ID to request the Muhud tab to open that chapter.
-  /// The Muhud tab resets this to null once handled.
-  static final ValueNotifier<int?> muhudChapterRequest = ValueNotifier(null);
 }

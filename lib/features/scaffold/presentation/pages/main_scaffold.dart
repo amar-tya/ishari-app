@@ -19,24 +19,6 @@ class MainScaffold extends StatefulWidget {
 class _MainScaffoldState extends State<MainScaffold> {
   int _selectedIndex = 0;
 
-  @override
-  void initState() {
-    super.initState();
-    AppState.muhudChapterRequest.addListener(_onMuhudChapterRequest);
-  }
-
-  @override
-  void dispose() {
-    AppState.muhudChapterRequest.removeListener(_onMuhudChapterRequest);
-    super.dispose();
-  }
-
-  void _onMuhudChapterRequest() {
-    if (AppState.muhudChapterRequest.value != null) {
-      setState(() => _selectedIndex = 1);
-    }
-  }
-
   void _onTabSelected(int index) {
     // For guest mode, gate the Bookmark tab
     if (index == 4 && AppState.isGuestMode.value) {

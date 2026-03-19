@@ -35,10 +35,12 @@ import 'features/home/presentation/bloc/home_bloc.dart' as _i123;
 import 'features/muhud/data/datasources/muhud_remote_datasource.dart' as _i314;
 import 'features/muhud/data/repositories/muhud_repository_impl.dart' as _i964;
 import 'features/muhud/domain/repositories/muhud_repository.dart' as _i681;
+import 'features/muhud/domain/usecases/get_all_chapters.dart' as _i183;
 import 'features/muhud/domain/usecases/get_bookmarked_verse_ids.dart' as _i356;
 import 'features/muhud/domain/usecases/get_chapter_by_id.dart' as _i307;
 import 'features/muhud/domain/usecases/get_verses_by_chapter.dart' as _i1006;
 import 'features/muhud/domain/usecases/toggle_bookmark.dart' as _i718;
+import 'features/muhud/presentation/bloc/chapter_list_bloc.dart' as _i242;
 import 'features/muhud/presentation/bloc/muhud_bloc.dart' as _i533;
 import 'injection_container.dart' as _i809;
 
@@ -100,6 +102,9 @@ _i174.GetIt initDependencies(
       gh<_i75.NetworkInfo>(),
     ),
   );
+  gh.factory<_i183.GetAllChapters>(
+    () => _i183.GetAllChapters(gh<_i681.MuhudRepository>()),
+  );
   gh.factory<_i356.GetBookmarkedVerseIds>(
     () => _i356.GetBookmarkedVerseIds(gh<_i681.MuhudRepository>()),
   );
@@ -111,6 +116,9 @@ _i174.GetIt initDependencies(
   );
   gh.factory<_i718.ToggleBookmark>(
     () => _i718.ToggleBookmark(gh<_i681.MuhudRepository>()),
+  );
+  gh.factory<_i242.ChapterListBloc>(
+    () => _i242.ChapterListBloc(getAllChapters: gh<_i183.GetAllChapters>()),
   );
   gh.factory<_i123.HomeBloc>(
     () => _i123.HomeBloc(
