@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:ishari/features/home/domain/entities/chapter_entity.dart';
 
 class ChapterListItem extends StatelessWidget {
@@ -49,10 +50,11 @@ class ChapterListItem extends StatelessWidget {
                 children: [
                   Text(
                     chapter.title,
-                    style: const TextStyle(
+                    style: GoogleFonts.poppins(
                       fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF1C1B1F),
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 0.5,
+                      color: const Color(0xFF1C1B1F),
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -60,9 +62,9 @@ class ChapterListItem extends StatelessWidget {
                   const SizedBox(height: 3),
                   Text(
                     '${chapter.verseCount} Bait | ${chapter.category}',
-                    style: const TextStyle(
+                    style: GoogleFonts.poppins(
                       fontSize: 12,
-                      color: Color(0xFF79747E),
+                      color: const Color(0xFF79747E),
                     ),
                   ),
                 ],
@@ -74,11 +76,11 @@ class ChapterListItem extends StatelessWidget {
             if (chapter.description.isNotEmpty)
               Text(
                 chapter.description,
-                style: const TextStyle(
-                  fontFamily: 'Scheherazade',
-                  fontSize: 20,
+                style: GoogleFonts.scheherazadeNew(
+                  fontSize: 25,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF51C878),
+                  fontStyle: FontStyle.italic,
+                  color: const Color(0x8051C878),
                 ),
                 textDirection: TextDirection.rtl,
                 textAlign: TextAlign.right,

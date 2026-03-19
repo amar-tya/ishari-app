@@ -115,8 +115,7 @@ class _MuhudListBodyState extends State<_MuhudListBody> {
                     _GreenHeader(
                       searchController: _searchController,
                       query: _query,
-                      onQueryChanged: (v) =>
-                          setState(() => _query = v.trim()),
+                      onQueryChanged: (v) => setState(() => _query = v.trim()),
                       onQueryCleared: () {
                         _searchController.clear();
                         setState(() => _query = '');
@@ -189,9 +188,9 @@ class _MuhudListBodyState extends State<_MuhudListBody> {
                       ),
                       const SizedBox(height: 24),
                       FilledButton.icon(
-                        onPressed: () => context
-                            .read<ChapterListBloc>()
-                            .add(const ChapterListEvent.load()),
+                        onPressed: () => context.read<ChapterListBloc>().add(
+                          const ChapterListEvent.load(),
+                        ),
                         icon: const Icon(Icons.refresh),
                         label: const Text('Coba Lagi'),
                         style: FilledButton.styleFrom(
