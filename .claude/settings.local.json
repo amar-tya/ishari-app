@@ -50,7 +50,11 @@
       "Bash(cat:*)",
       "Bash(sleep:*)",
       "Bash(mount:*)",
-      "Bash(df:*)"
+      "Bash(df:*)",
+      "Bash(cmd.exe:*)",
+      "Bash(tail:*)",
+      "Bash(file:*)",
+      "Bash(head:*)"
     ]
   }
 }
