@@ -7,21 +7,26 @@ import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ishari/features/auth/presentation/pages/home_page.dart';
 import 'package:ishari/features/introduction/presentation/pages/introduction_page.dart';
 import 'package:ishari/features/muhud/presentation/pages/chapter_reader_page.dart';
+import 'package:ishari/features/splash/presentation/pages/splash_page.dart';
 
 /// Application router powered by [GoRouter].
 ///
 /// Redirect logic:
+/// - [SplashPage] manages its own exit via [SplashPage._tryNavigate].
 /// - Unauthenticated / non-guest users are sent to [IntroductionPage].
 /// - Authenticated or guest users trying to visit introduction are redirected
 ///   to [HomePage].
 GoRouter createRouter(AuthBloc authBloc) {
   return GoRouter(
-    initialLocation: IntroductionPage.routePath,
+    initialLocation: SplashPage.routePath,
     refreshListenable: Listenable.merge([
       GoRouterAuthRefreshStream(authBloc.stream),
       AppState.isGuestMode,
     ]),
     redirect: (context, state) {
+      // Splash manages its own navigation — never redirect away from it.
+      if (state.matchedLocation == SplashPage.routePath) return null;
+
       final isAuthenticated = authBloc.state.maybeWhen(
         authenticated: (_) => true,
         orElse: () => false,
@@ -35,6 +40,11 @@ GoRouter createRouter(AuthBloc authBloc) {
       return null;
     },
     routes: [
+      GoRoute(
+        path: SplashPage.routePath,
+        name: 'splash',
+        builder: (context, state) => const SplashPage(),
+      ),
       GoRoute(
         path: IntroductionPage.routePath,
         name: 'introduction',
