@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:ishari/features/home/domain/entities/chapter_entity.dart';
 import 'package:ishari/features/muhud/presentation/bloc/chapter_list_bloc.dart';
 import 'package:ishari/features/muhud/presentation/bloc/chapter_list_event.dart';
@@ -138,6 +139,7 @@ class _MuhudListBodyState extends State<_MuhudListBody> {
                               ),
                             )
                           : ListView.builder(
+                              padding: EdgeInsets.zero,
                               itemCount: filtered.length,
                               itemBuilder: (context, index) {
                                 final chapter = filtered[index];
@@ -240,33 +242,21 @@ class _GreenHeader extends StatelessWidget {
         bottom: false,
         child: Column(
           children: [
-            // Title bar
-            const SizedBox(
-              height: 56,
-              child: Center(
-                child: Text(
-                  'Muhud',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-
             // Search bar
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
               child: TextField(
                 controller: searchController,
                 onChanged: onQueryChanged,
-                style: const TextStyle(fontSize: 14, color: Color(0xFF1C1B1F)),
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: const Color(0xFF1C1B1F),
+                ),
                 decoration: InputDecoration(
-                  hintText: 'Cari kitab...',
-                  hintStyle: const TextStyle(
+                  hintText: 'Cari Muhud...',
+                  hintStyle: GoogleFonts.poppins(
                     fontSize: 14,
-                    color: Color(0xFF79747E),
+                    color: const Color(0xFF79747E),
                   ),
                   prefixIcon: const Icon(
                     Icons.search_rounded,
@@ -358,7 +348,7 @@ class _CategoryTab extends StatelessWidget {
         alignment: Alignment.center,
         child: Text(
           label,
-          style: TextStyle(
+          style: GoogleFonts.poppins(
             fontSize: 13,
             fontWeight: FontWeight.w600,
             color: isActive

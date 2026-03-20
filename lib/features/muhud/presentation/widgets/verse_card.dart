@@ -94,7 +94,7 @@ class _VerseCardState extends State<VerseCard>
       decoration: BoxDecoration(
         color: widget.isPlaying
             ? const Color(0xFFFAFFFE)
-            : const Color(0xFFFAFAFA),
+            : Colors.white,
         border: Border(
           left: BorderSide(
             color: widget.isPlaying

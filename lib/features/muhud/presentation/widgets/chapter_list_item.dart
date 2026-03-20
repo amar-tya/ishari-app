@@ -33,7 +33,7 @@ class ChapterListItem extends StatelessWidget {
               alignment: Alignment.center,
               child: Text(
                 number.toString(),
-                style: const TextStyle(
+                style: GoogleFonts.poppins(
                   color: Colors.white,
                   fontSize: 13,
                   fontWeight: FontWeight.w700,

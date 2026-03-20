@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ChapterAppBar extends StatelessWidget {
   const ChapterAppBar({
@@ -40,9 +41,8 @@ class ChapterAppBar extends StatelessWidget {
               child: Text(
                 title ?? '',
                 textAlign: TextAlign.left,
-                textDirection: TextDirection.rtl,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
+                style: GoogleFonts.poppins(
                   color: Colors.white,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,

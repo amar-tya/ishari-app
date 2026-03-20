@@ -39,7 +39,7 @@ class _ChapterReaderBodyState extends State<ChapterReaderBody> {
   final ScrollController _scrollController = ScrollController();
 
   static const double _appBarHeight = 56.0;
-  static const double _chapterHeaderHeight = 100.0;
+  static const double _chapterHeaderHeight = 120.0;
 
   @override
   void initState() {
@@ -164,13 +164,14 @@ class _ChapterHeader extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(24, 6, 24, 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
+          spacing: 5,
           children: [
             Text(
               chapter.title,
               textAlign: TextAlign.left,
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
-              style: const TextStyle(
+              style: GoogleFonts.poppins(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -178,13 +179,14 @@ class _ChapterHeader extends StatelessWidget {
               ),
             ),
             Text(
-              '( ${chapter.description} )',
+              chapter.description,
               textAlign: TextAlign.left,
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
               style: GoogleFonts.scheherazadeNew(
-                fontSize: 20,
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
+                fontStyle: FontStyle.italic,
                 color: Colors.white,
                 height: 1.3,
               ),
@@ -192,7 +194,7 @@ class _ChapterHeader extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               'Kitab ${chapter.category} • ${chapter.verseCount} Ayat',
-              style: TextStyle(
+              style: GoogleFonts.poppins(
                 fontSize: 13,
                 color: Colors.white.withValues(alpha: 0.8),
               ),
