@@ -12,9 +12,6 @@ const _categories = [
 ];
 
 /// Horizontally scrollable category filter chips.
-///
-/// Reads [HomeBloc] to determine the active chip and dispatches
-/// [HomeEvent.categorySelected] on tap.
 class CategoryChips extends StatelessWidget {
   const CategoryChips({super.key, required this.selectedCategory});
 
@@ -26,38 +23,34 @@ class CategoryChips extends StatelessWidget {
       height: 34,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         itemCount: _categories.length,
         separatorBuilder: (_, __) => const SizedBox(width: 8),
         itemBuilder: (context, i) {
           final cat = _categories[i];
           final isActive = cat == selectedCategory;
           return GestureDetector(
-            onTap: () => context
-                .read<HomeBloc>()
-                .add(HomeEvent.categorySelected(cat)),
+            onTap: () {
+              context.read<HomeBloc>().add(HomeEvent.categorySelected(cat));
+            },
             child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
+              duration: const Duration(milliseconds: 180),
               height: 34,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: isActive
-                    ? const Color(0xFF51C878)
-                    : Colors.white,
+                color: isActive ? const Color(0xFF111111) : Colors.transparent,
                 borderRadius: BorderRadius.circular(100),
                 border: isActive
                     ? null
-                    : Border.all(color: const Color(0xFFC8E6C9), width: 1.5),
+                    : Border.all(color: const Color(0xFFD8D8D5), width: 1.5),
               ),
               alignment: Alignment.center,
               child: Text(
                 cat,
                 style: TextStyle(
                   fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: isActive
-                      ? Colors.white
-                      : const Color(0xFF51C878),
+                  fontWeight: FontWeight.w700,
+                  color: isActive ? Colors.white : const Color(0xFF888888),
                 ),
               ),
             ),
