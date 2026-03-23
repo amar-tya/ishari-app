@@ -54,7 +54,9 @@
       "Bash(cmd.exe:*)",
       "Bash(tail:*)",
       "Bash(file:*)",
-      "Bash(head:*)"
+      "Bash(head:*)",
+      "Bash(cmd:*)",
+      "Bash(git:*)"
     ]
   }
 }
