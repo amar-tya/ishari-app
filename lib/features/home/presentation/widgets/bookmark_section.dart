@@ -1,140 +1,215 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:ishari/core/app_state.dart';
 
-/// Bookmark section.
+/// Compact bookmark info widget with liquid glass style.
 ///
-/// - Guest: shows a lock banner with a CTA to sign in.
-/// - Logged-in: placeholder — full BookmarkBloc implementation is a future task.
+/// - Guest: shows a lock CTA inside the glass card.
+/// - Logged-in: shows bookmark count + navigate arrow.
 class BookmarkSection extends StatelessWidget {
-  const BookmarkSection({super.key, required this.isGuest});
+  const BookmarkSection({
+    super.key,
+    required this.isGuest,
+    this.bookmarkCount = 0,
+    this.onTap,
+  });
 
   final bool isGuest;
 
+  /// Total saved bookmarks (placeholder until BookmarkBloc is implemented).
+  final int bookmarkCount;
+
+  /// Called when the widget is tapped (navigate to bookmark tab).
+  final VoidCallback? onTap;
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Bookmark Saya',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF1C1B1F),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: GestureDetector(
+        onTap: isGuest ? null : onTap,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+              decoration: BoxDecoration(
+                color: const Color(0xFF10B981).withValues(alpha: 0.18),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: const Color(0xFF10B981).withValues(alpha: 0.35),
                 ),
               ),
-              if (!isGuest)
-                const Text(
-                  'Lihat semua',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF51C878),
-                  ),
+              child: isGuest ? const _GuestContent() : _LoggedInContent(count: bookmarkCount),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LoggedInContent extends StatelessWidget {
+  const _LoggedInContent({required this.count});
+
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        // Icon box
+        Container(
+          width: 46,
+          height: 46,
+          decoration: BoxDecoration(
+            color: const Color(0xFF10B981).withValues(alpha: 0.25),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: const Color(0xFF10B981).withValues(alpha: 0.4),
+            ),
+          ),
+          child: const Icon(
+            Icons.bookmark,
+            color: Colors.white,
+            size: 22,
+          ),
+        ),
+        const SizedBox(width: 14),
+        // Text
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '$count Shalawat',
+                style: const TextStyle(
+                  fontSize: 19,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white,
+                  letterSpacing: -0.5,
+                  height: 1,
                 ),
+              ),
+              const SizedBox(height: 3),
+              Text(
+                'tersimpan di bookmark kamu',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white.withValues(alpha: 0.6),
+                ),
+              ),
             ],
           ),
         ),
-        const SizedBox(height: 12),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: isGuest ? const _GuestBookmarkBanner() : const _LoggedInBookmarkPlaceholder(),
+        // Color dots
+        Row(
+          children: [
+            _Dot(color: const Color(0xFF34D399)),
+            const SizedBox(width: 5),
+            _Dot(color: const Color(0xFF818CF8)),
+            const SizedBox(width: 5),
+            _Dot(color: const Color(0xFFF472B6)),
+          ],
+        ),
+        const SizedBox(width: 10),
+        // Arrow button
+        Container(
+          width: 30,
+          height: 30,
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(9),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+          ),
+          child: const Icon(
+            Icons.chevron_right,
+            color: Colors.white,
+            size: 18,
+          ),
         ),
       ],
     );
   }
 }
 
-class _GuestBookmarkBanner extends StatelessWidget {
-  const _GuestBookmarkBanner();
+class _GuestContent extends StatelessWidget {
+  const _GuestContent();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE8EAE9)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          const Icon(
-            Icons.lock_outline,
-            size: 32,
-            color: Color(0xFF51C878),
-          ),
-          const SizedBox(height: 12),
-          const Text(
-            'Masuk untuk menyimpan\nshalawat favoritmu',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF1C1B1F),
-              height: 1.4,
+    return Row(
+      children: [
+        Container(
+          width: 46,
+          height: 46,
+          decoration: BoxDecoration(
+            color: const Color(0xFF10B981).withValues(alpha: 0.25),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: const Color(0xFF10B981).withValues(alpha: 0.4),
             ),
           ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: FilledButton(
-              onPressed: () {
-                AppState.isGuestMode.value = false;
-                // The GoRouter redirect will send the user to /introduction
-              },
-              style: FilledButton.styleFrom(
-                backgroundColor: const Color(0xFF51C878),
+          child: const Icon(Icons.lock_outline, color: Colors.white, size: 20),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Masuk untuk bookmark',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                  letterSpacing: -0.3,
+                ),
               ),
-              child: const Text('Masuk Sekarang'),
-            ),
+              const SizedBox(height: 3),
+              Text(
+                'Simpan shalawat favoritmu',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.white.withValues(alpha: 0.6),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+        GestureDetector(
+          onTap: () => AppState.isGuestMode.value = false,
+          child: Container(
+            width: 30,
+            height: 30,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(9),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+            ),
+            child: const Icon(Icons.chevron_right, color: Colors.white, size: 18),
+          ),
+        ),
+      ],
     );
   }
 }
 
-class _LoggedInBookmarkPlaceholder extends StatelessWidget {
-  const _LoggedInBookmarkPlaceholder();
+class _Dot extends StatelessWidget {
+  const _Dot({required this.color});
+
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Replace with real BookmarkBloc once implemented
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE8EAE9)),
-      ),
-      child: const Column(
-        children: [
-          Icon(Icons.bookmark_outline, size: 32, color: Color(0xFF51C878)),
-          SizedBox(height: 8),
-          Text(
-            'Belum ada bookmark',
-            style: TextStyle(
-              fontSize: 14,
-              color: Color(0xFF79747E),
-            ),
-          ),
-        ],
-      ),
+      width: 8,
+      height: 8,
+      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
     );
   }
 }

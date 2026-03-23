@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:ishari/features/auth/domain/entities/user_entity.dart';
 
-/// Greeting header: avatar + "Halo, [Nama]!" + notification bell.
+/// Compact header: avatar circle + display name (left), bell icon (right).
 class HomeHeader extends StatelessWidget {
   const HomeHeader({super.key, this.user});
 
-  /// Authenticated user. `null` for guest mode.
   final UserEntity? user;
 
   @override
@@ -15,30 +14,21 @@ class HomeHeader extends StatelessWidget {
         isGuest ? 'Tamu' : (user!.displayName?.split(' ').first ?? 'Sahabat');
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         children: [
           _Avatar(user: user),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Halo, $displayName!',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF1C1B1F),
-                  ),
-                ),
-                const Text(
-                  "Assalamu'alaikum",
-                  style: TextStyle(fontSize: 12, color: Color(0xFF79747E)),
-                ),
-              ],
+          const SizedBox(width: 10),
+          Text(
+            displayName,
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF111111),
+              letterSpacing: -0.2,
             ),
           ),
+          const Spacer(),
           _BellButton(hasNotification: !isGuest),
         ],
       ),
@@ -55,38 +45,29 @@ class _Avatar extends StatelessWidget {
   Widget build(BuildContext context) {
     if (user?.avatarUrl != null) {
       return CircleAvatar(
-        radius: 23,
+        radius: 19,
         backgroundImage: NetworkImage(user!.avatarUrl!),
       );
     }
 
-    const initial = 'A'; // fallback initial
+    final initial = user?.displayName?.isNotEmpty == true
+        ? user!.displayName![0].toUpperCase()
+        : (user == null ? '?' : 'S');
 
     return Container(
-      width: 46,
-      height: 46,
+      width: 38,
+      height: 38,
       decoration: const BoxDecoration(
         shape: BoxShape.circle,
-        color: Color(0xFF51C878),
-        boxShadow: [
-          BoxShadow(
-            color: Color(0x5951C878),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
+        color: Color(0xFF10B981),
       ),
       alignment: Alignment.center,
       child: Text(
-        user != null
-            ? (user!.displayName?.isNotEmpty == true
-                ? user!.displayName![0].toUpperCase()
-                : initial)
-            : '?',
+        initial,
         style: const TextStyle(
           color: Colors.white,
-          fontSize: 20,
-          fontWeight: FontWeight.w700,
+          fontSize: 14,
+          fontWeight: FontWeight.w800,
         ),
       ),
     );
@@ -105,31 +86,28 @@ class _BellButton extends StatelessWidget {
       height: 40,
       decoration: const BoxDecoration(
         shape: BoxShape.circle,
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Color(0x14000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
+        color: Color(0xFFEAEAE7),
       ),
       child: Stack(
         children: [
           const Center(
-            child: Icon(Icons.notifications_outlined, size: 20, color: Color(0xFF49454F)),
+            child: Icon(
+              Icons.notifications_outlined,
+              size: 20,
+              color: Color(0xFF555555),
+            ),
           ),
           if (hasNotification)
             Positioned(
               top: 8,
               right: 9,
               child: Container(
-                width: 8,
-                height: 8,
+                width: 7,
+                height: 7,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE53935),
+                  color: const Color(0xFFEF4444),
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 1.5),
+                  border: Border.all(color: const Color(0xFFF5F5F2), width: 1.5),
                 ),
               ),
             ),

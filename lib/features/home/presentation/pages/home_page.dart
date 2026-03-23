@@ -1,21 +1,20 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:ishari/core/app_state.dart';
 import 'package:ishari/features/auth/domain/entities/user_entity.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ishari/features/home/domain/entities/chapter_entity.dart';
-import 'package:ishari/features/home/domain/entities/hadi_entity.dart';
 import 'package:ishari/features/home/presentation/bloc/home_bloc.dart';
 import 'package:ishari/features/home/presentation/widgets/bookmark_section.dart';
 import 'package:ishari/features/home/presentation/widgets/category_chips.dart';
-import 'package:ishari/features/home/presentation/widgets/chapter_card.dart';
-import 'package:ishari/features/home/presentation/widgets/featured_chapter_card.dart';
-import 'package:ishari/features/home/presentation/widgets/hadi_section.dart';
+import 'package:ishari/features/home/presentation/widgets/chapter_masonry_grid.dart';
 import 'package:ishari/features/home/presentation/widgets/home_header.dart';
-import 'package:ishari/features/home/presentation/widgets/home_search_bar.dart';
+import 'package:ishari/features/home/presentation/widgets/home_hero.dart';
 import 'package:ishari/injection_container.dart';
 
 /// Beranda tab — provides [HomeBloc] and renders the full homepage layout.
@@ -51,10 +50,8 @@ class _HomeTabBody extends StatelessWidget {
           initial: () => const SizedBox.shrink(),
           loading: () => const _LoadingView(),
           loaded: (featured, chapters, category, hadiList) => _LoadedView(
-            featuredChapter: featured,
             chapters: chapters,
             selectedCategory: category,
-            hadiList: hadiList,
           ),
           error: (message) => _ErrorView(message: message),
         );
@@ -64,7 +61,7 @@ class _HomeTabBody extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Loading state
+// Loading
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _LoadingView extends StatelessWidget {
@@ -73,12 +70,10 @@ class _LoadingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      backgroundColor: Color(0xFFF6F8F7),
+      backgroundColor: Color(0xFFF5F5F2),
       body: SafeArea(
         child: Center(
-          child: CircularProgressIndicator(
-            color: Color(0xFF51C878),
-          ),
+          child: CircularProgressIndicator(color: Color(0xFF10B981)),
         ),
       ),
     );
@@ -86,7 +81,7 @@ class _LoadingView extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Error state
+// Error
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _ErrorView extends StatelessWidget {
@@ -97,7 +92,7 @@ class _ErrorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F8F7),
+      backgroundColor: const Color(0xFFF5F5F2),
       body: SafeArea(
         child: Center(
           child: Padding(
@@ -123,7 +118,7 @@ class _ErrorView extends StatelessWidget {
                   icon: const Icon(Icons.refresh),
                   label: const Text('Coba Lagi'),
                   style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFF51C878),
+                    backgroundColor: const Color(0xFF10B981),
                   ),
                 ),
               ],
@@ -136,21 +131,17 @@ class _ErrorView extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Loaded state — the full homepage layout
+// Loaded — full homepage
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _LoadedView extends StatelessWidget {
   const _LoadedView({
-    required this.featuredChapter,
     required this.chapters,
     required this.selectedCategory,
-    required this.hadiList,
   });
 
-  final ChapterEntity featuredChapter;
   final List<ChapterEntity> chapters;
   final String selectedCategory;
-  final List<HadiEntity> hadiList;
 
   @override
   Widget build(BuildContext context) {
@@ -162,13 +153,15 @@ class _LoadedView extends StatelessWidget {
     );
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F8F7),
-      body: SafeArea(
+      backgroundColor: const Color(0xFFF5F5F2),
+      body: ScrollConfiguration(
+        behavior: const ScrollBehavior().copyWith(overscroll: false),
+        child: SafeArea(
+        bottom: false,
         child: RefreshIndicator(
-          color: const Color(0xFF51C878),
+          color: const Color(0xFF10B981),
           onRefresh: () async {
             context.read<HomeBloc>().add(HomeEvent.refresh(userId: user?.id));
-            // Wait until the bloc leaves the loading state
             await context.read<HomeBloc>().stream.firstWhere(
               (s) => s.maybeWhen(loading: () => false, orElse: () => true),
             );
@@ -180,115 +173,182 @@ class _LoadedView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 16),
 
-                    // 1. Header
+                    // 1. Header: avatar + name + bell
                     HomeHeader(user: isGuest ? null : user),
+                    const SizedBox(height: 20),
+
+                    // 2. QS Al-Ahzab:56 headline
+                    const HomeHero(),
                     const SizedBox(height: 14),
 
-                    // 2. Search bar
-                    const HomeSearchBar(),
-                    const SizedBox(height: 24),
-
-                    // 3. Featured chapter card
-                    FeaturedChapterCard(
-                      chapter: featuredChapter,
-                      isGuest: isGuest,
-                      onTap: () {
-                        final id = int.tryParse(featuredChapter.id);
-                        if (id != null) unawaited(context.push('/chapter/$id'));
-                      },
-                    ),
-                    const SizedBox(height: 24),
-
-                    // 4a. Category section header
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Jelajahi Kategori',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF1C1B1F),
-                            ),
-                          ),
-                          Text(
-                            'Lihat semua',
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF51C878),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    // 4b. Category chips
+                    // 3. Category chips
                     CategoryChips(selectedCategory: selectedCategory),
                     const SizedBox(height: 14),
-                  ],
-                ),
-              ),
 
-              // 4c. Chapter cards — horizontal scroll
-              SliverToBoxAdapter(
-                child: chapters.isEmpty
-                    ? const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                        child: Text(
-                          'Belum ada chapter untuk kategori ini.',
-                          style: TextStyle(color: Color(0xFF79747E)),
-                        ),
-                      )
-                    : SizedBox(
-                        height: 148,
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                          ).copyWith(bottom: 4),
-                          itemCount: chapters.length,
-                          separatorBuilder: (_, __) =>
-                              const SizedBox(width: 12),
-                          itemBuilder: (_, i) => ChapterCard(
-                            chapter: chapters[i],
-                            onTap: () {
-                              final id = int.tryParse(chapters[i].id);
-                              if (id != null) {
-                                unawaited(context.push('/chapter/$id'));
-                              }
-                            },
-                          ),
-                        ),
+                    // 4. Dark glass section
+                    RepaintBoundary(
+                      child: _GlassSection(
+                        isGuest: isGuest,
+                        chapters: chapters,
+                        onChapterTap: (chapter) {
+                          final id = int.tryParse(chapter.id);
+                          if (id != null) unawaited(context.push('/chapter/$id'));
+                        },
                       ),
-              ),
-
-              SliverToBoxAdapter(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 24),
-
-                    // 5. Bookmark section
-                    BookmarkSection(isGuest: isGuest),
-                    const SizedBox(height: 24),
-
-                    // 6. Hadi section
-                    if (hadiList.isNotEmpty) ...[
-                      HadiSection(hadiList: hadiList),
-                      const SizedBox(height: 16),
-                    ],
+                    ),
                   ],
                 ),
               ),
             ],
           ),
+          ),
         ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Dark glass section: Bookmark widget + Chapter masonry grid
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _GlassSection extends StatelessWidget {
+  const _GlassSection({
+    required this.isGuest,
+    required this.chapters,
+    this.onChapterTap,
+  });
+
+  final bool isGuest;
+  final List<ChapterEntity> chapters;
+  final void Function(ChapterEntity)? onChapterTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+      child: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF071A0F),
+              Color(0xFF0B3321),
+              Color(0xFF071A0F),
+            ],
+            stops: [0.0, 0.55, 1.0],
+          ),
+        ),
+        child: Stack(
+        children: [
+          // Ambient orbs
+          Positioned(
+            top: -40,
+            right: -30,
+            child: _Orb(
+              size: 180,
+              color: const Color(0xFF10B981).withValues(alpha: 0.4),
+            ),
+          ),
+          Positioned(
+            bottom: 120,
+            left: -30,
+            child: _Orb(
+              size: 150,
+              color: const Color(0xFF34D399).withValues(alpha: 0.2),
+            ),
+          ),
+          Positioned(
+            top: 200,
+            right: 10,
+            child: _Orb(
+              size: 120,
+              color: const Color(0xFF065F46).withValues(alpha: 0.55),
+            ),
+          ),
+
+          // Content
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Bookmark section header + widget
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                child: Text(
+                  'Bookmark Saya',
+                  style: GoogleFonts.poppins(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
+                    letterSpacing: -0.3,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              BookmarkSection(isGuest: isGuest),
+              const SizedBox(height: 18),
+
+              // Chapter section header
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Chapter Shalawat',
+                      style: GoogleFonts.poppins(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                        letterSpacing: -0.3,
+                      ),
+                    ),
+                    Text(
+                      'Lihat Semua',
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF4ADE80),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 14),
+
+              // Masonry grid
+              ChapterMasonryGrid(
+                chapters: chapters,
+                onChapterTap: onChapterTap,
+              ),
+              const SizedBox(height: 32),
+            ],
+          ),
+        ],
+      ),
+    ),
+    );
+  }
+}
+
+/// Blurred ambient orb for the glass section background.
+class _Orb extends StatelessWidget {
+  const _Orb({required this.size, required this.color});
+
+  final double size;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return ImageFiltered(
+      imageFilter: ImageFilter.blur(sigmaX: 52, sigmaY: 52),
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(shape: BoxShape.circle, color: color),
       ),
     );
   }
