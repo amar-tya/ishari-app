@@ -42,6 +42,12 @@ import 'features/muhud/domain/usecases/get_verses_by_chapter.dart' as _i1006;
 import 'features/muhud/domain/usecases/toggle_bookmark.dart' as _i718;
 import 'features/muhud/presentation/bloc/chapter_list_bloc.dart' as _i242;
 import 'features/muhud/presentation/bloc/muhud_bloc.dart' as _i533;
+import 'features/search/data/datasources/search_remote_datasource.dart'
+    as _i647;
+import 'features/search/data/repositories/search_repository_impl.dart' as _i967;
+import 'features/search/domain/repositories/search_repository.dart' as _i246;
+import 'features/search/domain/usecases/search_chapters.dart' as _i961;
+import 'features/search/presentation/bloc/search_bloc.dart' as _i944;
 import 'injection_container.dart' as _i809;
 
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -61,6 +67,9 @@ _i174.GetIt initDependencies(
   );
   gh.lazySingleton<_i314.MuhudRemoteDataSource>(
     () => _i314.MuhudRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
+  );
+  gh.lazySingleton<_i647.SearchRemoteDataSource>(
+    () => _i647.SearchRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
   );
   gh.lazySingleton<_i588.AuthRemoteDataSource>(
     () => _i588.AuthRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
@@ -83,6 +92,12 @@ _i174.GetIt initDependencies(
   gh.lazySingleton<_i681.MuhudRepository>(
     () => _i964.MuhudRepositoryImpl(
       gh<_i314.MuhudRemoteDataSource>(),
+      gh<_i75.NetworkInfo>(),
+    ),
+  );
+  gh.lazySingleton<_i246.SearchRepository>(
+    () => _i967.SearchRepositoryImpl(
+      gh<_i647.SearchRemoteDataSource>(),
       gh<_i75.NetworkInfo>(),
     ),
   );
@@ -116,6 +131,12 @@ _i174.GetIt initDependencies(
   );
   gh.factory<_i718.ToggleBookmark>(
     () => _i718.ToggleBookmark(gh<_i681.MuhudRepository>()),
+  );
+  gh.factory<_i961.SearchChapters>(
+    () => _i961.SearchChapters(gh<_i246.SearchRepository>()),
+  );
+  gh.factory<_i944.SearchBloc>(
+    () => _i944.SearchBloc(gh<_i961.SearchChapters>()),
   );
   gh.factory<_i242.ChapterListBloc>(
     () => _i242.ChapterListBloc(getAllChapters: gh<_i183.GetAllChapters>()),

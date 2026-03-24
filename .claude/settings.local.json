@@ -57,7 +57,8 @@
       "Bash(head:*)",
       "Bash(cmd:*)",
       "Bash(git:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(PATH=/c/Users/aamar/flutter/bin::*)"
     ]
   }
 }

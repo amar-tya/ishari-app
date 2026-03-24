@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:ishari/core/app_state.dart';
 import 'package:ishari/features/home/presentation/pages/home_page.dart';
 import 'package:ishari/features/muhud/presentation/pages/muhud_tab.dart';
+import 'package:ishari/features/search/presentation/pages/search_tab.dart';
 
 /// Root scaffold providing the 4-tab floating pill navigation bar.
 ///
@@ -46,7 +47,7 @@ class _MainScaffoldState extends State<MainScaffold> {
         index: _selectedIndex,
         children: const [
           HomeTab(),
-          _PlaceholderTab(icon: Icons.search_rounded, label: 'Cari'),
+          SearchTab(),
           MuhudTab(),
           _PlaceholderTab(icon: Icons.bookmark_outline, label: 'Bookmark'),
         ],
