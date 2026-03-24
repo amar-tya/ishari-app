@@ -1,298 +1,753 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ishari App — Chapter Reader (Muhud)</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;0,9..40,900;1,9..40,400&display=swap');
+
+    /* ── Design Tokens (matches homepage design system) ─────────── */
+    :root {
+      --clr-primary: #CAFF00;
+      --clr-primary-dim: #A8D900;
+      --clr-primary-soft: #EDFFC0;
+      --clr-dark: #111111;
+      --clr-dark-2: #1E1E1E;
+      --clr-surface: #FFFFFF;
+      --clr-bg: #F0F5EE;
+      --clr-bg-alt: #E8F0E6;
+      --clr-muted: #777777;
+      --clr-muted-light: #AAAAAA;
+      --clr-border: #E2E8DF;
+      --clr-border-dark: #D0D8CE;
+      --clr-error: #FF4D4F;
+      --clr-success: #22C55E;
+      --font: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --radius-xs: 6px;
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 22px;
+      --radius-xl: 28px;
+      --radius-pill: 100px;
+      --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     body {
-      background: #E8EAE9;
+      background: #DEDEDE;
       display: flex;
       justify-content: center;
       align-items: flex-start;
       min-height: 100vh;
       padding: 40px 40px 60px;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans', sans-serif;
+      font-family: var(--font);
       gap: 36px;
       flex-wrap: wrap;
     }
 
     /* ── Phone Shell ─────────────────────────────────────────────── */
-    .phone-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
-    .screen-label { font-size: 11px; font-weight: 700; color: #79747E; letter-spacing: 1px; text-transform: uppercase; }
+    .phone-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .screen-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #555;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
 
     .phone {
       width: 375px;
-      background: #1C1B1F;
-      border-radius: 50px;
+      background: #111;
+      border-radius: 52px;
       padding: 14px;
-      box-shadow: 0 0 0 1px #333, 0 20px 60px rgba(0,0,0,0.5), inset 0 0 0 2px #2C2C2E;
+      box-shadow: 0 0 0 1px #2a2a2a, 0 40px 100px rgba(0, 0, 0, 0.5);
       position: relative;
     }
+
     .phone::before {
-      content: ''; position: absolute; left: -3px; top: 110px;
-      width: 3px; height: 32px; background: #2C2C2E; border-radius: 2px 0 0 2px;
-      box-shadow: 0 44px 0 #2C2C2E, 0 88px 0 #2C2C2E;
+      content: '';
+      position: absolute;
+      left: -3px;
+      top: 110px;
+      width: 3px;
+      height: 32px;
+      background: #222;
+      border-radius: 2px 0 0 2px;
+      box-shadow: 0 44px 0 #222, 0 88px 0 #222;
     }
+
     .phone::after {
-      content: ''; position: absolute; right: -3px; top: 140px;
-      width: 3px; height: 64px; background: #2C2C2E; border-radius: 0 2px 2px 0;
+      content: '';
+      position: absolute;
+      right: -3px;
+      top: 140px;
+      width: 3px;
+      height: 64px;
+      background: #222;
+      border-radius: 0 2px 2px 0;
     }
 
-    .screen { background: #51C878; border-radius: 38px; overflow: hidden; position: relative; }
-
-    /* Status Bar */
-    .notch-bar {
-      background: linear-gradient(135deg, #51C878 0%, #45B868 100%);
-      height: 44px; display: flex; align-items: center;
-      justify-content: space-between; padding: 0 20px; position: relative;
+    .screen {
+      background: var(--clr-bg);
+      border-radius: 40px;
+      overflow: hidden;
     }
-    .notch-bar::after {
-      content: ''; position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
-      width: 120px; height: 28px; background: #1C1B1F; border-radius: 20px;
-    }
-    .status-time { font-size: 13px; font-weight: 600; color: #fff; z-index: 1; }
-    .status-icons { display: flex; align-items: center; gap: 5px; z-index: 1; }
 
-    /* AppBar — green */
+    /* ── Status Bar ──────────────────────────────────────────────── */
+    .status-bar {
+      background: var(--clr-bg);
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      position: relative;
+    }
+
+    .status-bar::after {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 118px;
+      height: 28px;
+      background: #111;
+      border-radius: 20px;
+    }
+
+    .status-time {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--clr-dark);
+      z-index: 1;
+      letter-spacing: -0.3px;
+    }
+
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      z-index: 1;
+    }
+
+    /* ── App Bar ─────────────────────────────────────────────────── */
     .app-bar {
-      background: linear-gradient(135deg, #51C878 0%, #45B868 100%);
-      height: 56px; display: flex; align-items: center;
-      padding: 0 8px; gap: 8px;
-    }
-    .app-bar-title {
-      flex: 1; text-align: center; font-size: 18px; font-weight: 700; color: #fff;
-      direction: rtl; text-align: right; padding: 0 8px;
-    }
-    .back-btn, .icon-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-
-    /* Chapter header — green section */
-    .chapter-header {
-      background: linear-gradient(135deg, #51C878 0%, #45B868 100%);
-      padding: 4px 24px 20px;
-      text-align: left;
-      position: sticky;
-      top: 0;
-      z-index: 5;
-      transition: opacity 0.3s ease;
-    }
-    .chapter-header-title { font-size: 24px; font-weight: 800; color: #fff; text-align: right; direction: rtl; }
-    .chapter-header-sub { font-size: 13px; color: rgba(255,255,255,0.8); margin-top: 4px; text-align: left; }
-    .chapter-chips {
-      display: flex; flex-wrap: wrap; gap: 8px;
-      justify-content: center; padding: 14px 0 20px;
-    }
-    .chip {
-      height: 30px; padding: 0 14px; border-radius: 100px;
-      font-size: 12px; font-weight: 600;
-      display: flex; align-items: center; white-space: nowrap;
-    }
-    .chip.active { background: #fff; color: #51C878; }
-    .chip.inactive { background: rgba(255,255,255,0.22); color: rgba(255,255,255,0.92); }
-
-    /* Rounded top clip — white sheet starts here */
-    .rounded-top-clip {
-      background: linear-gradient(135deg, #51C878 0%, #45B868 100%);
-      line-height: 0;
-    }
-    .rounded-top-clip-inner {
-      background: #fff; border-radius: 20px 20px 0 0; height: 20px;
+      background: var(--clr-bg);
+      height: 52px;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 8px;
     }
 
-    /* Scroll area */
-    .scroll-area { height: 420px; overflow-y: auto; overflow-x: hidden; background: #fff; scrollbar-width: none; position: relative; }
-    .scroll-area::-webkit-scrollbar { display: none; }
-    .scroll-area::before {
-      content: ''; position: sticky; top: 0; left: 0; right: 0; height: 60px;
-      background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%);
-      pointer-events: none; z-index: 10;
-    }
-
-    /* Shalawat calligraphy */
-    .shalawat-header {
-      background: #fff; padding: 14px 20px 16px; text-align: center;
-      border-bottom: 1px solid #EEF0EF;
-    }
-    .shalawat-arabic {
-      font-family: 'Noto Sans Arabic', 'Traditional Arabic', 'Arial Unicode MS', serif;
-      font-size: 22px; color: #1C1B1F; direction: rtl; line-height: 1.9; font-weight: 700;
-    }
-
-    /* Verse list */
-    .verse-list { background: #fff; }
-    .verse-item { padding: 14px 16px 16px; border-bottom: 1px solid #EEF0EF; }
-    .verse-item.playing { background: #FAFFFE; border-left: 3px solid #51C878; padding-left: 13px; }
-
-    .verse-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 16px;
-    }
-    .verse-num {
-      width: 30px; height: 30px; border-radius: 50%;
-      border: 1.5px solid #C8E6C9; background: #F0FAF4;
-      color: #51C878; font-size: 11px; font-weight: 700;
-      display: flex; align-items: center; justify-content: center;
-      position: relative; flex-shrink: 0;
-    }
-    .verse-num.playing-num { border-color: #51C878; background: #E8F5E9; }
-    @keyframes pulse-ring {
-      0%   { transform: scale(1); opacity: 0.55; }
-      100% { transform: scale(1.9); opacity: 0; }
-    }
-    .verse-num.playing-num::before {
-      content: ''; position: absolute; inset: -5px; border-radius: 50%;
-      border: 2px solid #51C878; animation: pulse-ring 1.4s ease-out infinite;
-    }
-    .verse-actions { display: flex; align-items: center; gap: 6px; }
-    .action-btn {
-      width: 32px; height: 32px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .action-btn.play-btn { border: 1.5px solid #51C878; }
-    .action-btn.play-btn.active { background: #51C878; }
-
-    .arabic-text {
-      font-family: 'Noto Sans Arabic', 'Traditional Arabic', 'Arial Unicode MS', serif;
-      font-size: 22px; color: #1C1B1F; text-align: right; direction: rtl;
-      line-height: 2; font-weight: 600; width: 100%; display: block; margin-bottom: 12px;
-    }
-    .transliteration { font-size: 12px; color: #49454F; font-style: italic; line-height: 1.6; margin-bottom: 6px; }
-    .translation-label { font-size: 10px; font-weight: 700; color: #51C878; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 3px; }
-    .translation { font-size: 12px; color: #79747E; line-height: 1.6; }
-
-    /* Bottom Nav */
-    .bottom-nav {
-      background: #fff; border-top: 1px solid #E8EAE9; height: 72px;
-      display: flex; align-items: stretch; padding-bottom: 8px;
-      box-shadow: 0 -2px 12px rgba(0,0,0,0.05);
-    }
-    .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; }
-    .nav-label { font-size: 9px; font-weight: 600; }
-    .nav-active .nav-label { color: #51C878; }
-    .nav-inactive .nav-label { color: #79747E; }
-
-    .home-indicator { background: #fff; height: 26px; display: flex; align-items: center; justify-content: center; }
-    .home-indicator-bar { width: 120px; height: 4px; background: #1C1B1F; border-radius: 2px; opacity: 0.2; }
-
-    /* ── Quick Tools Panel ────────────────────────────────────────── */
-    .qt-panel {
-      position: absolute; top: 0; right: 0; bottom: 0; width: 82%;
-      background: #fff; border-radius: 0 38px 38px 0; z-index: 11;
-      display: flex; flex-direction: column; overflow: hidden;
-    }
-    .qt-header {
-      padding: 18px 18px 14px; border-bottom: 1px solid #E8EAE9;
-      display: flex; align-items: center; gap: 10px;
-    }
-    .qt-close {
-      width: 28px; height: 28px; border-radius: 50%; background: #F6F8F7;
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    }
-    .qt-title { font-size: 17px; font-weight: 700; color: #1C1B1F; }
-
-    .qt-tabs {
-      display: flex; padding: 12px 14px 0; gap: 6px; overflow-x: auto; scrollbar-width: none;
-    }
-    .qt-tabs::-webkit-scrollbar { display: none; }
-    .qt-tab {
-      height: 30px; padding: 0 14px; border-radius: 100px;
-      font-size: 12px; font-weight: 600; display: flex; align-items: center; white-space: nowrap;
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--clr-surface);
+      border: 1.5px solid var(--clr-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       flex-shrink: 0;
     }
-    .qt-tab.active { background: #51C878; color: #fff; }
-    .qt-tab.inactive { background: #F6F8F7; color: #79747E; }
 
-    .qt-body { flex: 1; overflow-y: auto; padding: 0 18px 16px; scrollbar-width: none; }
-    .qt-body::-webkit-scrollbar { display: none; }
+    .app-bar-title {
+      flex: 1;
+      text-align: center;
+      font-family: 'Noto Naskh Arabic', 'Noto Sans Arabic', serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--clr-dark);
+      direction: rtl;
+      letter-spacing: -0.3px;
+    }
 
-    .qt-section-label { font-size: 14px; font-weight: 700; color: #1C1B1F; padding: 16px 0 10px; }
+    /* ── Chapter Hero ────────────────────────────────────────────── */
+    .chapter-hero {
+      padding: 16px 20px 0;
+    }
+
+    .ecard-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 22px;
+      padding: 0 8px;
+      border-radius: var(--radius-pill);
+      background: var(--clr-bg-alt);
+      border: 1px solid var(--clr-border);
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--clr-muted);
+      margin-bottom: 8px;
+    }
+
+    .chapter-arabic {
+      font-family: 'Noto Naskh Arabic', 'Noto Sans Arabic', 'Traditional Arabic', serif;
+      font-size: 44px;
+      font-weight: 900;
+      direction: rtl;
+      text-align: right;
+      color: var(--clr-dark);
+      line-height: 1.2;
+      letter-spacing: -1px;
+      margin-bottom: 4px;
+      text-shadow: 3px 3px 0px var(--clr-primary), 6px 6px 0px rgba(202, 255, 0, 0.18);
+    }
+
+    .chapter-arabic-trans {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--clr-muted);
+      font-style: italic;
+      text-align: right;
+      margin-bottom: 6px;
+    }
+
+    .chapter-latin {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--clr-muted-light);
+      letter-spacing: 0.2px;
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+
+    /* ── Category Chips ──────────────────────────────────────────── */
+    .chips-scroll {
+      overflow-x: auto;
+      display: flex;
+      gap: 8px;
+      padding: 0 20px 16px;
+      scrollbar-width: none;
+    }
+
+    .chips-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chip {
+      flex-shrink: 0;
+      height: 32px;
+      border-radius: var(--radius-pill);
+      padding: 0 14px;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      font-family: var(--font);
+    }
+
+    .chip-active {
+      background: var(--clr-dark);
+      color: #fff;
+    }
+
+    .chip-inactive {
+      background: transparent;
+      color: var(--clr-muted);
+      border: 1.5px solid var(--clr-border-dark);
+    }
+
+    /* ── Scroll Area ─────────────────────────────────────────────── */
+    .scroll-area {
+      height: 540px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: var(--clr-surface);
+      border-radius: 24px 24px 0 0;
+      margin-top: -24px;
+      position: relative;
+      z-index: 5;
+      scrollbar-width: none;
+    }
+
+    .scroll-area::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* ── Verse List (flat) ───────────────────────────────────────── */
+    .verse-item {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--clr-border);
+    }
+
+    .verse-item:last-child { border-bottom: none; }
+
+    .verse-item.playing {
+      background: var(--clr-primary-soft);
+    }
+
+    .verse-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .verse-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--clr-bg-alt);
+      border: 1px solid var(--clr-border);
+      color: var(--clr-muted);
+      font-size: 10px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .verse-num.playing-num {
+      background: var(--clr-dark);
+      border-color: var(--clr-dark);
+      color: var(--clr-primary);
+    }
+
+    @keyframes pulse-ring {
+      0% {
+        transform: scale(1);
+        opacity: 0.55;
+      }
+
+      100% {
+        transform: scale(1.9);
+        opacity: 0;
+      }
+    }
+
+    .verse-num.playing-num::before {
+      content: '';
+      position: absolute;
+      inset: -5px;
+      border-radius: 50%;
+      border: 2px solid var(--clr-primary);
+      animation: pulse-ring 1.4s ease-out infinite;
+    }
+
+    .verse-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .action-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .action-btn.play-btn {
+      background: var(--clr-dark);
+    }
+
+    .action-btn.play-btn.active {
+      background: var(--clr-primary);
+    }
+
+    .arabic-text {
+      font-family: 'Noto Naskh Arabic', 'Noto Sans Arabic', 'Traditional Arabic', serif;
+      font-size: 22px;
+      color: var(--clr-dark);
+      text-align: right;
+      direction: rtl;
+      line-height: 1.9;
+      font-weight: 700;
+      width: 100%;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .transliteration {
+      font-size: 12px;
+      color: var(--clr-muted);
+      font-style: italic;
+      line-height: 1.6;
+      margin-bottom: 6px;
+    }
+
+    .translation-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--clr-muted-light);
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+
+    .translation {
+      font-size: 12px;
+      color: var(--clr-muted);
+      line-height: 1.6;
+    }
+
+    /* ── Floating Bottom Nav ─────────────────────────────────────── */
+    .nav-wrap {
+      background: var(--clr-bg);
+      padding: 8px 16px 16px;
+    }
+
+    .bottom-nav {
+      background: var(--clr-surface);
+      border-radius: var(--radius-pill);
+      height: 60px;
+      display: flex;
+      align-items: center;
+      padding: 0 6px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14), 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      height: 44px;
+      border-radius: var(--radius-pill);
+    }
+
+    .nav-active {
+      background: var(--clr-primary);
+      flex: 1.6;
+    }
+
+    .nav-label {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+      white-space: nowrap;
+    }
+
+    .nav-active .nav-label {
+      color: var(--clr-dark);
+    }
+
+    .nav-inactive .nav-label {
+      display: none;
+    }
+
+    .home-indicator {
+      background: var(--clr-bg);
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-bottom: 4px;
+    }
+
+    .home-bar {
+      width: 100px;
+      height: 4px;
+      background: var(--clr-dark);
+      border-radius: 2px;
+      opacity: 0.1;
+    }
+
+    /* ── Quick Tools Panel ───────────────────────────────────────── */
+    .qt-panel {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 82%;
+      background: var(--clr-surface);
+      border-radius: 0 38px 38px 0;
+      z-index: 11;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .qt-header {
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid var(--clr-border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .qt-close {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--clr-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .qt-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--clr-dark);
+      letter-spacing: -0.3px;
+    }
+
+    .qt-tabs {
+      display: flex;
+      padding: 12px 14px 0;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .qt-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .qt-tab {
+      height: 30px;
+      padding: 0 14px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .qt-tab.active {
+      background: var(--clr-dark);
+      color: #fff;
+    }
+
+    .qt-tab.inactive {
+      background: var(--clr-bg);
+      color: var(--clr-muted);
+      border: 1.5px solid var(--clr-border);
+    }
+
+    .qt-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 18px 16px;
+      scrollbar-width: none;
+    }
+
+    .qt-body::-webkit-scrollbar {
+      display: none;
+    }
+
+    .qt-section-label {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--clr-dark);
+      padding: 16px 0 10px;
+      letter-spacing: -0.2px;
+    }
+
     .qt-row {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 0; border-bottom: 1px solid #F0F0F0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--clr-border);
     }
-    .qt-row:last-child { border-bottom: none; }
-    .qt-row-label { font-size: 14px; color: #1C1B1F; }
-    .qt-row-sub { font-size: 11px; color: #79747E; margin-top: 1px; }
+
+    .qt-row:last-child {
+      border-bottom: none;
+    }
+
+    .qt-row-label {
+      font-size: 14px;
+      color: var(--clr-dark);
+      font-weight: 500;
+    }
+
+    .qt-row-sub {
+      font-size: 11px;
+      color: var(--clr-muted);
+      margin-top: 1px;
+    }
+
     .qt-badge {
-      font-size: 9px; font-weight: 700; color: #fff; background: #51C878;
-      padding: 2px 6px; border-radius: 100px; margin-left: 6px; letter-spacing: 0.3px;
+      font-size: 9px;
+      font-weight: 800;
+      color: var(--clr-dark);
+      background: var(--clr-primary);
+      padding: 2px 6px;
+      border-radius: var(--radius-pill);
+      margin-left: 6px;
+      letter-spacing: 0.3px;
     }
 
-    .toggle { width: 42px; height: 24px; border-radius: 12px; position: relative; flex-shrink: 0; }
-    .toggle.on { background: #51C878; }
-    .toggle.off { background: #E0E0E0; }
+    .toggle {
+      width: 42px;
+      height: 24px;
+      border-radius: 12px;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .toggle.on {
+      background: var(--clr-dark);
+    }
+
+    .toggle.off {
+      background: var(--clr-border-dark);
+    }
+
     .toggle::after {
-      content: ''; position: absolute; top: 2px; width: 20px; height: 20px;
-      background: #fff; border-radius: 50%; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-      transition: left 0.15s;
+      content: '';
+      position: absolute;
+      top: 2px;
+      width: 20px;
+      height: 20px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
     }
-    .toggle.on::after { right: 2px; }
-    .toggle.off::after { left: 2px; }
 
-    .qt-slider-row { padding: 10px 0 14px; border-bottom: 1px solid #F0F0F0; }
-    .qt-slider-label { font-size: 13px; color: #1C1B1F; margin-bottom: 10px; display: flex; justify-content: space-between; }
-    .qt-slider-val { font-size: 13px; font-weight: 700; color: #51C878; }
-    .slider-track { height: 4px; background: #E8EAE9; border-radius: 2px; position: relative; }
-    .slider-fill { height: 4px; background: #51C878; border-radius: 2px; }
+    .toggle.on::after {
+      right: 2px;
+      left: auto;
+    }
+
+    .toggle.off::after {
+      left: 2px;
+    }
+
+    .qt-slider-row {
+      padding: 10px 0 14px;
+      border-bottom: 1px solid var(--clr-border);
+    }
+
+    .qt-slider-label {
+      font-size: 13px;
+      color: var(--clr-dark);
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      font-weight: 500;
+    }
+
+    .qt-slider-val {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--clr-dark);
+    }
+
+    .slider-track {
+      height: 4px;
+      background: var(--clr-bg-alt);
+      border-radius: 2px;
+      position: relative;
+    }
+
+    .slider-fill {
+      height: 4px;
+      background: var(--clr-dark);
+      border-radius: 2px;
+    }
+
     .slider-thumb {
-      width: 18px; height: 18px; border-radius: 50%; background: #51C878;
-      position: absolute; top: -7px; box-shadow: 0 2px 6px rgba(81,200,120,0.5);
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--clr-primary);
+      position: absolute;
+      top: -7px;
+      box-shadow: 0 2px 6px rgba(202, 255, 0, 0.5);
     }
 
     .qt-font-row {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 0; border-bottom: 1px solid #F0F0F0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--clr-border);
     }
-    .qt-font-val { font-size: 12px; color: #51C878; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+
+    .qt-font-val {
+      font-size: 12px;
+      color: var(--clr-muted);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
   </style>
 </head>
+
 <body>
 
-<!-- ══════════════════════════════ SCREEN 1: CHAPTER READER -->
-<div class="phone-wrap">
-  <div class="screen-label">Screen 1 — Chapter Reader</div>
-  <div class="phone">
-    <div class="screen">
+  <!-- ═══════════════════════════════ SCREEN 1: CHAPTER READER ══════ -->
+  <div class="phone-wrap">
+    <div class="screen-label">Screen 1 — Chapter Reader</div>
+    <div class="phone">
+      <div class="screen">
 
-      <!-- Status Bar — green -->
-      <div class="notch-bar">
-        <span class="status-time">9:41</span>
-        <div class="status-icons">
-          <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="8" width="3" height="4" rx="1" fill="#fff"/><rect x="4.5" y="5" width="3" height="7" rx="1" fill="#fff"/><rect x="9" y="2" width="3" height="10" rx="1" fill="#fff"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="#fff" opacity="0.4"/></svg>
-          <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 10.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" fill="#fff"/><path d="M4.2 7.3A5.3 5.3 0 018 5.9a5.3 5.3 0 013.8 1.4l1.1-1.1A7 7 0 008 4.2a7 7 0 00-4.9 2l1.1 1.1z" fill="#fff"/><path d="M1.5 4.6A9.5 9.5 0 018 2a9.5 9.5 0 016.5 2.6l1-1A11.1 11.1 0 008 .4 11.1 11.1 0 00.5 3.6l1 1z" fill="#fff"/></svg>
-          <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="#fff" stroke-opacity="0.5"/><rect x="1.5" y="1.5" width="17" height="9" rx="2" fill="#fff"/><path d="M23 4v4a2 2 0 000-4z" fill="#fff" opacity="0.5"/></svg>
+        <!-- Status Bar -->
+        <div class="status-bar">
+          <span class="status-time">9:41</span>
+          <div class="status-icons">
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+              <rect x="0" y="8" width="3" height="4" rx="1" fill="#111" />
+              <rect x="4.5" y="5" width="3" height="7" rx="1" fill="#111" />
+              <rect x="9" y="2" width="3" height="10" rx="1" fill="#111" />
+              <rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="#111" opacity="0.3" />
+            </svg>
+            <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+              <rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="#111" stroke-opacity="0.3" />
+              <rect x="1.5" y="1.5" width="17" height="9" rx="2" fill="#111" />
+              <path d="M23 4v4a2 2 0 000-4z" fill="#111" opacity="0.4" />
+            </svg>
+          </div>
         </div>
-      </div>
 
-      <!-- AppBar — green, with dynamic title, back + quick tools -->
-      <div class="app-bar">
-        <div class="back-btn">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <!-- App Bar -->
+        <div class="app-bar">
+          <div class="icon-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path d="M15 18l-6-6 6-6" stroke="#111" stroke-width="2.2" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+          </div>
+          <div class="app-bar-title">الاِبْتِدَاء</div>
+          <div class="icon-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path d="M4 6h16M7 12h10M10 18h4" stroke="#111" stroke-width="1.8" stroke-linecap="round" />
+            </svg>
+          </div>
         </div>
-        <div class="app-bar-title">الفاتحة</div>
-        <!-- Quick Tools icon -->
-        <div class="icon-btn">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M7 12h10M10 18h4" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
+
+        <!-- Chapter Hero -->
+        <div class="chapter-hero">
+          <div class="ecard-num">01</div>
+          <div class="chapter-arabic">الاِبْتِدَاء</div>
+          <div class="chapter-arabic-trans">al-ibtidāʾ</div>
+          <div class="chapter-latin">Ibtida — Pembukaan · Diwan · 12 bait</div>
         </div>
-      </div>
 
-      <!-- Chapter Header — green section with title + subtitle + chips -->
-      <div class="chapter-header">
-        <div class="chapter-header-title">الفاتحة</div>
-        <div class="chapter-header-sub">Mekah • 7 Ayat</div>
-      </div>
-
-      <!-- Rounded white top clip -->
-      <div class="rounded-top-clip">
-        <div class="rounded-top-clip-inner"></div>
-      </div>
-
-      <!-- Scroll area — white -->
-      <div class="scroll-area">
-        <!-- Verse List -->
-        <div class="verse-list">
+        <!-- Scroll Area -->
+        <div class="scroll-area">
 
           <!-- VERSE 1 -->
           <div class="verse-item">
@@ -300,23 +755,29 @@
               <div class="verse-num">1</div>
               <div class="verse-actions">
                 <div class="action-btn play-btn">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M8 5.5v13L19 12 8 5.5z" fill="#51C878"/></svg>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
+                    <path d="M8 5.5v13L19 12 8 5.5z" fill="#fff" />
+                  </svg>
                 </div>
                 <div class="action-btn">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="9" y="9" width="13" height="13" rx="2" stroke="#C0BCC5" stroke-width="1.8"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="#C0BCC5" stroke-width="1.8"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M5 3h14a1 1 0 011 1v17l-8-4-8 4V4a1 1 0 011-1z" stroke="#AAAAAA" stroke-width="1.8"
+                      stroke-linejoin="round" />
+                  </svg>
                 </div>
                 <div class="action-btn">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 3h14a1 1 0 011 1v17l-8-4-8 4V4a1 1 0 011-1z" stroke="#C8E6C9" stroke-width="1.8" stroke-linejoin="round"/></svg>
-                </div>
-                <div class="action-btn">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="5" cy="12" r="1.5" fill="#C0BCC5"/><circle cx="12" cy="12" r="1.5" fill="#C0BCC5"/><circle cx="19" cy="12" r="1.5" fill="#C0BCC5"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <circle cx="5" cy="12" r="1.5" fill="#AAAAAA" />
+                    <circle cx="12" cy="12" r="1.5" fill="#AAAAAA" />
+                    <circle cx="19" cy="12" r="1.5" fill="#AAAAAA" />
+                  </svg>
                 </div>
               </div>
             </div>
-            <span class="arabic-text">ٱلۡحَمۡدُ لِلَّهِ رَبِّ ٱلۡعَٰلَمِينَ</span>
-            <div class="transliteration">alḥamdu lillāhi rabbi l-ʿālamīna</div>
+            <span class="arabic-text">صَلَّى اللَّهُ عَلَى مُحَمَّدٍ</span>
+            <div class="transliteration">ṣallā allāhu ʿalā muḥammadin</div>
             <div class="translation-label">Terjemahan</div>
-            <div class="translation">Segala puji bagi Allah, Tuhan seluruh alam</div>
+            <div class="translation">Semoga Allah melimpahkan shalawat kepada Muhammad</div>
           </div>
 
           <!-- VERSE 2 — bookmarked -->
@@ -325,23 +786,29 @@
               <div class="verse-num">2</div>
               <div class="verse-actions">
                 <div class="action-btn play-btn">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M8 5.5v13L19 12 8 5.5z" fill="#51C878"/></svg>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
+                    <path d="M8 5.5v13L19 12 8 5.5z" fill="#fff" />
+                  </svg>
                 </div>
                 <div class="action-btn">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="9" y="9" width="13" height="13" rx="2" stroke="#C0BCC5" stroke-width="1.8"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="#C0BCC5" stroke-width="1.8"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M5 3h14a1 1 0 011 1v17l-8-4-8 4V4a1 1 0 011-1z" fill="#111" stroke="#111"
+                      stroke-width="1.8" stroke-linejoin="round" />
+                  </svg>
                 </div>
                 <div class="action-btn">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 3h14a1 1 0 011 1v17l-8-4-8 4V4a1 1 0 011-1z" fill="#51C878" stroke="#51C878" stroke-width="1.8" stroke-linejoin="round"/></svg>
-                </div>
-                <div class="action-btn">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="5" cy="12" r="1.5" fill="#C0BCC5"/><circle cx="12" cy="12" r="1.5" fill="#C0BCC5"/><circle cx="19" cy="12" r="1.5" fill="#C0BCC5"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <circle cx="5" cy="12" r="1.5" fill="#AAAAAA" />
+                    <circle cx="12" cy="12" r="1.5" fill="#AAAAAA" />
+                    <circle cx="19" cy="12" r="1.5" fill="#AAAAAA" />
+                  </svg>
                 </div>
               </div>
             </div>
-            <span class="arabic-text">ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ</span>
-            <div class="transliteration">ar-raḥmāni r-raḥīmi</div>
+            <span class="arabic-text">صَلَاةً دَائِمَةً تَدُومُ وَتُخْلِدُ</span>
+            <div class="transliteration">ṣalātan dāʾimatan tadūmu wa-tukhlidu</div>
             <div class="translation-label">Terjemahan</div>
-            <div class="translation">Yang Maha Pengasih, Maha Penyayang</div>
+            <div class="translation">Shalawat yang abadi, terus-menerus dan kekal</div>
           </div>
 
           <!-- VERSE 3 — playing -->
@@ -350,294 +817,346 @@
               <div class="verse-num playing-num">3</div>
               <div class="verse-actions">
                 <div class="action-btn play-btn active">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><rect x="6" y="5" width="4" height="14" rx="1" fill="#fff"/><rect x="14" y="5" width="4" height="14" rx="1" fill="#fff"/></svg>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
+                    <rect x="6" y="5" width="4" height="14" rx="1" fill="#111" />
+                    <rect x="14" y="5" width="4" height="14" rx="1" fill="#111" />
+                  </svg>
                 </div>
                 <div class="action-btn">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="9" y="9" width="13" height="13" rx="2" stroke="#C0BCC5" stroke-width="1.8"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="#C0BCC5" stroke-width="1.8"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M5 3h14a1 1 0 011 1v17l-8-4-8 4V4a1 1 0 011-1z" stroke="#AAAAAA" stroke-width="1.8"
+                      stroke-linejoin="round" />
+                  </svg>
                 </div>
                 <div class="action-btn">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 3h14a1 1 0 011 1v17l-8-4-8 4V4a1 1 0 011-1z" stroke="#C8E6C9" stroke-width="1.8" stroke-linejoin="round"/></svg>
-                </div>
-                <div class="action-btn">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="5" cy="12" r="1.5" fill="#C0BCC5"/><circle cx="12" cy="12" r="1.5" fill="#C0BCC5"/><circle cx="19" cy="12" r="1.5" fill="#C0BCC5"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <circle cx="5" cy="12" r="1.5" fill="#AAAAAA" />
+                    <circle cx="12" cy="12" r="1.5" fill="#AAAAAA" />
+                    <circle cx="19" cy="12" r="1.5" fill="#AAAAAA" />
+                  </svg>
                 </div>
               </div>
             </div>
-            <span class="arabic-text">مَٰلِكِ يَوۡمِ ٱلدِّينِ</span>
-            <div class="transliteration">māliki yawmi d-dīni</div>
+            <span class="arabic-text">مَا دَامَتِ الدُّنْيَا وَمَا يَنْتَهِي</span>
+            <div class="transliteration">mā dāmati d-dunyā wa-mā yantahī</div>
             <div class="translation-label">Terjemahan</div>
-            <div class="translation">Pemilik hari pembalasan</div>
+            <div class="translation">Selama dunia ini ada dan tidak pernah berakhir</div>
           </div>
 
-          <!-- VERSE 4 — partial -->
+          <!-- VERSE 4 — faded / not yet reached -->
           <div class="verse-item" style="opacity:0.45;">
             <div class="verse-header">
               <div class="verse-num">4</div>
               <div class="verse-actions">
-                <div class="action-btn play-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M8 5.5v13L19 12 8 5.5z" fill="#51C878"/></svg></div>
-                <div class="action-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="9" y="9" width="13" height="13" rx="2" stroke="#C0BCC5" stroke-width="1.8"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="#C0BCC5" stroke-width="1.8"/></svg></div>
-                <div class="action-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 3h14a1 1 0 011 1v17l-8-4-8 4V4a1 1 0 011-1z" stroke="#C8E6C9" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
-                <div class="action-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="5" cy="12" r="1.5" fill="#C0BCC5"/><circle cx="12" cy="12" r="1.5" fill="#C0BCC5"/><circle cx="19" cy="12" r="1.5" fill="#C0BCC5"/></svg></div>
+                <div class="action-btn play-btn">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
+                    <path d="M8 5.5v13L19 12 8 5.5z" fill="#fff" />
+                  </svg>
+                </div>
+                <div class="action-btn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M5 3h14a1 1 0 011 1v17l-8-4-8 4V4a1 1 0 011-1z" stroke="#AAAAAA" stroke-width="1.8"
+                      stroke-linejoin="round" />
+                  </svg>
+                </div>
               </div>
             </div>
-            <span class="arabic-text">إِيَّاكَ نَعۡبُدُ وَإِيَّاكَ نَسۡتَعِينُ</span>
-            <div class="transliteration">iyyāka naʿbudu wa-iyyāka nastaʿīnu</div>
+            <span class="arabic-text">وَعَلَى آلِهِ وَصَحْبِهِ الْكِرَامِ</span>
+            <div class="transliteration">wa-ʿalā ālihi wa-ṣaḥbihi l-kirāmi</div>
           </div>
 
-        </div>
-      </div>
+          <div style="height:20px;"></div>
+        </div><!-- /scroll-area -->
 
-      <!-- Bottom Nav -->
-      <div class="bottom-nav">
-        <div class="nav-item nav-inactive">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 9.5L12 3l9 6.5V21a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" fill="#79747E"/></svg>
-          <span class="nav-label">Beranda</span>
-        </div>
-        <div class="nav-item nav-active">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="8" height="11" rx="2" fill="#51C878"/><rect x="3" y="16" width="8" height="5" rx="2" fill="#51C878"/><rect x="13" y="3" width="8" height="5" rx="2" fill="#51C878"/><rect x="13" y="10" width="8" height="11" rx="2" fill="#51C878"/></svg>
-          <span class="nav-label">Muhud</span>
-        </div>
-        <div class="nav-item nav-inactive">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4V4zm2 2v12h12V6H6zm2 2h8v2H8V8zm0 4h6v2H8v-2z" fill="#79747E"/></svg>
-          <span class="nav-label">Kitab</span>
-        </div>
-        <div class="nav-item nav-inactive">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#79747E"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="#79747E"/></svg>
-          <span class="nav-label">Hadi</span>
-        </div>
-        <div class="nav-item nav-inactive">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M5 3h14a1 1 0 011 1v17l-8-4-8 4V4a1 1 0 011-1z" fill="#79747E"/></svg>
-          <span class="nav-label">Bookmark</span>
-        </div>
-        <div class="nav-item nav-inactive">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#79747E"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="#79747E"/></svg>
-          <span class="nav-label">Profil</span>
-        </div>
       </div>
-      <div class="home-indicator"><div class="home-indicator-bar"></div></div>
-
     </div>
   </div>
-</div>
 
 
-<!-- ══════════════════════════════ SCREEN 2: QUICK TOOLS -->
-<div class="phone-wrap">
-  <div class="screen-label">Screen 2 — Quick Tools</div>
-  <div class="phone">
-    <div class="screen" style="position:relative; overflow:hidden; background:#fff;">
+  <!-- ═══════════════════════════════ SCREEN 2: QUICK TOOLS ══════════ -->
+  <div class="phone-wrap">
+    <div class="screen-label">Screen 2 — Quick Tools</div>
+    <div class="phone">
+      <div class="screen" style="position:relative; overflow:hidden;">
 
-      <div class="notch-bar" style="background:#51C878;">
-        <span class="status-time">9:41</span>
-        <div class="status-icons">
-          <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="8" width="3" height="4" rx="1" fill="#fff"/><rect x="4.5" y="5" width="3" height="7" rx="1" fill="#fff"/><rect x="9" y="2" width="3" height="10" rx="1" fill="#fff"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="#fff" opacity="0.4"/></svg>
-          <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 10.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" fill="#fff"/><path d="M4.2 7.3A5.3 5.3 0 018 5.9a5.3 5.3 0 013.8 1.4l1.1-1.1A7 7 0 008 4.2a7 7 0 00-4.9 2l1.1 1.1z" fill="#fff"/><path d="M1.5 4.6A9.5 9.5 0 018 2a9.5 9.5 0 016.5 2.6l1-1A11.1 11.1 0 008 .4 11.1 11.1 0 00.5 3.6l1 1z" fill="#fff"/></svg>
-          <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="#fff" stroke-opacity="0.5"/><rect x="1.5" y="1.5" width="17" height="9" rx="2" fill="#fff"/><path d="M23 4v4a2 2 0 000-4z" fill="#fff" opacity="0.5"/></svg>
+        <!-- Status Bar -->
+        <div class="status-bar">
+          <span class="status-time">9:41</span>
+          <div class="status-icons">
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+              <rect x="0" y="8" width="3" height="4" rx="1" fill="#111" />
+              <rect x="4.5" y="5" width="3" height="7" rx="1" fill="#111" />
+              <rect x="9" y="2" width="3" height="10" rx="1" fill="#111" />
+              <rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="#111" opacity="0.3" />
+            </svg>
+            <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+              <rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="#111" stroke-opacity="0.3" />
+              <rect x="1.5" y="1.5" width="17" height="9" rx="2" fill="#111" />
+              <path d="M23 4v4a2 2 0 000-4z" fill="#111" opacity="0.4" />
+            </svg>
+          </div>
+        </div>
+
+        <div style="position:relative; height:860px; overflow:hidden;">
+          <!-- Dimmed reader background -->
+          <div style="filter:blur(1px); opacity:0.25; pointer-events:none;">
+            <div class="app-bar">
+              <div class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path d="M15 18l-6-6 6-6" stroke="#111" stroke-width="2.2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg></div>
+              <div class="app-bar-title">الاِبْتِدَاء</div>
+              <div class="icon-btn"></div>
+            </div>
+            <div style="padding:16px 20px 0;">
+              <div style="font-size:10px;font-weight:800;color:#777;margin-bottom:6px;">01</div>
+              <div
+                style="font-family:serif;font-size:40px;font-weight:900;direction:rtl;text-align:right;color:#111;text-shadow:3px 3px 0 #CAFF00;margin-bottom:6px;">
+                الاِبْتِدَاء</div>
+              <div style="font-size:12px;color:#777;margin-bottom:14px;">Ibtida — Pembukaan</div>
+            </div>
+            <div class="verse-card">
+              <span class="arabic-text" style="font-size:18px;">صَلَّى اللَّهُ عَلَى مُحَمَّدٍ</span>
+            </div>
+            <div class="verse-card playing">
+              <span class="arabic-text" style="font-size:18px;">صَلَاةً دَائِمَةً تَدُومُ وَتُخْلِدُ</span>
+            </div>
+          </div>
+
+          <!-- Overlay -->
+          <div style="position:absolute; inset:0; background:rgba(0,0,0,0.4); z-index:10;"></div>
+
+          <!-- Quick Tools Panel — slides from right -->
+          <div class="qt-panel">
+            <div class="qt-header">
+              <div class="qt-close">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                  <path d="M18 6L6 18M6 6l12 12" stroke="#777" stroke-width="2" stroke-linecap="round" />
+                </svg>
+              </div>
+              <div class="qt-title">Quick Tools</div>
+            </div>
+
+            <div class="qt-tabs">
+              <div class="qt-tab active">Bait</div>
+              <div class="qt-tab inactive">Hadi</div>
+              <div class="qt-tab inactive">Kategori</div>
+              <div class="qt-tab inactive">Kitab</div>
+            </div>
+
+            <div class="qt-body">
+              <div class="qt-section-label">Konten</div>
+
+              <div class="qt-row">
+                <div>
+                  <div class="qt-row-label">Arab</div>
+                  <div class="qt-row-sub">Tampilkan teks Arab</div>
+                </div>
+                <div class="toggle on"></div>
+              </div>
+              <div class="qt-row">
+                <div>
+                  <div class="qt-row-label">Transliterasi</div>
+                  <div class="qt-row-sub">Tampilkan latin</div>
+                </div>
+                <div class="toggle on"></div>
+              </div>
+              <div class="qt-row">
+                <div style="display:flex; align-items:center;">
+                  <div class="qt-row-label">Terjemahan</div>
+                  <span class="qt-badge">ID</span>
+                </div>
+                <div class="toggle off"></div>
+              </div>
+              <div class="qt-row">
+                <div>
+                  <div class="qt-row-label">Per Kata</div>
+                  <div class="qt-row-sub">Sorot kata saat audio</div>
+                </div>
+                <div class="toggle off"></div>
+              </div>
+
+              <div class="qt-section-label">Pengaturan Font</div>
+
+              <div class="qt-font-row">
+                <div class="qt-row-label">Font Arab</div>
+                <div class="qt-font-val">
+                  Uthmani
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                    <path d="M9 18l6-6-6-6" stroke="#AAAAAA" stroke-width="2" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                </div>
+              </div>
+
+              <div class="qt-slider-row">
+                <div class="qt-slider-label">
+                  <span>Ukuran Font Arab</span>
+                  <span class="qt-slider-val">22</span>
+                </div>
+                <div class="slider-track">
+                  <div class="slider-fill" style="width:55%;"></div>
+                  <div class="slider-thumb" style="left:calc(55% - 9px);"></div>
+                </div>
+              </div>
+
+              <div class="qt-slider-row" style="border-bottom:none;">
+                <div class="qt-slider-label">
+                  <span>Ukuran Font Terjemahan</span>
+                  <span class="qt-slider-val">14</span>
+                </div>
+                <div class="slider-track">
+                  <div class="slider-fill" style="width:35%;"></div>
+                  <div class="slider-thumb" style="left:calc(35% - 9px);"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
-
-      <!-- Dimmed reader in background -->
-      <div style="position:relative; height:858px; overflow:hidden;">
-        <div style="filter:blur(1px); opacity:0.3; pointer-events:none;">
-          <div class="app-bar">
-            <div class="back-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          </div>
-          <div class="chapter-header" style="padding-bottom:8px;">
-            <div class="chapter-header-title" style="font-size:20px;">Al-Fatihah</div>
-            <div class="chapter-header-sub">Mekah • 7 Ayat</div>
-          </div>
-          <div style="background:#51C878; line-height:0;"><div style="background:#fff; border-radius:20px 20px 0 0; height:20px;"></div></div>
-          <div class="shalawat-header">
-            <div class="shalawat-arabic">بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ</div>
-          </div>
-          <div class="verse-list">
-            <div class="verse-item"><span class="arabic-text" style="font-size:18px;">ٱلۡحَمۡدُ لِلَّهِ رَبِّ ٱلۡعَٰلَمِينَ</span></div>
-            <div class="verse-item playing"><span class="arabic-text" style="font-size:18px;">مَٰلِكِ يَوۡمِ ٱلدِّينِ</span></div>
-          </div>
-        </div>
-
-        <!-- Overlay -->
-        <div style="position:absolute; inset:0; background:rgba(0,0,0,0.35); z-index:10;"></div>
-
-        <!-- Quick Tools Panel — slides from right -->
-        <div class="qt-panel">
-          <div class="qt-header">
-            <div class="qt-close">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="#49454F" stroke-width="2" stroke-linecap="round"/></svg>
-            </div>
-            <div class="qt-title">Quick Tools</div>
-          </div>
-
-          <!-- Nav tabs -->
-          <div class="qt-tabs">
-            <div class="qt-tab active">Bait</div>
-            <div class="qt-tab inactive">Hadi</div>
-            <div class="qt-tab inactive">Kategori</div>
-            <div class="qt-tab inactive">Kitab</div>
-          </div>
-
-          <div class="qt-body">
-
-            <div class="qt-section-label">Konten</div>
-
-            <div class="qt-row">
-              <div>
-                <div class="qt-row-label">Arab</div>
-                <div class="qt-row-sub">Tampilkan teks Arab</div>
-              </div>
-              <div class="toggle on"></div>
-            </div>
-
-            <div class="qt-row">
-              <div>
-                <div class="qt-row-label">Transliterasi</div>
-                <div class="qt-row-sub">Tampilkan latin</div>
-              </div>
-              <div class="toggle on"></div>
-            </div>
-
-            <div class="qt-row">
-              <div style="display:flex; align-items:center;">
-                <div class="qt-row-label">Terjemahan</div>
-                <span class="qt-badge">ID</span>
-              </div>
-              <div class="toggle off"></div>
-            </div>
-
-            <div class="qt-row">
-              <div>
-                <div class="qt-row-label">Per Kata</div>
-                <div class="qt-row-sub">Sorot kata saat audio</div>
-              </div>
-              <div class="toggle off"></div>
-            </div>
-
-            <div class="qt-section-label">Pengaturan Font</div>
-
-            <div class="qt-font-row">
-              <div class="qt-row-label">Font Arab</div>
-              <div class="qt-font-val">
-                Uthmani
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="#51C878" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </div>
-            </div>
-
-            <div class="qt-slider-row">
-              <div class="qt-slider-label">
-                <span>Ukuran Font Arab</span>
-                <span class="qt-slider-val">22</span>
-              </div>
-              <div class="slider-track">
-                <div class="slider-fill" style="width:55%;"></div>
-                <div class="slider-thumb" style="left:calc(55% - 9px);"></div>
-              </div>
-            </div>
-
-            <div class="qt-slider-row" style="border-bottom:none;">
-              <div class="qt-slider-label">
-                <span>Ukuran Font Terjemahan</span>
-                <span class="qt-slider-val">14</span>
-              </div>
-              <div class="slider-track">
-                <div class="slider-fill" style="width:35%;"></div>
-                <div class="slider-thumb" style="left:calc(35% - 9px);"></div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-      </div>
-
     </div>
   </div>
-</div>
 
 
-<!-- ══════════════════════════════ SCREEN 3: AUDIO SELECTION -->
-<div class="phone-wrap">
-  <div class="screen-label">Screen 3 — Pusat Pilihan Audio</div>
-  <div class="phone">
-    <div class="screen" style="position:relative; background:#fff;">
+  <!-- ═══════════════════════════════ SCREEN 3: AUDIO SELECTION ═════ -->
+  <div class="phone-wrap">
+    <div class="screen-label">Screen 3 — Pusat Pilihan Audio</div>
+    <div class="phone">
+      <div class="screen" style="position:relative; overflow:hidden;">
 
-      <div class="notch-bar" style="background:#51C878;">
-        <span class="status-time">9:41</span>
-        <div class="status-icons">
-          <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="8" width="3" height="4" rx="1" fill="#fff"/><rect x="4.5" y="5" width="3" height="7" rx="1" fill="#fff"/><rect x="9" y="2" width="3" height="10" rx="1" fill="#fff"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="#fff" opacity="0.4"/></svg>
-          <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 10.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" fill="#fff"/><path d="M4.2 7.3A5.3 5.3 0 018 5.9a5.3 5.3 0 013.8 1.4l1.1-1.1A7 7 0 008 4.2a7 7 0 00-4.9 2l1.1 1.1z" fill="#fff"/><path d="M1.5 4.6A9.5 9.5 0 018 2a9.5 9.5 0 016.5 2.6l1-1A11.1 11.1 0 008 .4 11.1 11.1 0 00.5 3.6l1 1z" fill="#fff"/></svg>
-          <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="#fff" stroke-opacity="0.5"/><rect x="1.5" y="1.5" width="17" height="9" rx="2" fill="#fff"/><path d="M23 4v4a2 2 0 000-4z" fill="#fff" opacity="0.5"/></svg>
-        </div>
-      </div>
-
-      <!-- Dimmed reader background -->
-      <div style="position:relative; height:858px; overflow:hidden;">
-        <div style="filter:blur(1px); opacity:0.3; pointer-events:none;">
-          <div class="app-bar">
-            <div class="back-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          </div>
-          <div class="chapter-header" style="padding-bottom:8px;">
-            <div class="chapter-header-title" style="font-size:20px;">Al-Fatihah</div>
-            <div class="chapter-header-sub">Mekah • 7 Ayat</div>
-          </div>
-          <div style="background:#51C878; line-height:0;"><div style="background:#fff; border-radius:20px 20px 0 0; height:20px;"></div></div>
-          <div class="shalawat-header">
-            <div class="shalawat-arabic">بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ</div>
-          </div>
-          <div class="verse-list">
-            <div class="verse-item"><span class="arabic-text" style="font-size:18px;">ٱلۡحَمۡدُ لِلَّهِ رَبِّ ٱلۡعَٰلَمِينَ</span></div>
-            <div class="verse-item playing"><span class="arabic-text" style="font-size:18px;">مَٰلِكِ يَوۡمِ ٱلدِّينِ</span></div>
+        <!-- Status Bar -->
+        <div class="status-bar">
+          <span class="status-time">9:41</span>
+          <div class="status-icons">
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+              <rect x="0" y="8" width="3" height="4" rx="1" fill="#111" />
+              <rect x="4.5" y="5" width="3" height="7" rx="1" fill="#111" />
+              <rect x="9" y="2" width="3" height="10" rx="1" fill="#111" />
+              <rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="#111" opacity="0.3" />
+            </svg>
+            <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+              <rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="#111" stroke-opacity="0.3" />
+              <rect x="1.5" y="1.5" width="17" height="9" rx="2" fill="#111" />
+              <path d="M23 4v4a2 2 0 000-4z" fill="#111" opacity="0.4" />
+            </svg>
           </div>
         </div>
 
-        <!-- Dark overlay -->
-        <div style="position:absolute; inset:0; background:rgba(0,0,0,0.4); z-index:10;"></div>
-
-        <!-- Audio Selection Bottom Sheet -->
-        <div style="position:absolute; bottom:0; left:0; right:0; background:#fff; border-radius:24px 24px 0 0; z-index:11; padding:0 0 24px;">
-
-          <div style="width:36px; height:4px; background:#E8EAE9; border-radius:2px; margin:12px auto 20px;"></div>
-
-          <div style="padding:0 20px;">
-            <div style="font-size:19px; font-weight:700; color:#1C1B1F;">Pusat Pilihan Audio</div>
-            <div style="font-size:13px; color:#79747E; margin-top:4px;">Pilih bacaan untuk Al-Fatihah – Ayat 1</div>
-
-            <div style="font-size:10px; font-weight:700; color:#51C878; letter-spacing:0.8px; text-transform:uppercase; margin-top:20px; margin-bottom:10px;">Pilih Pimpinan Hadi</div>
-            <div style="display:flex; gap:10px; margin-bottom:20px;">
-              <div style="flex:1; border:1.5px solid #51C878; background:#F0FAF4; border-radius:12px; padding:12px 8px; display:flex; flex-direction:column; align-items:center; gap:8px;">
-                <div style="width:44px; height:44px; border-radius:50%; background:#C8E6C9; color:#2E7D32; font-size:16px; font-weight:700; display:flex; align-items:center; justify-content:center;">G</div>
-                <div style="font-size:11px; font-weight:600; color:#1C1B1F; text-align:center;">Gus Hadi</div>
-              </div>
-              <div style="flex:1; border:1.5px solid #E8EAE9; border-radius:12px; padding:12px 8px; display:flex; flex-direction:column; align-items:center; gap:8px;">
-                <div style="width:44px; height:44px; border-radius:50%; background:#E8EAE9; color:#79747E; font-size:16px; font-weight:700; display:flex; align-items:center; justify-content:center;">A</div>
-                <div style="font-size:11px; font-weight:600; color:#1C1B1F; text-align:center;">Ahmad Hadi</div>
-              </div>
-              <div style="flex:1; border:1.5px solid #E8EAE9; border-radius:12px; padding:12px 8px; display:flex; flex-direction:column; align-items:center; gap:8px;">
-                <div style="width:44px; height:44px; border-radius:50%; background:#E8EAE9; color:#79747E; font-size:16px; font-weight:700; display:flex; align-items:center; justify-content:center;">B</div>
-                <div style="font-size:11px; font-weight:600; color:#1C1B1F; text-align:center;">Budi Hadi</div>
-              </div>
+        <div style="position:relative; height:860px; overflow:hidden;">
+          <!-- Dimmed reader background -->
+          <div style="filter:blur(1px); opacity:0.25; pointer-events:none;">
+            <div class="app-bar">
+              <div class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path d="M15 18l-6-6 6-6" stroke="#111" stroke-width="2.2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg></div>
+              <div class="app-bar-title">الاِبْتِدَاء</div>
+              <div class="icon-btn"></div>
             </div>
-
-            <div style="font-size:10px; font-weight:700; color:#51C878; letter-spacing:0.8px; text-transform:uppercase; margin-bottom:10px;">Recitation Style</div>
-            <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px;">
-              <div style="height:32px; padding:0 16px; border-radius:100px; background:#51C878; color:#fff; font-size:12px; font-weight:600; display:flex; align-items:center;">Joz</div>
-              <div style="height:32px; padding:0 16px; border-radius:100px; background:#fff; color:#51C878; border:1.5px solid #C8E6C9; font-size:12px; font-weight:600; display:flex; align-items:center;">Yahum</div>
-              <div style="height:32px; padding:0 16px; border-radius:100px; background:#fff; color:#51C878; border:1.5px solid #C8E6C9; font-size:12px; font-weight:600; display:flex; align-items:center;">Terem</div>
-              <div style="height:32px; padding:0 16px; border-radius:100px; background:#fff; color:#51C878; border:1.5px solid #C8E6C9; font-size:12px; font-weight:600; display:flex; align-items:center;">Inat</div>
-              <div style="height:32px; padding:0 16px; border-radius:100px; background:#fff; color:#51C878; border:1.5px solid #C8E6C9; font-size:12px; font-weight:600; display:flex; align-items:center;">Rojazz</div>
+            <div style="padding:16px 20px 0;">
+              <div
+                style="font-family:serif;font-size:40px;font-weight:900;direction:rtl;text-align:right;color:#111;text-shadow:3px 3px 0 #CAFF00;margin-bottom:6px;">
+                الاِبْتِدَاء</div>
+              <div style="font-size:12px;color:#777;margin-bottom:14px;">Ibtida — Pembukaan</div>
+            </div>
+            <div class="verse-card">
+              <span class="arabic-text" style="font-size:18px;">صَلَّى اللَّهُ عَلَى مُحَمَّدٍ</span>
+            </div>
+            <div class="verse-card playing">
+              <span class="arabic-text" style="font-size:18px;">صَلَاةً دَائِمَةً تَدُومُ</span>
             </div>
           </div>
 
-          <div style="margin:20px 20px 0; background:#51C878; color:#fff; height:50px; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px; font-size:15px; font-weight:700; box-shadow:0 4px 16px rgba(81,200,120,0.4);">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M8 5.5v13L19 12 8 5.5z" fill="#fff"/></svg>
-            Putar
+          <!-- Dark overlay -->
+          <div style="position:absolute; inset:0; background:rgba(0,0,0,0.4); z-index:10;"></div>
+
+          <!-- Audio Selection Bottom Sheet -->
+          <div
+            style="position:absolute; bottom:0; left:0; right:0; background:var(--clr-surface); border-radius:28px 28px 0 0; z-index:11; padding:0 0 28px;">
+
+            <!-- Drag handle -->
+            <div
+              style="width:36px; height:4px; background:var(--clr-border); border-radius:2px; margin:12px auto 20px;">
+            </div>
+
+            <div style="padding:0 20px;">
+              <div style="font-size:19px; font-weight:900; color:var(--clr-dark); letter-spacing:-0.4px;">Pusat Pilihan
+                Audio</div>
+              <div style="font-size:13px; color:var(--clr-muted); margin-top:4px; font-weight:500;">Pilih bacaan untuk
+                Ibtida – Bait 1</div>
+
+              <!-- Pilih Hadi -->
+              <div
+                style="font-size:10px; font-weight:800; color:var(--clr-muted); letter-spacing:0.6px; text-transform:uppercase; margin-top:20px; margin-bottom:10px;">
+                Pilih Pimpinan Hadi</div>
+              <div style="display:flex; gap:10px; margin-bottom:20px;">
+                <!-- active -->
+                <div
+                  style="flex:1; border:2px solid var(--clr-dark); background:var(--clr-bg); border-radius:14px; padding:12px 8px; display:flex; flex-direction:column; align-items:center; gap:8px;">
+                  <div
+                    style="width:44px; height:44px; border-radius:50%; background:var(--clr-primary); color:var(--clr-dark); font-size:16px; font-weight:900; display:flex; align-items:center; justify-content:center;">
+                    G</div>
+                  <div style="font-size:11px; font-weight:700; color:var(--clr-dark); text-align:center;">Gus Hadi</div>
+                </div>
+                <!-- inactive -->
+                <div
+                  style="flex:1; border:1.5px solid var(--clr-border); border-radius:14px; padding:12px 8px; display:flex; flex-direction:column; align-items:center; gap:8px;">
+                  <div
+                    style="width:44px; height:44px; border-radius:50%; background:var(--clr-bg-alt); color:var(--clr-muted); font-size:16px; font-weight:700; display:flex; align-items:center; justify-content:center;">
+                    A</div>
+                  <div style="font-size:11px; font-weight:700; color:var(--clr-muted); text-align:center;">Ahmad Hadi
+                  </div>
+                </div>
+                <div
+                  style="flex:1; border:1.5px solid var(--clr-border); border-radius:14px; padding:12px 8px; display:flex; flex-direction:column; align-items:center; gap:8px;">
+                  <div
+                    style="width:44px; height:44px; border-radius:50%; background:var(--clr-bg-alt); color:var(--clr-muted); font-size:16px; font-weight:700; display:flex; align-items:center; justify-content:center;">
+                    B</div>
+                  <div style="font-size:11px; font-weight:700; color:var(--clr-muted); text-align:center;">Budi Hadi
+                  </div>
+                </div>
+              </div>
+
+              <!-- Gaya Bacaan -->
+              <div
+                style="font-size:10px; font-weight:800; color:var(--clr-muted); letter-spacing:0.6px; text-transform:uppercase; margin-bottom:10px;">
+                Gaya Bacaan</div>
+              <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px;">
+                <div
+                  style="height:32px; padding:0 16px; border-radius:100px; background:var(--clr-dark); color:#fff; font-size:12px; font-weight:700; display:flex; align-items:center;">
+                  Joz</div>
+                <div
+                  style="height:32px; padding:0 16px; border-radius:100px; background:transparent; color:var(--clr-muted); border:1.5px solid var(--clr-border-dark); font-size:12px; font-weight:700; display:flex; align-items:center;">
+                  Yahum</div>
+                <div
+                  style="height:32px; padding:0 16px; border-radius:100px; background:transparent; color:var(--clr-muted); border:1.5px solid var(--clr-border-dark); font-size:12px; font-weight:700; display:flex; align-items:center;">
+                  Terem</div>
+                <div
+                  style="height:32px; padding:0 16px; border-radius:100px; background:transparent; color:var(--clr-muted); border:1.5px solid var(--clr-border-dark); font-size:12px; font-weight:700; display:flex; align-items:center;">
+                  Inat</div>
+                <div
+                  style="height:32px; padding:0 16px; border-radius:100px; background:transparent; color:var(--clr-muted); border:1.5px solid var(--clr-border-dark); font-size:12px; font-weight:700; display:flex; align-items:center;">
+                  Rojazz</div>
+              </div>
+            </div>
+
+            <!-- Play CTA Button -->
+            <div
+              style="margin:0 20px; background:var(--clr-dark); color:var(--clr-primary); height:52px; border-radius:var(--radius-pill); display:flex; align-items:center; justify-content:center; gap:8px; font-size:15px; font-weight:800; letter-spacing:-0.2px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M8 5.5v13L19 12 8 5.5z" fill="#CAFF00" />
+              </svg>
+              Putar
+            </div>
+
           </div>
-
         </div>
-      </div>
 
+      </div>
     </div>
   </div>
-</div>
 
 </body>
+
 </html>

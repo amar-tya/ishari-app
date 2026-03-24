@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:ishari/features/home/domain/entities/chapter_entity.dart';
 import 'package:ishari/features/home/presentation/widgets/chapter_card.dart';
@@ -18,9 +16,8 @@ class ChapterMasonryGrid extends StatelessWidget {
   final List<ChapterEntity> chapters;
   final void Function(ChapterEntity)? onChapterTap;
 
-  // Card glass tints cycling through the list
-  static const _tints = [
-    Color(0xFF22C55E), // green
+  static const _accents = [
+    Color(0xFF10B981), // emerald
     Color(0xFF6366F1), // indigo
     Color(0xFFA855F7), // violet
     Color(0xFFFBBF24), // amber
@@ -28,7 +25,7 @@ class ChapterMasonryGrid extends StatelessWidget {
     Color(0xFF38BDF8), // sky
   ];
 
-  Color _tint(int index) => _tints[index % _tints.length];
+  Color _accent(int index) => _accents[index % _accents.length];
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +75,7 @@ class ChapterMasonryGrid extends StatelessWidget {
           Expanded(
             child: ChapterCard(
               chapter: tall,
-              glassColor: _tint(0),
+              accentColor: _accent(0),
               isTall: true,
               onTap: () => onChapterTap?.call(tall),
             ),
@@ -92,7 +89,7 @@ class ChapterMasonryGrid extends StatelessWidget {
                   Expanded(
                     child: ChapterCard(
                       chapter: topRight,
-                      glassColor: _tint(1),
+                      accentColor: _accent(1),
                       onTap: () => onChapterTap?.call(topRight),
                     ),
                   ),
@@ -102,7 +99,7 @@ class ChapterMasonryGrid extends StatelessWidget {
                   Expanded(
                     child: ChapterCard(
                       chapter: botRight,
-                      glassColor: _tint(2),
+                      accentColor: _accent(2),
                       onTap: () => onChapterTap?.call(botRight),
                     ),
                   ),
@@ -127,7 +124,7 @@ class ChapterMasonryGrid extends StatelessWidget {
           Expanded(
             child: ChapterCard(
               chapter: left,
-              glassColor: _tint(li),
+              accentColor: _accent(li),
               onTap: () => onChapterTap?.call(left),
             ),
           ),
@@ -136,7 +133,7 @@ class ChapterMasonryGrid extends StatelessWidget {
             Expanded(
               child: ChapterCard(
                 chapter: right,
-                glassColor: _tint(ri),
+                accentColor: _accent(ri),
                 onTap: () => onChapterTap?.call(right),
               ),
             ),

@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:ishari/core/app_state.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ishari/features/auth/presentation/pages/home_page.dart';
 import 'package:ishari/features/introduction/presentation/pages/introduction_page.dart';
-import 'package:ishari/features/splash/presentation/widgets/book_logo_painter.dart';
-import 'package:ishari/features/splash/presentation/widgets/loading_dots.dart';
+import 'package:ishari/features/splash/presentation/widgets/loading_bar.dart';
 
-const _primary = Color(0xFF51C878);
-const _primaryDark = Color(0xFF3DA85F);
-const _onSurface = Color(0xFF1C1B1F);
-const _hint = Color(0xFF79747E);
+const _bg = Color(0xFFF0F5EE);
+const _dark = Color(0xFF111111);
+const _muted = Color(0xFF777777);
 
 /// Splash screen shown on app launch while [AuthBloc] resolves auth status.
 ///
@@ -68,96 +65,59 @@ class _SplashPageState extends State<SplashPage> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) => _tryNavigate(),
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: _bg,
         body: Stack(
           children: [
-            // Decorative radial gradient circles
-            const Positioned(
-              top: -80,
-              right: -80,
-              child: _BgCircle(size: 320, opacity: 0.08),
-            ),
-            const Positioned(
-              bottom: -60,
-              left: -60,
-              child: _BgCircle(size: 280, opacity: 0.06),
-            ),
-
-            // Top accent bar
+            // Dot grid decoration — bottom right
             Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                height: 4,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [_primary, _primaryDark],
-                  ),
-                ),
-              ),
+              bottom: 120,
+              right: 24,
+              child: _DotGrid(),
             ),
 
-            // Center: logo + name + tagline
-            Center(
+            // Center: wordmark + tagline
+            const Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const BookLogoWidget(),
-                  const SizedBox(height: 32),
-                  RichText(
-                    text: TextSpan(
+                  IntrinsicWidth(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        TextSpan(
-                          text: 'ISHA',
-                          style: GoogleFonts.poppins(
-                            fontSize: 40,
-                            fontWeight: FontWeight.w800,
-                            color: _onSurface,
-                            letterSpacing: 8,
-                          ),
-                        ),
-                        TextSpan(
-                          text: 'RI',
-                          style: GoogleFonts.poppins(
-                            fontSize: 40,
-                            fontWeight: FontWeight.w800,
-                            color: _primary,
-                            letterSpacing: 8,
+                        const Text(
+                          'ISHARI',
+                          style: TextStyle(
+                            fontFamily: 'DM Sans',
+                            fontSize: 58,
+                            fontWeight: FontWeight.w900,
+                            color: _dark,
+                            letterSpacing: -2,
+                            height: 1,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  Container(
-                    width: 40,
-                    height: 2,
-                    decoration: BoxDecoration(
-                      color: _primary.withValues(alpha: 0.5),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
                   const Text(
-                    'membaca dan mendengarkan shalawat ISHARI',
+                    'Membaca & Mendengarkan shalawat',
                     style: TextStyle(
-                      fontSize: 12,
-                      color: _hint,
-                      letterSpacing: 0.3,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: _muted,
+                      letterSpacing: 1,
                     ),
-                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
             ),
 
-            // Bottom loading dots
+            // Bottom loading bar
             const Positioned(
-              bottom: 48,
+              bottom: 56,
               left: 0,
               right: 0,
-              child: Center(child: LoadingDotsWidget()),
+              child: Center(child: LoadingBarWidget()),
             ),
           ],
         ),
@@ -166,27 +126,36 @@ class _SplashPageState extends State<SplashPage> {
   }
 }
 
-class _BgCircle extends StatelessWidget {
-  const _BgCircle({required this.size, required this.opacity});
-
-  final double size;
-  final double opacity;
-
+class _DotGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: RadialGradient(
-          colors: [
-            _primary.withValues(alpha: opacity),
-            Colors.transparent,
-          ],
-          stops: const [0, 0.7],
-        ),
-      ),
+    const dotColor = Color(0xFF111111);
+    const dotSize = 5.0;
+    const gap = 5.0;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(3, (_) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: gap),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: List.generate(4, (col) {
+              return Padding(
+                padding: EdgeInsets.only(right: col < 3 ? gap : 0),
+                child: Container(
+                  width: dotSize,
+                  height: dotSize,
+                  decoration: BoxDecoration(
+                    color: dotColor.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              );
+            }),
+          ),
+        );
+      }),
     );
   }
 }

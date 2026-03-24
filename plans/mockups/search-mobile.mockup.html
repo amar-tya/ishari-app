@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ishari App — Homepage Mockup</title>
+  <title>Ishari App — Search Mockup</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;0,9..40,900;1,9..40,400&display=swap');
 
@@ -141,114 +141,66 @@
       display: none;
     }
 
-    /* ── Header ──────────────────────────────────────────────── */
-    .header {
+    /* ── Search Header ───────────────────────────────────────── */
+    .search-header {
       padding: 16px 20px 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
     }
 
-    .header-user {
+    .search-title {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--clr-dark);
+      letter-spacing: -0.5px;
+      margin-bottom: 14px;
+    }
+
+    /* ── Search Input ────────────────────────────────────────── */
+    .search-bar {
       display: flex;
       align-items: center;
       gap: 10px;
-    }
-
-    .avatar-circle {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: var(--clr-primary);
-      color: var(--clr-dark);
-      font-size: 14px;
-      font-weight: 900;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .user-greeting {
-      font-size: 10px;
-      color: var(--clr-muted);
-      font-weight: 500;
-      margin-bottom: 1px;
-    }
-
-    .user-name {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--clr-dark);
-      letter-spacing: -0.2px;
-    }
-
-    .bell-btn {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
       background: var(--clr-surface);
+      border-radius: var(--radius-pill);
       border: 1.5px solid var(--clr-border);
+      padding: 0 16px;
+      height: 46px;
+      box-shadow: var(--shadow-xs);
+    }
+
+    .search-bar-focused {
+      border-color: var(--clr-dark);
+    }
+
+    .search-icon {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-input-text {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--clr-dark);
+      font-family: var(--font);
+    }
+
+    .search-input-placeholder {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--clr-muted-light);
+      font-family: var(--font);
+    }
+
+    .clear-btn {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--clr-muted-light);
       display: flex;
       align-items: center;
       justify-content: center;
-      position: relative;
-    }
-
-    .bell-dot {
-      position: absolute;
-      top: 7px;
-      right: 7px;
-      width: 6px;
-      height: 6px;
-      background: var(--clr-error);
-      border-radius: 50%;
-      border: 1.5px solid var(--clr-bg);
-    }
-
-    /* ── Hero Headline ───────────────────────────────────────── */
-    .hero {
-      padding: 18px 20px 0;
-    }
-
-    .qs-label {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--clr-muted);
-      letter-spacing: 0.4px;
-      margin-bottom: 6px;
-    }
-
-    .headline {
-      font-size: 26px;
-      font-weight: 900;
-      color: var(--clr-dark);
-      letter-spacing: -0.6px;
-      line-height: 1.2;
-    }
-
-    .headline-badge {
-      background: var(--clr-primary);
-      border-radius: 6px;
-      padding: 0 5px;
-      display: inline;
-    }
-    .headline-word {
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-      background: var(--clr-dark);
-      color: #fff;
-      border-radius: 8px;
-      padding: 1px 8px 2px;
-      font-size: 0.9em;
-      vertical-align: middle;
-      position: relative;
-      top: -1px;
-    }
-    .headline-word-dot {
-      width: 5px; height: 5px;
-      border-radius: 50%;
-      background: var(--clr-primary);
       flex-shrink: 0;
     }
 
@@ -304,19 +256,26 @@
       letter-spacing: -0.3px;
     }
 
-    .see-all {
+    .result-count {
       font-size: 12px;
       font-weight: 600;
       color: var(--clr-muted);
     }
 
-    /* ── Chapter Event Card ──────────────────────────────────── */
+    /* ── Masonry grid ────────────────────────────────────────── */
+    .masonry {
+      columns: 2;
+      column-gap: 10px;
+      padding: 0 16px 0;
+    }
+
     .ecard {
-      margin: 0 16px 10px;
+      margin: 0 0 10px;
       background: var(--clr-surface);
       border-radius: 18px;
       padding: 14px;
       box-shadow: var(--shadow-xs);
+      break-inside: avoid;
     }
 
     .ecard-src {
@@ -343,7 +302,6 @@
       justify-content: space-between;
     }
 
-    /* arrow button */
     .arrow-btn {
       width: 34px;
       height: 34px;
@@ -353,20 +311,10 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-shrink: 0;
     }
 
-    /* ── Masonry grid ────────────────────────────────────────── */
-    .masonry {
-      columns: 2;
-      column-gap: 10px;
-      padding: 14px 16px 0;
-    }
-    .masonry .ecard {
-      margin: 0 0 10px;
-      break-inside: avoid;
-    }
-
-    /* ── Chapter Card (redesigned) ──────────────────────────── */
+    /* ── Chapter Card styles ─────────────────────────────────── */
     .ecard-arabic {
       font-family: 'Noto Naskh Arabic', 'Noto Sans Arabic', 'Traditional Arabic', serif;
       font-size: 48px;
@@ -377,12 +325,17 @@
       line-height: 1.15;
       letter-spacing: -1px;
       margin: 8px 0 6px;
-      /* graffiti feel: slight paint-stroke shadow */
       text-shadow: 3px 3px 0px var(--clr-primary), 6px 6px 0px rgba(202,255,0,0.18);
     }
+
     .ecard-arabic-sm {
       font-size: 36px;
     }
+
+    .ecard-arabic-xs {
+      font-size: 28px;
+    }
+
     .ecard-latin {
       font-size: 11px;
       font-weight: 700;
@@ -391,6 +344,7 @@
       margin-bottom: 10px;
       line-height: 1.4;
     }
+
     .ecard-num {
       display: inline-flex;
       align-items: center;
@@ -406,11 +360,105 @@
       margin-bottom: 4px;
     }
 
+    /* ── Highlight match ─────────────────────────────────────── */
+    .highlight {
+      background: var(--clr-primary);
+      border-radius: 3px;
+      padding: 0 2px;
+    }
+
+    /* ── Empty / Idle state ──────────────────────────────────── */
+    .idle-state {
+      padding: 32px 20px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      text-align: center;
+    }
+
+    .idle-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--clr-surface);
+      border: 1.5px solid var(--clr-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 4px;
+    }
+
+    .idle-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--clr-dark);
+      letter-spacing: -0.3px;
+    }
+
+    .idle-sub {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--clr-muted);
+      line-height: 1.5;
+      max-width: 220px;
+    }
+
+    /* ── Recent Searches ─────────────────────────────────────── */
+    .recent-list {
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .recent-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--clr-border);
+    }
+
+    .recent-item:last-child {
+      border-bottom: none;
+    }
+
+    .recent-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .recent-text {
+      flex: 1;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--clr-dark);
+    }
+
+    .recent-sub {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--clr-muted);
+    }
+
+    .recent-arrow {
+      color: var(--clr-muted-light);
+    }
+
     /* ── Floating Bottom Nav ─────────────────────────────────── */
     .nav-wrap {
       background: var(--clr-bg);
       padding: 8px 16px 16px;
     }
+
     .bottom-nav {
       background: var(--clr-surface);
       border-radius: var(--radius-pill);
@@ -420,6 +468,7 @@
       padding: 0 6px;
       box-shadow: 0 8px 32px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.06);
     }
+
     .nav-item {
       flex: 1;
       display: flex;
@@ -431,22 +480,27 @@
       border-radius: var(--radius-pill);
       transition: all 120ms ease;
     }
+
     .nav-active {
       background: var(--clr-primary);
       flex: 1.6;
     }
+
     .nav-label {
       font-size: 11px;
       font-weight: 800;
       letter-spacing: -0.2px;
       white-space: nowrap;
     }
+
     .nav-active .nav-label {
       color: var(--clr-dark);
     }
+
     .nav-inactive .nav-label {
       display: none;
     }
+
     .home-indicator {
       background: var(--clr-bg);
       height: 20px;
@@ -455,6 +509,7 @@
       justify-content: center;
       padding-bottom: 4px;
     }
+
     .home-bar {
       width: 100px;
       height: 4px;
@@ -491,43 +546,42 @@
       <!-- SCROLL AREA -->
       <div class="scroll-area">
 
-        <!-- HEADER -->
-        <div class="header">
-          <div class="header-user">
-            <div class="avatar-circle">A</div>
-            <div>
-              <div class="user-greeting">Selamat Datang 👋</div>
-              <div class="user-name">Ahmad Jamil</div>
-            </div>
-          </div>
-          <div class="bell-btn">
-            <div class="bell-dot"></div>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M12 22a2 2 0 001.995-1.85L14 20h-4a2 2 0 001.85 1.995L12 22zm7-5H5l1-1V11a6 6 0 014.033-5.667 2 2 0 013.934 0A6 6 0 0118 11v5l1 1z"
-                fill="#555" />
-            </svg>
-          </div>
-        </div>
+        <!-- SEARCH HEADER -->
+        <div class="search-header">
 
-        <!-- HERO -->
-        <div class="hero">
-          <div class="qs-label">QS Al-Ahzab: 56</div>
-          <div class="headline">
-            Sesungguhnya <span class="headline-word"><span class="headline-word-dot"></span>Allah</span> dan para <span class="headline-word"><span class="headline-word-dot"></span>malaikat-Nya</span> bershalawat untuk Nabi.
+          <!-- Search Input (active / with query) -->
+          <div class="search-bar search-bar-focused">
+            <div class="search-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <circle cx="11" cy="11" r="8" stroke="#111" stroke-width="2" fill="none"/>
+                <path d="M21 21l-4.35-4.35" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="search-input-text">shalawat</div>
+            <div class="clear-btn">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                <path d="M2 2l6 6M8 2l-6 6" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </div>
           </div>
         </div>
 
         <!-- CATEGORY CHIPS -->
         <div class="chips-scroll">
-          <div class="chip chip-active">Diwan</div>
+          <div class="chip chip-active">Semua</div>
+          <div class="chip chip-inactive">Diwan</div>
           <div class="chip chip-inactive">Diba</div>
           <div class="chip chip-inactive">Muradah</div>
           <div class="chip chip-inactive">Rowi</div>
-          <div class="chip chip-inactive">Syaraful Anam</div>
         </div>
 
-        <!-- CHAPTER CARDS — MASONRY -->
+        <!-- RESULT SECTION HEADER -->
+        <div class="section-header">
+          <div class="section-title">Hasil Pencarian</div>
+          <div class="result-count">12 bab ditemukan</div>
+        </div>
+
+        <!-- MASONRY RESULT CARDS -->
         <div class="masonry">
 
           <!-- CARD 1 -->
@@ -590,6 +644,36 @@
             </div>
           </div>
 
+          <!-- CARD 5 -->
+          <div class="ecard">
+            <div class="ecard-num">05</div>
+            <div class="ecard-arabic ecard-arabic-xs">التَّهْلِيل</div>
+            <div class="ecard-latin">Tahlil — Pujian</div>
+            <div class="ecard-footer">
+              <div class="ecard-src"><span>Diba · 9 bait</span></div>
+              <div class="arrow-btn">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                  <path d="M9 18l6-6-6-6" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 6 (dark accent) -->
+          <div class="ecard" style="background:var(--clr-dark-2);">
+            <div class="ecard-num" style="background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.12);color:rgba(255,255,255,0.5);">06</div>
+            <div class="ecard-arabic ecard-arabic-sm" style="color:#CAFF00;text-shadow:3px 3px 0 rgba(202,255,0,0.2);">الخِتَام</div>
+            <div class="ecard-latin" style="color:rgba(255,255,255,0.45);">Khitam — Penutup</div>
+            <div class="ecard-footer">
+              <div class="ecard-src" style="color:rgba(255,255,255,0.35);"><span>Muradah · 6 bait</span></div>
+              <div class="arrow-btn" style="background:var(--clr-primary);">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                  <path d="M9 18l6-6-6-6" stroke="#111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
         </div><!-- /masonry -->
 
         <div style="height: 20px;"></div>
@@ -599,19 +683,19 @@
       <div class="nav-wrap">
         <div class="bottom-nav">
 
-          <!-- BERANDA (active) -->
-          <div class="nav-item nav-active">
+          <!-- BERANDA -->
+          <div class="nav-item nav-inactive">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-              <path d="M3 12L12 4l9 8v9a1 1 0 01-1 1h-5v-5h-6v5H4a1 1 0 01-1-1v-9z" fill="#111"/>
+              <path d="M3 12L12 4l9 8v9a1 1 0 01-1 1h-5v-5h-6v5H4a1 1 0 01-1-1v-9z" stroke="#AAAAAA" stroke-width="2" fill="none" stroke-linejoin="round"/>
             </svg>
             <span class="nav-label">Beranda</span>
           </div>
 
-          <!-- CARI -->
-          <div class="nav-item nav-inactive">
+          <!-- CARI (active) -->
+          <div class="nav-item nav-active">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <circle cx="11" cy="11" r="8" stroke="#AAAAAA" stroke-width="2" fill="none"/>
-              <path d="M21 21l-4.35-4.35" stroke="#AAAAAA" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="11" cy="11" r="8" stroke="#111" stroke-width="2" fill="none"/>
+              <path d="M21 21l-4.35-4.35" stroke="#111" stroke-width="2" stroke-linecap="round"/>
             </svg>
             <span class="nav-label">Cari</span>
           </div>

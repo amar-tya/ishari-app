@@ -17,9 +17,7 @@ class NightModeIllustration extends StatelessWidget {
 class _NightModePainter extends CustomPainter {
   static const _primary = Color(0xFF51C878);
   static const _primaryDark = Color(0xFF3DAF5E);
-  static const _primaryContainer = Color(0xFFE8F8EE);
   static const _yellow = Color(0xFFFFD54F);
-  static const _teal = Color(0xFFB2DFDB);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -40,15 +38,14 @@ class _NightModePainter extends CustomPainter {
     );
 
     // Background medallion
-    c.drawCircle(const Offset(140, 108), 82, Paint()..color = _primaryContainer);
-    c.drawCircle(
-      const Offset(140, 108),
-      82,
-      Paint()
-        ..color = const Color(0xFFC8F0D6)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2,
-    );
+    // c.drawCircle(
+    //   const Offset(140, 108),
+    //   82,
+    //   Paint()
+    //     ..color = const Color(0xFFC8F0D6)
+    //     ..style = PaintingStyle.stroke
+    //     ..strokeWidth = 2,
+    // );
     _dashedCircle(c, 140, 108, 66, const Color(0xFFC8F0D6), 1.5, 5, 4);
 
     // Moon (crescent) — large circle minus smaller offset circle
@@ -67,8 +64,16 @@ class _NightModePainter extends CustomPainter {
     // Sparkles
     _star4(c, Paint()..color = _yellow, 228, 36, 8);
     _star4(c, Paint()..color = _yellow.withOpacity(0.8), 46, 58, 6);
-    c.drawCircle(const Offset(50, 158), 5, Paint()..color = const Color(0xFFFF8A65).withOpacity(0.65));
-    c.drawCircle(const Offset(242, 80), 4, Paint()..color = const Color(0xFF64B5F6).withOpacity(0.7));
+    c.drawCircle(
+      const Offset(50, 158),
+      5,
+      Paint()..color = const Color(0xFFFF8A65).withOpacity(0.65),
+    );
+    c.drawCircle(
+      const Offset(242, 80),
+      4,
+      Paint()..color = const Color(0xFF64B5F6).withOpacity(0.7),
+    );
 
     _cross(c, _yellow, 156, 22, 5, 2.2);
     _cross(c, _primary, 34, 126, 6, 2.5);
@@ -81,7 +86,12 @@ class _NightModePainter extends CustomPainter {
     final moonPath = Path()
       ..addOval(Rect.fromCircle(center: Offset(cx, cy), radius: r));
     final maskPath = Path()
-      ..addOval(Rect.fromCircle(center: Offset(cx + offsetX, cy - 10), radius: r * 0.78));
+      ..addOval(
+        Rect.fromCircle(
+          center: Offset(cx + offsetX, cy - 10),
+          radius: r * 0.78,
+        ),
+      );
 
     final combined = Path.combine(PathOperation.difference, moonPath, maskPath);
     c.drawPath(combined, Paint()..color = _primary);
@@ -108,12 +118,18 @@ class _NightModePainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
     c.drawRRect(
-      RRect.fromRectAndRadius(Rect.fromLTWH(x, y, 44, 72), const Radius.circular(8)),
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(x, y, 44, 72),
+        const Radius.circular(8),
+      ),
       paint,
     );
     // Dark screen
     c.drawRRect(
-      RRect.fromRectAndRadius(Rect.fromLTWH(x + 4, y + 10, 36, 52), const Radius.circular(4)),
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(x + 4, y + 10, 36, 52),
+        const Radius.circular(4),
+      ),
       Paint()..color = _primaryDark.withOpacity(0.15),
     );
     // Text lines on screen
@@ -151,12 +167,22 @@ class _NightModePainter extends CustomPainter {
     c.drawLine(Offset(cx - r, cy), Offset(cx + r, cy), paint);
   }
 
-  void _dashedCircle(Canvas c, double cx, double cy, double r, Color color, double sw, double dl, double gl) {
+  void _dashedCircle(
+    Canvas c,
+    double cx,
+    double cy,
+    double r,
+    Color color,
+    double sw,
+    double dl,
+    double gl,
+  ) {
     final paint = Paint()
       ..color = color
       ..style = PaintingStyle.stroke
       ..strokeWidth = sw;
-    final path = Path()..addOval(Rect.fromCircle(center: Offset(cx, cy), radius: r));
+    final path = Path()
+      ..addOval(Rect.fromCircle(center: Offset(cx, cy), radius: r));
     final metrics = path.computeMetrics().first;
     var dist = 0.0;
     final dashed = Path();

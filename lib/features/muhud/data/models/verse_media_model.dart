@@ -15,7 +15,8 @@ String _typeToString(dynamic v) => v.toString();
 abstract class VerseMediaModel with _$VerseMediaModel {
   const factory VerseMediaModel({
     @JsonKey(fromJson: _idToString) required String id,
-    @JsonKey(name: 'verse_id', fromJson: _verseIdToString) required String verseId,
+    @JsonKey(name: 'verse_id', fromJson: _verseIdToString)
+    required String verseId,
     required HadiMediaModel hadi,
     @JsonKey(name: 'media_url') required String mediaUrl,
     @JsonKey(fromJson: _idToString) required String duration,
@@ -29,11 +30,13 @@ abstract class VerseMediaModel with _$VerseMediaModel {
 
   VerseMediaEntity toEntity() {
     try {
-      debugPrint('[VerseMediaModel] Converting to entity - id: $id, verseId: $verseId, duration: $duration, type: $type');
+      debugPrint(
+        '[VerseMediaModel] Converting to entity - id: $id, verseId: $verseId, duration: $duration, type: $type',
+      );
 
       // Handle null or "null" duration by defaulting to 0
-      int parsedDuration = 0;
-      if (duration != null && duration != 'null' && duration.toString().isNotEmpty) {
+      var parsedDuration = 0;
+      if (duration != 'null' && duration.toString().isNotEmpty) {
         parsedDuration = int.parse(duration);
       }
 
@@ -48,8 +51,12 @@ abstract class VerseMediaModel with _$VerseMediaModel {
     } catch (e) {
       debugPrint('[VerseMediaModel] ERROR in toEntity: $e');
       debugPrint('[VerseMediaModel] id=$id (type: ${id.runtimeType})');
-      debugPrint('[VerseMediaModel] verseId=$verseId (type: ${verseId.runtimeType})');
-      debugPrint('[VerseMediaModel] duration=$duration (type: ${duration.runtimeType})');
+      debugPrint(
+        '[VerseMediaModel] verseId=$verseId (type: ${verseId.runtimeType})',
+      );
+      debugPrint(
+        '[VerseMediaModel] duration=$duration (type: ${duration.runtimeType})',
+      );
       debugPrint('[VerseMediaModel] type=$type (type: ${type.runtimeType})');
       rethrow;
     }

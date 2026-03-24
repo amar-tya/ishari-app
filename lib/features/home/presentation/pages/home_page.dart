@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,7 +9,6 @@ import 'package:ishari/features/auth/domain/entities/user_entity.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ishari/features/home/domain/entities/chapter_entity.dart';
 import 'package:ishari/features/home/presentation/bloc/home_bloc.dart';
-import 'package:ishari/features/home/presentation/widgets/bookmark_section.dart';
 import 'package:ishari/features/home/presentation/widgets/category_chips.dart';
 import 'package:ishari/features/home/presentation/widgets/chapter_masonry_grid.dart';
 import 'package:ishari/features/home/presentation/widgets/home_header.dart';
@@ -157,198 +155,89 @@ class _LoadedView extends StatelessWidget {
       body: ScrollConfiguration(
         behavior: const ScrollBehavior().copyWith(overscroll: false),
         child: SafeArea(
-        bottom: false,
-        child: RefreshIndicator(
-          color: const Color(0xFF10B981),
-          onRefresh: () async {
-            context.read<HomeBloc>().add(HomeEvent.refresh(userId: user?.id));
-            await context.read<HomeBloc>().stream.firstWhere(
-              (s) => s.maybeWhen(loading: () => false, orElse: () => true),
-            );
-          },
-          child: CustomScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            slivers: [
-              SliverToBoxAdapter(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 16),
-
-                    // 1. Header: avatar + name + bell
-                    HomeHeader(user: isGuest ? null : user),
-                    const SizedBox(height: 20),
-
-                    // 2. QS Al-Ahzab:56 headline
-                    const HomeHero(),
-                    const SizedBox(height: 14),
-
-                    // 3. Category chips
-                    CategoryChips(selectedCategory: selectedCategory),
-                    const SizedBox(height: 14),
-
-                    // 4. Dark glass section
-                    RepaintBoundary(
-                      child: _GlassSection(
-                        isGuest: isGuest,
+          bottom: false,
+          child: RefreshIndicator(
+            color: const Color(0xFF10B981),
+            onRefresh: () async {
+              context.read<HomeBloc>().add(HomeEvent.refresh(userId: user?.id));
+              await context.read<HomeBloc>().stream.firstWhere(
+                    (s) => s.maybeWhen(loading: () => false, orElse: () => true),
+                  );
+            },
+            child: CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 16),
+                      HomeHeader(user: isGuest ? null : user),
+                      const SizedBox(height: 20),
+                      const HomeHero(),
+                      const SizedBox(height: 16),
+                      CategoryChips(selectedCategory: selectedCategory),
+                      const SizedBox(height: 24),
+                      _SectionHeader(count: chapters.length),
+                      const SizedBox(height: 12),
+                      ChapterMasonryGrid(
                         chapters: chapters,
                         onChapterTap: (chapter) {
                           final id = int.tryParse(chapter.id);
                           if (id != null) unawaited(context.push('/chapter/$id'));
                         },
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Dark glass section: Bookmark widget + Chapter masonry grid
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _GlassSection extends StatelessWidget {
-  const _GlassSection({
-    required this.isGuest,
-    required this.chapters,
-    this.onChapterTap,
-  });
-
-  final bool isGuest;
-  final List<ChapterEntity> chapters;
-  final void Function(ChapterEntity)? onChapterTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-      child: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF071A0F),
-              Color(0xFF0B3321),
-              Color(0xFF071A0F),
-            ],
-            stops: [0.0, 0.55, 1.0],
-          ),
-        ),
-        child: Stack(
-        children: [
-          // Ambient orbs
-          Positioned(
-            top: -40,
-            right: -30,
-            child: _Orb(
-              size: 180,
-              color: const Color(0xFF10B981).withValues(alpha: 0.4),
-            ),
-          ),
-          Positioned(
-            bottom: 120,
-            left: -30,
-            child: _Orb(
-              size: 150,
-              color: const Color(0xFF34D399).withValues(alpha: 0.2),
-            ),
-          ),
-          Positioned(
-            top: 200,
-            right: 10,
-            child: _Orb(
-              size: 120,
-              color: const Color(0xFF065F46).withValues(alpha: 0.55),
-            ),
-          ),
-
-          // Content
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Bookmark section header + widget
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                child: Text(
-                  'Bookmark Saya',
-                  style: GoogleFonts.poppins(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.white,
-                    letterSpacing: -0.3,
+                      const SizedBox(height: 40),
+                    ],
                   ),
                 ),
-              ),
-              const SizedBox(height: 12),
-              BookmarkSection(isGuest: isGuest),
-              const SizedBox(height: 18),
-
-              // Chapter section header
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Chapter Shalawat',
-                      style: GoogleFonts.poppins(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
-                        letterSpacing: -0.3,
-                      ),
-                    ),
-                    Text(
-                      'Lihat Semua',
-                      style: GoogleFonts.poppins(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF4ADE80),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 14),
-
-              // Masonry grid
-              ChapterMasonryGrid(
-                chapters: chapters,
-                onChapterTap: onChapterTap,
-              ),
-              const SizedBox(height: 32),
-            ],
+              ],
+            ),
           ),
-        ],
+        ),
       ),
-    ),
     );
   }
 }
 
-/// Blurred ambient orb for the glass section background.
-class _Orb extends StatelessWidget {
-  const _Orb({required this.size, required this.color});
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader({required this.count});
 
-  final double size;
-  final Color color;
+  final int count;
 
   @override
   Widget build(BuildContext context) {
-    return ImageFiltered(
-      imageFilter: ImageFilter.blur(sigmaX: 52, sigmaY: 52),
-      child: Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(shape: BoxShape.circle, color: color),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            'Chapter Shalawat',
+            style: GoogleFonts.poppins(
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+              color: const Color(0xFF111111),
+              letterSpacing: -0.4,
+            ),
+          ),
+          const Spacer(),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: const Color(0xFF10B981).withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(100),
+            ),
+            child: Text(
+              '$count chapter',
+              style: GoogleFonts.poppins(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF059669),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

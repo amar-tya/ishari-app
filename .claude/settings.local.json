@@ -56,7 +56,8 @@
       "Bash(file:*)",
       "Bash(head:*)",
       "Bash(cmd:*)",
-      "Bash(git:*)"
+      "Bash(git:*)",
+      "Bash(python3:*)"
     ]
   }
 }

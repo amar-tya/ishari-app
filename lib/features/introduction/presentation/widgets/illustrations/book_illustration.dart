@@ -17,7 +17,6 @@ class BookIllustration extends StatelessWidget {
 
 class _BookPainter extends CustomPainter {
   static const _primary = Color(0xFF51C878);
-  static const _primaryDark = Color(0xFF3DAF5E);
   static const _primaryContainer = Color(0xFFE8F8EE);
   static const _teal = Color(0xFFB2DFDB);
   static const _yellow = Color(0xFFFFD54F);
@@ -65,7 +64,12 @@ class _BookPainter extends CustomPainter {
       ..cubicTo(80, 178, 130, 174, 148, 172)
       ..close();
 
-    c.drawPath(path, Paint()..color = Colors.white..style = PaintingStyle.fill);
+    c.drawPath(
+      path,
+      Paint()
+        ..color = Colors.white
+        ..style = PaintingStyle.fill,
+    );
     c.drawPath(
       path,
       Paint()
@@ -82,7 +86,9 @@ class _BookPainter extends CustomPainter {
       ..close();
     c.drawPath(
       shadow,
-      Paint()..color = const Color(0xFFE0F2E9)..style = PaintingStyle.fill,
+      Paint()
+        ..color = const Color(0xFFE0F2E9)
+        ..style = PaintingStyle.fill,
     );
   }
 
@@ -94,7 +100,12 @@ class _BookPainter extends CustomPainter {
       ..cubicTo(220, 178, 170, 174, 152, 172)
       ..close();
 
-    c.drawPath(path, Paint()..color = Colors.white..style = PaintingStyle.fill);
+    c.drawPath(
+      path,
+      Paint()
+        ..color = Colors.white
+        ..style = PaintingStyle.fill,
+    );
     c.drawPath(
       path,
       Paint()
@@ -111,7 +122,9 @@ class _BookPainter extends CustomPainter {
       ..close();
     c.drawPath(
       shadow,
-      Paint()..color = const Color(0xFFE0F2E9)..style = PaintingStyle.fill,
+      Paint()
+        ..color = const Color(0xFFE0F2E9)
+        ..style = PaintingStyle.fill,
     );
   }
 
@@ -155,11 +168,56 @@ class _BookPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     // Line 1
-    _wavyLine(c, greenPaint, [68, 95, 78, 90, 92, 98, 102, 93, 112, 88, 122, 95, 132, 91]);
+    _wavyLine(c, greenPaint, [
+      68,
+      95,
+      78,
+      90,
+      92,
+      98,
+      102,
+      93,
+      112,
+      88,
+      122,
+      95,
+      132,
+      91,
+    ]);
     // Line 2
-    _wavyLine(c, tealPaint, [70, 112, 82, 107, 96, 115, 108, 110, 118, 105, 128, 112, 138, 108]);
+    _wavyLine(c, tealPaint, [
+      70,
+      112,
+      82,
+      107,
+      96,
+      115,
+      108,
+      110,
+      118,
+      105,
+      128,
+      112,
+      138,
+      108,
+    ]);
     // Line 3
-    _wavyLine(c, greenPaint, [68, 129, 80, 124, 94, 132, 106, 127, 116, 122, 127, 129, 136, 126]);
+    _wavyLine(c, greenPaint, [
+      68,
+      129,
+      80,
+      124,
+      94,
+      132,
+      106,
+      127,
+      116,
+      122,
+      127,
+      129,
+      136,
+      126,
+    ]);
     // Line 4
     _shortLine(c, tealPaint, [72, 146, 82, 141, 94, 149, 108, 144]);
 
@@ -181,9 +239,54 @@ class _BookPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
-    _wavyLine(c, greenPaint, [168, 95, 178, 90, 192, 98, 202, 93, 212, 88, 222, 95, 232, 91]);
-    _wavyLine(c, tealPaint, [165, 112, 177, 107, 191, 115, 203, 110, 213, 105, 223, 112, 235, 108]);
-    _wavyLine(c, greenPaint, [168, 129, 180, 124, 194, 132, 206, 127, 216, 122, 227, 129, 234, 126]);
+    _wavyLine(c, greenPaint, [
+      168,
+      95,
+      178,
+      90,
+      192,
+      98,
+      202,
+      93,
+      212,
+      88,
+      222,
+      95,
+      232,
+      91,
+    ]);
+    _wavyLine(c, tealPaint, [
+      165,
+      112,
+      177,
+      107,
+      191,
+      115,
+      203,
+      110,
+      213,
+      105,
+      223,
+      112,
+      235,
+      108,
+    ]);
+    _wavyLine(c, greenPaint, [
+      168,
+      129,
+      180,
+      124,
+      194,
+      132,
+      206,
+      127,
+      216,
+      122,
+      227,
+      129,
+      234,
+      126,
+    ]);
     _shortLine(c, tealPaint, [170, 146, 180, 141, 196, 149, 210, 144]);
 
     _dot(c, 175, 162);
@@ -194,7 +297,9 @@ class _BookPainter extends CustomPainter {
     c.drawCircle(
       const Offset(210, 160),
       12,
-      Paint()..color = _primaryContainer..style = PaintingStyle.fill,
+      Paint()
+        ..color = _primaryContainer
+        ..style = PaintingStyle.fill,
     );
     c.drawCircle(
       const Offset(210, 160),
@@ -228,7 +333,9 @@ class _BookPainter extends CustomPainter {
     c.drawCircle(
       Offset(x, y),
       2.5,
-      Paint()..color = _primaryContainer..style = PaintingStyle.fill,
+      Paint()
+        ..color = _primaryContainer
+        ..style = PaintingStyle.fill,
     );
     c.drawCircle(
       Offset(x, y),
@@ -262,8 +369,9 @@ class _BookPainter extends CustomPainter {
   }
 
   void _drawSparkles(Canvas c) {
-    final yellowPaint = Paint()..color = _yellow..style = PaintingStyle.fill;
-    final greenPaint = Paint()..color = _primary..style = PaintingStyle.fill;
+    final yellowPaint = Paint()
+      ..color = _yellow
+      ..style = PaintingStyle.fill;
     final linePaintYellow = Paint()
       ..color = _yellow
       ..strokeWidth = 2.5
@@ -280,12 +388,38 @@ class _BookPainter extends CustomPainter {
     // Star top-right
     _star4(c, yellowPaint, 268, 44, 6.5);
     // Small star upper-right
-    _star4(c, Paint()..color = _yellow.withOpacity(0.7)..style = PaintingStyle.fill, 256, 80, 5);
+    _star4(
+      c,
+      Paint()
+        ..color = _yellow.withOpacity(0.7)
+        ..style = PaintingStyle.fill,
+      256,
+      80,
+      5,
+    );
 
     // Dot sparkles
-    c.drawCircle(const Offset(44, 82), 4, Paint()..color = _yellow.withOpacity(0.8)..style = PaintingStyle.fill);
-    c.drawCircle(const Offset(260, 108), 3, Paint()..color = _orange.withOpacity(0.7)..style = PaintingStyle.fill);
-    c.drawCircle(const Offset(38, 140), 3, Paint()..color = _blue.withOpacity(0.6)..style = PaintingStyle.fill);
+    c.drawCircle(
+      const Offset(44, 82),
+      4,
+      Paint()
+        ..color = _yellow.withOpacity(0.8)
+        ..style = PaintingStyle.fill,
+    );
+    c.drawCircle(
+      const Offset(260, 108),
+      3,
+      Paint()
+        ..color = _orange.withOpacity(0.7)
+        ..style = PaintingStyle.fill,
+    );
+    c.drawCircle(
+      const Offset(38, 140),
+      3,
+      Paint()
+        ..color = _blue.withOpacity(0.6)
+        ..style = PaintingStyle.fill,
+    );
 
     // Cross sparkle top-center-left
     c.drawLine(const Offset(90, 28), const Offset(90, 38), linePaintYellow);
@@ -327,7 +461,8 @@ class _BookPainter extends CustomPainter {
       ..color = color
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth;
-    final path = Path()..addOval(Rect.fromCircle(center: Offset(cx, cy), radius: r));
+    final path = Path()
+      ..addOval(Rect.fromCircle(center: Offset(cx, cy), radius: r));
     final pathMetrics = path.computeMetrics().first;
     var distance = 0.0;
     final dashPath = Path();
