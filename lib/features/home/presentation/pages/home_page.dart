@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:ishari/core/app_state.dart';
 import 'package:ishari/features/auth/domain/entities/user_entity.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
@@ -14,6 +13,8 @@ import 'package:ishari/features/home/presentation/widgets/chapter_masonry_grid.d
 import 'package:ishari/features/home/presentation/widgets/home_header.dart';
 import 'package:ishari/features/home/presentation/widgets/home_hero.dart';
 import 'package:ishari/injection_container.dart';
+
+const _kBg = Color(0xFFF0F5EE);
 
 /// Beranda tab — provides [HomeBloc] and renders the full homepage layout.
 class HomeTab extends StatelessWidget {
@@ -68,10 +69,13 @@ class _LoadingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      backgroundColor: Color(0xFFF5F5F2),
+      backgroundColor: _kBg,
       body: SafeArea(
         child: Center(
-          child: CircularProgressIndicator(color: Color(0xFF10B981)),
+          child: CircularProgressIndicator(
+            color: Color(0xFF111111),
+            strokeWidth: 2.5,
+          ),
         ),
       ),
     );
@@ -90,7 +94,7 @@ class _ErrorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F2),
+      backgroundColor: _kBg,
       body: SafeArea(
         child: Center(
           child: Padding(
@@ -101,13 +105,13 @@ class _ErrorView extends StatelessWidget {
                 const Icon(
                   Icons.wifi_off_outlined,
                   size: 48,
-                  color: Color(0xFF79747E),
+                  color: Color(0xFF777777),
                 ),
                 const SizedBox(height: 16),
                 Text(
                   message,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: Color(0xFF79747E)),
+                  style: const TextStyle(color: Color(0xFF777777)),
                 ),
                 const SizedBox(height: 24),
                 FilledButton.icon(
@@ -116,7 +120,7 @@ class _ErrorView extends StatelessWidget {
                   icon: const Icon(Icons.refresh),
                   label: const Text('Coba Lagi'),
                   style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFF10B981),
+                    backgroundColor: const Color(0xFF111111),
                   ),
                 ),
               ],
@@ -151,13 +155,13 @@ class _LoadedView extends StatelessWidget {
     );
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F2),
+      backgroundColor: _kBg,
       body: ScrollConfiguration(
         behavior: const ScrollBehavior().copyWith(overscroll: false),
         child: SafeArea(
           bottom: false,
           child: RefreshIndicator(
-            color: const Color(0xFF10B981),
+            color: const Color(0xFF111111),
             onRefresh: () async {
               context.read<HomeBloc>().add(HomeEvent.refresh(userId: user?.id));
               await context.read<HomeBloc>().stream.firstWhere(
@@ -173,13 +177,10 @@ class _LoadedView extends StatelessWidget {
                     children: [
                       const SizedBox(height: 16),
                       HomeHeader(user: isGuest ? null : user),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 18),
                       const HomeHero(),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 14),
                       CategoryChips(selectedCategory: selectedCategory),
-                      const SizedBox(height: 24),
-                      _SectionHeader(count: chapters.length),
-                      const SizedBox(height: 12),
                       ChapterMasonryGrid(
                         chapters: chapters,
                         onChapterTap: (chapter) {
@@ -200,45 +201,3 @@ class _LoadedView extends StatelessWidget {
   }
 }
 
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({required this.count});
-
-  final int count;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            'Chapter Shalawat',
-            style: GoogleFonts.poppins(
-              fontSize: 18,
-              fontWeight: FontWeight.w800,
-              color: const Color(0xFF111111),
-              letterSpacing: -0.4,
-            ),
-          ),
-          const Spacer(),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: const Color(0xFF10B981).withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(100),
-            ),
-            child: Text(
-              '$count chapter',
-              style: GoogleFonts.poppins(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF059669),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}

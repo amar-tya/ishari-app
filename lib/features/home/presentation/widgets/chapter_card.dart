@@ -2,26 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ishari/features/home/domain/entities/chapter_entity.dart';
 
-/// Flat chapter card for the masonry grid.
+enum ChapterCardVariant { light, dark, lime }
+
+/// Chapter card for the masonry grid.
 ///
-/// [accentColor] is used for the number badge, left strip, and subtle tint.
-/// [isTall] makes the card taller (used for the left "hero" card in the grid).
+/// Three visual variants: [light] (white), [dark] (#111111), [lime] (#CAFF00).
+/// Arabic title is displayed large with a graffiti-style text shadow.
 class ChapterCard extends StatelessWidget {
   const ChapterCard({
     super.key,
     required this.chapter,
-    required this.accentColor,
-    this.isTall = false,
+    this.variant = ChapterCardVariant.light,
     this.onTap,
   });
 
   final ChapterEntity chapter;
-  final Color accentColor;
-  final bool isTall;
+  final ChapterCardVariant variant;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
+    final colors = _ColorsForVariant(variant);
     final numLabel = chapter.number != null
         ? chapter.number!.toString().padLeft(2, '0')
         : '';
@@ -29,124 +30,115 @@ class ChapterCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        constraints: const BoxConstraints(minHeight: 148),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          color: colors.cardBg,
+          borderRadius: BorderRadius.circular(18),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 12,
+              offset: const Offset(0, 1),
+            ),
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 2,
+              offset: const Offset(0, 1),
             ),
           ],
         ),
-        clipBehavior: Clip.hardEdge,
-        child: IntrinsicHeight(
-          child: Row(
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Column(
+            spacing: 4,
             crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              // Left accent strip
-              Container(
-                width: 4,
-                color: accentColor,
-              ),
-              // Content
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 14, 12, 14),
-                  child: Stack(
-                    children: [
-                      // Arabic watermark
-                      Positioned(
-                        top: -2,
-                        right: 0,
-                        child: Opacity(
-                          opacity: 0.07,
-                          child: Text(
-                            chapter.description,
-                            style: GoogleFonts.scheherazadeNew(
-                              fontSize: 44,
-                              color: accentColor,
-                              height: 1,
-                            ),
-                            textDirection: TextDirection.rtl,
-                            maxLines: 1,
-                            overflow: TextOverflow.clip,
-                          ),
-                        ),
+              // Number badge
+              if (numLabel.isNotEmpty)
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Container(
+                    width: 22,
+                    height: 22,
+                    decoration: BoxDecoration(
+                      color: colors.badgeBg,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: colors.badgeBorder),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      numLabel,
+                      style: GoogleFonts.poppins(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        color: colors.badgeText,
                       ),
-
-                      // Card body
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Number badge
-                          if (numLabel.isNotEmpty)
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 3,
-                              ),
-                              decoration: BoxDecoration(
-                                color: accentColor.withValues(alpha: 0.12),
-                                borderRadius: BorderRadius.circular(100),
-                              ),
-                              child: Text(
-                                numLabel,
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 0.3,
-                                  color: accentColor,
-                                ),
-                              ),
-                            ),
-
-                          const Spacer(),
-
-                          // Arabic excerpt
-                          Text(
-                            chapter.description,
-                            style: GoogleFonts.scheherazadeNew(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: const Color(0xFF222222),
-                              height: 1.6,
-                            ),
-                            textDirection: TextDirection.rtl,
-                            textAlign: TextAlign.right,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 8),
-
-                          // Title + verse count
-                          Text(
-                            chapter.title,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w800,
-                              color: Color(0xFF111111),
-                              letterSpacing: -0.2,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            '${chapter.verseCount} bait',
-                            style: const TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFFAAAAAA),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                    ),
                   ),
                 ),
+
+              // Arabic title
+              Padding(
+                padding: const EdgeInsets.only(top: 8, bottom: 6),
+                child: Text(
+                  chapter.description,
+                  style: GoogleFonts.scheherazadeNew(
+                    fontSize: colors.arabicFontSize,
+                    fontWeight: FontWeight.w900,
+                    color: colors.arabicText,
+                    height: 1.6,
+                    letterSpacing: -1,
+                    shadows: colors.arabicShadows,
+                  ),
+                  textDirection: TextDirection.rtl,
+                  textAlign: TextAlign.right,
+                  maxLines: 2,
+                  overflow: TextOverflow.clip,
+                ),
+              ),
+
+              const SizedBox(height: 5),
+
+              // Latin translation
+              Text(
+                chapter.title,
+                style: GoogleFonts.poppins(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: colors.latinText,
+                  letterSpacing: 0.2,
+                  height: 1.4,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+
+              // Footer: source + arrow button
+              Row(
+                children: [
+                  Text(
+                    '${chapter.category} · ${chapter.verseCount} bait',
+                    style: GoogleFonts.poppins(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      color: colors.sourceText,
+                    ),
+                  ),
+                  const Spacer(),
+                  Container(
+                    width: 34,
+                    height: 34,
+                    decoration: BoxDecoration(
+                      color: colors.arrowBg,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.chevron_right_rounded,
+                      size: 18,
+                      color: colors.arrowIcon,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -154,4 +146,84 @@ class ChapterCard extends StatelessWidget {
       ),
     );
   }
+}
+
+class _ColorsForVariant {
+  _ColorsForVariant(ChapterCardVariant variant) {
+    switch (variant) {
+      case ChapterCardVariant.light:
+        cardBg = Colors.white;
+        badgeBg = const Color(0xFFE8F0E6);
+        badgeBorder = const Color(0xFFE2E8DF);
+        badgeText = const Color(0xFF777777);
+        arabicText = const Color(0xFF111111);
+        arabicShadows = const [
+          Shadow(
+            color: Color(0xFFCAFF00),
+            offset: Offset(3, 3),
+            blurRadius: 0,
+          ),
+          Shadow(
+            color: Color(0x2DCAFF00),
+            offset: Offset(6, 6),
+            blurRadius: 0,
+          ),
+        ];
+        arabicFontSize = 48;
+        latinText = const Color(0xFF777777);
+        sourceText = const Color(0xFF777777);
+        arrowBg = const Color(0xFF111111);
+        arrowIcon = Colors.white;
+
+      case ChapterCardVariant.dark:
+        cardBg = const Color(0xFF111111);
+        badgeBg = const Color(0x14FFFFFF);
+        badgeBorder = const Color(0x1FFFFFFF);
+        badgeText = const Color(0x80FFFFFF);
+        arabicText = const Color(0xFFCAFF00);
+        arabicShadows = const [
+          Shadow(
+            color: Color(0x33CAFF00),
+            offset: Offset(3, 3),
+            blurRadius: 0,
+          ),
+        ];
+        arabicFontSize = 36;
+        latinText = const Color(0x73FFFFFF);
+        sourceText = const Color(0x59FFFFFF);
+        arrowBg = const Color(0xFFCAFF00);
+        arrowIcon = const Color(0xFF111111);
+
+      case ChapterCardVariant.lime:
+        cardBg = const Color(0xFFCAFF00);
+        badgeBg = const Color(0x14000000);
+        badgeBorder = const Color(0x1A000000);
+        badgeText = const Color(0x80000000);
+        arabicText = const Color(0xFF111111);
+        arabicShadows = const [
+          Shadow(
+            color: Color(0x1A000000),
+            offset: Offset(3, 3),
+            blurRadius: 0,
+          ),
+        ];
+        arabicFontSize = 36;
+        latinText = const Color(0x8C000000);
+        sourceText = const Color(0x73000000);
+        arrowBg = const Color(0xFF111111);
+        arrowIcon = Colors.white;
+    }
+  }
+
+  late Color cardBg;
+  late Color badgeBg;
+  late Color badgeBorder;
+  late Color badgeText;
+  late Color arabicText;
+  late List<Shadow> arabicShadows;
+  late double arabicFontSize;
+  late Color latinText;
+  late Color sourceText;
+  late Color arrowBg;
+  late Color arrowIcon;
 }

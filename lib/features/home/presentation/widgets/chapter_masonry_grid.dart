@@ -2,145 +2,89 @@ import 'package:flutter/material.dart';
 import 'package:ishari/features/home/domain/entities/chapter_entity.dart';
 import 'package:ishari/features/home/presentation/widgets/chapter_card.dart';
 
-/// 2-column masonry grid for chapter cards on the dark glass section.
+/// True 2-column masonry grid: odd-indexed chapters go in the left column,
+/// even-indexed in the right. Each card takes its natural height.
 ///
-/// First row: tall card on the left, two stacked cards on the right.
-/// Subsequent rows: two equal cards side-by-side.
+/// Cards cycle through [light → dark → lime → light …] variants.
 class ChapterMasonryGrid extends StatelessWidget {
   const ChapterMasonryGrid({
-    super.key,
     required this.chapters,
+    super.key,
     this.onChapterTap,
   });
 
   final List<ChapterEntity> chapters;
   final void Function(ChapterEntity)? onChapterTap;
 
-  static const _accents = [
-    Color(0xFF10B981), // emerald
-    Color(0xFF6366F1), // indigo
-    Color(0xFFA855F7), // violet
-    Color(0xFFFBBF24), // amber
-    Color(0xFFF43F5E), // rose
-    Color(0xFF38BDF8), // sky
-  ];
-
-  Color _accent(int index) => _accents[index % _accents.length];
-
   @override
   Widget build(BuildContext context) {
     if (chapters.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      return const Padding(
+        padding: EdgeInsets.fromLTRB(16, 14, 16, 0),
         child: Text(
           'Belum ada chapter untuk kategori ini.',
-          style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.5),
-            fontSize: 14,
-          ),
+          style: TextStyle(color: Color(0xFF777777), fontSize: 14),
         ),
       );
     }
 
-    final widgets = <Widget>[];
-
-    // First row: tall card (index 0) + 2 stacked cards (index 1 & 2)
-    final firstRow = _buildFirstRow(chapters);
-    widgets.add(firstRow);
-
-    // Additional rows: pairs starting at index 3
-    for (var i = 3; i < chapters.length; i += 2) {
-      final left = chapters[i];
-      final right = i + 1 < chapters.length ? chapters[i + 1] : null;
-      widgets.add(const SizedBox(height: 10));
-      widgets.add(_buildEqualRow(left, i, right, i + 1));
+    // Distribute: index 0,2,4… → left column; 1,3,5… → right column
+    final left = <(int, ChapterEntity)>[];
+    final right = <(int, ChapterEntity)>[];
+    for (var i = 0; i < chapters.length; i++) {
+      if (i.isEven) {
+        left.add((i, chapters[i]));
+      } else {
+        right.add((i, chapters[i]));
+      }
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(children: widgets),
-    );
-  }
-
-  Widget _buildFirstRow(List<ChapterEntity> list) {
-    final tall = list[0];
-    final topRight = list.length > 1 ? list[1] : null;
-    final botRight = list.length > 2 ? list[2] : null;
-
-    return IntrinsicHeight(
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Tall left card
           Expanded(
-            child: ChapterCard(
-              chapter: tall,
-              accentColor: _accent(0),
-              isTall: true,
-              onTap: () => onChapterTap?.call(tall),
-            ),
+            child: _MasonryColumn(items: left, onTap: onChapterTap),
           ),
           const SizedBox(width: 10),
-          // Right column
           Expanded(
-            child: Column(
-              children: [
-                if (topRight != null)
-                  Expanded(
-                    child: ChapterCard(
-                      chapter: topRight,
-                      accentColor: _accent(1),
-                      onTap: () => onChapterTap?.call(topRight),
-                    ),
-                  ),
-                if (topRight != null && botRight != null)
-                  const SizedBox(height: 10),
-                if (botRight != null)
-                  Expanded(
-                    child: ChapterCard(
-                      chapter: botRight,
-                      accentColor: _accent(2),
-                      onTap: () => onChapterTap?.call(botRight),
-                    ),
-                  ),
-              ],
-            ),
+            child: _MasonryColumn(items: right, onTap: onChapterTap),
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildEqualRow(
-    ChapterEntity left,
-    int li,
-    ChapterEntity? right,
-    int ri,
-  ) {
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: ChapterCard(
-              chapter: left,
-              accentColor: _accent(li),
-              onTap: () => onChapterTap?.call(left),
-            ),
+class _MasonryColumn extends StatelessWidget {
+  const _MasonryColumn({required this.items, this.onTap});
+
+  final List<(int, ChapterEntity)> items;
+  final void Function(ChapterEntity)? onTap;
+
+  static const List<ChapterCardVariant> _variants = [
+    ChapterCardVariant.light,
+    ChapterCardVariant.dark,
+    ChapterCardVariant.lime,
+  ];
+
+  ChapterCardVariant _variant(int index) => _variants[index % _variants.length];
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (final (index, chapter) in items) ...[
+          ChapterCard(
+            chapter: chapter,
+            variant: _variant(index),
+            onTap: () => onTap?.call(chapter),
           ),
-          if (right != null) ...[
-            const SizedBox(width: 10),
-            Expanded(
-              child: ChapterCard(
-                chapter: right,
-                accentColor: _accent(ri),
-                onTap: () => onChapterTap?.call(right),
-              ),
-            ),
-          ] else
-            const Expanded(child: SizedBox()),
+          const SizedBox(height: 10),
         ],
-      ),
+      ],
     );
   }
 }

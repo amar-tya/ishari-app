@@ -5,10 +5,12 @@ import 'package:ishari/core/app_state.dart';
 import 'package:ishari/features/home/presentation/pages/home_page.dart';
 import 'package:ishari/features/muhud/presentation/pages/muhud_tab.dart';
 
-/// Root scaffold providing the 5-tab bottom navigation bar.
+/// Root scaffold providing the 4-tab floating pill navigation bar.
 ///
-/// Tab 0 — Beranda (home content, fully implemented)
-/// Tabs 1–4 — Placeholder screens (Kitab, Hadi, Bookmark, Profil)
+/// Tab 0 — Beranda (HomeTab, fully implemented)
+/// Tab 1 — Cari (placeholder)
+/// Tab 2 — Kitab (MuhudTab, sementara)
+/// Tab 3 — Bookmark (placeholder, guest-gated)
 class MainScaffold extends StatefulWidget {
   const MainScaffold({super.key});
 
@@ -20,8 +22,7 @@ class _MainScaffoldState extends State<MainScaffold> {
   int _selectedIndex = 0;
 
   void _onTabSelected(int index) {
-    // For guest mode, gate the Bookmark tab
-    if (index == 4 && AppState.isGuestMode.value) {
+    if (index == 3 && AppState.isGuestMode.value) {
       _showBookmarkLockSheet();
       return;
     }
@@ -40,18 +41,17 @@ class _MainScaffoldState extends State<MainScaffold> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF0F5EE),
       body: IndexedStack(
         index: _selectedIndex,
         children: const [
           HomeTab(),
+          _PlaceholderTab(icon: Icons.search_rounded, label: 'Cari'),
           MuhudTab(),
-          _PlaceholderTab(icon: Icons.menu_book_rounded, label: 'Kitab'),
-          _PlaceholderTab(icon: Icons.people_outline, label: 'Hadi'),
           _PlaceholderTab(icon: Icons.bookmark_outline, label: 'Bookmark'),
-          _PlaceholderTab(icon: Icons.person_outline, label: 'Profil'),
         ],
       ),
-      bottomNavigationBar: _BottomNavBar(
+      bottomNavigationBar: _FloatingNavBar(
         selectedIndex: _selectedIndex,
         onTap: _onTabSelected,
       ),
@@ -60,16 +60,16 @@ class _MainScaffoldState extends State<MainScaffold> {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Custom Bottom Navigation Bar
+// Floating pill navigation bar
 // ─────────────────────────────────────────────────────────────────────────────
 
-const Color _primaryGreen = Color(0xFF51C878);
-const Color _inactiveGrey = Color(0xFF79747E);
-const Color _navBg = Colors.white;
-const Color _navBorder = Color(0xFFE8EAE9);
+const _kLime = Color(0xFFCAFF00);
+const _kDark = Color(0xFF111111);
+const _kInactiveIcon = Color(0xFFAAAAAA);
+const _kNavBg = Color(0xFFF0F5EE);
 
-class _BottomNavBar extends StatelessWidget {
-  const _BottomNavBar({
+class _FloatingNavBar extends StatelessWidget {
+  const _FloatingNavBar({
     required this.selectedIndex,
     required this.onTap,
   });
@@ -77,118 +77,110 @@ class _BottomNavBar extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onTap;
 
+  static const _items = [
+    _NavItemData(icon: Icons.home_rounded, label: 'Beranda'),
+    _NavItemData(icon: Icons.search_rounded, label: 'Cari'),
+    _NavItemData(icon: Icons.menu_book_rounded, label: 'Kitab'),
+    _NavItemData(icon: Icons.bookmark_outline, label: 'Bookmark'),
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
+    return Container(
+      color: _kNavBg,
+      padding: EdgeInsets.fromLTRB(16, 8, 16, 16 + bottomPadding),
       child: Container(
-        height: 80,
-        decoration: const BoxDecoration(
-          color: _navBg,
-          border: Border(top: BorderSide(color: _navBorder)),
-          boxShadow: [
+        height: 60,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(100),
+          boxShadow: const [
             BoxShadow(
-              color: Color(0x0D000000),
-              blurRadius: 12,
-              offset: Offset(0, -2),
+              color: Color(0x24000000),
+              blurRadius: 32,
+              offset: Offset(0, 8),
+            ),
+            BoxShadow(
+              color: Color(0x0F000000),
+              blurRadius: 8,
+              offset: Offset(0, 2),
             ),
           ],
         ),
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            // Regular nav items row
-            Row(
-              children: [
+        child: Padding(
+          padding: const EdgeInsets.all(6),
+          child: Row(
+            children: [
+              for (var i = 0; i < _items.length; i++)
                 _NavItem(
-                  icon: Icons.home_rounded,
-                  label: 'Beranda',
-                  index: 0,
-                  selectedIndex: selectedIndex,
-                  onTap: onTap,
+                  data: _items[i],
+                  isActive: selectedIndex == i,
+                  onTap: () => onTap(i),
                 ),
-                _NavItem(
-                  icon: Icons.menu_book_rounded,
-                  label: 'Muhud',
-                  index: 1,
-                  selectedIndex: selectedIndex,
-                  onTap: onTap,
-                ),
-                _NavItem(
-                  icon: Icons.menu_book_rounded,
-                  label: 'Kitab',
-                  index: 2,
-                  selectedIndex: selectedIndex,
-                  onTap: onTap,
-                ),
-                _NavItem(
-                  icon: Icons.person_outline,
-                  label: 'Hadi',
-                  index: 3,
-                  selectedIndex: selectedIndex,
-                  onTap: onTap,
-                ),
-                // Centre placeholder space for the floating Hadi button
-                _NavItem(
-                  icon: Icons.bookmark_outline,
-                  label: 'Bookmark',
-                  index: 4,
-                  selectedIndex: selectedIndex,
-                  onTap: onTap,
-                ),
-                _NavItem(
-                  icon: Icons.person_outline,
-                  label: 'Profil',
-                  index: 5,
-                  selectedIndex: selectedIndex,
-                  onTap: onTap,
-                ),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
+}
+
+class _NavItemData {
+  const _NavItemData({required this.icon, required this.label});
+  final IconData icon;
+  final String label;
 }
 
 class _NavItem extends StatelessWidget {
   const _NavItem({
-    required this.icon,
-    required this.label,
-    required this.index,
-    required this.selectedIndex,
+    required this.data,
+    required this.isActive,
     required this.onTap,
   });
 
-  final IconData icon;
-  final String label;
-  final int index;
-  final int selectedIndex;
-  final ValueChanged<int> onTap;
+  final _NavItemData data;
+  final bool isActive;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final isActive = selectedIndex == index;
-    final color = isActive ? _primaryGreen : _inactiveGrey;
-
     return Expanded(
+      flex: isActive ? 16 : 10,
       child: GestureDetector(
-        onTap: () => onTap(index),
+        onTap: onTap,
         behavior: HitTestBehavior.opaque,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: color, size: 24),
-            const SizedBox(height: 3),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
-                color: color,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeInOut,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            color: isActive ? _kLime : Colors.transparent,
+            borderRadius: BorderRadius.circular(100),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                data.icon,
+                size: 20,
+                color: isActive ? _kDark : _kInactiveIcon,
               ),
-            ),
-          ],
+              if (isActive) ...[
+                const SizedBox(width: 5),
+                Text(
+                  data.label,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    color: _kDark,
+                    letterSpacing: -0.2,
+                  ),
+                ),
+              ],
+            ],
+          ),
         ),
       ),
     );
@@ -196,7 +188,7 @@ class _NavItem extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Placeholder tabs for Kitab, Hadi, Bookmark, Profil
+// Placeholder tabs
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _PlaceholderTab extends StatelessWidget {
@@ -247,7 +239,7 @@ class _BookmarkLockSheet extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.lock_outline, size: 48, color: _primaryGreen),
+            const Icon(Icons.lock_outline, size: 48, color: _kDark),
             const SizedBox(height: 16),
             const Text(
               'Masuk untuk mengakses Bookmark',
@@ -257,7 +249,7 @@ class _BookmarkLockSheet extends StatelessWidget {
             const SizedBox(height: 8),
             const Text(
               'Simpan shalawat favoritmu dan akses kapan saja.',
-              style: TextStyle(fontSize: 14, color: _inactiveGrey),
+              style: TextStyle(fontSize: 14, color: Color(0xFF79747E)),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
@@ -267,8 +259,10 @@ class _BookmarkLockSheet extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).pop();
                   AppState.isGuestMode.value = false;
-                  // Router redirect will handle navigation to /introduction
                 },
+                style: FilledButton.styleFrom(
+                  backgroundColor: _kDark,
+                ),
                 child: const Text('Masuk Sekarang'),
               ),
             ),
