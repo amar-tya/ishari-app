@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class ChapterAppBar extends StatelessWidget {
   const ChapterAppBar({
@@ -19,20 +18,15 @@ class ChapterAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF51C878), Color(0xFF45B868)],
-        ),
-      ),
+      height: 52,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      color: const Color(0xFFF0F5EE),
       child: Row(
         children: [
           if (!isEmbeddedInTab)
-            IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () => context.pop(),
+            _IconBtn(
+              icon: Icons.arrow_back_ios_new,
+              onTap: () => context.pop(),
             ),
           Expanded(
             child: AnimatedOpacity(
@@ -40,25 +34,46 @@ class ChapterAppBar extends StatelessWidget {
               duration: const Duration(milliseconds: 250),
               child: Text(
                 title ?? '',
-                textAlign: TextAlign.left,
+                textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.poppins(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+                style: const TextStyle(
+                  color: Color(0xFF111111),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -0.3,
                 ),
               ),
             ),
           ),
-          IconButton(
-            tooltip: 'Quick Tools',
-            icon: const Icon(
-              Icons.tune_rounded,
-              color: Colors.white,
-            ),
-            onPressed: onOpenQuickTools,
+          _IconBtn(
+            icon: Icons.tune_rounded,
+            onTap: onOpenQuickTools,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _IconBtn extends StatelessWidget {
+  const _IconBtn({required this.icon, required this.onTap});
+
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 38,
+        height: 38,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          shape: BoxShape.circle,
+          border: Border.all(color: const Color(0xFFE2E8DF), width: 1.5),
+        ),
+        child: Icon(icon, color: const Color(0xFF111111), size: 18),
       ),
     );
   }

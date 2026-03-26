@@ -38,8 +38,8 @@ class _ChapterReaderBodyState extends State<ChapterReaderBody> {
   double _headerOffset = 0;
   final ScrollController _scrollController = ScrollController();
 
-  static const double _appBarHeight = 56.0;
-  static const double _chapterHeaderHeight = 120.0;
+  static const double _appBarHeight = 52.0;
+  static const double _chapterHeaderHeight = 170.0;
 
   @override
   void initState() {
@@ -74,17 +74,9 @@ class _ChapterReaderBodyState extends State<ChapterReaderBody> {
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          // Layer 1: Green gradient background (full screen)
+          // Layer 1: Light sage background (full screen)
           const Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Color(0xFF51C878), Color(0xFF45B868)],
-                ),
-              ),
-            ),
+            child: ColoredBox(color: Color(0xFFF0F5EE)),
           ),
 
           // Layer 2: Chapter header — fixed below app bar
@@ -152,51 +144,68 @@ class _ChapterHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF51C878), Color(0xFF45B868)],
-        ),
-      ),
+    return ColoredBox(
+      color: const Color(0xFFF0F5EE),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 6, 24, 24),
+        padding: const EdgeInsets.fromLTRB(22, 4, 22, 28),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          spacing: 5,
           children: [
+            // Label row
             Text(
-              chapter.title,
-              textAlign: TextAlign.left,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-              style: GoogleFonts.poppins(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                height: 1.3,
+              'DIWAN \u2022 ${chapter.verseCount} BAIT',
+              style: const TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF777777),
+                letterSpacing: 1.4,
               ),
             ),
+            const SizedBox(height: 14),
+            // Arabic title
             Text(
               chapter.description,
-              textAlign: TextAlign.left,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
+              textAlign: TextAlign.right,
+              maxLines: 2,
               style: GoogleFonts.scheherazadeNew(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                fontStyle: FontStyle.italic,
-                color: Colors.white,
-                height: 1.3,
+                fontSize: 44,
+                fontWeight: FontWeight.w900,
+                color: const Color(0xFF111111),
+                height: 1.2,
+              ),
+              textDirection: TextDirection.rtl,
+            ),
+            const SizedBox(height: 12),
+            // Transliteration pill
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(16, 5, 16, 7),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFCAFF00),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  chapter.title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF111111),
+                    height: 1,
+                    letterSpacing: -0.3,
+                  ),
+                ),
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 8),
+            // Subtitle
             Text(
-              'Kitab ${chapter.category} • ${chapter.verseCount} Ayat',
-              style: GoogleFonts.poppins(
-                fontSize: 13,
-                color: Colors.white.withValues(alpha: 0.8),
+              'Kitab ${chapter.category}',
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF777777),
+                letterSpacing: 0.2,
               ),
             ),
           ],

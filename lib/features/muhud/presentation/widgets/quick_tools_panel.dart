@@ -62,68 +62,80 @@ class _QuickToolsPanelState extends State<QuickToolsPanel> {
                   children: [
                     // Header
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 16, 8, 0),
+                      padding: const EdgeInsets.fromLTRB(18, 18, 18, 14),
                       child: Row(
                         children: [
+                          // Close button
+                          GestureDetector(
+                            onTap: widget.onClose,
+                            child: Container(
+                              width: 28,
+                              height: 28,
+                              decoration: const BoxDecoration(
+                                color: Color(0xFFF0F5EE),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.close_rounded,
+                                size: 14,
+                                color: Color(0xFF777777),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
                           const Text(
                             'Quick Tools',
                             style: TextStyle(
                               fontSize: 17,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF1C1B1F),
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xFF111111),
+                              letterSpacing: -0.3,
                             ),
-                          ),
-                          const Spacer(),
-                          IconButton(
-                            icon: const Icon(
-                              Icons.close_rounded,
-                              color: Color(0xFF79747E),
-                            ),
-                            onPressed: widget.onClose,
                           ),
                         ],
                       ),
                     ),
+                    const Divider(height: 1, color: Color(0xFFE2E8DF)),
                     // Tab chips
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
+                      padding: const EdgeInsets.fromLTRB(14, 12, 14, 0),
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children: List.generate(_tabs.length, (i) {
                             final selected = _selectedTab == i;
                             return Padding(
-                              padding: const EdgeInsets.only(right: 8),
+                              padding: const EdgeInsets.only(right: 6),
                               child: GestureDetector(
-                                onTap: () => setState(() => _selectedTab = i),
+                                onTap: () =>
+                                    setState(() => _selectedTab = i),
                                 child: AnimatedContainer(
                                   duration: const Duration(milliseconds: 150),
+                                  height: 30,
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 14,
-                                    vertical: 7,
                                   ),
                                   decoration: BoxDecoration(
                                     color: selected
-                                        ? const Color(0xFF51C878)
-                                        : const Color(0xFFF5F5F5),
-                                    borderRadius: BorderRadius.circular(20),
+                                        ? const Color(0xFF111111)
+                                        : const Color(0xFFF0F5EE),
+                                    borderRadius: BorderRadius.circular(100),
                                     border: selected
                                         ? null
                                         : Border.all(
-                                            color: const Color(0xFFE0E0E0),
+                                            color: const Color(0xFFE2E8DF),
+                                            width: 1.5,
                                           ),
                                   ),
+                                  alignment: Alignment.center,
                                   child: Text(
                                     _tabs[i],
                                     style: TextStyle(
                                       fontSize: 12,
-                                      fontWeight: FontWeight.w600,
+                                      fontWeight: FontWeight.w700,
                                       color: selected
                                           ? Colors.white
-                                          : const Color(0xFF1C1B1F),
+                                          : const Color(0xFF777777),
                                     ),
                                   ),
                                 ),
@@ -133,7 +145,6 @@ class _QuickToolsPanelState extends State<QuickToolsPanel> {
                         ),
                       ),
                     ),
-                    const Divider(height: 1, color: Color(0xFFE8EAE9)),
                     const SizedBox(height: 4),
                     Expanded(
                       child: _selectedTab == 0
@@ -152,7 +163,7 @@ class _QuickToolsPanelState extends State<QuickToolsPanel> {
                               child: Text(
                                 '${_tabs[_selectedTab]} — coming soon',
                                 style: const TextStyle(
-                                  color: Color(0xFF79747E),
+                                  color: Color(0xFF777777),
                                 ),
                               ),
                             ),
@@ -192,141 +203,185 @@ class _BaitTabContent extends StatelessWidget {
     final bloc = context.read<MuhudBloc>();
 
     return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 18),
       children: [
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
         const Text(
-          'KONTEN',
+          'Konten',
           style: TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.w700,
-            color: Color(0xFF79747E),
-            letterSpacing: 0.8,
+            fontSize: 13,
+            fontWeight: FontWeight.w800,
+            color: Color(0xFF111111),
+            letterSpacing: -0.2,
           ),
         ),
-        const SizedBox(height: 8),
         _ToggleRow(
           label: 'Arab',
+          subtitle: 'Tampilkan teks Arab',
           value: showArabic,
           onChanged: (_) => bloc.add(const MuhudEvent.toggleArabic()),
         ),
         _ToggleRow(
           label: 'Transliterasi',
+          subtitle: 'Tampilkan latin',
           value: showTransliteration,
           onChanged: (_) => bloc.add(const MuhudEvent.toggleTransliteration()),
         ),
         _ToggleRow(
           label: 'Terjemahan',
+          badge: 'ID',
           value: showTranslation,
           onChanged: (_) => bloc.add(const MuhudEvent.toggleTranslation()),
         ),
-        const SizedBox(height: 20),
-        const Divider(height: 1, color: Color(0xFFE8EAE9)),
-        const SizedBox(height: 20),
-        const Text(
-          'PENGATURAN FONT',
-          style: TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.w700,
-            color: Color(0xFF79747E),
-            letterSpacing: 0.8,
-          ),
-        ),
-        const SizedBox(height: 12),
-        const Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Font Arab',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF1C1B1F),
-              ),
-            ),
-            Row(
-              children: [
-                Text(
-                  'scheherazadeNew',
-                  style: TextStyle(fontSize: 13, color: Color(0xFF51C878)),
-                ),
-                SizedBox(width: 4),
-                Icon(
-                  Icons.chevron_right_rounded,
-                  size: 18,
-                  color: Color(0xFF79747E),
-                ),
-              ],
-            ),
-          ],
-        ),
         const SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Ukuran Arab',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF1C1B1F),
-              ),
-            ),
-            Text(
-              arabFontSize.round().toString(),
-              style: const TextStyle(fontSize: 13, color: Color(0xFF51C878)),
-            ),
-          ],
-        ),
-        SliderTheme(
-          data: SliderTheme.of(context).copyWith(
-            activeTrackColor: const Color(0xFF51C878),
-            thumbColor: const Color(0xFF51C878),
-            inactiveTrackColor: const Color(0xFFE0E0E0),
-            overlayColor: const Color(0xFF51C878).withValues(alpha: 0.12),
+        const Text(
+          'Pengaturan Font',
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w800,
+            color: Color(0xFF111111),
+            letterSpacing: -0.2,
           ),
-          child: Slider(
-            value: arabFontSize,
-            min: 16,
-            max: 36,
-            divisions: 20,
-            onChanged: onArabFontSizeChanged,
+        ),
+        const SizedBox(height: 4),
+        // Font Arab row
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Font Arab',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF111111),
+                ),
+              ),
+              Row(
+                children: [
+                  const Text(
+                    'Scheherazade New',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF777777),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  const Icon(
+                    Icons.chevron_right_rounded,
+                    size: 16,
+                    color: Color(0xFFAAAAAA),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const Divider(height: 1, color: Color(0xFFE2E8DF)),
+        // Arab font size slider
+        Padding(
+          padding: const EdgeInsets.only(top: 10, bottom: 14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Ukuran Font Arab',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF111111),
+                    ),
+                  ),
+                  Text(
+                    arabFontSize.round().toString(),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF111111),
+                    ),
+                  ),
+                ],
+              ),
+              SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                  activeTrackColor: const Color(0xFF111111),
+                  thumbColor: const Color(0xFFCAFF00),
+                  inactiveTrackColor: const Color(0xFFE8F0E6),
+                  overlayColor:
+                      const Color(0xFFCAFF00).withValues(alpha: 0.20),
+                  thumbShape: const RoundSliderThumbShape(
+                    enabledThumbRadius: 9,
+                  ),
+                  trackHeight: 4,
+                ),
+                child: Slider(
+                  value: arabFontSize,
+                  min: 16,
+                  max: 36,
+                  divisions: 20,
+                  onChanged: onArabFontSizeChanged,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const Divider(height: 1, color: Color(0xFFE2E8DF)),
+        // Translation font size slider
+        Padding(
+          padding: const EdgeInsets.only(top: 10, bottom: 14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Ukuran Font Terjemahan',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF111111),
+                    ),
+                  ),
+                  Text(
+                    translationFontSize.round().toString(),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF111111),
+                    ),
+                  ),
+                ],
+              ),
+              SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                  activeTrackColor: const Color(0xFF111111),
+                  thumbColor: const Color(0xFFCAFF00),
+                  inactiveTrackColor: const Color(0xFFE8F0E6),
+                  overlayColor:
+                      const Color(0xFFCAFF00).withValues(alpha: 0.20),
+                  thumbShape: const RoundSliderThumbShape(
+                    enabledThumbRadius: 9,
+                  ),
+                  trackHeight: 4,
+                ),
+                child: Slider(
+                  value: translationFontSize,
+                  min: 10,
+                  max: 22,
+                  divisions: 12,
+                  onChanged: onTranslationFontSizeChanged,
+                ),
+              ),
+            ],
           ),
         ),
         const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Ukuran Terjemahan',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF1C1B1F),
-              ),
-            ),
-            Text(
-              translationFontSize.round().toString(),
-              style: const TextStyle(fontSize: 13, color: Color(0xFF51C878)),
-            ),
-          ],
-        ),
-        SliderTheme(
-          data: SliderTheme.of(context).copyWith(
-            activeTrackColor: const Color(0xFF51C878),
-            thumbColor: const Color(0xFF51C878),
-            inactiveTrackColor: const Color(0xFFE0E0E0),
-            overlayColor: const Color(0xFF51C878).withValues(alpha: 0.12),
-          ),
-          child: Slider(
-            value: translationFontSize,
-            min: 10,
-            max: 22,
-            divisions: 12,
-            onChanged: onTranslationFontSizeChanged,
-          ),
-        ),
-        const SizedBox(height: 24),
       ],
     );
   }
@@ -337,31 +392,83 @@ class _ToggleRow extends StatelessWidget {
     required this.label,
     required this.value,
     required this.onChanged,
+    this.subtitle,
+    this.badge,
   });
 
   final String label;
+  final String? subtitle;
+  final String? badge;
   final bool value;
   final ValueChanged<bool> onChanged;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      decoration: const BoxDecoration(
+        border: Border(bottom: BorderSide(color: Color(0xFFE2E8DF))),
+      ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Color(0xFF1C1B1F),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      label,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF111111),
+                      ),
+                    ),
+                    if (badge != null) ...[
+                      const SizedBox(width: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFCAFF00),
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        child: Text(
+                          badge!,
+                          style: const TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w800,
+                            color: Color(0xFF111111),
+                            letterSpacing: 0.3,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                if (subtitle != null) ...[
+                  const SizedBox(height: 1),
+                  Text(
+                    subtitle!,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: Color(0xFF777777),
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: const Color(0xFF51C878),
+            activeColor: Colors.white,
+            activeTrackColor: const Color(0xFF111111),
+            inactiveThumbColor: Colors.white,
+            inactiveTrackColor: const Color(0xFFD0D8CE),
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
         ],

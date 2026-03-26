@@ -21,13 +21,13 @@ class ChapterReaderPage extends StatelessWidget {
         builder: (context, state) {
           return state.when(
             initial: () => const Scaffold(
-              backgroundColor: Color(0xFFF6F8F7),
+              backgroundColor: Color(0xFFF0F5EE),
               body: SizedBox.shrink(),
             ),
             loading: () => const Scaffold(
-              backgroundColor: Color(0xFFF6F8F7),
+              backgroundColor: Color(0xFFF0F5EE),
               body: Center(
-                child: CircularProgressIndicator(color: Color(0xFF51C878)),
+                child: CircularProgressIndicator(color: Color(0xFFCAFF00)),
               ),
             ),
             loaded: (chapter, verses, bookmarked, showTranslation,
@@ -44,7 +44,7 @@ class ChapterReaderPage extends StatelessWidget {
                   isEmbeddedInTab: false,
                 ),
             error: (message) => Scaffold(
-              backgroundColor: const Color(0xFFF6F8F7),
+              backgroundColor: const Color(0xFFF0F5EE),
               body: Center(
                 child: Padding(
                   padding: const EdgeInsets.all(24),
@@ -70,7 +70,8 @@ class ChapterReaderPage extends StatelessWidget {
                         icon: const Icon(Icons.refresh),
                         label: const Text('Coba Lagi'),
                         style: FilledButton.styleFrom(
-                          backgroundColor: const Color(0xFF51C878),
+                          backgroundColor: const Color(0xFF111111),
+                          foregroundColor: const Color(0xFFCAFF00),
                         ),
                       ),
                     ],

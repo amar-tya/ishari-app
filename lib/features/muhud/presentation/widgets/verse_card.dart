@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ishari/features/muhud/domain/entities/verse_with_details_entity.dart';
 
@@ -65,19 +65,6 @@ class _VerseCardState extends State<VerseCard>
     super.dispose();
   }
 
-  void _copyArabicText() {
-    Clipboard.setData(
-      ClipboardData(text: widget.verse.verse.arabicText),
-    );
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Teks Arab disalin'),
-        duration: Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final translation = widget.verse.translations.isNotEmpty
@@ -91,19 +78,30 @@ class _VerseCardState extends State<VerseCard>
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
+      margin: widget.isPlaying
+          ? const EdgeInsets.symmetric(horizontal: 8, vertical: 2)
+          : EdgeInsets.zero,
       decoration: BoxDecoration(
         color: widget.isPlaying
-            ? const Color(0xFFFAFFFE)
+            ? const Color(0xFFEDFFC0)
             : Colors.white,
-        border: Border(
-          left: BorderSide(
-            color: widget.isPlaying
-                ? const Color(0xFF51C878)
-                : Colors.transparent,
-            width: 3,
-          ),
-          bottom: const BorderSide(color: Color(0xFFE8EAE9)),
-        ),
+        borderRadius: widget.isPlaying ? BorderRadius.circular(16) : null,
+        border: widget.isPlaying
+            ? Border(
+                left: const BorderSide(color: Color(0xFFCAFF00), width: 3),
+              )
+            : const Border(
+                bottom: BorderSide(color: Color(0xFFE2E8DF)),
+              ),
+        boxShadow: widget.isPlaying
+            ? [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.06),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ]
+            : null,
       ),
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
       child: Column(
@@ -118,24 +116,6 @@ class _VerseCardState extends State<VerseCard>
                 pulseAnim: _pulseAnim,
               ),
               const Spacer(),
-              // Play/pause — only if verse has audio
-              if (hasAudio) ...[
-                _ActionButton(
-                  icon: widget.isPlaying
-                      ? Icons.pause_rounded
-                      : Icons.play_arrow_rounded,
-                  isActive: widget.isPlaying,
-                  onTap: widget.onPlayTap,
-                ),
-                const SizedBox(width: 4),
-              ],
-              // Copy Arabic text
-              _ActionButton(
-                icon: Icons.copy_outlined,
-                isActive: false,
-                onTap: _copyArabicText,
-              ),
-              const SizedBox(width: 4),
               // Bookmark
               _ActionButton(
                 icon: widget.isBookmarked
@@ -144,13 +124,24 @@ class _VerseCardState extends State<VerseCard>
                 isActive: widget.isBookmarked,
                 onTap: widget.onBookmarkToggle,
               ),
-              const SizedBox(width: 4),
+              const SizedBox(width: 2),
               // More
               _ActionButton(
                 icon: Icons.more_horiz_rounded,
                 isActive: false,
                 onTap: () {},
               ),
+              const SizedBox(width: 4),
+              // Play/pause — only if verse has audio
+              if (hasAudio)
+                _ActionButton(
+                  icon: widget.isPlaying
+                      ? Icons.pause_rounded
+                      : Icons.play_arrow_rounded,
+                  isActive: widget.isPlaying,
+                  variant: _ActionButtonVariant.play,
+                  onTap: widget.onPlayTap,
+                ),
             ],
           ),
 
@@ -173,14 +164,15 @@ class _VerseCardState extends State<VerseCard>
           // Transliteration
           if (widget.showTransliteration &&
               widget.verse.verse.transliteration.isNotEmpty) ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             Text(
               widget.verse.verse.transliteration,
+              textAlign: TextAlign.right,
               style: const TextStyle(
-                fontSize: 13,
-                color: Color(0xFF79747E),
+                fontSize: 11,
+                color: Color(0xFF777777),
                 fontStyle: FontStyle.italic,
-                height: 1.6,
+                height: 1.5,
               ),
             ),
           ],
@@ -193,8 +185,8 @@ class _VerseCardState extends State<VerseCard>
               style: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.w700,
-                color: Color(0xFF51C878),
-                letterSpacing: 0.8,
+                color: Color(0xFFAAAAAA),
+                letterSpacing: 0.4,
               ),
             ),
             const SizedBox(height: 4),
@@ -226,9 +218,9 @@ class _VerseNumberBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final label = number.toString().padLeft(2, '0');
     return SizedBox(
-      width: 36,
-      height: 36,
+      height: 28,
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -238,31 +230,38 @@ class _VerseNumberBadge extends StatelessWidget {
               builder: (_, __) => Transform.scale(
                 scale: pulseAnim.value,
                 child: Container(
-                  width: 32,
-                  height: 32,
+                  height: 22,
+                  width: 36,
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: const Color(0xFF51C878).withValues(alpha: 0.25),
+                    borderRadius: BorderRadius.circular(100),
+                    color: const Color(0xFFCAFF00).withValues(alpha: 0.35),
                   ),
                 ),
               ),
             ),
           Container(
-            width: 32,
-            height: 32,
+            height: 22,
+            constraints: const BoxConstraints(minWidth: 28),
+            padding: const EdgeInsets.symmetric(horizontal: 7),
             decoration: BoxDecoration(
               color: isPlaying
-                  ? const Color(0xFF51C878)
-                  : const Color(0xFFEEEEEE),
-              shape: BoxShape.circle,
+                  ? const Color(0xFF111111)
+                  : const Color(0xFFE8F0E6),
+              borderRadius: BorderRadius.circular(100),
+              border: Border.all(
+                color: const Color(0xFFE2E8DF),
+              ),
             ),
             alignment: Alignment.center,
             child: Text(
-              number.toString(),
+              label,
               style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                color: isPlaying ? Colors.white : const Color(0xFF1C1B1F),
+                fontSize: 10,
+                fontWeight: FontWeight.w800,
+                color: isPlaying
+                    ? const Color(0xFFCAFF00)
+                    : const Color(0xFF777777),
+                letterSpacing: 0.2,
               ),
             ),
           ),
@@ -272,34 +271,47 @@ class _VerseNumberBadge extends StatelessWidget {
   }
 }
 
+enum _ActionButtonVariant { play, ghost }
+
 class _ActionButton extends StatelessWidget {
   const _ActionButton({
     required this.icon,
     required this.isActive,
     required this.onTap,
+    this.variant = _ActionButtonVariant.ghost,
   });
 
   final IconData icon;
   final bool isActive;
   final VoidCallback onTap;
+  final _ActionButtonVariant variant;
 
   @override
   Widget build(BuildContext context) {
+    final Color bgColor;
+    final Color iconColor;
+
+    if (variant == _ActionButtonVariant.play) {
+      bgColor = isActive ? const Color(0xFFCAFF00) : const Color(0xFF111111);
+      iconColor = isActive ? const Color(0xFF111111) : Colors.white;
+    } else {
+      bgColor = Colors.transparent;
+      iconColor = isActive ? const Color(0xFF111111) : const Color(0xFFAAAAAA);
+    }
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 34,
-        height: 34,
+        width: 30,
+        height: 30,
         decoration: BoxDecoration(
-          color: isActive
-              ? const Color(0xFF51C878).withValues(alpha: 0.12)
-              : const Color(0xFFF5F5F5),
+          color: bgColor,
           shape: BoxShape.circle,
         ),
         child: Icon(
           icon,
-          color: isActive ? const Color(0xFF51C878) : const Color(0xFF79747E),
-          size: 18,
+          color: iconColor,
+          size: variant == _ActionButtonVariant.play ? 14 : 15,
         ),
       ),
     );
