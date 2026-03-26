@@ -63,3 +63,6 @@ devtools_options.yaml
 
 # nimbalyst
 nimbalyst-local/
+
+# FVM Version Cache
+.fvm/
