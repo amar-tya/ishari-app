@@ -70,6 +70,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final current = state;
     final category =
         current is _Loaded ? current.selectedCategory : _kDefaultCategory;
+    // Emit loading first so the stream always fires, even when the fetched data
+    // is identical to the current state (BlocBase.emit deduplicates equal states).
+    emit(const HomeState.loading());
     await _fetchAll(emit, category: category, userId: event.userId);
   }
 

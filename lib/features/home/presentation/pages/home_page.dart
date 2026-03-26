@@ -38,17 +38,48 @@ class HomeTab extends StatelessWidget {
   }
 }
 
-class _HomeTabBody extends StatelessWidget {
+class _HomeTabBody extends StatefulWidget {
   const _HomeTabBody();
 
   @override
+  State<_HomeTabBody> createState() => _HomeTabBodyState();
+}
+
+class _HomeTabBodyState extends State<_HomeTabBody> {
+  // Cache the last successfully loaded data so RefreshIndicator can keep
+  // showing the loaded view (instead of a full-screen spinner) while
+  // _onRefresh briefly emits HomeState.loading().
+  List<ChapterEntity>? _cachedChapters;
+  String? _cachedCategory;
+
+  @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeBloc, HomeState>(
+    return BlocConsumer<HomeBloc, HomeState>(
+      listenWhen: (_, state) =>
+          state.maybeWhen(loaded: (_, __, ___, ____) => true, orElse: () => false),
+      listener: (context, state) {
+        state.maybeWhen(
+          loaded: (_, chapters, category, __) {
+            _cachedChapters = chapters;
+            _cachedCategory = category;
+          },
+          orElse: () {},
+        );
+      },
       builder: (context, state) {
         return state.when(
           initial: () => const SizedBox.shrink(),
-          loading: () => const _LoadingView(),
-          loaded: (featured, chapters, category, hadiList) => _LoadedView(
+          loading: () {
+            // During pull-to-refresh, keep showing the loaded content so the
+            // RefreshIndicator widget stays mounted and its spinner keeps running.
+            final chapters = _cachedChapters;
+            final category = _cachedCategory;
+            if (chapters != null && category != null) {
+              return _LoadedView(chapters: chapters, selectedCategory: category);
+            }
+            return const _LoadingView();
+          },
+          loaded: (_, chapters, category, __) => _LoadedView(
             chapters: chapters,
             selectedCategory: category,
           ),
@@ -163,10 +194,16 @@ class _LoadedView extends StatelessWidget {
           child: RefreshIndicator(
             color: const Color(0xFF111111),
             onRefresh: () async {
-              context.read<HomeBloc>().add(HomeEvent.refresh(userId: user?.id));
-              await context.read<HomeBloc>().stream.firstWhere(
-                    (s) => s.maybeWhen(loading: () => false, orElse: () => true),
-                  );
+              final bloc = context.read<HomeBloc>();
+              final future = bloc.stream.firstWhere(
+                (s) => s.maybeWhen(
+                  loaded: (_, __, ___, ____) => true,
+                  error: (_) => true,
+                  orElse: () => false,
+                ),
+              );
+              bloc.add(HomeEvent.refresh(userId: user?.id));
+              await future;
             },
             child: CustomScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
