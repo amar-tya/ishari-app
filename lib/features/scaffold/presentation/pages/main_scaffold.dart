@@ -3,14 +3,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:ishari/core/app_state.dart';
 import 'package:ishari/features/home/presentation/pages/home_page.dart';
-import 'package:ishari/features/muhud/presentation/pages/muhud_tab.dart';
+import 'package:ishari/features/kitab/presentation/pages/kitab_tab.dart';
 import 'package:ishari/features/search/presentation/pages/search_tab.dart';
 
 /// Root scaffold providing the 4-tab floating pill navigation bar.
 ///
 /// Tab 0 — Beranda (HomeTab, fully implemented)
 /// Tab 1 — Cari (placeholder)
-/// Tab 2 — Kitab (MuhudTab, sementara)
+/// Tab 2 — Kitab (KitabTab)
 /// Tab 3 — Bookmark (placeholder, guest-gated)
 class MainScaffold extends StatefulWidget {
   const MainScaffold({super.key});
@@ -48,7 +48,7 @@ class _MainScaffoldState extends State<MainScaffold> {
         children: const [
           HomeTab(),
           SearchTab(),
-          MuhudTab(),
+          KitabTab(),
           _PlaceholderTab(icon: Icons.bookmark_outline, label: 'Bookmark'),
         ],
       ),

@@ -32,6 +32,11 @@ import 'features/home/domain/usecases/get_chapters_by_category.dart' as _i853;
 import 'features/home/domain/usecases/get_featured_chapter.dart' as _i212;
 import 'features/home/domain/usecases/get_hadi_list.dart' as _i316;
 import 'features/home/presentation/bloc/home_bloc.dart' as _i123;
+import 'features/kitab/data/datasources/kitab_remote_datasource.dart' as _i914;
+import 'features/kitab/data/repositories/kitab_repository_impl.dart' as _i918;
+import 'features/kitab/domain/repositories/kitab_repository.dart' as _i430;
+import 'features/kitab/domain/usecases/get_all_books.dart' as _i395;
+import 'features/kitab/presentation/bloc/kitab_bloc.dart' as _i468;
 import 'features/muhud/data/datasources/muhud_remote_datasource.dart' as _i314;
 import 'features/muhud/data/repositories/muhud_repository_impl.dart' as _i964;
 import 'features/muhud/domain/repositories/muhud_repository.dart' as _i681;
@@ -74,6 +79,9 @@ _i174.GetIt initDependencies(
   gh.lazySingleton<_i588.AuthRemoteDataSource>(
     () => _i588.AuthRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
   );
+  gh.lazySingleton<_i914.KitabRemoteDataSource>(
+    () => _i914.KitabRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
+  );
   gh.lazySingleton<_i75.NetworkInfo>(
     () => _i75.NetworkInfoImpl(gh<_i161.InternetConnection>()),
   );
@@ -89,6 +97,12 @@ _i174.GetIt initDependencies(
       gh<_i75.NetworkInfo>(),
     ),
   );
+  gh.lazySingleton<_i430.KitabRepository>(
+    () => _i918.KitabRepositoryImpl(
+      gh<_i914.KitabRemoteDataSource>(),
+      gh<_i75.NetworkInfo>(),
+    ),
+  );
   gh.lazySingleton<_i681.MuhudRepository>(
     () => _i964.MuhudRepositoryImpl(
       gh<_i314.MuhudRemoteDataSource>(),
@@ -100,6 +114,9 @@ _i174.GetIt initDependencies(
       gh<_i647.SearchRemoteDataSource>(),
       gh<_i75.NetworkInfo>(),
     ),
+  );
+  gh.factory<_i395.GetAllBooks>(
+    () => _i395.GetAllBooks(gh<_i430.KitabRepository>()),
   );
   gh.factory<_i853.GetChaptersByCategory>(
     () => _i853.GetChaptersByCategory(gh<_i649.HomeRepository>()),
@@ -132,6 +149,7 @@ _i174.GetIt initDependencies(
   gh.factory<_i718.ToggleBookmark>(
     () => _i718.ToggleBookmark(gh<_i681.MuhudRepository>()),
   );
+  gh.factory<_i468.KitabBloc>(() => _i468.KitabBloc(gh<_i395.GetAllBooks>()));
   gh.factory<_i961.SearchChapters>(
     () => _i961.SearchChapters(gh<_i246.SearchRepository>()),
   );
