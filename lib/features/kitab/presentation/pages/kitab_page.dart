@@ -33,7 +33,10 @@ class KitabPage extends StatelessWidget {
             ),
             error: (message) => _ErrorBody(message: message),
             loaded: (books) => ListView(
-              padding: EdgeInsets.only(top: topPadding + 20, bottom: 24),
+              padding: EdgeInsets.only(
+                top: topPadding + 20,
+                bottom: MediaQuery.of(context).padding.bottom + 8,
+              ),
               children: [
                 _PageHeader(count: books.length),
                 const SizedBox(height: 16),

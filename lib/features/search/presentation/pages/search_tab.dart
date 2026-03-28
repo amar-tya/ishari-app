@@ -277,7 +277,9 @@ class _ResultsView extends StatelessWidget {
             },
           ),
         ),
-        const SliverToBoxAdapter(child: SizedBox(height: 40)),
+        SliverToBoxAdapter(
+          child: SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
+        ),
       ],
     );
   }

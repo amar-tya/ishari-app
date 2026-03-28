@@ -44,6 +44,7 @@ class _MainScaffoldState extends State<MainScaffold> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF0F5EE),
+      extendBody: true,
       body: IndexedStack(
         index: _selectedIndex,
         children: [
@@ -68,7 +69,6 @@ class _MainScaffoldState extends State<MainScaffold> {
 const _kLime = Color(0xFFCAFF00);
 const _kDark = Color(0xFF111111);
 const _kInactiveIcon = Color(0xFFAAAAAA);
-const _kNavBg = Color(0xFFF0F5EE);
 
 class _FloatingNavBar extends StatelessWidget {
   const _FloatingNavBar({
@@ -90,8 +90,7 @@ class _FloatingNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).padding.bottom;
 
-    return Container(
-      color: _kNavBg,
+    return Padding(
       padding: EdgeInsets.fromLTRB(16, 8, 16, 16 + bottomPadding),
       child: Container(
         height: 60,

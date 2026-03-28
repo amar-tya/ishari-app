@@ -225,7 +225,7 @@ class _LoadedView extends StatelessWidget {
                           if (id != null) unawaited(context.push('/chapter/$id'));
                         },
                       ),
-                      const SizedBox(height: 40),
+                      SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
                     ],
                   ),
                 ),
