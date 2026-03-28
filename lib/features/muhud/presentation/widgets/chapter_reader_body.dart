@@ -240,7 +240,7 @@ class _WhiteVerseSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: !rounded
-          ? const BorderRadius.vertical(top: Radius.circular(40))
+          ? const BorderRadius.vertical(top: Radius.circular(20))
           : BorderRadius.zero,
       child: ColoredBox(
         color: Colors.white,

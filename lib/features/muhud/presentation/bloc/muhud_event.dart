@@ -17,6 +17,7 @@ sealed class MuhudEvent with _$MuhudEvent {
     required int verseId,
     required String hadiId,
     required VerseMediaType recitationType,
+    required int mediaId,
   }) = _PlayVerse;
 
   const factory MuhudEvent.stopAudio() = _StopAudio;

@@ -71,6 +71,7 @@ class VerseList extends StatelessWidget {
         verseId: verse.verse.id,
         hadiId: result.hadiId,
         recitationType: result.recitationType,
+        mediaId: result.mediaId,
       ),
     );
   }

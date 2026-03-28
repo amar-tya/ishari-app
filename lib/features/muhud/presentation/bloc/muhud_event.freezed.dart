@@ -134,13 +134,13 @@ return toggleTransliteration(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int chapterId)?  loadChapter,TResult Function()?  toggleTranslation,TResult Function( int verseId)?  toggleBookmark,TResult Function( int verseId,  String hadiId,  VerseMediaType recitationType)?  playVerse,TResult Function()?  stopAudio,TResult Function()?  toggleArabic,TResult Function()?  toggleTransliteration,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int chapterId)?  loadChapter,TResult Function()?  toggleTranslation,TResult Function( int verseId)?  toggleBookmark,TResult Function( int verseId,  String hadiId,  VerseMediaType recitationType,  int mediaId)?  playVerse,TResult Function()?  stopAudio,TResult Function()?  toggleArabic,TResult Function()?  toggleTransliteration,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LoadChapter() when loadChapter != null:
 return loadChapter(_that.chapterId);case _ToggleTranslation() when toggleTranslation != null:
 return toggleTranslation();case _ToggleBookmark() when toggleBookmark != null:
 return toggleBookmark(_that.verseId);case _PlayVerse() when playVerse != null:
-return playVerse(_that.verseId,_that.hadiId,_that.recitationType);case _StopAudio() when stopAudio != null:
+return playVerse(_that.verseId,_that.hadiId,_that.recitationType,_that.mediaId);case _StopAudio() when stopAudio != null:
 return stopAudio();case _ToggleArabic() when toggleArabic != null:
 return toggleArabic();case _ToggleTransliteration() when toggleTransliteration != null:
 return toggleTransliteration();case _:
@@ -161,13 +161,13 @@ return toggleTransliteration();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int chapterId)  loadChapter,required TResult Function()  toggleTranslation,required TResult Function( int verseId)  toggleBookmark,required TResult Function( int verseId,  String hadiId,  VerseMediaType recitationType)  playVerse,required TResult Function()  stopAudio,required TResult Function()  toggleArabic,required TResult Function()  toggleTransliteration,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int chapterId)  loadChapter,required TResult Function()  toggleTranslation,required TResult Function( int verseId)  toggleBookmark,required TResult Function( int verseId,  String hadiId,  VerseMediaType recitationType,  int mediaId)  playVerse,required TResult Function()  stopAudio,required TResult Function()  toggleArabic,required TResult Function()  toggleTransliteration,}) {final _that = this;
 switch (_that) {
 case _LoadChapter():
 return loadChapter(_that.chapterId);case _ToggleTranslation():
 return toggleTranslation();case _ToggleBookmark():
 return toggleBookmark(_that.verseId);case _PlayVerse():
-return playVerse(_that.verseId,_that.hadiId,_that.recitationType);case _StopAudio():
+return playVerse(_that.verseId,_that.hadiId,_that.recitationType,_that.mediaId);case _StopAudio():
 return stopAudio();case _ToggleArabic():
 return toggleArabic();case _ToggleTransliteration():
 return toggleTransliteration();}
@@ -184,13 +184,13 @@ return toggleTransliteration();}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int chapterId)?  loadChapter,TResult? Function()?  toggleTranslation,TResult? Function( int verseId)?  toggleBookmark,TResult? Function( int verseId,  String hadiId,  VerseMediaType recitationType)?  playVerse,TResult? Function()?  stopAudio,TResult? Function()?  toggleArabic,TResult? Function()?  toggleTransliteration,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int chapterId)?  loadChapter,TResult? Function()?  toggleTranslation,TResult? Function( int verseId)?  toggleBookmark,TResult? Function( int verseId,  String hadiId,  VerseMediaType recitationType,  int mediaId)?  playVerse,TResult? Function()?  stopAudio,TResult? Function()?  toggleArabic,TResult? Function()?  toggleTransliteration,}) {final _that = this;
 switch (_that) {
 case _LoadChapter() when loadChapter != null:
 return loadChapter(_that.chapterId);case _ToggleTranslation() when toggleTranslation != null:
 return toggleTranslation();case _ToggleBookmark() when toggleBookmark != null:
 return toggleBookmark(_that.verseId);case _PlayVerse() when playVerse != null:
-return playVerse(_that.verseId,_that.hadiId,_that.recitationType);case _StopAudio() when stopAudio != null:
+return playVerse(_that.verseId,_that.hadiId,_that.recitationType,_that.mediaId);case _StopAudio() when stopAudio != null:
 return stopAudio();case _ToggleArabic() when toggleArabic != null:
 return toggleArabic();case _ToggleTransliteration() when toggleTransliteration != null:
 return toggleTransliteration();case _:
@@ -369,12 +369,13 @@ as int,
 
 
 class _PlayVerse implements MuhudEvent {
-  const _PlayVerse({required this.verseId, required this.hadiId, required this.recitationType});
+  const _PlayVerse({required this.verseId, required this.hadiId, required this.recitationType, required this.mediaId});
   
 
  final  int verseId;
  final  String hadiId;
  final  VerseMediaType recitationType;
+ final  int mediaId;
 
 /// Create a copy of MuhudEvent
 /// with the given fields replaced by the non-null parameter values.
@@ -386,16 +387,16 @@ _$PlayVerseCopyWith<_PlayVerse> get copyWith => __$PlayVerseCopyWithImpl<_PlayVe
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PlayVerse&&(identical(other.verseId, verseId) || other.verseId == verseId)&&(identical(other.hadiId, hadiId) || other.hadiId == hadiId)&&(identical(other.recitationType, recitationType) || other.recitationType == recitationType));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PlayVerse&&(identical(other.verseId, verseId) || other.verseId == verseId)&&(identical(other.hadiId, hadiId) || other.hadiId == hadiId)&&(identical(other.recitationType, recitationType) || other.recitationType == recitationType)&&(identical(other.mediaId, mediaId) || other.mediaId == mediaId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,verseId,hadiId,recitationType);
+int get hashCode => Object.hash(runtimeType,verseId,hadiId,recitationType,mediaId);
 
 @override
 String toString() {
-  return 'MuhudEvent.playVerse(verseId: $verseId, hadiId: $hadiId, recitationType: $recitationType)';
+  return 'MuhudEvent.playVerse(verseId: $verseId, hadiId: $hadiId, recitationType: $recitationType, mediaId: $mediaId)';
 }
 
 
@@ -406,7 +407,7 @@ abstract mixin class _$PlayVerseCopyWith<$Res> implements $MuhudEventCopyWith<$R
   factory _$PlayVerseCopyWith(_PlayVerse value, $Res Function(_PlayVerse) _then) = __$PlayVerseCopyWithImpl;
 @useResult
 $Res call({
- int verseId, String hadiId, VerseMediaType recitationType
+ int verseId, String hadiId, VerseMediaType recitationType, int mediaId
 });
 
 
@@ -423,12 +424,13 @@ class __$PlayVerseCopyWithImpl<$Res>
 
 /// Create a copy of MuhudEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? verseId = null,Object? hadiId = null,Object? recitationType = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? verseId = null,Object? hadiId = null,Object? recitationType = null,Object? mediaId = null,}) {
   return _then(_PlayVerse(
 verseId: null == verseId ? _self.verseId : verseId // ignore: cast_nullable_to_non_nullable
 as int,hadiId: null == hadiId ? _self.hadiId : hadiId // ignore: cast_nullable_to_non_nullable
 as String,recitationType: null == recitationType ? _self.recitationType : recitationType // ignore: cast_nullable_to_non_nullable
-as VerseMediaType,
+as VerseMediaType,mediaId: null == mediaId ? _self.mediaId : mediaId // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 

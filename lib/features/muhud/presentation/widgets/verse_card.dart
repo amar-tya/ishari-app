@@ -87,8 +87,8 @@ class _VerseCardState extends State<VerseCard>
             : Colors.white,
         borderRadius: widget.isPlaying ? BorderRadius.circular(16) : null,
         border: widget.isPlaying
-            ? Border(
-                left: const BorderSide(color: Color(0xFFCAFF00), width: 3),
+            ? const Border(
+                left: BorderSide(color: Color(0xFFCAFF00), width: 3),
               )
             : const Border(
                 bottom: BorderSide(color: Color(0xFFE2E8DF)),

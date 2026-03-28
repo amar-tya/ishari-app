@@ -46,7 +46,7 @@ abstract class VerseMediaModel with _$VerseMediaModel {
         hadi: hadi.toEntity(),
         mediaUrl: mediaUrl,
         duration: parsedDuration,
-        type: VerseMediaTypeExt.fromString(type),
+        type: VerseMediaTypeExt.tryFromString(type) ?? VerseMediaType.joz,
       );
     } catch (e) {
       debugPrint('[VerseMediaModel] ERROR in toEntity: $e');

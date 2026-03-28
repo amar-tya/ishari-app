@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ishari/features/muhud/domain/entities/hadi_media_entity.dart';
+import 'package:ishari/features/muhud/domain/entities/verse_media_entity.dart';
 import 'package:ishari/features/muhud/domain/entities/verse_media_type.dart';
 import 'package:ishari/features/muhud/domain/entities/verse_with_details_entity.dart';
 
@@ -9,13 +10,17 @@ class AudioSelectionSheet extends StatefulWidget {
 
   final VerseWithDetailsEntity verse;
 
-  /// Shows the bottom sheet and returns `(hadiId, recitationType)` if user
-  /// taps Putar, or `null` if dismissed.
-  static Future<({String hadiId, VerseMediaType recitationType})?> show(
+  /// Shows the bottom sheet and returns `(hadiId, recitationType, mediaId)` if
+  /// user taps Putar, or `null` if dismissed.
+  static Future<
+    ({String hadiId, VerseMediaType recitationType, int mediaId})?
+  > show(
     BuildContext context,
     VerseWithDetailsEntity verse,
   ) {
-    return showModalBottomSheet<({String hadiId, VerseMediaType recitationType})>(
+    return showModalBottomSheet<
+      ({String hadiId, VerseMediaType recitationType, int mediaId})
+    >(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -29,7 +34,7 @@ class AudioSelectionSheet extends StatefulWidget {
 
 class _AudioSelectionSheetState extends State<AudioSelectionSheet> {
   String? _selectedHadiId;
-  VerseMediaType? _selectedType;
+  int? _selectedMediaId;
 
   List<HadiMediaEntity> get _uniqueHadis {
     final seen = <String>{};
@@ -39,30 +44,36 @@ class _AudioSelectionSheetState extends State<AudioSelectionSheet> {
         .toList();
   }
 
-  List<VerseMediaType> get _availableTypes {
-    if (_selectedHadiId == null) return VerseMediaType.values;
+  List<VerseMediaEntity> get _availableMedia {
+    if (_selectedHadiId == null) return [];
     return widget.verse.mediaList
         .where((m) => m.hadi.id == _selectedHadiId)
-        .map((m) => m.type)
-        .toSet()
         .toList();
   }
 
-  bool get _canPlay => _selectedHadiId != null && _selectedType != null;
+  /// Returns label for a chip. Appends index number if multiple entries share
+  /// the same type (e.g. "Yahum 1", "Yahum 2").
+  String _mediaLabel(VerseMediaEntity media, List<VerseMediaEntity> allMedia) {
+    final sameType = allMedia.where((m) => m.type == media.type).toList();
+    if (sameType.length <= 1) return media.type.label;
+    return '${media.type.label} ${sameType.indexOf(media) + 1}';
+  }
+
+  bool get _canPlay => _selectedHadiId != null && _selectedMediaId != null;
 
   @override
   void initState() {
     super.initState();
     final hadis = _uniqueHadis;
     if (hadis.isNotEmpty) _selectedHadiId = hadis.first.id;
-    final types = _availableTypes;
-    if (types.isNotEmpty) _selectedType = types.first;
+    final media = _availableMedia;
+    if (media.isNotEmpty) _selectedMediaId = media.first.id;
   }
 
   @override
   Widget build(BuildContext context) {
     final hadis = _uniqueHadis;
-    final types = _availableTypes;
+    final mediaItems = _availableMedia;
 
     return Container(
       decoration: const BoxDecoration(
@@ -140,94 +151,98 @@ class _AudioSelectionSheetState extends State<AudioSelectionSheet> {
               ),
             ),
             const SizedBox(height: 10),
-            SizedBox(
-              height: 100,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                itemCount: hadis.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 10),
-                itemBuilder: (_, i) {
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: List.generate(hadis.length, (i) {
                   final hadi = hadis[i];
                   final selected = _selectedHadiId == hadi.id;
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _selectedHadiId = hadi.id;
-                        final avail = _availableTypes;
-                        if (!avail.contains(_selectedType)) {
-                          _selectedType =
-                              avail.isNotEmpty ? avail.first : null;
-                        }
-                      });
-                    },
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 150),
-                      width: 80,
-                      decoration: BoxDecoration(
-                        color: selected
-                            ? const Color(0xFFF0F5EE)
-                            : Colors.white,
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      bottom: i < hadis.length - 1 ? 8 : 0,
+                    ),
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedHadiId = hadi.id;
+                          final avail = _availableMedia;
+                          if (!avail.any((m) => m.id == _selectedMediaId)) {
+                            _selectedMediaId =
+                                avail.isNotEmpty ? avail.first.id : null;
+                          }
+                        });
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 150),
+                        decoration: BoxDecoration(
                           color: selected
-                              ? const Color(0xFF111111)
-                              : const Color(0xFFE2E8DF),
-                          width: selected ? 2 : 1.5,
+                              ? const Color(0xFFF0F5EE)
+                              : Colors.white,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: selected
+                                ? const Color(0xFF111111)
+                                : const Color(0xFFE2E8DF),
+                            width: selected ? 2 : 1.5,
+                          ),
                         ),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 12,
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: 44,
-                            height: 44,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: selected
-                                  ? const Color(0xFFCAFF00)
-                                  : const Color(0xFFE8F0E6),
-                            ),
-                            child: hadi.photoUrl != null
-                                ? ClipOval(
-                                    child: Image.network(
-                                      hadi.photoUrl!,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (_, __, ___) =>
-                                          _HadiInitial(
-                                        name: hadi.name,
-                                        selected: selected,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: selected
+                                    ? const Color(0xFFCAFF00)
+                                    : const Color(0xFFE8F0E6),
+                              ),
+                              child: hadi.photoUrl != null
+                                  ? ClipOval(
+                                      child: Image.network(
+                                        hadi.photoUrl!,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (_, __, ___) =>
+                                            _HadiInitial(
+                                          name: hadi.name,
+                                          selected: selected,
+                                        ),
                                       ),
+                                    )
+                                  : _HadiInitial(
+                                      name: hadi.name,
+                                      selected: selected,
                                     ),
-                                  )
-                                : _HadiInitial(
-                                    name: hadi.name,
-                                    selected: selected,
-                                  ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            hadi.name,
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: selected
-                                  ? const Color(0xFF111111)
-                                  : const Color(0xFF777777),
                             ),
-                            textAlign: TextAlign.center,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                hadi.name,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  color: selected
+                                      ? const Color(0xFF111111)
+                                      : const Color(0xFF555555),
+                                ),
+                              ),
+                            ),
+                            if (selected)
+                              const Icon(
+                                Icons.check_circle_rounded,
+                                size: 18,
+                                color: Color(0xFF111111),
+                              ),
+                          ],
+                        ),
                       ),
                     ),
                   );
-                },
+                }),
               ),
             ),
             const SizedBox(height: 20),
@@ -250,10 +265,10 @@ class _AudioSelectionSheetState extends State<AudioSelectionSheet> {
               child: Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: types.map((type) {
-                  final selected = _selectedType == type;
+                children: mediaItems.map((media) {
+                  final selected = _selectedMediaId == media.id;
                   return GestureDetector(
-                    onTap: () => setState(() => _selectedType = type),
+                    onTap: () => setState(() => _selectedMediaId = media.id),
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 150),
                       height: 32,
@@ -272,7 +287,7 @@ class _AudioSelectionSheetState extends State<AudioSelectionSheet> {
                       ),
                       alignment: Alignment.center,
                       child: Text(
-                        type.label,
+                        _mediaLabel(media, mediaItems),
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
@@ -292,12 +307,15 @@ class _AudioSelectionSheetState extends State<AudioSelectionSheet> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: GestureDetector(
                 onTap: _canPlay
-                    ? () => Navigator.of(context).pop(
-                          (
-                            hadiId: _selectedHadiId!,
-                            recitationType: _selectedType!,
-                          ),
-                        )
+                    ? () {
+                        final selectedMedia = widget.verse.mediaList
+                            .firstWhere((m) => m.id == _selectedMediaId);
+                        Navigator.of(context).pop((
+                          hadiId: _selectedHadiId!,
+                          recitationType: selectedMedia.type,
+                          mediaId: _selectedMediaId!,
+                        ));
+                      }
                     : null,
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 150),

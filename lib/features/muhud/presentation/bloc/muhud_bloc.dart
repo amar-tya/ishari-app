@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:ishari/features/muhud/domain/entities/verse_media_type.dart';
 import 'package:ishari/features/muhud/domain/usecases/get_bookmarked_verse_ids.dart';
 import 'package:ishari/features/muhud/domain/usecases/get_chapter_by_id.dart';
 import 'package:ishari/features/muhud/domain/usecases/get_verses_by_chapter.dart';
@@ -25,8 +24,8 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
         loadChapter: (chapterId) => _onLoadChapter(chapterId, emit),
         toggleTranslation: () async => _onToggleTranslation(emit),
         toggleBookmark: (verseId) async => _onToggleBookmark(verseId, emit),
-        playVerse: (verseId, hadiId, recitationType) =>
-            _onPlayVerse(verseId, hadiId, recitationType, emit),
+        playVerse: (verseId, hadiId, recitationType, mediaId) =>
+            _onPlayVerse(verseId, mediaId, emit),
         stopAudio: () => _onStopAudio(emit),
         toggleArabic: () async => _onToggleArabic(emit),
         toggleTransliteration: () async => _onToggleTransliteration(emit),
@@ -134,16 +133,13 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
 
   Future<void> _onPlayVerse(
     int verseId,
-    String hadiId,
-    VerseMediaType recitationType,
+    int mediaId,
     Emitter<MuhudState> emit,
   ) async {
     final future = state.mapOrNull(
       loaded: (l) async {
         final verse = l.verses.firstWhere((v) => v.verse.id == verseId);
-        final media = verse.mediaList
-            .where((m) => m.hadi.id == hadiId && m.type == recitationType)
-            .firstOrNull;
+        final media = verse.mediaList.where((m) => m.id == mediaId).firstOrNull;
         if (media == null) return;
 
         emit(l.copyWith(playingVerseId: verseId, isAudioLoading: true));

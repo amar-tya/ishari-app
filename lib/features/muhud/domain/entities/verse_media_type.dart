@@ -27,4 +27,15 @@ extension VerseMediaTypeExt on VerseMediaType {
       _ => VerseMediaType.joz,
     };
   }
+
+  static VerseMediaType? tryFromString(String value) {
+    return switch (value.toLowerCase()) {
+      'joz' => VerseMediaType.joz,
+      'yahum' => VerseMediaType.yahum,
+      'terem' => VerseMediaType.terem,
+      'inat' => VerseMediaType.inat,
+      'rojazz' => VerseMediaType.rojazz,
+      _ => null,
+    };
+  }
 }
