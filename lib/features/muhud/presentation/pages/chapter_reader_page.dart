@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ishari/features/muhud/presentation/bloc/muhud_bloc.dart';
 import 'package:ishari/features/muhud/presentation/bloc/muhud_event.dart';
 import 'package:ishari/features/muhud/presentation/bloc/muhud_state.dart';
@@ -13,10 +14,21 @@ class ChapterReaderPage extends StatelessWidget {
 
   final int chapterId;
 
+  String _resolveUserId(BuildContext context) {
+    return context.read<AuthBloc>().state.maybeWhen(
+      authenticated: (user) => user.id,
+      orElse: () => '',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => sl<MuhudBloc>()..add(MuhudEvent.loadChapter(chapterId: chapterId)),
+      create: (ctx) => sl<MuhudBloc>()
+        ..add(MuhudEvent.loadChapter(
+          chapterId: chapterId,
+          userId: _resolveUserId(ctx),
+        )),
       child: BlocBuilder<MuhudBloc, MuhudState>(
         builder: (context, state) {
           return state.when(
@@ -41,7 +53,6 @@ class ChapterReaderPage extends StatelessWidget {
                   showArabic: showArabic,
                   showTransliteration: showTransliteration,
                   playingVerseId: playingVerseId,
-                  isEmbeddedInTab: false,
                 ),
             error: (message) => Scaffold(
               backgroundColor: const Color(0xFFF0F5EE),
@@ -66,7 +77,10 @@ class ChapterReaderPage extends StatelessWidget {
                       FilledButton.icon(
                         onPressed: () => context
                             .read<MuhudBloc>()
-                            .add(MuhudEvent.loadChapter(chapterId: chapterId)),
+                            .add(MuhudEvent.loadChapter(
+                              chapterId: chapterId,
+                              userId: _resolveUserId(context),
+                            )),
                         icon: const Icon(Icons.refresh),
                         label: const Text('Coba Lagi'),
                         style: FilledButton.styleFrom(

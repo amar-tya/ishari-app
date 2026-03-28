@@ -13,7 +13,7 @@ abstract interface class MuhudRemoteDataSource {
   Future<List<ChapterEntity>> getAllChapters();
   Future<ChapterEntity> getChapterById(int chapterId);
   Future<List<VerseWithDetailsModel>> getVersesByChapter(int chapterId);
-  Future<bool> toggleBookmark(int verseId, String userId);
+  Future<bool> toggleBookmark(int verseId, String userId, {String? note});
   Future<List<int>> getBookmarkedVerseIds(String userId);
   Future<List<BookmarkedVerseEntity>> getBookmarkedVerses(String userId);
 }
@@ -166,7 +166,7 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
   }
 
   @override
-  Future<bool> toggleBookmark(int verseId, String userId) async {
+  Future<bool> toggleBookmark(int verseId, String userId, {String? note}) async {
     try {
       final publicUserId = await _getPublicUserId();
 
@@ -187,6 +187,7 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
         await _supabaseClient.from('bookmarks').insert({
           'verse_id': verseId,
           'user_id': publicUserId,
+          if (note != null && note.isNotEmpty) 'note': note,
         });
         return true;
       }
@@ -223,7 +224,7 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
       final data = await _supabaseClient
           .from('bookmarks')
           .select(
-            'created_at, verses(id, verse_number, arabic_text, transliteration, chapters(id, title, category))',
+            'note, created_at, verses(id, verse_number, arabic_text, transliteration, chapters(id, title, category))',
           )
           .order('created_at', ascending: false);
 
@@ -243,6 +244,7 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
           chapterTitle: chapter['title'] as String,
           chapterCategory: chapter['category'] as String,
           bookmarkedAt: DateTime.parse(d['created_at'] as String),
+          note: d['note'] as String?,
         );
       }).toList();
     } catch (e) {

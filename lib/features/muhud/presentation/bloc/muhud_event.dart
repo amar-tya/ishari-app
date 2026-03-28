@@ -5,13 +5,17 @@ part 'muhud_event.freezed.dart';
 
 @freezed
 sealed class MuhudEvent with _$MuhudEvent {
-  const factory MuhudEvent.loadChapter({required int chapterId}) =
-      _LoadChapter;
+  const factory MuhudEvent.loadChapter({
+    required int chapterId,
+    required String userId,
+  }) = _LoadChapter;
 
   const factory MuhudEvent.toggleTranslation() = _ToggleTranslation;
 
-  const factory MuhudEvent.toggleBookmark({required int verseId}) =
-      _ToggleBookmark;
+  const factory MuhudEvent.toggleBookmark({
+    required int verseId,
+    String? note,
+  }) = _ToggleBookmark;
 
   const factory MuhudEvent.playVerse({
     required int verseId,

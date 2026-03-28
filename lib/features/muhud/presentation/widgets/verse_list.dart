@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ishari/features/muhud/domain/entities/verse_with_details_entity.dart';
 import 'package:ishari/features/muhud/presentation/bloc/muhud_bloc.dart';
 import 'package:ishari/features/muhud/presentation/bloc/muhud_event.dart';
+import 'package:ishari/features/muhud/presentation/widgets/add_bookmark_sheet.dart';
 import 'package:ishari/features/muhud/presentation/widgets/audio_selection_sheet.dart';
 import 'package:ishari/features/muhud/presentation/widgets/verse_card.dart';
 
@@ -40,13 +41,33 @@ class VerseList extends StatelessWidget {
           showTranslation: showTranslation,
           showArabic: showArabic,
           showTransliteration: showTransliteration,
-          onBookmarkToggle: () => context
-              .read<MuhudBloc>()
-              .add(MuhudEvent.toggleBookmark(verseId: verse.verse.id)),
+          onBookmarkToggle: () =>
+              _handleBookmarkTap(context, verse, isBookmarked),
           onPlayTap: () => _handlePlayTap(context, verse, isPlaying),
         );
       },
     );
+  }
+
+  Future<void> _handleBookmarkTap(
+    BuildContext context,
+    VerseWithDetailsEntity verse,
+    bool isBookmarked,
+  ) async {
+    final bloc = context.read<MuhudBloc>();
+
+    if (isBookmarked) {
+      // Langsung hapus tanpa sheet
+      bloc.add(MuhudEvent.toggleBookmark(verseId: verse.verse.id));
+    } else {
+      // Tampilkan sheet untuk note opsional
+      final note = await AddBookmarkSheet.show(context);
+      if (note == null || !context.mounted) return; // user cancel
+      bloc.add(MuhudEvent.toggleBookmark(
+        verseId: verse.verse.id,
+        note: note.isEmpty ? null : note,
+      ));
+    }
   }
 
   Future<void> _handlePlayTap(

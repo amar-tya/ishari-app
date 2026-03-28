@@ -60,13 +60,14 @@ class MuhudRepositoryImpl implements MuhudRepository {
   @override
   Future<Either<Failure, bool>> toggleBookmark(
     int verseId,
-    String userId,
-  ) async {
+    String userId, {
+    String? note,
+  }) async {
     if (!await _networkInfo.isConnected) {
       return left(const NetworkFailure());
     }
     try {
-      final result = await _remote.toggleBookmark(verseId, userId);
+      final result = await _remote.toggleBookmark(verseId, userId, note: note);
       return right(result);
     } on ServerException catch (e) {
       return left(ServerFailure(message: e.message));

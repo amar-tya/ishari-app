@@ -33,6 +33,7 @@ class FilterChipsRow extends StatelessWidget {
           final cat = categories[i];
           final isActive = cat == selectedCategory;
           return GestureDetector(
+            behavior: HitTestBehavior.opaque,
             onTap: () => onSelected(cat),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 180),

@@ -9,6 +9,10 @@ class ToggleBookmark {
 
   final MuhudRepository repository;
 
-  Future<Either<Failure, bool>> call(int verseId, String userId) =>
-      repository.toggleBookmark(verseId, userId);
+  Future<Either<Failure, bool>> call(
+    int verseId,
+    String userId, {
+    String? note,
+  }) =>
+      repository.toggleBookmark(verseId, userId, note: note);
 }

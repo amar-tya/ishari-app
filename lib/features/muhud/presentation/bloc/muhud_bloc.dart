@@ -21,9 +21,9 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
   }) : super(const MuhudState.initial()) {
     on<MuhudEvent>((event, emit) async {
       await event.when(
-        loadChapter: (chapterId) => _onLoadChapter(chapterId, emit),
+        loadChapter: (chapterId, userId) => _onLoadChapter(chapterId, userId, emit),
         toggleTranslation: () async => _onToggleTranslation(emit),
-        toggleBookmark: (verseId) async => _onToggleBookmark(verseId, emit),
+        toggleBookmark: (verseId, note) async => _onToggleBookmark(verseId, note, emit),
         playVerse: (verseId, hadiId, recitationType, mediaId) =>
             _onPlayVerse(verseId, mediaId, emit),
         stopAudio: () => _onStopAudio(emit),
@@ -40,6 +40,7 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
 
   final _audioPlayer = AudioPlayer();
   StreamSubscription<PlayerState>? _playerStateSubscription;
+  String _userId = '';
 
   @override
   Future<void> close() async {
@@ -48,8 +49,9 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
     return super.close();
   }
 
-  Future<void> _onLoadChapter(int chapterId, Emitter<MuhudState> emit) async {
+  Future<void> _onLoadChapter(int chapterId, String userId, Emitter<MuhudState> emit) async {
     debugPrint('[MuhudBloc] _onLoadChapter START - chapterId: $chapterId');
+    _userId = userId;
     emit(const MuhudState.loading());
 
     try {
@@ -92,7 +94,18 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
           );
         },
       );
-    } catch (e, stackTrace) {
+
+      // Load bookmarks after initial state is emitted (non-blocking for UI)
+      if (userId.isNotEmpty) {
+        final bookmarksResult = await getBookmarkedVerseIds(userId);
+        bookmarksResult.fold(
+          (_) {}, // silent fail — tampil tanpa bookmark
+          (ids) => state.mapOrNull(
+            loaded: (l) => emit(l.copyWith(bookmarkedVerseIds: ids.toSet())),
+          ),
+        );
+      }
+    } on Exception catch (e, stackTrace) {
       debugPrint('[MuhudBloc] Exception in _onLoadChapter: $e');
       debugPrint('[MuhudBloc] StackTrace: $stackTrace');
       emit(MuhudState.error(message: 'Error: $e'));
@@ -117,7 +130,12 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
     );
   }
 
-  void _onToggleBookmark(int verseId, Emitter<MuhudState> emit) {
+  Future<void> _onToggleBookmark(int verseId, String? note, Emitter<MuhudState> emit) async {
+    // Optimistic update
+    final wasBookmarked = state.mapOrNull(
+      loaded: (l) => l.bookmarkedVerseIds.contains(verseId),
+    ) ?? false;
+
     state.mapOrNull(
       loaded: (l) {
         final updated = Set<int>.from(l.bookmarkedVerseIds);
@@ -128,6 +146,28 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
         }
         emit(l.copyWith(bookmarkedVerseIds: updated));
       },
+    );
+
+    // Persist to Supabase (skip if guest)
+    if (_userId.isEmpty) return;
+
+    final result = await toggleBookmark(verseId, _userId, note: note);
+    result.fold(
+      (_) {
+        // Revert optimistic update on failure
+        state.mapOrNull(
+          loaded: (l) {
+            final reverted = Set<int>.from(l.bookmarkedVerseIds);
+            if (wasBookmarked) {
+              reverted.add(verseId);
+            } else {
+              reverted.remove(verseId);
+            }
+            emit(l.copyWith(bookmarkedVerseIds: reverted));
+          },
+        );
+      },
+      (_) {},
     );
   }
 

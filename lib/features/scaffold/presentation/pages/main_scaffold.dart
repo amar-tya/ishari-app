@@ -46,11 +46,11 @@ class _MainScaffoldState extends State<MainScaffold> {
       backgroundColor: const Color(0xFFF0F5EE),
       body: IndexedStack(
         index: _selectedIndex,
-        children: const [
-          HomeTab(),
-          SearchTab(),
-          KitabTab(),
-          BookmarkTab(),
+        children: [
+          const HomeTab(),
+          const SearchTab(),
+          const KitabTab(),
+          BookmarkTab(isActive: _selectedIndex == 3),
         ],
       ),
       bottomNavigationBar: _FloatingNavBar(

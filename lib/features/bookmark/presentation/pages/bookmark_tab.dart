@@ -25,7 +25,9 @@ const _kCategories = [
 
 /// Bookmark tab — wraps BookmarkBloc and builds the full page.
 class BookmarkTab extends StatelessWidget {
-  const BookmarkTab({super.key});
+  const BookmarkTab({required this.isActive, super.key});
+
+  final bool isActive;
 
   @override
   Widget build(BuildContext context) {
@@ -39,13 +41,15 @@ class BookmarkTab extends StatelessWidget {
         if (userId != null) bloc.add(BookmarkEvent.load(userId: userId));
         return bloc;
       },
-      child: const _BookmarkTabBody(),
+      child: _BookmarkTabBody(isActive: isActive),
     );
   }
 }
 
 class _BookmarkTabBody extends StatefulWidget {
-  const _BookmarkTabBody();
+  const _BookmarkTabBody({required this.isActive});
+
+  final bool isActive;
 
   @override
   State<_BookmarkTabBody> createState() => _BookmarkTabBodyState();
@@ -54,6 +58,17 @@ class _BookmarkTabBody extends StatefulWidget {
 class _BookmarkTabBodyState extends State<_BookmarkTabBody> {
   bool _showSearch = false;
   final _searchController = TextEditingController();
+
+  @override
+  void didUpdateWidget(_BookmarkTabBody oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isActive && !oldWidget.isActive) {
+      final userId = _getUserId();
+      if (userId != null) {
+        context.read<BookmarkBloc>().add(BookmarkEvent.load(userId: userId));
+      }
+    }
+  }
 
   @override
   void dispose() {

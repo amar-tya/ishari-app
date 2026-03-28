@@ -20,8 +20,9 @@ abstract interface class MuhudRepository {
   /// Returns true if bookmarked, false if removed.
   Future<Either<Failure, bool>> toggleBookmark(
     int verseId,
-    String userId,
-  );
+    String userId, {
+    String? note,
+  });
 
   /// Returns list of bookmarked verse IDs for a user.
   Future<Either<Failure, List<int>>> getBookmarkedVerseIds(String userId);

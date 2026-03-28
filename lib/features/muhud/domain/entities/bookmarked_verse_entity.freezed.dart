@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$BookmarkedVerseEntity {
 
- int get verseId; int get verseNumber; String get arabicText; String get transliteration; int get chapterId; String get chapterTitle; String get chapterCategory; DateTime get bookmarkedAt;
+ int get verseId; int get verseNumber; String get arabicText; String get transliteration; int get chapterId; String get chapterTitle; String get chapterCategory; DateTime get bookmarkedAt; String? get note;
 /// Create a copy of BookmarkedVerseEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $BookmarkedVerseEntityCopyWith<BookmarkedVerseEntity> get copyWith => _$Bookmark
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BookmarkedVerseEntity&&(identical(other.verseId, verseId) || other.verseId == verseId)&&(identical(other.verseNumber, verseNumber) || other.verseNumber == verseNumber)&&(identical(other.arabicText, arabicText) || other.arabicText == arabicText)&&(identical(other.transliteration, transliteration) || other.transliteration == transliteration)&&(identical(other.chapterId, chapterId) || other.chapterId == chapterId)&&(identical(other.chapterTitle, chapterTitle) || other.chapterTitle == chapterTitle)&&(identical(other.chapterCategory, chapterCategory) || other.chapterCategory == chapterCategory)&&(identical(other.bookmarkedAt, bookmarkedAt) || other.bookmarkedAt == bookmarkedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BookmarkedVerseEntity&&(identical(other.verseId, verseId) || other.verseId == verseId)&&(identical(other.verseNumber, verseNumber) || other.verseNumber == verseNumber)&&(identical(other.arabicText, arabicText) || other.arabicText == arabicText)&&(identical(other.transliteration, transliteration) || other.transliteration == transliteration)&&(identical(other.chapterId, chapterId) || other.chapterId == chapterId)&&(identical(other.chapterTitle, chapterTitle) || other.chapterTitle == chapterTitle)&&(identical(other.chapterCategory, chapterCategory) || other.chapterCategory == chapterCategory)&&(identical(other.bookmarkedAt, bookmarkedAt) || other.bookmarkedAt == bookmarkedAt)&&(identical(other.note, note) || other.note == note));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,verseId,verseNumber,arabicText,transliteration,chapterId,chapterTitle,chapterCategory,bookmarkedAt);
+int get hashCode => Object.hash(runtimeType,verseId,verseNumber,arabicText,transliteration,chapterId,chapterTitle,chapterCategory,bookmarkedAt,note);
 
 @override
 String toString() {
-  return 'BookmarkedVerseEntity(verseId: $verseId, verseNumber: $verseNumber, arabicText: $arabicText, transliteration: $transliteration, chapterId: $chapterId, chapterTitle: $chapterTitle, chapterCategory: $chapterCategory, bookmarkedAt: $bookmarkedAt)';
+  return 'BookmarkedVerseEntity(verseId: $verseId, verseNumber: $verseNumber, arabicText: $arabicText, transliteration: $transliteration, chapterId: $chapterId, chapterTitle: $chapterTitle, chapterCategory: $chapterCategory, bookmarkedAt: $bookmarkedAt, note: $note)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $BookmarkedVerseEntityCopyWith<$Res>  {
   factory $BookmarkedVerseEntityCopyWith(BookmarkedVerseEntity value, $Res Function(BookmarkedVerseEntity) _then) = _$BookmarkedVerseEntityCopyWithImpl;
 @useResult
 $Res call({
- int verseId, int verseNumber, String arabicText, String transliteration, int chapterId, String chapterTitle, String chapterCategory, DateTime bookmarkedAt
+ int verseId, int verseNumber, String arabicText, String transliteration, int chapterId, String chapterTitle, String chapterCategory, DateTime bookmarkedAt, String? note
 });
 
 
@@ -62,7 +62,7 @@ class _$BookmarkedVerseEntityCopyWithImpl<$Res>
 
 /// Create a copy of BookmarkedVerseEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? verseId = null,Object? verseNumber = null,Object? arabicText = null,Object? transliteration = null,Object? chapterId = null,Object? chapterTitle = null,Object? chapterCategory = null,Object? bookmarkedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? verseId = null,Object? verseNumber = null,Object? arabicText = null,Object? transliteration = null,Object? chapterId = null,Object? chapterTitle = null,Object? chapterCategory = null,Object? bookmarkedAt = null,Object? note = freezed,}) {
   return _then(_self.copyWith(
 verseId: null == verseId ? _self.verseId : verseId // ignore: cast_nullable_to_non_nullable
 as int,verseNumber: null == verseNumber ? _self.verseNumber : verseNumber // ignore: cast_nullable_to_non_nullable
@@ -72,7 +72,8 @@ as String,chapterId: null == chapterId ? _self.chapterId : chapterId // ignore: 
 as int,chapterTitle: null == chapterTitle ? _self.chapterTitle : chapterTitle // ignore: cast_nullable_to_non_nullable
 as String,chapterCategory: null == chapterCategory ? _self.chapterCategory : chapterCategory // ignore: cast_nullable_to_non_nullable
 as String,bookmarkedAt: null == bookmarkedAt ? _self.bookmarkedAt : bookmarkedAt // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,note: freezed == note ? _self.note : note // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -157,10 +158,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int verseId,  int verseNumber,  String arabicText,  String transliteration,  int chapterId,  String chapterTitle,  String chapterCategory,  DateTime bookmarkedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int verseId,  int verseNumber,  String arabicText,  String transliteration,  int chapterId,  String chapterTitle,  String chapterCategory,  DateTime bookmarkedAt,  String? note)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _BookmarkedVerseEntity() when $default != null:
-return $default(_that.verseId,_that.verseNumber,_that.arabicText,_that.transliteration,_that.chapterId,_that.chapterTitle,_that.chapterCategory,_that.bookmarkedAt);case _:
+return $default(_that.verseId,_that.verseNumber,_that.arabicText,_that.transliteration,_that.chapterId,_that.chapterTitle,_that.chapterCategory,_that.bookmarkedAt,_that.note);case _:
   return orElse();
 
 }
@@ -178,10 +179,10 @@ return $default(_that.verseId,_that.verseNumber,_that.arabicText,_that.translite
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int verseId,  int verseNumber,  String arabicText,  String transliteration,  int chapterId,  String chapterTitle,  String chapterCategory,  DateTime bookmarkedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int verseId,  int verseNumber,  String arabicText,  String transliteration,  int chapterId,  String chapterTitle,  String chapterCategory,  DateTime bookmarkedAt,  String? note)  $default,) {final _that = this;
 switch (_that) {
 case _BookmarkedVerseEntity():
-return $default(_that.verseId,_that.verseNumber,_that.arabicText,_that.transliteration,_that.chapterId,_that.chapterTitle,_that.chapterCategory,_that.bookmarkedAt);case _:
+return $default(_that.verseId,_that.verseNumber,_that.arabicText,_that.transliteration,_that.chapterId,_that.chapterTitle,_that.chapterCategory,_that.bookmarkedAt,_that.note);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -198,10 +199,10 @@ return $default(_that.verseId,_that.verseNumber,_that.arabicText,_that.translite
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int verseId,  int verseNumber,  String arabicText,  String transliteration,  int chapterId,  String chapterTitle,  String chapterCategory,  DateTime bookmarkedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int verseId,  int verseNumber,  String arabicText,  String transliteration,  int chapterId,  String chapterTitle,  String chapterCategory,  DateTime bookmarkedAt,  String? note)?  $default,) {final _that = this;
 switch (_that) {
 case _BookmarkedVerseEntity() when $default != null:
-return $default(_that.verseId,_that.verseNumber,_that.arabicText,_that.transliteration,_that.chapterId,_that.chapterTitle,_that.chapterCategory,_that.bookmarkedAt);case _:
+return $default(_that.verseId,_that.verseNumber,_that.arabicText,_that.transliteration,_that.chapterId,_that.chapterTitle,_that.chapterCategory,_that.bookmarkedAt,_that.note);case _:
   return null;
 
 }
@@ -213,7 +214,7 @@ return $default(_that.verseId,_that.verseNumber,_that.arabicText,_that.translite
 
 
 class _BookmarkedVerseEntity implements BookmarkedVerseEntity {
-  const _BookmarkedVerseEntity({required this.verseId, required this.verseNumber, required this.arabicText, required this.transliteration, required this.chapterId, required this.chapterTitle, required this.chapterCategory, required this.bookmarkedAt});
+  const _BookmarkedVerseEntity({required this.verseId, required this.verseNumber, required this.arabicText, required this.transliteration, required this.chapterId, required this.chapterTitle, required this.chapterCategory, required this.bookmarkedAt, this.note});
   
 
 @override final  int verseId;
@@ -224,6 +225,7 @@ class _BookmarkedVerseEntity implements BookmarkedVerseEntity {
 @override final  String chapterTitle;
 @override final  String chapterCategory;
 @override final  DateTime bookmarkedAt;
+@override final  String? note;
 
 /// Create a copy of BookmarkedVerseEntity
 /// with the given fields replaced by the non-null parameter values.
@@ -235,16 +237,16 @@ _$BookmarkedVerseEntityCopyWith<_BookmarkedVerseEntity> get copyWith => __$Bookm
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BookmarkedVerseEntity&&(identical(other.verseId, verseId) || other.verseId == verseId)&&(identical(other.verseNumber, verseNumber) || other.verseNumber == verseNumber)&&(identical(other.arabicText, arabicText) || other.arabicText == arabicText)&&(identical(other.transliteration, transliteration) || other.transliteration == transliteration)&&(identical(other.chapterId, chapterId) || other.chapterId == chapterId)&&(identical(other.chapterTitle, chapterTitle) || other.chapterTitle == chapterTitle)&&(identical(other.chapterCategory, chapterCategory) || other.chapterCategory == chapterCategory)&&(identical(other.bookmarkedAt, bookmarkedAt) || other.bookmarkedAt == bookmarkedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BookmarkedVerseEntity&&(identical(other.verseId, verseId) || other.verseId == verseId)&&(identical(other.verseNumber, verseNumber) || other.verseNumber == verseNumber)&&(identical(other.arabicText, arabicText) || other.arabicText == arabicText)&&(identical(other.transliteration, transliteration) || other.transliteration == transliteration)&&(identical(other.chapterId, chapterId) || other.chapterId == chapterId)&&(identical(other.chapterTitle, chapterTitle) || other.chapterTitle == chapterTitle)&&(identical(other.chapterCategory, chapterCategory) || other.chapterCategory == chapterCategory)&&(identical(other.bookmarkedAt, bookmarkedAt) || other.bookmarkedAt == bookmarkedAt)&&(identical(other.note, note) || other.note == note));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,verseId,verseNumber,arabicText,transliteration,chapterId,chapterTitle,chapterCategory,bookmarkedAt);
+int get hashCode => Object.hash(runtimeType,verseId,verseNumber,arabicText,transliteration,chapterId,chapterTitle,chapterCategory,bookmarkedAt,note);
 
 @override
 String toString() {
-  return 'BookmarkedVerseEntity(verseId: $verseId, verseNumber: $verseNumber, arabicText: $arabicText, transliteration: $transliteration, chapterId: $chapterId, chapterTitle: $chapterTitle, chapterCategory: $chapterCategory, bookmarkedAt: $bookmarkedAt)';
+  return 'BookmarkedVerseEntity(verseId: $verseId, verseNumber: $verseNumber, arabicText: $arabicText, transliteration: $transliteration, chapterId: $chapterId, chapterTitle: $chapterTitle, chapterCategory: $chapterCategory, bookmarkedAt: $bookmarkedAt, note: $note)';
 }
 
 
@@ -255,7 +257,7 @@ abstract mixin class _$BookmarkedVerseEntityCopyWith<$Res> implements $Bookmarke
   factory _$BookmarkedVerseEntityCopyWith(_BookmarkedVerseEntity value, $Res Function(_BookmarkedVerseEntity) _then) = __$BookmarkedVerseEntityCopyWithImpl;
 @override @useResult
 $Res call({
- int verseId, int verseNumber, String arabicText, String transliteration, int chapterId, String chapterTitle, String chapterCategory, DateTime bookmarkedAt
+ int verseId, int verseNumber, String arabicText, String transliteration, int chapterId, String chapterTitle, String chapterCategory, DateTime bookmarkedAt, String? note
 });
 
 
@@ -272,7 +274,7 @@ class __$BookmarkedVerseEntityCopyWithImpl<$Res>
 
 /// Create a copy of BookmarkedVerseEntity
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? verseId = null,Object? verseNumber = null,Object? arabicText = null,Object? transliteration = null,Object? chapterId = null,Object? chapterTitle = null,Object? chapterCategory = null,Object? bookmarkedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? verseId = null,Object? verseNumber = null,Object? arabicText = null,Object? transliteration = null,Object? chapterId = null,Object? chapterTitle = null,Object? chapterCategory = null,Object? bookmarkedAt = null,Object? note = freezed,}) {
   return _then(_BookmarkedVerseEntity(
 verseId: null == verseId ? _self.verseId : verseId // ignore: cast_nullable_to_non_nullable
 as int,verseNumber: null == verseNumber ? _self.verseNumber : verseNumber // ignore: cast_nullable_to_non_nullable
@@ -282,7 +284,8 @@ as String,chapterId: null == chapterId ? _self.chapterId : chapterId // ignore: 
 as int,chapterTitle: null == chapterTitle ? _self.chapterTitle : chapterTitle // ignore: cast_nullable_to_non_nullable
 as String,chapterCategory: null == chapterCategory ? _self.chapterCategory : chapterCategory // ignore: cast_nullable_to_non_nullable
 as String,bookmarkedAt: null == bookmarkedAt ? _self.bookmarkedAt : bookmarkedAt // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,note: freezed == note ? _self.note : note // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

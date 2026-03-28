@@ -107,7 +107,7 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
     String query,
     bool newestFirst,
   ) {
-    var result = all;
+    var result = all.toList(); // copy to avoid mutating allBookmarks
 
     if (category != 'Semua') {
       result = result.where((b) => b.chapterCategory == category).toList();

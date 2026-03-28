@@ -61,7 +61,9 @@
       "Bash(PATH=/c/Users/aamar/flutter/bin::*)",
       "Bash(rm:*)",
       "mcp__supabase__execute_sql",
-      "mcp__supabase__apply_migration"
+      "mcp__supabase__apply_migration",
+      "Bash(uname:*)",
+      "Bash(FLUTTER_ROOT=/c/Users/aamar/fvm/versions/stable:*)"
     ]
   }
 }

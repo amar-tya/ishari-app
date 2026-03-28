@@ -13,5 +13,6 @@ abstract class BookmarkedVerseEntity with _$BookmarkedVerseEntity {
     required String chapterTitle,
     required String chapterCategory,
     required DateTime bookmarkedAt,
+    String? note,
   }) = _BookmarkedVerseEntity;
 }

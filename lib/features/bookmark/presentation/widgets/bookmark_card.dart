@@ -168,7 +168,50 @@ class BookmarkCard extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 10),
+            const SizedBox(height: 6),
+
+            // ── Note (if present) ─────────────────────────────────────
+            if (bookmark.note != null && bookmark.note!.isNotEmpty)
+              Container(
+                margin: const EdgeInsets.fromLTRB(14, 2, 14, 0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 7,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE8F0E6),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(top: 1),
+                      child: Icon(
+                        Icons.chat_bubble_outline_rounded,
+                        size: 12,
+                        color: Color(0xFF777777),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        bookmark.note!,
+                        style: GoogleFonts.poppins(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFF777777),
+                          height: 1.4,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+            const SizedBox(height: 8),
 
             // ── Footer ───────────────────────────────────────────────
             Container(
