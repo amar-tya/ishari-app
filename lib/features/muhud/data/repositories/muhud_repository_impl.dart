@@ -5,6 +5,7 @@ import 'package:ishari/core/errors/failures.dart';
 import 'package:ishari/core/network/network_info.dart';
 import 'package:ishari/features/home/domain/entities/chapter_entity.dart';
 import 'package:ishari/features/muhud/data/datasources/muhud_remote_datasource.dart';
+import 'package:ishari/features/muhud/domain/entities/bookmarked_verse_entity.dart';
 import 'package:ishari/features/muhud/domain/entities/verse_with_details_entity.dart';
 import 'package:ishari/features/muhud/domain/repositories/muhud_repository.dart';
 
@@ -81,6 +82,21 @@ class MuhudRepositoryImpl implements MuhudRepository {
     }
     try {
       final result = await _remote.getBookmarkedVerseIds(userId);
+      return right(result);
+    } on ServerException catch (e) {
+      return left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<BookmarkedVerseEntity>>> getBookmarkedVerses(
+    String userId,
+  ) async {
+    if (!await _networkInfo.isConnected) {
+      return left(const NetworkFailure());
+    }
+    try {
+      final result = await _remote.getBookmarkedVerses(userId);
       return right(result);
     } on ServerException catch (e) {
       return left(ServerFailure(message: e.message));

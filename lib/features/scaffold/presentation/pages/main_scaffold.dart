@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:ishari/core/app_state.dart';
+import 'package:ishari/features/bookmark/presentation/pages/bookmark_tab.dart';
 import 'package:ishari/features/home/presentation/pages/home_page.dart';
 import 'package:ishari/features/kitab/presentation/pages/kitab_tab.dart';
 import 'package:ishari/features/search/presentation/pages/search_tab.dart';
@@ -49,7 +50,7 @@ class _MainScaffoldState extends State<MainScaffold> {
           HomeTab(),
           SearchTab(),
           KitabTab(),
-          _PlaceholderTab(icon: Icons.bookmark_outline, label: 'Bookmark'),
+          BookmarkTab(),
         ],
       ),
       bottomNavigationBar: _FloatingNavBar(

@@ -25,6 +25,7 @@ import 'features/auth/domain/usecases/get_current_user.dart' as _i191;
 import 'features/auth/domain/usecases/sign_in_with_google.dart' as _i648;
 import 'features/auth/domain/usecases/sign_out.dart' as _i872;
 import 'features/auth/presentation/bloc/auth_bloc.dart' as _i363;
+import 'features/bookmark/presentation/bloc/bookmark_bloc.dart' as _i560;
 import 'features/home/data/datasources/home_remote_datasource.dart' as _i400;
 import 'features/home/data/repositories/home_repository_impl.dart' as _i689;
 import 'features/home/domain/repositories/home_repository.dart' as _i649;
@@ -42,6 +43,7 @@ import 'features/muhud/data/repositories/muhud_repository_impl.dart' as _i964;
 import 'features/muhud/domain/repositories/muhud_repository.dart' as _i681;
 import 'features/muhud/domain/usecases/get_all_chapters.dart' as _i183;
 import 'features/muhud/domain/usecases/get_bookmarked_verse_ids.dart' as _i356;
+import 'features/muhud/domain/usecases/get_bookmarked_verses.dart' as _i718;
 import 'features/muhud/domain/usecases/get_chapter_by_id.dart' as _i307;
 import 'features/muhud/domain/usecases/get_verses_by_chapter.dart' as _i1006;
 import 'features/muhud/domain/usecases/toggle_bookmark.dart' as _i718;
@@ -140,6 +142,9 @@ _i174.GetIt initDependencies(
   gh.factory<_i356.GetBookmarkedVerseIds>(
     () => _i356.GetBookmarkedVerseIds(gh<_i681.MuhudRepository>()),
   );
+  gh.factory<_i718.GetBookmarkedVerses>(
+    () => _i718.GetBookmarkedVerses(gh<_i681.MuhudRepository>()),
+  );
   gh.factory<_i307.GetChapterById>(
     () => _i307.GetChapterById(gh<_i681.MuhudRepository>()),
   );
@@ -152,6 +157,12 @@ _i174.GetIt initDependencies(
   gh.factory<_i468.KitabBloc>(() => _i468.KitabBloc(gh<_i395.GetAllBooks>()));
   gh.factory<_i961.SearchChapters>(
     () => _i961.SearchChapters(gh<_i246.SearchRepository>()),
+  );
+  gh.factory<_i560.BookmarkBloc>(
+    () => _i560.BookmarkBloc(
+      gh<_i718.GetBookmarkedVerses>(),
+      gh<_i718.ToggleBookmark>(),
+    ),
   );
   gh.factory<_i944.SearchBloc>(
     () => _i944.SearchBloc(gh<_i961.SearchChapters>()),

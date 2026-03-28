@@ -1,6 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:ishari/core/errors/failures.dart';
 import 'package:ishari/features/home/domain/entities/chapter_entity.dart';
+import 'package:ishari/features/muhud/domain/entities/bookmarked_verse_entity.dart';
 import 'package:ishari/features/muhud/domain/entities/verse_with_details_entity.dart';
 
 abstract interface class MuhudRepository {
@@ -24,4 +25,9 @@ abstract interface class MuhudRepository {
 
   /// Returns list of bookmarked verse IDs for a user.
   Future<Either<Failure, List<int>>> getBookmarkedVerseIds(String userId);
+
+  /// Returns full bookmarked verses with chapter info, ordered newest first.
+  Future<Either<Failure, List<BookmarkedVerseEntity>>> getBookmarkedVerses(
+    String userId,
+  );
 }

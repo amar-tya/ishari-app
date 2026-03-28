@@ -6,6 +6,7 @@ import 'package:ishari/features/muhud/data/models/translation_model.dart';
 import 'package:ishari/features/muhud/data/models/verse_media_model.dart';
 import 'package:ishari/features/muhud/data/models/verse_model.dart';
 import 'package:ishari/features/muhud/data/models/verse_with_details_model.dart';
+import 'package:ishari/features/muhud/domain/entities/bookmarked_verse_entity.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract interface class MuhudRemoteDataSource {
@@ -14,6 +15,7 @@ abstract interface class MuhudRemoteDataSource {
   Future<List<VerseWithDetailsModel>> getVersesByChapter(int chapterId);
   Future<bool> toggleBookmark(int verseId, String userId);
   Future<List<int>> getBookmarkedVerseIds(String userId);
+  Future<List<BookmarkedVerseEntity>> getBookmarkedVerses(String userId);
 }
 
 @LazySingleton(as: MuhudRemoteDataSource)
@@ -150,29 +152,41 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
     return VerseMediaModel.fromJson(json);
   }
 
+  /// Lookup the integer `public.users.id` for the currently authenticated user.
+  Future<int> _getPublicUserId() async {
+    final email = _supabaseClient.auth.currentUser?.email;
+    if (email == null) throw const ServerException(message: 'Not authenticated');
+    final data = await _supabaseClient
+        .from('users')
+        .select('id')
+        .eq('email', email)
+        .single();
+    final id = data['id'];
+    return id is int ? id : int.parse(id.toString());
+  }
+
   @override
   Future<bool> toggleBookmark(int verseId, String userId) async {
     try {
-      // Check if bookmark exists
+      final publicUserId = await _getPublicUserId();
+
       final existing = await _supabaseClient
           .from('bookmarks')
           .select()
           .eq('verse_id', verseId)
-          .eq('user_id', userId);
+          .eq('user_id', publicUserId);
 
       if ((existing as List<dynamic>).isNotEmpty) {
-        // Delete bookmark
         await _supabaseClient
             .from('bookmarks')
             .delete()
             .eq('verse_id', verseId)
-            .eq('user_id', userId);
+            .eq('user_id', publicUserId);
         return false;
       } else {
-        // Create bookmark
         await _supabaseClient.from('bookmarks').insert({
           'verse_id': verseId,
-          'user_id': userId,
+          'user_id': publicUserId,
         });
         return true;
       }
@@ -184,10 +198,10 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
   @override
   Future<List<int>> getBookmarkedVerseIds(String userId) async {
     try {
+      // RLS filters rows to the current auth user automatically.
       final data = await _supabaseClient
           .from('bookmarks')
-          .select('verse_id')
-          .eq('user_id', userId);
+          .select('verse_id');
 
       return (data as List<dynamic>)
           .map((item) {
@@ -195,6 +209,42 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
             return verseId is int ? verseId : int.parse(verseId.toString());
           })
           .toList();
+    } catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<List<BookmarkedVerseEntity>> getBookmarkedVerses(
+    String userId,
+  ) async {
+    try {
+      // RLS filters rows to the current auth user automatically.
+      final data = await _supabaseClient
+          .from('bookmarks')
+          .select(
+            'created_at, verses(id, verse_number, arabic_text, transliteration, chapters(id, title, category))',
+          )
+          .order('created_at', ascending: false);
+
+      return (data as List<dynamic>).map((item) {
+        final d = item as Map<String, dynamic>;
+        final verse = d['verses'] as Map<String, dynamic>;
+        final chapter = verse['chapters'] as Map<String, dynamic>;
+
+        int toInt(dynamic v) => v is int ? v : int.parse(v.toString());
+
+        return BookmarkedVerseEntity(
+          verseId: toInt(verse['id']),
+          verseNumber: toInt(verse['verse_number']),
+          arabicText: verse['arabic_text'] as String,
+          transliteration: verse['transliteration'] as String,
+          chapterId: toInt(chapter['id']),
+          chapterTitle: chapter['title'] as String,
+          chapterCategory: chapter['category'] as String,
+          bookmarkedAt: DateTime.parse(d['created_at'] as String),
+        );
+      }).toList();
     } catch (e) {
       throw ServerException(message: e.toString());
     }
