@@ -1,7 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:ishari/core/app_state.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 
 /// Compact bookmark info widget with liquid glass style.
 ///
@@ -182,7 +183,9 @@ class _GuestContent extends StatelessWidget {
           ),
         ),
         GestureDetector(
-          onTap: () => AppState.isGuestMode.value = false,
+          onTap: () => context
+              .read<AuthBloc>()
+              .add(const AuthEvent.signInWithGoogle()),
           child: Container(
             width: 30,
             height: 30,

@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ishari/core/app_state.dart';
+import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ishari/features/bookmark/presentation/pages/bookmark_tab.dart';
 import 'package:ishari/features/home/presentation/pages/home_page.dart';
 import 'package:ishari/features/kitab/presentation/pages/kitab_tab.dart';
@@ -259,7 +261,9 @@ class _BookmarkLockSheet extends StatelessWidget {
               child: FilledButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  AppState.isGuestMode.value = false;
+                  context
+                      .read<AuthBloc>()
+                      .add(const AuthEvent.signInWithGoogle());
                 },
                 style: FilledButton.styleFrom(
                   backgroundColor: _kDark,
