@@ -14,6 +14,9 @@ class ChapterReaderBody extends StatefulWidget {
     required this.showTranslation,
     required this.showArabic,
     required this.showTransliteration,
+    required this.arabFontSize,
+    required this.transliterationFontSize,
+    required this.translationFontSize,
     this.playingVerseId,
     this.isEmbeddedInTab = false,
     super.key,
@@ -25,6 +28,9 @@ class ChapterReaderBody extends StatefulWidget {
   final bool showTranslation;
   final bool showArabic;
   final bool showTransliteration;
+  final double arabFontSize;
+  final double transliterationFontSize;
+  final double translationFontSize;
   final int? playingVerseId;
   final bool isEmbeddedInTab;
 
@@ -101,6 +107,9 @@ class _ChapterReaderBodyState extends State<ChapterReaderBody> {
               showTranslation: widget.showTranslation,
               showArabic: widget.showArabic,
               showTransliteration: widget.showTransliteration,
+              arabFontSize: widget.arabFontSize,
+              transliterationFontSize: widget.transliterationFontSize,
+              translationFontSize: widget.translationFontSize,
               playingVerseId: widget.playingVerseId,
             ),
           ),
@@ -129,6 +138,9 @@ class _ChapterReaderBodyState extends State<ChapterReaderBody> {
                 showArabic: widget.showArabic,
                 showTransliteration: widget.showTransliteration,
                 showTranslation: widget.showTranslation,
+                arabFontSize: widget.arabFontSize,
+                transliterationFontSize: widget.transliterationFontSize,
+                translationFontSize: widget.translationFontSize,
               ),
             ),
         ],
@@ -224,6 +236,9 @@ class _WhiteVerseSheet extends StatelessWidget {
     required this.showTranslation,
     required this.showArabic,
     required this.showTransliteration,
+    required this.arabFontSize,
+    required this.transliterationFontSize,
+    required this.translationFontSize,
     this.playingVerseId,
   });
 
@@ -234,6 +249,9 @@ class _WhiteVerseSheet extends StatelessWidget {
   final bool showTranslation;
   final bool showArabic;
   final bool showTransliteration;
+  final double arabFontSize;
+  final double transliterationFontSize;
+  final double translationFontSize;
   final int? playingVerseId;
 
   @override
@@ -254,6 +272,9 @@ class _WhiteVerseSheet extends StatelessWidget {
               showTranslation: showTranslation,
               showArabic: showArabic,
               showTransliteration: showTransliteration,
+              arabFontSize: arabFontSize,
+              transliterationFontSize: transliterationFontSize,
+              translationFontSize: translationFontSize,
               playingVerseId: playingVerseId,
             ),
             const SliverToBoxAdapter(

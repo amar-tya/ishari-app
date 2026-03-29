@@ -19,6 +19,9 @@ sealed class MuhudState with _$MuhudState {
     @Default(false) bool isAudioLoading,
     @Default(true) bool showArabic,
     @Default(true) bool showTransliteration,
+    @Default(22.0) double arabFontSize,
+    @Default(11.0) double transliterationFontSize,
+    @Default(14.0) double translationFontSize,
   }) = _Loaded;
 
   const factory MuhudState.error({required String message}) = _Error;

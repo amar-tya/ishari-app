@@ -14,6 +14,7 @@ import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart'
     as _i161;
+import 'package:shared_preferences/shared_preferences.dart' as _i460;
 import 'package:supabase_flutter/supabase_flutter.dart' as _i454;
 
 import 'core/network/network_info.dart' as _i75;
@@ -59,13 +60,17 @@ import 'features/search/presentation/bloc/search_bloc.dart' as _i944;
 import 'injection_container.dart' as _i809;
 
 // initializes the registration of main-scope dependencies inside of GetIt
-_i174.GetIt initDependencies(
+Future<_i174.GetIt> initDependencies(
   _i174.GetIt getIt, {
   String? environment,
   _i526.EnvironmentFilter? environmentFilter,
-}) {
+}) async {
   final gh = _i526.GetItHelper(getIt, environment, environmentFilter);
   final registerModule = _$RegisterModule();
+  await gh.singletonAsync<_i460.SharedPreferences>(
+    () => registerModule.prefs,
+    preResolve: true,
+  );
   gh.lazySingleton<_i454.SupabaseClient>(() => registerModule.supabaseClient);
   gh.lazySingleton<_i161.InternetConnection>(
     () => registerModule.internetConnection,
@@ -175,19 +180,20 @@ _i174.GetIt initDependencies(
   gh.factory<_i242.ChapterListBloc>(
     () => _i242.ChapterListBloc(getAllChapters: gh<_i183.GetAllChapters>()),
   );
-  gh.factory<_i123.HomeBloc>(
-    () => _i123.HomeBloc(
-      gh<_i212.GetFeaturedChapter>(),
-      gh<_i853.GetChaptersByCategory>(),
-      gh<_i316.GetHadiList>(),
-    ),
-  );
   gh.factory<_i533.MuhudBloc>(
     () => _i533.MuhudBloc(
       getVersesByChapter: gh<_i1006.GetVersesByChapter>(),
       toggleBookmark: gh<_i718.ToggleBookmark>(),
       getBookmarkedVerseIds: gh<_i356.GetBookmarkedVerseIds>(),
       getChapterById: gh<_i307.GetChapterById>(),
+      prefs: gh<_i460.SharedPreferences>(),
+    ),
+  );
+  gh.factory<_i123.HomeBloc>(
+    () => _i123.HomeBloc(
+      gh<_i212.GetFeaturedChapter>(),
+      gh<_i853.GetChaptersByCategory>(),
+      gh<_i316.GetHadiList>(),
     ),
   );
   gh.lazySingleton<_i191.GetCurrentUser>(

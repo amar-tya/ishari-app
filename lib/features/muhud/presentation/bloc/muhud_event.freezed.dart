@@ -55,7 +55,7 @@ extension MuhudEventPatterns on MuhudEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _LoadChapter value)?  loadChapter,TResult Function( _ToggleTranslation value)?  toggleTranslation,TResult Function( _ToggleBookmark value)?  toggleBookmark,TResult Function( _PlayVerse value)?  playVerse,TResult Function( _StopAudio value)?  stopAudio,TResult Function( _ToggleArabic value)?  toggleArabic,TResult Function( _ToggleTransliteration value)?  toggleTransliteration,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _LoadChapter value)?  loadChapter,TResult Function( _ToggleTranslation value)?  toggleTranslation,TResult Function( _ToggleBookmark value)?  toggleBookmark,TResult Function( _PlayVerse value)?  playVerse,TResult Function( _StopAudio value)?  stopAudio,TResult Function( _ToggleArabic value)?  toggleArabic,TResult Function( _ToggleTransliteration value)?  toggleTransliteration,TResult Function( _SetArabFontSize value)?  setArabFontSize,TResult Function( _SetTransliterationFontSize value)?  setTransliterationFontSize,TResult Function( _SetTranslationFontSize value)?  setTranslationFontSize,TResult Function( _ResetFontSizes value)?  resetFontSizes,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _LoadChapter() when loadChapter != null:
@@ -65,7 +65,11 @@ return toggleBookmark(_that);case _PlayVerse() when playVerse != null:
 return playVerse(_that);case _StopAudio() when stopAudio != null:
 return stopAudio(_that);case _ToggleArabic() when toggleArabic != null:
 return toggleArabic(_that);case _ToggleTransliteration() when toggleTransliteration != null:
-return toggleTransliteration(_that);case _:
+return toggleTransliteration(_that);case _SetArabFontSize() when setArabFontSize != null:
+return setArabFontSize(_that);case _SetTransliterationFontSize() when setTransliterationFontSize != null:
+return setTransliterationFontSize(_that);case _SetTranslationFontSize() when setTranslationFontSize != null:
+return setTranslationFontSize(_that);case _ResetFontSizes() when resetFontSizes != null:
+return resetFontSizes(_that);case _:
   return orElse();
 
 }
@@ -83,7 +87,7 @@ return toggleTransliteration(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _LoadChapter value)  loadChapter,required TResult Function( _ToggleTranslation value)  toggleTranslation,required TResult Function( _ToggleBookmark value)  toggleBookmark,required TResult Function( _PlayVerse value)  playVerse,required TResult Function( _StopAudio value)  stopAudio,required TResult Function( _ToggleArabic value)  toggleArabic,required TResult Function( _ToggleTransliteration value)  toggleTransliteration,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _LoadChapter value)  loadChapter,required TResult Function( _ToggleTranslation value)  toggleTranslation,required TResult Function( _ToggleBookmark value)  toggleBookmark,required TResult Function( _PlayVerse value)  playVerse,required TResult Function( _StopAudio value)  stopAudio,required TResult Function( _ToggleArabic value)  toggleArabic,required TResult Function( _ToggleTransliteration value)  toggleTransliteration,required TResult Function( _SetArabFontSize value)  setArabFontSize,required TResult Function( _SetTransliterationFontSize value)  setTransliterationFontSize,required TResult Function( _SetTranslationFontSize value)  setTranslationFontSize,required TResult Function( _ResetFontSizes value)  resetFontSizes,}){
 final _that = this;
 switch (_that) {
 case _LoadChapter():
@@ -93,7 +97,11 @@ return toggleBookmark(_that);case _PlayVerse():
 return playVerse(_that);case _StopAudio():
 return stopAudio(_that);case _ToggleArabic():
 return toggleArabic(_that);case _ToggleTransliteration():
-return toggleTransliteration(_that);}
+return toggleTransliteration(_that);case _SetArabFontSize():
+return setArabFontSize(_that);case _SetTransliterationFontSize():
+return setTransliterationFontSize(_that);case _SetTranslationFontSize():
+return setTranslationFontSize(_that);case _ResetFontSizes():
+return resetFontSizes(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -107,7 +115,7 @@ return toggleTransliteration(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _LoadChapter value)?  loadChapter,TResult? Function( _ToggleTranslation value)?  toggleTranslation,TResult? Function( _ToggleBookmark value)?  toggleBookmark,TResult? Function( _PlayVerse value)?  playVerse,TResult? Function( _StopAudio value)?  stopAudio,TResult? Function( _ToggleArabic value)?  toggleArabic,TResult? Function( _ToggleTransliteration value)?  toggleTransliteration,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _LoadChapter value)?  loadChapter,TResult? Function( _ToggleTranslation value)?  toggleTranslation,TResult? Function( _ToggleBookmark value)?  toggleBookmark,TResult? Function( _PlayVerse value)?  playVerse,TResult? Function( _StopAudio value)?  stopAudio,TResult? Function( _ToggleArabic value)?  toggleArabic,TResult? Function( _ToggleTransliteration value)?  toggleTransliteration,TResult? Function( _SetArabFontSize value)?  setArabFontSize,TResult? Function( _SetTransliterationFontSize value)?  setTransliterationFontSize,TResult? Function( _SetTranslationFontSize value)?  setTranslationFontSize,TResult? Function( _ResetFontSizes value)?  resetFontSizes,}){
 final _that = this;
 switch (_that) {
 case _LoadChapter() when loadChapter != null:
@@ -117,7 +125,11 @@ return toggleBookmark(_that);case _PlayVerse() when playVerse != null:
 return playVerse(_that);case _StopAudio() when stopAudio != null:
 return stopAudio(_that);case _ToggleArabic() when toggleArabic != null:
 return toggleArabic(_that);case _ToggleTransliteration() when toggleTransliteration != null:
-return toggleTransliteration(_that);case _:
+return toggleTransliteration(_that);case _SetArabFontSize() when setArabFontSize != null:
+return setArabFontSize(_that);case _SetTransliterationFontSize() when setTransliterationFontSize != null:
+return setTransliterationFontSize(_that);case _SetTranslationFontSize() when setTranslationFontSize != null:
+return setTranslationFontSize(_that);case _ResetFontSizes() when resetFontSizes != null:
+return resetFontSizes(_that);case _:
   return null;
 
 }
@@ -134,7 +146,7 @@ return toggleTransliteration(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int chapterId,  String userId)?  loadChapter,TResult Function()?  toggleTranslation,TResult Function( int verseId,  String? note)?  toggleBookmark,TResult Function( int verseId,  String hadiId,  VerseMediaType recitationType,  int mediaId)?  playVerse,TResult Function()?  stopAudio,TResult Function()?  toggleArabic,TResult Function()?  toggleTransliteration,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int chapterId,  String userId)?  loadChapter,TResult Function()?  toggleTranslation,TResult Function( int verseId,  String? note)?  toggleBookmark,TResult Function( int verseId,  String hadiId,  VerseMediaType recitationType,  int mediaId)?  playVerse,TResult Function()?  stopAudio,TResult Function()?  toggleArabic,TResult Function()?  toggleTransliteration,TResult Function( double size)?  setArabFontSize,TResult Function( double size)?  setTransliterationFontSize,TResult Function( double size)?  setTranslationFontSize,TResult Function()?  resetFontSizes,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LoadChapter() when loadChapter != null:
 return loadChapter(_that.chapterId,_that.userId);case _ToggleTranslation() when toggleTranslation != null:
@@ -143,7 +155,11 @@ return toggleBookmark(_that.verseId,_that.note);case _PlayVerse() when playVerse
 return playVerse(_that.verseId,_that.hadiId,_that.recitationType,_that.mediaId);case _StopAudio() when stopAudio != null:
 return stopAudio();case _ToggleArabic() when toggleArabic != null:
 return toggleArabic();case _ToggleTransliteration() when toggleTransliteration != null:
-return toggleTransliteration();case _:
+return toggleTransliteration();case _SetArabFontSize() when setArabFontSize != null:
+return setArabFontSize(_that.size);case _SetTransliterationFontSize() when setTransliterationFontSize != null:
+return setTransliterationFontSize(_that.size);case _SetTranslationFontSize() when setTranslationFontSize != null:
+return setTranslationFontSize(_that.size);case _ResetFontSizes() when resetFontSizes != null:
+return resetFontSizes();case _:
   return orElse();
 
 }
@@ -161,7 +177,7 @@ return toggleTransliteration();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int chapterId,  String userId)  loadChapter,required TResult Function()  toggleTranslation,required TResult Function( int verseId,  String? note)  toggleBookmark,required TResult Function( int verseId,  String hadiId,  VerseMediaType recitationType,  int mediaId)  playVerse,required TResult Function()  stopAudio,required TResult Function()  toggleArabic,required TResult Function()  toggleTransliteration,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int chapterId,  String userId)  loadChapter,required TResult Function()  toggleTranslation,required TResult Function( int verseId,  String? note)  toggleBookmark,required TResult Function( int verseId,  String hadiId,  VerseMediaType recitationType,  int mediaId)  playVerse,required TResult Function()  stopAudio,required TResult Function()  toggleArabic,required TResult Function()  toggleTransliteration,required TResult Function( double size)  setArabFontSize,required TResult Function( double size)  setTransliterationFontSize,required TResult Function( double size)  setTranslationFontSize,required TResult Function()  resetFontSizes,}) {final _that = this;
 switch (_that) {
 case _LoadChapter():
 return loadChapter(_that.chapterId,_that.userId);case _ToggleTranslation():
@@ -170,7 +186,11 @@ return toggleBookmark(_that.verseId,_that.note);case _PlayVerse():
 return playVerse(_that.verseId,_that.hadiId,_that.recitationType,_that.mediaId);case _StopAudio():
 return stopAudio();case _ToggleArabic():
 return toggleArabic();case _ToggleTransliteration():
-return toggleTransliteration();}
+return toggleTransliteration();case _SetArabFontSize():
+return setArabFontSize(_that.size);case _SetTransliterationFontSize():
+return setTransliterationFontSize(_that.size);case _SetTranslationFontSize():
+return setTranslationFontSize(_that.size);case _ResetFontSizes():
+return resetFontSizes();}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -184,7 +204,7 @@ return toggleTransliteration();}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int chapterId,  String userId)?  loadChapter,TResult? Function()?  toggleTranslation,TResult? Function( int verseId,  String? note)?  toggleBookmark,TResult? Function( int verseId,  String hadiId,  VerseMediaType recitationType,  int mediaId)?  playVerse,TResult? Function()?  stopAudio,TResult? Function()?  toggleArabic,TResult? Function()?  toggleTransliteration,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int chapterId,  String userId)?  loadChapter,TResult? Function()?  toggleTranslation,TResult? Function( int verseId,  String? note)?  toggleBookmark,TResult? Function( int verseId,  String hadiId,  VerseMediaType recitationType,  int mediaId)?  playVerse,TResult? Function()?  stopAudio,TResult? Function()?  toggleArabic,TResult? Function()?  toggleTransliteration,TResult? Function( double size)?  setArabFontSize,TResult? Function( double size)?  setTransliterationFontSize,TResult? Function( double size)?  setTranslationFontSize,TResult? Function()?  resetFontSizes,}) {final _that = this;
 switch (_that) {
 case _LoadChapter() when loadChapter != null:
 return loadChapter(_that.chapterId,_that.userId);case _ToggleTranslation() when toggleTranslation != null:
@@ -193,7 +213,11 @@ return toggleBookmark(_that.verseId,_that.note);case _PlayVerse() when playVerse
 return playVerse(_that.verseId,_that.hadiId,_that.recitationType,_that.mediaId);case _StopAudio() when stopAudio != null:
 return stopAudio();case _ToggleArabic() when toggleArabic != null:
 return toggleArabic();case _ToggleTransliteration() when toggleTransliteration != null:
-return toggleTransliteration();case _:
+return toggleTransliteration();case _SetArabFontSize() when setArabFontSize != null:
+return setArabFontSize(_that.size);case _SetTransliterationFontSize() when setTransliterationFontSize != null:
+return setTransliterationFontSize(_that.size);case _SetTranslationFontSize() when setTranslationFontSize != null:
+return setTranslationFontSize(_that.size);case _ResetFontSizes() when resetFontSizes != null:
+return resetFontSizes();case _:
   return null;
 
 }
@@ -529,6 +553,236 @@ int get hashCode => runtimeType.hashCode;
 @override
 String toString() {
   return 'MuhudEvent.toggleTransliteration()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class _SetArabFontSize implements MuhudEvent {
+  const _SetArabFontSize(this.size);
+  
+
+ final  double size;
+
+/// Create a copy of MuhudEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$SetArabFontSizeCopyWith<_SetArabFontSize> get copyWith => __$SetArabFontSizeCopyWithImpl<_SetArabFontSize>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SetArabFontSize&&(identical(other.size, size) || other.size == size));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,size);
+
+@override
+String toString() {
+  return 'MuhudEvent.setArabFontSize(size: $size)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$SetArabFontSizeCopyWith<$Res> implements $MuhudEventCopyWith<$Res> {
+  factory _$SetArabFontSizeCopyWith(_SetArabFontSize value, $Res Function(_SetArabFontSize) _then) = __$SetArabFontSizeCopyWithImpl;
+@useResult
+$Res call({
+ double size
+});
+
+
+
+
+}
+/// @nodoc
+class __$SetArabFontSizeCopyWithImpl<$Res>
+    implements _$SetArabFontSizeCopyWith<$Res> {
+  __$SetArabFontSizeCopyWithImpl(this._self, this._then);
+
+  final _SetArabFontSize _self;
+  final $Res Function(_SetArabFontSize) _then;
+
+/// Create a copy of MuhudEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? size = null,}) {
+  return _then(_SetArabFontSize(
+null == size ? _self.size : size // ignore: cast_nullable_to_non_nullable
+as double,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class _SetTransliterationFontSize implements MuhudEvent {
+  const _SetTransliterationFontSize(this.size);
+  
+
+ final  double size;
+
+/// Create a copy of MuhudEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$SetTransliterationFontSizeCopyWith<_SetTransliterationFontSize> get copyWith => __$SetTransliterationFontSizeCopyWithImpl<_SetTransliterationFontSize>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SetTransliterationFontSize&&(identical(other.size, size) || other.size == size));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,size);
+
+@override
+String toString() {
+  return 'MuhudEvent.setTransliterationFontSize(size: $size)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$SetTransliterationFontSizeCopyWith<$Res> implements $MuhudEventCopyWith<$Res> {
+  factory _$SetTransliterationFontSizeCopyWith(_SetTransliterationFontSize value, $Res Function(_SetTransliterationFontSize) _then) = __$SetTransliterationFontSizeCopyWithImpl;
+@useResult
+$Res call({
+ double size
+});
+
+
+
+
+}
+/// @nodoc
+class __$SetTransliterationFontSizeCopyWithImpl<$Res>
+    implements _$SetTransliterationFontSizeCopyWith<$Res> {
+  __$SetTransliterationFontSizeCopyWithImpl(this._self, this._then);
+
+  final _SetTransliterationFontSize _self;
+  final $Res Function(_SetTransliterationFontSize) _then;
+
+/// Create a copy of MuhudEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? size = null,}) {
+  return _then(_SetTransliterationFontSize(
+null == size ? _self.size : size // ignore: cast_nullable_to_non_nullable
+as double,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class _SetTranslationFontSize implements MuhudEvent {
+  const _SetTranslationFontSize(this.size);
+  
+
+ final  double size;
+
+/// Create a copy of MuhudEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$SetTranslationFontSizeCopyWith<_SetTranslationFontSize> get copyWith => __$SetTranslationFontSizeCopyWithImpl<_SetTranslationFontSize>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SetTranslationFontSize&&(identical(other.size, size) || other.size == size));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,size);
+
+@override
+String toString() {
+  return 'MuhudEvent.setTranslationFontSize(size: $size)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$SetTranslationFontSizeCopyWith<$Res> implements $MuhudEventCopyWith<$Res> {
+  factory _$SetTranslationFontSizeCopyWith(_SetTranslationFontSize value, $Res Function(_SetTranslationFontSize) _then) = __$SetTranslationFontSizeCopyWithImpl;
+@useResult
+$Res call({
+ double size
+});
+
+
+
+
+}
+/// @nodoc
+class __$SetTranslationFontSizeCopyWithImpl<$Res>
+    implements _$SetTranslationFontSizeCopyWith<$Res> {
+  __$SetTranslationFontSizeCopyWithImpl(this._self, this._then);
+
+  final _SetTranslationFontSize _self;
+  final $Res Function(_SetTranslationFontSize) _then;
+
+/// Create a copy of MuhudEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? size = null,}) {
+  return _then(_SetTranslationFontSize(
+null == size ? _self.size : size // ignore: cast_nullable_to_non_nullable
+as double,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class _ResetFontSizes implements MuhudEvent {
+  const _ResetFontSizes();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ResetFontSizes);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'MuhudEvent.resetFontSizes()';
 }
 
 

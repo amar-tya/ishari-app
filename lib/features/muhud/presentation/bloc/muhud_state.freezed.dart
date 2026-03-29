@@ -125,12 +125,12 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( ChapterEntity chapter,  List<VerseWithDetailsEntity> verses,  Set<int> bookmarkedVerseIds,  bool showTranslation,  int? playingVerseId,  bool isAudioLoading,  bool showArabic,  bool showTransliteration)?  loaded,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( ChapterEntity chapter,  List<VerseWithDetailsEntity> verses,  Set<int> bookmarkedVerseIds,  bool showTranslation,  int? playingVerseId,  bool isAudioLoading,  bool showArabic,  bool showTransliteration,  double arabFontSize,  double transliterationFontSize,  double translationFontSize)?  loaded,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
 return loading();case _Loaded() when loaded != null:
-return loaded(_that.chapter,_that.verses,_that.bookmarkedVerseIds,_that.showTranslation,_that.playingVerseId,_that.isAudioLoading,_that.showArabic,_that.showTransliteration);case _Error() when error != null:
+return loaded(_that.chapter,_that.verses,_that.bookmarkedVerseIds,_that.showTranslation,_that.playingVerseId,_that.isAudioLoading,_that.showArabic,_that.showTransliteration,_that.arabFontSize,_that.transliterationFontSize,_that.translationFontSize);case _Error() when error != null:
 return error(_that.message);case _:
   return orElse();
 
@@ -149,12 +149,12 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( ChapterEntity chapter,  List<VerseWithDetailsEntity> verses,  Set<int> bookmarkedVerseIds,  bool showTranslation,  int? playingVerseId,  bool isAudioLoading,  bool showArabic,  bool showTransliteration)  loaded,required TResult Function( String message)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( ChapterEntity chapter,  List<VerseWithDetailsEntity> verses,  Set<int> bookmarkedVerseIds,  bool showTranslation,  int? playingVerseId,  bool isAudioLoading,  bool showArabic,  bool showTransliteration,  double arabFontSize,  double transliterationFontSize,  double translationFontSize)  loaded,required TResult Function( String message)  error,}) {final _that = this;
 switch (_that) {
 case _Initial():
 return initial();case _Loading():
 return loading();case _Loaded():
-return loaded(_that.chapter,_that.verses,_that.bookmarkedVerseIds,_that.showTranslation,_that.playingVerseId,_that.isAudioLoading,_that.showArabic,_that.showTransliteration);case _Error():
+return loaded(_that.chapter,_that.verses,_that.bookmarkedVerseIds,_that.showTranslation,_that.playingVerseId,_that.isAudioLoading,_that.showArabic,_that.showTransliteration,_that.arabFontSize,_that.transliterationFontSize,_that.translationFontSize);case _Error():
 return error(_that.message);}
 }
 /// A variant of `when` that fallback to returning `null`
@@ -169,12 +169,12 @@ return error(_that.message);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( ChapterEntity chapter,  List<VerseWithDetailsEntity> verses,  Set<int> bookmarkedVerseIds,  bool showTranslation,  int? playingVerseId,  bool isAudioLoading,  bool showArabic,  bool showTransliteration)?  loaded,TResult? Function( String message)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( ChapterEntity chapter,  List<VerseWithDetailsEntity> verses,  Set<int> bookmarkedVerseIds,  bool showTranslation,  int? playingVerseId,  bool isAudioLoading,  bool showArabic,  bool showTransliteration,  double arabFontSize,  double transliterationFontSize,  double translationFontSize)?  loaded,TResult? Function( String message)?  error,}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
 return loading();case _Loaded() when loaded != null:
-return loaded(_that.chapter,_that.verses,_that.bookmarkedVerseIds,_that.showTranslation,_that.playingVerseId,_that.isAudioLoading,_that.showArabic,_that.showTransliteration);case _Error() when error != null:
+return loaded(_that.chapter,_that.verses,_that.bookmarkedVerseIds,_that.showTranslation,_that.playingVerseId,_that.isAudioLoading,_that.showArabic,_that.showTransliteration,_that.arabFontSize,_that.transliterationFontSize,_that.translationFontSize);case _Error() when error != null:
 return error(_that.message);case _:
   return null;
 
@@ -251,7 +251,7 @@ String toString() {
 
 
 class _Loaded implements MuhudState {
-  const _Loaded({required this.chapter, required final  List<VerseWithDetailsEntity> verses, required final  Set<int> bookmarkedVerseIds, required this.showTranslation, this.playingVerseId, this.isAudioLoading = false, this.showArabic = true, this.showTransliteration = true}): _verses = verses,_bookmarkedVerseIds = bookmarkedVerseIds;
+  const _Loaded({required this.chapter, required final  List<VerseWithDetailsEntity> verses, required final  Set<int> bookmarkedVerseIds, required this.showTranslation, this.playingVerseId, this.isAudioLoading = false, this.showArabic = true, this.showTransliteration = true, this.arabFontSize = 22.0, this.transliterationFontSize = 11.0, this.translationFontSize = 14.0}): _verses = verses,_bookmarkedVerseIds = bookmarkedVerseIds;
   
 
  final  ChapterEntity chapter;
@@ -274,6 +274,9 @@ class _Loaded implements MuhudState {
 @JsonKey() final  bool isAudioLoading;
 @JsonKey() final  bool showArabic;
 @JsonKey() final  bool showTransliteration;
+@JsonKey() final  double arabFontSize;
+@JsonKey() final  double transliterationFontSize;
+@JsonKey() final  double translationFontSize;
 
 /// Create a copy of MuhudState
 /// with the given fields replaced by the non-null parameter values.
@@ -285,16 +288,16 @@ _$LoadedCopyWith<_Loaded> get copyWith => __$LoadedCopyWithImpl<_Loaded>(this, _
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Loaded&&(identical(other.chapter, chapter) || other.chapter == chapter)&&const DeepCollectionEquality().equals(other._verses, _verses)&&const DeepCollectionEquality().equals(other._bookmarkedVerseIds, _bookmarkedVerseIds)&&(identical(other.showTranslation, showTranslation) || other.showTranslation == showTranslation)&&(identical(other.playingVerseId, playingVerseId) || other.playingVerseId == playingVerseId)&&(identical(other.isAudioLoading, isAudioLoading) || other.isAudioLoading == isAudioLoading)&&(identical(other.showArabic, showArabic) || other.showArabic == showArabic)&&(identical(other.showTransliteration, showTransliteration) || other.showTransliteration == showTransliteration));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Loaded&&(identical(other.chapter, chapter) || other.chapter == chapter)&&const DeepCollectionEquality().equals(other._verses, _verses)&&const DeepCollectionEquality().equals(other._bookmarkedVerseIds, _bookmarkedVerseIds)&&(identical(other.showTranslation, showTranslation) || other.showTranslation == showTranslation)&&(identical(other.playingVerseId, playingVerseId) || other.playingVerseId == playingVerseId)&&(identical(other.isAudioLoading, isAudioLoading) || other.isAudioLoading == isAudioLoading)&&(identical(other.showArabic, showArabic) || other.showArabic == showArabic)&&(identical(other.showTransliteration, showTransliteration) || other.showTransliteration == showTransliteration)&&(identical(other.arabFontSize, arabFontSize) || other.arabFontSize == arabFontSize)&&(identical(other.transliterationFontSize, transliterationFontSize) || other.transliterationFontSize == transliterationFontSize)&&(identical(other.translationFontSize, translationFontSize) || other.translationFontSize == translationFontSize));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,chapter,const DeepCollectionEquality().hash(_verses),const DeepCollectionEquality().hash(_bookmarkedVerseIds),showTranslation,playingVerseId,isAudioLoading,showArabic,showTransliteration);
+int get hashCode => Object.hash(runtimeType,chapter,const DeepCollectionEquality().hash(_verses),const DeepCollectionEquality().hash(_bookmarkedVerseIds),showTranslation,playingVerseId,isAudioLoading,showArabic,showTransliteration,arabFontSize,transliterationFontSize,translationFontSize);
 
 @override
 String toString() {
-  return 'MuhudState.loaded(chapter: $chapter, verses: $verses, bookmarkedVerseIds: $bookmarkedVerseIds, showTranslation: $showTranslation, playingVerseId: $playingVerseId, isAudioLoading: $isAudioLoading, showArabic: $showArabic, showTransliteration: $showTransliteration)';
+  return 'MuhudState.loaded(chapter: $chapter, verses: $verses, bookmarkedVerseIds: $bookmarkedVerseIds, showTranslation: $showTranslation, playingVerseId: $playingVerseId, isAudioLoading: $isAudioLoading, showArabic: $showArabic, showTransliteration: $showTransliteration, arabFontSize: $arabFontSize, transliterationFontSize: $transliterationFontSize, translationFontSize: $translationFontSize)';
 }
 
 
@@ -305,7 +308,7 @@ abstract mixin class _$LoadedCopyWith<$Res> implements $MuhudStateCopyWith<$Res>
   factory _$LoadedCopyWith(_Loaded value, $Res Function(_Loaded) _then) = __$LoadedCopyWithImpl;
 @useResult
 $Res call({
- ChapterEntity chapter, List<VerseWithDetailsEntity> verses, Set<int> bookmarkedVerseIds, bool showTranslation, int? playingVerseId, bool isAudioLoading, bool showArabic, bool showTransliteration
+ ChapterEntity chapter, List<VerseWithDetailsEntity> verses, Set<int> bookmarkedVerseIds, bool showTranslation, int? playingVerseId, bool isAudioLoading, bool showArabic, bool showTransliteration, double arabFontSize, double transliterationFontSize, double translationFontSize
 });
 
 
@@ -322,7 +325,7 @@ class __$LoadedCopyWithImpl<$Res>
 
 /// Create a copy of MuhudState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? chapter = null,Object? verses = null,Object? bookmarkedVerseIds = null,Object? showTranslation = null,Object? playingVerseId = freezed,Object? isAudioLoading = null,Object? showArabic = null,Object? showTransliteration = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? chapter = null,Object? verses = null,Object? bookmarkedVerseIds = null,Object? showTranslation = null,Object? playingVerseId = freezed,Object? isAudioLoading = null,Object? showArabic = null,Object? showTransliteration = null,Object? arabFontSize = null,Object? transliterationFontSize = null,Object? translationFontSize = null,}) {
   return _then(_Loaded(
 chapter: null == chapter ? _self.chapter : chapter // ignore: cast_nullable_to_non_nullable
 as ChapterEntity,verses: null == verses ? _self._verses : verses // ignore: cast_nullable_to_non_nullable
@@ -332,7 +335,10 @@ as bool,playingVerseId: freezed == playingVerseId ? _self.playingVerseId : playi
 as int?,isAudioLoading: null == isAudioLoading ? _self.isAudioLoading : isAudioLoading // ignore: cast_nullable_to_non_nullable
 as bool,showArabic: null == showArabic ? _self.showArabic : showArabic // ignore: cast_nullable_to_non_nullable
 as bool,showTransliteration: null == showTransliteration ? _self.showTransliteration : showTransliteration // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,arabFontSize: null == arabFontSize ? _self.arabFontSize : arabFontSize // ignore: cast_nullable_to_non_nullable
+as double,transliterationFontSize: null == transliterationFontSize ? _self.transliterationFontSize : transliterationFontSize // ignore: cast_nullable_to_non_nullable
+as double,translationFontSize: null == translationFontSize ? _self.translationFontSize : translationFontSize // ignore: cast_nullable_to_non_nullable
+as double,
   ));
 }
 

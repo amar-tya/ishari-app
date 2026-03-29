@@ -14,6 +14,9 @@ class VerseList extends StatelessWidget {
     required this.showTranslation,
     required this.showArabic,
     required this.showTransliteration,
+    required this.arabFontSize,
+    required this.transliterationFontSize,
+    required this.translationFontSize,
     this.playingVerseId,
     super.key,
   });
@@ -23,6 +26,9 @@ class VerseList extends StatelessWidget {
   final bool showTranslation;
   final bool showArabic;
   final bool showTransliteration;
+  final double arabFontSize;
+  final double transliterationFontSize;
+  final double translationFontSize;
   final int? playingVerseId;
 
   @override
@@ -41,6 +47,9 @@ class VerseList extends StatelessWidget {
           showTranslation: showTranslation,
           showArabic: showArabic,
           showTransliteration: showTransliteration,
+          arabFontSize: arabFontSize,
+          transliterationFontSize: transliterationFontSize,
+          translationFontSize: translationFontSize,
           onBookmarkToggle: () =>
               _handleBookmarkTap(context, verse, isBookmarked),
           onPlayTap: () => _handlePlayTap(context, verse, isPlaying),

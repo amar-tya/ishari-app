@@ -10,6 +10,12 @@ import 'package:ishari/features/muhud/domain/usecases/toggle_bookmark.dart';
 import 'package:ishari/features/muhud/presentation/bloc/muhud_event.dart';
 import 'package:ishari/features/muhud/presentation/bloc/muhud_state.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+// SharedPreferences keys for reader font size settings
+const _kArabFontSize = 'muhud_arab_font_size';
+const _kTransliterationFontSize = 'muhud_transliteration_font_size';
+const _kTranslationFontSize = 'muhud_translation_font_size';
 
 @injectable
 class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
@@ -18,6 +24,7 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
     required this.toggleBookmark,
     required this.getBookmarkedVerseIds,
     required this.getChapterById,
+    required this.prefs,
   }) : super(const MuhudState.initial()) {
     on<MuhudEvent>((event, emit) async {
       await event.when(
@@ -29,6 +36,11 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
         stopAudio: () => _onStopAudio(emit),
         toggleArabic: () async => _onToggleArabic(emit),
         toggleTransliteration: () async => _onToggleTransliteration(emit),
+        setArabFontSize: (size) async => _onSetArabFontSize(size, emit),
+        setTransliterationFontSize: (size) async =>
+            _onSetTransliterationFontSize(size, emit),
+        setTranslationFontSize: (size) async => _onSetTranslationFontSize(size, emit),
+        resetFontSizes: () async => _onResetFontSizes(emit),
       );
     });
   }
@@ -37,6 +49,7 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
   final ToggleBookmark toggleBookmark;
   final GetBookmarkedVerseIds getBookmarkedVerseIds;
   final GetChapterById getChapterById;
+  final SharedPreferences prefs;
 
   final _audioPlayer = AudioPlayer();
   StreamSubscription<PlayerState>? _playerStateSubscription;
@@ -87,6 +100,11 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
                   verses: verses,
                   bookmarkedVerseIds: const {},
                   showTranslation: true,
+                  arabFontSize: prefs.getDouble(_kArabFontSize) ?? 22.0,
+                  transliterationFontSize:
+                      prefs.getDouble(_kTransliterationFontSize) ?? 11.0,
+                  translationFontSize:
+                      prefs.getDouble(_kTranslationFontSize) ?? 14.0,
                 ),
               );
               debugPrint('[MuhudBloc] Loaded state emitted successfully');
@@ -215,5 +233,45 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
       },
     );
     if (future != null) await future;
+  }
+
+  Future<void> _onSetArabFontSize(double size, Emitter<MuhudState> emit) async {
+    state.mapOrNull(loaded: (l) => emit(l.copyWith(arabFontSize: size)));
+    await prefs.setDouble(_kArabFontSize, size);
+  }
+
+  Future<void> _onSetTransliterationFontSize(
+    double size,
+    Emitter<MuhudState> emit,
+  ) async {
+    state.mapOrNull(
+      loaded: (l) => emit(l.copyWith(transliterationFontSize: size)),
+    );
+    await prefs.setDouble(_kTransliterationFontSize, size);
+  }
+
+  Future<void> _onSetTranslationFontSize(
+    double size,
+    Emitter<MuhudState> emit,
+  ) async {
+    state.mapOrNull(
+      loaded: (l) => emit(l.copyWith(translationFontSize: size)),
+    );
+    await prefs.setDouble(_kTranslationFontSize, size);
+  }
+
+  Future<void> _onResetFontSizes(Emitter<MuhudState> emit) async {
+    state.mapOrNull(
+      loaded: (l) => emit(
+        l.copyWith(
+          arabFontSize: 22.0,
+          transliterationFontSize: 11.0,
+          translationFontSize: 14.0,
+        ),
+      ),
+    );
+    await prefs.remove(_kArabFontSize);
+    await prefs.remove(_kTransliterationFontSize);
+    await prefs.remove(_kTranslationFontSize);
   }
 }

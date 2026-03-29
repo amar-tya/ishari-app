@@ -37,6 +37,9 @@ dependencies:
   # Secure token storage
   flutter_secure_storage: ^10.0.0
 
+  # User preferences (reader font size settings)
+  shared_preferences: ^2.3.2
+
   # Network check
   internet_connection_checker_plus: ^2.5.1
 

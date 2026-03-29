@@ -29,4 +29,14 @@ sealed class MuhudEvent with _$MuhudEvent {
   const factory MuhudEvent.toggleArabic() = _ToggleArabic;
 
   const factory MuhudEvent.toggleTransliteration() = _ToggleTransliteration;
+
+  const factory MuhudEvent.setArabFontSize(double size) = _SetArabFontSize;
+
+  const factory MuhudEvent.setTransliterationFontSize(double size) =
+      _SetTransliterationFontSize;
+
+  const factory MuhudEvent.setTranslationFontSize(double size) =
+      _SetTranslationFontSize;
+
+  const factory MuhudEvent.resetFontSizes() = _ResetFontSizes;
 }

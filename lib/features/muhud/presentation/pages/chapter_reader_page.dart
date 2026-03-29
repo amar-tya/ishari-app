@@ -44,7 +44,8 @@ class ChapterReaderPage extends StatelessWidget {
             ),
             loaded: (chapter, verses, bookmarked, showTranslation,
                     playingVerseId, isAudioLoading, showArabic,
-                    showTransliteration) =>
+                    showTransliteration, arabFontSize, transliterationFontSize,
+                    translationFontSize) =>
                 ChapterReaderBody(
                   chapter: chapter,
                   verses: verses,
@@ -52,6 +53,9 @@ class ChapterReaderPage extends StatelessWidget {
                   showTranslation: showTranslation,
                   showArabic: showArabic,
                   showTransliteration: showTransliteration,
+                  arabFontSize: arabFontSize,
+                  transliterationFontSize: transliterationFontSize,
+                  translationFontSize: translationFontSize,
                   playingVerseId: playingVerseId,
                 ),
             error: (message) => Scaffold(

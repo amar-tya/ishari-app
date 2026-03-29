@@ -11,6 +11,9 @@ class VerseCard extends StatefulWidget {
     required this.showTranslation,
     required this.showArabic,
     required this.showTransliteration,
+    required this.arabFontSize,
+    required this.transliterationFontSize,
+    required this.translationFontSize,
     required this.onBookmarkToggle,
     required this.onPlayTap,
     super.key,
@@ -22,6 +25,9 @@ class VerseCard extends StatefulWidget {
   final bool showTranslation;
   final bool showArabic;
   final bool showTransliteration;
+  final double arabFontSize;
+  final double transliterationFontSize;
+  final double translationFontSize;
   final VoidCallback onBookmarkToggle;
   final VoidCallback onPlayTap;
 
@@ -151,7 +157,7 @@ class _VerseCardState extends State<VerseCard>
             Text(
               widget.verse.verse.arabicText,
               style: GoogleFonts.scheherazadeNew(
-                fontSize: 22,
+                fontSize: widget.arabFontSize,
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFF1C1B1F),
                 height: 2.2,
@@ -168,9 +174,9 @@ class _VerseCardState extends State<VerseCard>
             Text(
               widget.verse.verse.transliteration,
               textAlign: TextAlign.right,
-              style: const TextStyle(
-                fontSize: 11,
-                color: Color(0xFF777777),
+              style: TextStyle(
+                fontSize: widget.transliterationFontSize,
+                color: const Color(0xFF777777),
                 fontStyle: FontStyle.italic,
                 height: 1.5,
               ),
@@ -192,9 +198,9 @@ class _VerseCardState extends State<VerseCard>
             const SizedBox(height: 4),
             Text(
               translation.translationText,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Color(0xFF1C1B1F),
+              style: TextStyle(
+                fontSize: widget.translationFontSize,
+                color: const Color(0xFF1C1B1F),
                 height: 1.6,
               ),
             ),
