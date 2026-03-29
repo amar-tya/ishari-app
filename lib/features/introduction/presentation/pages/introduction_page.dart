@@ -4,16 +4,12 @@ import 'package:go_router/go_router.dart';
 import 'package:ishari/core/app_state.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ishari/features/auth/presentation/pages/home_page.dart';
-import 'package:ishari/features/introduction/presentation/widgets/illustrations/audio_illustration.dart';
-import 'package:ishari/features/introduction/presentation/widgets/illustrations/book_illustration.dart';
-import 'package:ishari/features/introduction/presentation/widgets/illustrations/bookmark_illustration.dart';
-import 'package:ishari/features/introduction/presentation/widgets/illustrations/key_illustration.dart';
-import 'package:ishari/features/introduction/presentation/widgets/illustrations/night_mode_illustration.dart';
+import 'package:ishari/features/introduction/presentation/widgets/intro_illustrations.dart';
 
 /// The onboarding / introduction flow.
 ///
 /// Shows 5 slides (PageView) before the user signs in or continues as guest.
-/// Design follows the Material Design 3 mockup with primary color #51C878.
+/// Design follows the Ishari Design System: Lime (#CAFF00) primary, DM Sans.
 class IntroductionPage extends StatefulWidget {
   static const routePath = '/introduction';
 
@@ -23,64 +19,114 @@ class IntroductionPage extends StatefulWidget {
   State<IntroductionPage> createState() => _IntroductionPageState();
 }
 
-// ── Color palette from mockup ──────────────────────────────────────────────
-const _primary = Color(0xFF51C878);
-const _illustrationBg = Color(0xFFF0FAF4);
-const _onSurface = Color(0xFF1C1B1F);
-const _onSurfaceVariant = Color(0xFF49454F);
-const _dotInactive = Color(0xFFC8E6C9);
+// ── Design System Tokens ───────────────────────────────────────────────────
+const _clrPrimary    = Color(0xFFCAFF00);   // Lime / brand accent
+const _clrDark       = Color(0xFF111111);   // Near-black
+const _clrSurface    = Color(0xFFFFFFFF);   // White
+const _clrBg         = Color(0xFFF0F5EE);   // App background (light sage)
+const _clrMuted      = Color(0xFF777777);   // Secondary text
+const _clrBorderDark = Color(0xFFD0D8CE);   // Stronger borders
 
-// ── Slide data model ───────────────────────────────────────────────────────
-enum _IllustrationType { book, audio, bookmark, nightMode, key }
+// ── Title inline badge styles ──────────────────────────────────────────────
+enum _BadgeStyle { dark, lime }
 
-class _SlideData {
-  const _SlideData({
-    required this.title,
-    required this.description,
-    required this.illustration,
-  });
+class _TitlePart {
+  const _TitlePart(this.text, {this.badge});
 
-  final String title;
-  final String description;
-  final _IllustrationType illustration;
+  final String text;
+  final _BadgeStyle? badge;
 }
 
-const _slides = [
-  _SlideData(
-    title: 'Baca Shalawat Mudah & Kapanpun',
-    description:
-        'Ratusan bait shalawat dari kitab Diwan,\nSyaraful Anam, Diba\', dan lainnya',
-    illustration: _IllustrationType.book,
-  ),
-  _SlideData(
-    title: 'Dengarkan dengan Khidmat',
-    description:
-        'Nikmati bacaan shalawat dengan audio\nberkualitas dari Pimpinan Shalawat terpilih',
-    illustration: _IllustrationType.audio,
-  ),
-  _SlideData(
-    title: 'Simpan Favoritmu',
-    description:
-        'Tandai shalawat kesukaan dan akses\nkembali kapan saja dengan mudah',
-    illustration: _IllustrationType.bookmark,
-  ),
-  _SlideData(
-    title: 'Mari Lestarikan Budaya Ulama Nusantara',
-    description: 'Mudah didengar, mudah disimpan, dan mudah diakses kapan saja',
-    illustration: _IllustrationType.nightMode,
-  ),
-  _SlideData(
-    title: 'Masuk untuk Mulai',
-    description:
-        'Aktifkan fitur bookmark dan personalisasi\ndengan masuk ke akun Anda',
-    illustration: _IllustrationType.key,
-  ),
-];
+// ── Slide data ─────────────────────────────────────────────────────────────
+class _SlideData {
+  const _SlideData({
+    required this.label,
+    required this.titleParts,
+    required this.description,
+    required this.illustrationBg,
+    required this.buildIllustration,
+  });
+
+  final String label;
+  final List<_TitlePart> titleParts;
+  final String description;
+  final Color illustrationBg;
+  final WidgetBuilder buildIllustration;
+}
+
+List<_SlideData> _buildSlides() => [
+      _SlideData(
+        label: 'QS Al-Ahzab: 56',
+        titleParts: const [
+          _TitlePart('Baca Shalawat '),
+          _TitlePart('Mudah', badge: _BadgeStyle.dark),
+          _TitlePart(' & Kapanpun'),
+        ],
+        description:
+            'Ratusan bait dari kitab Diwan, Syaraful Anam,\nDiba\', dan lainnya — dalam genggamanmu.',
+        illustrationBg: _clrBg,
+        buildIllustration: (_) => const ShalawatCardsIllustration(),
+      ),
+      _SlideData(
+        label: 'Pimpinan Shalawat',
+        titleParts: const [
+          _TitlePart('Dengarkan '),
+          _TitlePart('dengan Khidmat', badge: _BadgeStyle.dark),
+        ],
+        description:
+            'Nikmati bacaan shalawat dengan audio\nberkualitas dari Pimpinan Shalawat terpilih.',
+        illustrationBg: _clrBg,
+        buildIllustration: (_) => const AudioPlayerIllustration(),
+      ),
+      _SlideData(
+        label: 'Koleksi Favoritmu',
+        titleParts: const [
+          _TitlePart('Simpan '),
+          _TitlePart('Favoritmu', badge: _BadgeStyle.lime),
+          _TitlePart(' Kapan Saja'),
+        ],
+        description:
+            'Tandai shalawat kesukaan dan akses\nkembali kapan saja dengan mudah.',
+        illustrationBg: _clrBg,
+        buildIllustration: (_) => const BookmarkListIllustration(),
+      ),
+      _SlideData(
+        label: 'Warisan Ulama Nusantara',
+        titleParts: const [
+          _TitlePart('Mari '),
+          _TitlePart('Lestarikan', badge: _BadgeStyle.dark),
+          _TitlePart(' Budaya Ulama'),
+        ],
+        description:
+            'Mudah didengar, mudah disimpan,\ndan mudah diakses kapan saja.',
+        illustrationBg: _clrBg,
+        buildIllustration: (_) => const CultureGridIllustration(),
+      ),
+      _SlideData(
+        label: 'Mulai Perjalananmu',
+        titleParts: const [
+          _TitlePart('Masuk & Mulai '),
+          _TitlePart('Bershalawat', badge: _BadgeStyle.lime),
+          _TitlePart(' Sekarang'),
+        ],
+        description:
+            'Simpan progres, tandai bait favorit, dan\nakses riwayat bacaanmu di semua perangkat.',
+        illustrationBg: _clrBg,
+        buildIllustration: (_) => const SignInPreviewIllustration(),
+      ),
+    ];
 
 // ── Page ───────────────────────────────────────────────────────────────────
 class _IntroductionPageState extends State<IntroductionPage> {
   final _pageController = PageController();
   int _currentPage = 0;
+  late final List<_SlideData> _slides;
+
+  @override
+  void initState() {
+    super.initState();
+    _slides = _buildSlides();
+  }
 
   @override
   void dispose() {
@@ -114,17 +160,17 @@ class _IntroductionPageState extends State<IntroductionPage> {
           error: (message) => ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(message),
-              backgroundColor: const Color(0xFFB3261E),
+              backgroundColor: const Color(0xFFFF4D4F),
             ),
           ),
           orElse: () {},
         );
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: _clrBg,
         body: Stack(
           children: [
-            // ── PageView ────────────────────────────────────────────────
+            // ── PageView ─────────────────────────────────────────────────
             PageView.builder(
               controller: _pageController,
               onPageChanged: _onPageChanged,
@@ -133,7 +179,7 @@ class _IntroductionPageState extends State<IntroductionPage> {
                   _IntroSlide(slide: _slides[index]),
             ),
 
-            // ── Skip button (hidden on last slide) ──────────────────────
+            // ── Skip button (hidden on last slide) ───────────────────────
             if (_currentPage < _slides.length - 1)
               Positioned(
                 top: MediaQuery.of(context).padding.top + 52,
@@ -141,7 +187,7 @@ class _IntroductionPageState extends State<IntroductionPage> {
                 child: _SkipButton(onTap: _skipToLast),
               ),
 
-            // ── Bottom overlay (dots + CTA buttons) ─────────────────────
+            // ── Bottom overlay (dots + CTA) ──────────────────────────────
             Positioned(
               left: 0,
               right: 0,
@@ -168,44 +214,44 @@ class _IntroSlide extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Illustration area — top 55%
-        _IllustrationArea(type: slide.illustration),
-
-        // Text content — remaining space
+        _IllustrationArea(
+          bg: slide.illustrationBg,
+          child: slide.buildIllustration(context),
+        ),
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+            padding: const EdgeInsets.fromLTRB(20, 18, 20, 0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  slide.title,
-                  textAlign: TextAlign.center,
+                  slide.label,
                   style: const TextStyle(
-                    fontSize: 22,
+                    fontSize: 11,
                     fontWeight: FontWeight.w700,
-                    color: _onSurface,
-                    height: 1.3,
-                    letterSpacing: -0.2,
+                    color: _clrMuted,
+                    letterSpacing: 0.4,
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 6),
+                _TitleText(parts: slide.titleParts),
+                const SizedBox(height: 8),
                 Text(
                   slide.description,
-                  textAlign: TextAlign.center,
                   style: const TextStyle(
-                    fontSize: 14,
-                    color: _onSurfaceVariant,
-                    height: 1.65,
-                    letterSpacing: 0.1,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: _clrMuted,
+                    height: 1.6,
                   ),
                 ),
               ],
             ),
           ),
         ),
-
-        // Reserve space for the bottom section overlay
+        // Reserve space for bottom section overlay
         const SizedBox(height: 220),
       ],
     );
@@ -214,65 +260,96 @@ class _IntroSlide extends StatelessWidget {
 
 // ── Illustration area ──────────────────────────────────────────────────────
 class _IllustrationArea extends StatelessWidget {
-  const _IllustrationArea({required this.type});
+  const _IllustrationArea({required this.bg, required this.child});
 
-  final _IllustrationType type;
-
-  Widget _illustration() {
-    return switch (type) {
-      _IllustrationType.book => const BookIllustration(),
-      _IllustrationType.audio => const AudioIllustration(),
-      _IllustrationType.bookmark => const BookmarkIllustration(),
-      _IllustrationType.nightMode => const NightModeIllustration(),
-      _IllustrationType.key => const KeyIllustration(),
-    };
-  }
+  final Color bg;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    // 55% of screen height
-    final illustrationHeight = MediaQuery.of(context).size.height * 0.55;
-    return SizedBox(
+    final height = MediaQuery.of(context).size.height * 0.50;
+    return Container(
       width: double.infinity,
-      height: illustrationHeight,
-      child: ClipPath(
-        clipper: _WaveClipper(),
-        child: Container(
-          color: _illustrationBg,
-          child: SafeArea(
-            bottom: false,
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 48),
-                child: _illustration(),
-              ),
-            ),
-          ),
+      height: height,
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(28),
+          bottomRight: Radius.circular(28),
         ),
+      ),
+      clipBehavior: Clip.hardEdge,
+      child: SafeArea(
+        bottom: false,
+        child: child,
       ),
     );
   }
 }
 
-/// Clips a subtle curved wave at the bottom of the illustration area.
-class _WaveClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    final path = Path()
-      ..lineTo(0, size.height - 32)
-      ..quadraticBezierTo(
-        size.width / 2,
-        size.height + 16,
-        size.width,
-        size.height - 32,
-      )
-      ..lineTo(size.width, 0)
-      ..close();
-    return path;
-  }
+// ── Title with inline badges ───────────────────────────────────────────────
+class _TitleText extends StatelessWidget {
+  const _TitleText({required this.parts});
+
+  final List<_TitlePart> parts;
 
   @override
-  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
+  Widget build(BuildContext context) {
+    return Text.rich(
+      TextSpan(
+        children: parts.map((p) {
+          if (p.badge == null) {
+            return TextSpan(
+              text: p.text,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w900,
+                color: _clrDark,
+                height: 1.2,
+                letterSpacing: -0.5,
+              ),
+            );
+          }
+          final isDark = p.badge == _BadgeStyle.dark;
+          return WidgetSpan(
+            alignment: PlaceholderAlignment.middle,
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 2),
+              padding: const EdgeInsets.fromLTRB(7, 2, 8, 3),
+              decoration: BoxDecoration(
+                color: isDark ? _clrDark : _clrPrimary,
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (isDark)
+                    Container(
+                      width: 5,
+                      height: 5,
+                      margin: const EdgeInsets.only(right: 4),
+                      decoration: const BoxDecoration(
+                        color: _clrPrimary,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  Text(
+                    p.text,
+                    style: TextStyle(
+                      fontSize: 21,
+                      fontWeight: FontWeight.w900,
+                      color: isDark ? Colors.white : _clrDark,
+                      letterSpacing: -0.4,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
 }
 
 // ── Skip button ────────────────────────────────────────────────────────────
@@ -288,16 +365,17 @@ class _SkipButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.72),
+          color: Colors.white.withOpacity(0.9),
           borderRadius: BorderRadius.circular(100),
+          border: Border.all(color: _clrBorderDark, width: 1.5),
         ),
         child: const Text(
           'Lewati',
           style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w500,
-            color: _primary,
-            letterSpacing: 0.1,
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: _clrMuted,
+            letterSpacing: -0.1,
           ),
         ),
       ),
@@ -323,39 +401,21 @@ class _BottomSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).padding.bottom;
     return Container(
-      color: Colors.white,
-      padding: EdgeInsets.fromLTRB(24, 16, 24, bottomPadding + 8),
+      color: _clrBg,
+      padding: EdgeInsets.fromLTRB(20, 12, 20, bottomPadding + 8),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Page indicator dots
           _PageDots(current: currentPage, total: totalPages),
-          const SizedBox(height: 12),
-
+          const SizedBox(height: 8),
           if (_isLastPage) ...[
-            // Google Sign-In button
-            _GoogleSignInButton(),
-            const SizedBox(height: 12),
-            // Guest button
-            _GuestButton(),
+            const _GoogleSignInButton(),
             const SizedBox(height: 8),
-            const Text(
-              'Mode tamu tidak dapat menyimpan bookmark',
-              style: TextStyle(
-                fontSize: 12,
-                color: Color(0xFF79747E),
-                letterSpacing: 0.3,
-              ),
-              textAlign: TextAlign.center,
-            ),
+            const _GuestButton(),
           ] else ...[
-            // Next button
-            _FilledButton(
-              label: 'Selanjutnya →',
-              onTap: onNext,
-            ),
-            // Spacer matching the two-button height of the last slide
-            const SizedBox(height: 90),
+            _NextButton(onTap: onNext),
+            // Spacer matching two-button height on last slide
+            const SizedBox(height: 52),
           ],
         ],
       ),
@@ -379,13 +439,12 @@ class _PageDots extends StatelessWidget {
         return AnimatedContainer(
           duration: const Duration(milliseconds: 240),
           curve: Curves.easeInOut,
-          margin: const EdgeInsets.symmetric(horizontal: 4),
-          width: isActive ? 24 : 8,
-          height: 8,
+          margin: const EdgeInsets.symmetric(horizontal: 3),
+          width: isActive ? 22 : 6,
+          height: 6,
           decoration: BoxDecoration(
-            color: isActive ? _primary : Colors.transparent,
+            color: isActive ? _clrDark : _clrBorderDark,
             borderRadius: BorderRadius.circular(100),
-            border: isActive ? null : Border.all(color: _dotInactive, width: 2),
           ),
         );
       }),
@@ -393,11 +452,10 @@ class _PageDots extends StatelessWidget {
   }
 }
 
-// ── Filled button (Next) ───────────────────────────────────────────────────
-class _FilledButton extends StatelessWidget {
-  const _FilledButton({required this.label, required this.onTap});
+// ── Next button — btn-primary (Lime) ──────────────────────────────────────
+class _NextButton extends StatelessWidget {
+  const _NextButton({required this.onTap});
 
-  final String label;
   final VoidCallback onTap;
 
   @override
@@ -407,39 +465,55 @@ class _FilledButton extends StatelessWidget {
       child: Container(
         width: double.infinity,
         height: 52,
+        padding: const EdgeInsets.fromLTRB(22, 0, 8, 0),
         decoration: BoxDecoration(
-          color: _primary,
+          color: _clrPrimary,
           borderRadius: BorderRadius.circular(100),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
-              color: _primary.withOpacity(0.30),
-              blurRadius: 8,
-              offset: const Offset(0, 3),
-            ),
-            const BoxShadow(
-              color: Color(0x24000000),
-              blurRadius: 3,
-              offset: Offset(0, 1),
+              color: Color(0x44CAFF00),
+              blurRadius: 16,
+              offset: Offset(0, 4),
             ),
           ],
         ),
-        alignment: Alignment.center,
-        child: Text(
-          label,
-          style: const TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-            letterSpacing: 0.1,
-          ),
+        child: Row(
+          children: [
+            const Expanded(
+              child: Text(
+                'Selanjutnya',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  color: _clrDark,
+                  letterSpacing: -0.2,
+                ),
+              ),
+            ),
+            Container(
+              width: 36,
+              height: 36,
+              decoration: const BoxDecoration(
+                color: _clrDark,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.arrow_forward_rounded,
+                color: _clrPrimary,
+                size: 18,
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-// ── Google Sign-In button ──────────────────────────────────────────────────
+// ── Google Sign-In button — outlined ──────────────────────────────────────
 class _GoogleSignInButton extends StatelessWidget {
+  const _GoogleSignInButton();
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
@@ -448,27 +522,22 @@ class _GoogleSignInButton extends StatelessWidget {
           loading: () => true,
           orElse: () => false,
         );
-
         return GestureDetector(
           onTap: isLoading
               ? null
-              : () => context.read<AuthBloc>().add(
-                  const AuthEvent.signInWithGoogle(),
-                ),
+              : () => context
+                  .read<AuthBloc>()
+                  .add(const AuthEvent.signInWithGoogle()),
           child: Container(
             width: double.infinity,
             height: 52,
             decoration: BoxDecoration(
-              color: _primary,
+              color: _clrSurface,
               borderRadius: BorderRadius.circular(100),
-              boxShadow: [
+              border: Border.all(color: _clrBorderDark, width: 1.5),
+              boxShadow: const [
                 BoxShadow(
-                  color: _primary.withOpacity(0.30),
-                  blurRadius: 8,
-                  offset: const Offset(0, 3),
-                ),
-                const BoxShadow(
-                  color: Color(0x24000000),
+                  color: Color(0x0A000000),
                   blurRadius: 3,
                   offset: Offset(0, 1),
                 ),
@@ -481,32 +550,26 @@ class _GoogleSignInButton extends StatelessWidget {
                       height: 22,
                       child: CircularProgressIndicator(
                         strokeWidth: 2.5,
-                        valueColor: AlwaysStoppedAnimation(Colors.white),
+                        valueColor: AlwaysStoppedAnimation(_clrDark),
                       ),
                     ),
                   )
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Google "G" badge
-                      Container(
-                        width: 24,
-                        height: 24,
-                        padding: const EdgeInsets.all(4),
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                        ),
+                      SizedBox(
+                        width: 18,
+                        height: 18,
                         child: CustomPaint(painter: _GoogleGPainter()),
                       ),
                       const SizedBox(width: 10),
                       const Text(
                         'Masuk dengan Google',
                         style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                          letterSpacing: 0.1,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: _clrDark,
+                          letterSpacing: -0.1,
                         ),
                       ),
                     ],
@@ -518,8 +581,10 @@ class _GoogleSignInButton extends StatelessWidget {
   }
 }
 
-// ── Guest button ───────────────────────────────────────────────────────────
+// ── Guest button — ghost ───────────────────────────────────────────────────
 class _GuestButton extends StatelessWidget {
+  const _GuestButton();
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -529,20 +594,14 @@ class _GuestButton extends StatelessWidget {
       },
       child: Container(
         width: double.infinity,
-        height: 52,
-        decoration: BoxDecoration(
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(100),
-          border: Border.all(color: _primary, width: 1.5),
-        ),
+        height: 44,
         alignment: Alignment.center,
         child: const Text(
-          'Lanjutkan sebagai Tamu',
+          'Lanjutkan sebagai tamu →',
           style: TextStyle(
-            fontSize: 15,
+            fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: _primary,
-            letterSpacing: 0.1,
+            color: _clrMuted,
           ),
         ),
       ),
@@ -551,12 +610,11 @@ class _GuestButton extends StatelessWidget {
 }
 
 // ── Google G logo painter ──────────────────────────────────────────────────
-/// Paints a simplified Google "G" using the four brand colors as arc segments.
 class _GoogleGPainter extends CustomPainter {
-  static const _blue = Color(0xFF4285F4);
-  static const _green = Color(0xFF34A853);
+  static const _blue   = Color(0xFF4285F4);
+  static const _green  = Color(0xFF34A853);
   static const _yellow = Color(0xFFFBBC05);
-  static const _red = Color(0xFFEA4335);
+  static const _red    = Color(0xFFEA4335);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -574,22 +632,12 @@ class _GoogleGPainter extends CustomPainter {
     final rect = Rect.fromCircle(center: center, radius: radius);
     const deg = 3.14159265 / 180;
 
-    // Draw the arcs (colored segments)
-    // Red (top)
-    canvas.drawArc(rect, 195 * deg, 105 * deg, false, paint..color = _red);
-    // Yellow (left)
-    canvas.drawArc(rect, 135 * deg, 60 * deg, false, paint..color = _yellow);
-    // Green (bottom)
-    canvas.drawArc(rect, 45 * deg, 90 * deg, false, paint..color = _green);
-    // Blue (right)
-    canvas.drawArc(rect, -45 * deg, 90 * deg, false, paint..color = _blue);
+    canvas
+      ..drawArc(rect, 195 * deg, 105 * deg, false, paint..color = _red)
+      ..drawArc(rect, 135 * deg,  60 * deg, false, paint..color = _yellow)
+      ..drawArc(rect,  45 * deg,  90 * deg, false, paint..color = _green)
+      ..drawArc(rect, -45 * deg,  90 * deg, false, paint..color = _blue);
 
-    // Draw the horizontal bar of the "G"
-    final barPaint = Paint()
-      ..color = _blue
-      ..style = PaintingStyle.fill;
-
-    // The bar starts from the center and goes slightly past the arc edge
     canvas.drawRect(
       Rect.fromLTWH(
         center.dx,
@@ -597,7 +645,9 @@ class _GoogleGPainter extends CustomPainter {
         radius + (strokeW / 2),
         strokeW,
       ),
-      barPaint,
+      Paint()
+        ..color = _blue
+        ..style = PaintingStyle.fill,
     );
   }
 
