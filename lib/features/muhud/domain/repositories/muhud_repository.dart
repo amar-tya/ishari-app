@@ -31,4 +31,7 @@ abstract interface class MuhudRepository {
   Future<Either<Failure, List<BookmarkedVerseEntity>>> getBookmarkedVerses(
     String userId,
   );
+
+  /// Updates the note for a bookmarked verse.
+  Future<Either<Failure, void>> updateBookmarkNote(int verseId, String? note);
 }

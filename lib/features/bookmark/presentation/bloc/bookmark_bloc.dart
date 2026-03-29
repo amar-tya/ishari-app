@@ -4,6 +4,7 @@ import 'package:injectable/injectable.dart';
 import 'package:ishari/features/muhud/domain/entities/bookmarked_verse_entity.dart';
 import 'package:ishari/features/muhud/domain/usecases/get_bookmarked_verses.dart';
 import 'package:ishari/features/muhud/domain/usecases/toggle_bookmark.dart';
+import 'package:ishari/features/muhud/domain/usecases/update_bookmark_note.dart';
 
 part 'bookmark_bloc.freezed.dart';
 part 'bookmark_event.dart';
@@ -11,17 +12,22 @@ part 'bookmark_state.dart';
 
 @injectable
 class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
-  BookmarkBloc(this._getBookmarkedVerses, this._toggleBookmark)
-      : super(const BookmarkState.initial()) {
+  BookmarkBloc(
+    this._getBookmarkedVerses,
+    this._toggleBookmark,
+    this._updateBookmarkNote,
+  ) : super(const BookmarkState.initial()) {
     on<_Load>(_onLoad);
     on<_FilterChanged>(_onFilterChanged);
     on<_ToggleSort>(_onToggleSort);
     on<_SearchChanged>(_onSearchChanged);
     on<_RemoveBookmark>(_onRemoveBookmark);
+    on<_UpdateNote>(_onUpdateNote);
   }
 
   final GetBookmarkedVerses _getBookmarkedVerses;
   final ToggleBookmark _toggleBookmark;
+  final UpdateBookmarkNote _updateBookmarkNote;
 
   Future<void> _onLoad(_Load event, Emitter<BookmarkState> emit) async {
     emit(const BookmarkState.loading());
@@ -99,6 +105,26 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
         emit(l.copyWith(allBookmarks: updated, filtered: filtered));
       },
     );
+  }
+
+  Future<void> _onUpdateNote(
+    _UpdateNote event,
+    Emitter<BookmarkState> emit,
+  ) async {
+    state.mapOrNull(
+      loaded: (l) {
+        final updater = (BookmarkedVerseEntity b) => b.verseId == event.verseId
+            ? b.copyWith(note: event.note)
+            : b;
+        emit(
+          l.copyWith(
+            allBookmarks: l.allBookmarks.map(updater).toList(),
+            filtered: l.filtered.map(updater).toList(),
+          ),
+        );
+      },
+    );
+    await _updateBookmarkNote(event.verseId, event.note);
   }
 
   List<BookmarkedVerseEntity> _applyFilters(

@@ -230,7 +230,7 @@ class _BookmarkTabBodyState extends State<_BookmarkTabBody> {
                                     bookmark: b,
                                     onTap: () => context.push(
                                       '/chapter/${b.chapterId}',
-                                    ), // navigates to ChapterReaderPage
+                                    ),
                                     onRemove: userId == null
                                         ? () {}
                                         : () => context
@@ -241,6 +241,14 @@ class _BookmarkTabBodyState extends State<_BookmarkTabBody> {
                                                 userId: userId,
                                               ),
                                             ),
+                                    onEditNote: (note) => context
+                                        .read<BookmarkBloc>()
+                                        .add(
+                                          BookmarkEvent.updateNote(
+                                            verseId: b.verseId,
+                                            note: note,
+                                          ),
+                                        ),
                                   );
                                 },
                               ),

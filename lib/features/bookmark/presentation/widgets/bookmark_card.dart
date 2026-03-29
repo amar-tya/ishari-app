@@ -43,12 +43,14 @@ class BookmarkCard extends StatelessWidget {
     required this.bookmark,
     required this.onTap,
     required this.onRemove,
+    required this.onEditNote,
     super.key,
   });
 
   final BookmarkedVerseEntity bookmark;
   final VoidCallback onTap;
   final VoidCallback onRemove;
+  final void Function(String? note) onEditNote;
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +119,7 @@ class BookmarkCard extends StatelessWidget {
                   ),
                   // More / remove button
                   GestureDetector(
-                    onTap: () => _showRemoveSheet(context),
+                    onTap: () => _showOptionsSheet(context),
                     child: const Padding(
                       padding: EdgeInsets.all(6),
                       child: Icon(
@@ -280,6 +282,39 @@ class BookmarkCard extends StatelessWidget {
     );
   }
 
+  void _showOptionsSheet(BuildContext context) {
+    unawaited(showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _OptionsSheet(
+        hasNote: bookmark.note != null && bookmark.note!.isNotEmpty,
+        onEditNote: () {
+          Navigator.of(context).pop();
+          _showEditNoteSheet(context);
+        },
+        onRemove: () {
+          Navigator.of(context).pop();
+          _showRemoveSheet(context);
+        },
+      ),
+    ));
+  }
+
+  void _showEditNoteSheet(BuildContext context) {
+    unawaited(showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (_) => _EditNoteSheet(
+        initialNote: bookmark.note,
+        onSave: (note) {
+          Navigator.of(context).pop();
+          onEditNote(note);
+        },
+      ),
+    ));
+  }
+
   void _showRemoveSheet(BuildContext context) {
     unawaited(showModalBottomSheet<void>(
       context: context,
@@ -385,6 +420,265 @@ class _RemoveSheet extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Options sheet (Edit Catatan | Hapus Bookmark)
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _OptionsSheet extends StatelessWidget {
+  const _OptionsSheet({
+    required this.hasNote,
+    required this.onEditNote,
+    required this.onRemove,
+  });
+
+  final bool hasNote;
+  final VoidCallback onEditNote;
+  final VoidCallback onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 36,
+            height: 4,
+            decoration: BoxDecoration(
+              color: const Color(0xFFD0D8CE),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(height: 20),
+          _OptionTile(
+            icon: Icons.edit_note_rounded,
+            label: hasNote ? 'Edit Catatan' : 'Tambah Catatan',
+            onTap: onEditNote,
+          ),
+          const SizedBox(height: 4),
+          _OptionTile(
+            icon: Icons.bookmark_remove_rounded,
+            label: 'Hapus Bookmark',
+            onTap: onRemove,
+            isDestructive: true,
+          ),
+          const SizedBox(height: 8),
+          SizedBox(
+            width: double.infinity,
+            height: 44,
+            child: TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'Batal',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF777777),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _OptionTile extends StatelessWidget {
+  const _OptionTile({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.isDestructive = false,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  final bool isDestructive;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = isDestructive ? const Color(0xFFFF4D4F) : const Color(0xFF111111);
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: isDestructive
+              ? const Color(0xFFFFF1F0)
+              : const Color(0xFFF0F5EE),
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 20, color: color),
+            const SizedBox(width: 12),
+            Text(
+              label,
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: color,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Edit note sheet
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _EditNoteSheet extends StatefulWidget {
+  const _EditNoteSheet({required this.initialNote, required this.onSave});
+
+  final String? initialNote;
+  final void Function(String? note) onSave;
+
+  @override
+  State<_EditNoteSheet> createState() => _EditNoteSheetState();
+}
+
+class _EditNoteSheetState extends State<_EditNoteSheet> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialNote ?? '');
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFD0D8CE),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Catatan',
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+                color: const Color(0xFF111111),
+                letterSpacing: -0.3,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFFF0F5EE),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: const Color(0xFFD0D8CE), width: 1.5),
+              ),
+              child: TextField(
+                controller: _controller,
+                autofocus: true,
+                maxLines: 4,
+                minLines: 3,
+                maxLength: 200,
+                style: GoogleFonts.poppins(
+                  fontSize: 13,
+                  color: const Color(0xFF111111),
+                  height: 1.5,
+                ),
+                decoration: InputDecoration(
+                  hintText: 'Tulis catatan untuk ayat ini…',
+                  hintStyle: GoogleFonts.poppins(
+                    fontSize: 13,
+                    color: const Color(0xFFAAAAAA),
+                  ),
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.all(14),
+                  counterStyle: GoogleFonts.poppins(
+                    fontSize: 11,
+                    color: const Color(0xFFAAAAAA),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              height: 48,
+              child: FilledButton(
+                onPressed: () {
+                  final text = _controller.text.trim();
+                  widget.onSave(text.isEmpty ? null : text);
+                },
+                style: FilledButton.styleFrom(
+                  backgroundColor: const Color(0xFF111111),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                ),
+                child: Text(
+                  'Simpan',
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            SizedBox(
+              height: 44,
+              child: TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(
+                  'Batal',
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF777777),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

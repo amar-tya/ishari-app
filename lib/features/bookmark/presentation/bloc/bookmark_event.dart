@@ -16,4 +16,9 @@ sealed class BookmarkEvent with _$BookmarkEvent {
     required int verseId,
     required String userId,
   }) = _RemoveBookmark;
+
+  const factory BookmarkEvent.updateNote({
+    required int verseId,
+    required String? note,
+  }) = _UpdateNote;
 }

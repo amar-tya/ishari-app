@@ -103,4 +103,20 @@ class MuhudRepositoryImpl implements MuhudRepository {
       return left(ServerFailure(message: e.message));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> updateBookmarkNote(
+    int verseId,
+    String? note,
+  ) async {
+    if (!await _networkInfo.isConnected) {
+      return left(const NetworkFailure());
+    }
+    try {
+      await _remote.updateBookmarkNote(verseId, note);
+      return right(null);
+    } on ServerException catch (e) {
+      return left(ServerFailure(message: e.message));
+    }
+  }
 }

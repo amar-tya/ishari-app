@@ -47,6 +47,7 @@ import 'features/muhud/domain/usecases/get_bookmarked_verses.dart' as _i718;
 import 'features/muhud/domain/usecases/get_chapter_by_id.dart' as _i307;
 import 'features/muhud/domain/usecases/get_verses_by_chapter.dart' as _i1006;
 import 'features/muhud/domain/usecases/toggle_bookmark.dart' as _i718;
+import 'features/muhud/domain/usecases/update_bookmark_note.dart' as _i851;
 import 'features/muhud/presentation/bloc/chapter_list_bloc.dart' as _i242;
 import 'features/muhud/presentation/bloc/muhud_bloc.dart' as _i533;
 import 'features/search/data/datasources/search_remote_datasource.dart'
@@ -154,6 +155,9 @@ _i174.GetIt initDependencies(
   gh.factory<_i718.ToggleBookmark>(
     () => _i718.ToggleBookmark(gh<_i681.MuhudRepository>()),
   );
+  gh.factory<_i851.UpdateBookmarkNote>(
+    () => _i851.UpdateBookmarkNote(gh<_i681.MuhudRepository>()),
+  );
   gh.factory<_i468.KitabBloc>(() => _i468.KitabBloc(gh<_i395.GetAllBooks>()));
   gh.factory<_i961.SearchChapters>(
     () => _i961.SearchChapters(gh<_i246.SearchRepository>()),
@@ -162,6 +166,7 @@ _i174.GetIt initDependencies(
     () => _i560.BookmarkBloc(
       gh<_i718.GetBookmarkedVerses>(),
       gh<_i718.ToggleBookmark>(),
+      gh<_i851.UpdateBookmarkNote>(),
     ),
   );
   gh.factory<_i944.SearchBloc>(

@@ -55,7 +55,7 @@ extension BookmarkEventPatterns on BookmarkEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Load value)?  load,TResult Function( _FilterChanged value)?  filterChanged,TResult Function( _ToggleSort value)?  toggleSort,TResult Function( _SearchChanged value)?  searchChanged,TResult Function( _RemoveBookmark value)?  removeBookmark,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Load value)?  load,TResult Function( _FilterChanged value)?  filterChanged,TResult Function( _ToggleSort value)?  toggleSort,TResult Function( _SearchChanged value)?  searchChanged,TResult Function( _RemoveBookmark value)?  removeBookmark,TResult Function( _UpdateNote value)?  updateNote,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Load() when load != null:
@@ -63,7 +63,8 @@ return load(_that);case _FilterChanged() when filterChanged != null:
 return filterChanged(_that);case _ToggleSort() when toggleSort != null:
 return toggleSort(_that);case _SearchChanged() when searchChanged != null:
 return searchChanged(_that);case _RemoveBookmark() when removeBookmark != null:
-return removeBookmark(_that);case _:
+return removeBookmark(_that);case _UpdateNote() when updateNote != null:
+return updateNote(_that);case _:
   return orElse();
 
 }
@@ -81,7 +82,7 @@ return removeBookmark(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Load value)  load,required TResult Function( _FilterChanged value)  filterChanged,required TResult Function( _ToggleSort value)  toggleSort,required TResult Function( _SearchChanged value)  searchChanged,required TResult Function( _RemoveBookmark value)  removeBookmark,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Load value)  load,required TResult Function( _FilterChanged value)  filterChanged,required TResult Function( _ToggleSort value)  toggleSort,required TResult Function( _SearchChanged value)  searchChanged,required TResult Function( _RemoveBookmark value)  removeBookmark,required TResult Function( _UpdateNote value)  updateNote,}){
 final _that = this;
 switch (_that) {
 case _Load():
@@ -89,7 +90,8 @@ return load(_that);case _FilterChanged():
 return filterChanged(_that);case _ToggleSort():
 return toggleSort(_that);case _SearchChanged():
 return searchChanged(_that);case _RemoveBookmark():
-return removeBookmark(_that);}
+return removeBookmark(_that);case _UpdateNote():
+return updateNote(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -103,7 +105,7 @@ return removeBookmark(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Load value)?  load,TResult? Function( _FilterChanged value)?  filterChanged,TResult? Function( _ToggleSort value)?  toggleSort,TResult? Function( _SearchChanged value)?  searchChanged,TResult? Function( _RemoveBookmark value)?  removeBookmark,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Load value)?  load,TResult? Function( _FilterChanged value)?  filterChanged,TResult? Function( _ToggleSort value)?  toggleSort,TResult? Function( _SearchChanged value)?  searchChanged,TResult? Function( _RemoveBookmark value)?  removeBookmark,TResult? Function( _UpdateNote value)?  updateNote,}){
 final _that = this;
 switch (_that) {
 case _Load() when load != null:
@@ -111,7 +113,8 @@ return load(_that);case _FilterChanged() when filterChanged != null:
 return filterChanged(_that);case _ToggleSort() when toggleSort != null:
 return toggleSort(_that);case _SearchChanged() when searchChanged != null:
 return searchChanged(_that);case _RemoveBookmark() when removeBookmark != null:
-return removeBookmark(_that);case _:
+return removeBookmark(_that);case _UpdateNote() when updateNote != null:
+return updateNote(_that);case _:
   return null;
 
 }
@@ -128,14 +131,15 @@ return removeBookmark(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String userId)?  load,TResult Function( String category)?  filterChanged,TResult Function()?  toggleSort,TResult Function( String query)?  searchChanged,TResult Function( int verseId,  String userId)?  removeBookmark,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String userId)?  load,TResult Function( String category)?  filterChanged,TResult Function()?  toggleSort,TResult Function( String query)?  searchChanged,TResult Function( int verseId,  String userId)?  removeBookmark,TResult Function( int verseId,  String? note)?  updateNote,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Load() when load != null:
 return load(_that.userId);case _FilterChanged() when filterChanged != null:
 return filterChanged(_that.category);case _ToggleSort() when toggleSort != null:
 return toggleSort();case _SearchChanged() when searchChanged != null:
 return searchChanged(_that.query);case _RemoveBookmark() when removeBookmark != null:
-return removeBookmark(_that.verseId,_that.userId);case _:
+return removeBookmark(_that.verseId,_that.userId);case _UpdateNote() when updateNote != null:
+return updateNote(_that.verseId,_that.note);case _:
   return orElse();
 
 }
@@ -153,14 +157,15 @@ return removeBookmark(_that.verseId,_that.userId);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String userId)  load,required TResult Function( String category)  filterChanged,required TResult Function()  toggleSort,required TResult Function( String query)  searchChanged,required TResult Function( int verseId,  String userId)  removeBookmark,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String userId)  load,required TResult Function( String category)  filterChanged,required TResult Function()  toggleSort,required TResult Function( String query)  searchChanged,required TResult Function( int verseId,  String userId)  removeBookmark,required TResult Function( int verseId,  String? note)  updateNote,}) {final _that = this;
 switch (_that) {
 case _Load():
 return load(_that.userId);case _FilterChanged():
 return filterChanged(_that.category);case _ToggleSort():
 return toggleSort();case _SearchChanged():
 return searchChanged(_that.query);case _RemoveBookmark():
-return removeBookmark(_that.verseId,_that.userId);}
+return removeBookmark(_that.verseId,_that.userId);case _UpdateNote():
+return updateNote(_that.verseId,_that.note);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -174,14 +179,15 @@ return removeBookmark(_that.verseId,_that.userId);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String userId)?  load,TResult? Function( String category)?  filterChanged,TResult? Function()?  toggleSort,TResult? Function( String query)?  searchChanged,TResult? Function( int verseId,  String userId)?  removeBookmark,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String userId)?  load,TResult? Function( String category)?  filterChanged,TResult? Function()?  toggleSort,TResult? Function( String query)?  searchChanged,TResult? Function( int verseId,  String userId)?  removeBookmark,TResult? Function( int verseId,  String? note)?  updateNote,}) {final _that = this;
 switch (_that) {
 case _Load() when load != null:
 return load(_that.userId);case _FilterChanged() when filterChanged != null:
 return filterChanged(_that.category);case _ToggleSort() when toggleSort != null:
 return toggleSort();case _SearchChanged() when searchChanged != null:
 return searchChanged(_that.query);case _RemoveBookmark() when removeBookmark != null:
-return removeBookmark(_that.verseId,_that.userId);case _:
+return removeBookmark(_that.verseId,_that.userId);case _UpdateNote() when updateNote != null:
+return updateNote(_that.verseId,_that.note);case _:
   return null;
 
 }
@@ -481,6 +487,74 @@ class __$RemoveBookmarkCopyWithImpl<$Res>
 verseId: null == verseId ? _self.verseId : verseId // ignore: cast_nullable_to_non_nullable
 as int,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class _UpdateNote implements BookmarkEvent {
+  const _UpdateNote({required this.verseId, required this.note});
+  
+
+ final  int verseId;
+ final  String? note;
+
+/// Create a copy of BookmarkEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$UpdateNoteCopyWith<_UpdateNote> get copyWith => __$UpdateNoteCopyWithImpl<_UpdateNote>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UpdateNote&&(identical(other.verseId, verseId) || other.verseId == verseId)&&(identical(other.note, note) || other.note == note));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,verseId,note);
+
+@override
+String toString() {
+  return 'BookmarkEvent.updateNote(verseId: $verseId, note: $note)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$UpdateNoteCopyWith<$Res> implements $BookmarkEventCopyWith<$Res> {
+  factory _$UpdateNoteCopyWith(_UpdateNote value, $Res Function(_UpdateNote) _then) = __$UpdateNoteCopyWithImpl;
+@useResult
+$Res call({
+ int verseId, String? note
+});
+
+
+
+
+}
+/// @nodoc
+class __$UpdateNoteCopyWithImpl<$Res>
+    implements _$UpdateNoteCopyWith<$Res> {
+  __$UpdateNoteCopyWithImpl(this._self, this._then);
+
+  final _UpdateNote _self;
+  final $Res Function(_UpdateNote) _then;
+
+/// Create a copy of BookmarkEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? verseId = null,Object? note = freezed,}) {
+  return _then(_UpdateNote(
+verseId: null == verseId ? _self.verseId : verseId // ignore: cast_nullable_to_non_nullable
+as int,note: freezed == note ? _self.note : note // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

@@ -16,6 +16,7 @@ abstract interface class MuhudRemoteDataSource {
   Future<bool> toggleBookmark(int verseId, String userId, {String? note});
   Future<List<int>> getBookmarkedVerseIds(String userId);
   Future<List<BookmarkedVerseEntity>> getBookmarkedVerses(String userId);
+  Future<void> updateBookmarkNote(int verseId, String? note);
 }
 
 @LazySingleton(as: MuhudRemoteDataSource)
@@ -247,6 +248,20 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
           note: d['note'] as String?,
         );
       }).toList();
+    } catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<void> updateBookmarkNote(int verseId, String? note) async {
+    try {
+      final publicUserId = await _getPublicUserId();
+      await _supabaseClient
+          .from('bookmarks')
+          .update({'note': note})
+          .eq('verse_id', verseId)
+          .eq('user_id', publicUserId);
     } catch (e) {
       throw ServerException(message: e.toString());
     }
