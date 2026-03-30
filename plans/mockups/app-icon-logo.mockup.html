@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ishari — App Icon</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;0,9..40,900&display=swap');
+
+    :root {
+      --lime:  #CAFF00;
+      --lime2: #A8D900;
+      --dark:  #111111;
+      --font:  'DM Sans', -apple-system, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font);
+      background: #DEDEDE;
+      padding: 48px 32px 80px;
+      color: var(--dark);
+    }
+
+    .page { max-width: 960px; margin: 0 auto; }
+    h1 { font-size: 32px; font-weight: 900; letter-spacing: -1px; margin-bottom: 4px; }
+    .subtitle { font-size: 14px; color: #666; margin-bottom: 40px; }
+
+    .section {
+      background: #fff; border-radius: 24px;
+      padding: 36px; margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .section-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 1.4px;
+      text-transform: uppercase; color: #999; margin-bottom: 28px;
+    }
+
+    .row { display: flex; gap: 28px; flex-wrap: wrap; align-items: flex-start; }
+    .card { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .cap { font-size: 11px; font-weight: 700; color: #888; letter-spacing: .6px; text-transform: uppercase; }
+
+    .sizes-row { display: flex; gap: 20px; align-items: flex-end; flex-wrap: wrap; }
+    .size-item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .size-label { font-size: 11px; color: #999; font-family: monospace; }
+
+    .wm-row { display: flex; gap: 32px; flex-wrap: wrap; align-items: center; }
+    .wm-item { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+    .wm-box { border-radius: 16px; padding: 20px 28px; display: flex; align-items: center; gap: 14px; }
+    .wm-text { font-size: 26px; font-weight: 900; letter-spacing: -0.5px; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <h1>Ishari — Icon & Logo</h1>
+  <p class="subtitle">Kitab terbuka · Bintang 5 · Tanpa label teks</p>
+
+  <!--
+    ═══════════════════════════════════════════════════
+    THE MARK — open book + 5 stars, no text label
+    ═══════════════════════════════════════════════════
+
+    Book construction:
+    · Two pages fan out from a central spine
+    · Top edge of pages has a gentle upward arc (book fully open)
+    · Bottom edge is flat/slight curve
+    · Binding is a narrow dark wedge at the spine
+    · 3 text-line details per page
+    · 5 properly drawn stars above, center star slightly larger
+
+    SVG viewBox: 0 0 120 120
+    Stars: y band 14–32
+    Book: y band 38–88
+  -->
+
+  <!-- ──── PRIMARY: Dark background ──── -->
+  <div class="section">
+    <div class="section-label">Primary Mark — 3 Latar</div>
+    <div class="row">
+
+      <!-- DARK -->
+      <div class="card">
+        <div style="width:200px;height:200px;background:#111;border-radius:46px;
+                    box-shadow:0 10px 40px rgba(0,0,0,0.28);
+                    display:flex;align-items:center;justify-content:center;">
+          <svg width="130" height="130" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <!-- Subtle gradient for depth on right page -->
+              <linearGradient id="pgR_d" x1="60" y1="38" x2="100" y2="88" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#CAFF00"/>
+                <stop offset="100%" stop-color="#96C200"/>
+              </linearGradient>
+              <linearGradient id="pgL_d" x1="60" y1="38" x2="20" y2="88" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#CAFF00"/>
+                <stop offset="100%" stop-color="#AADD00"/>
+              </linearGradient>
+            </defs>
+
+            <!-- ── 5 STARS ── -->
+            <!-- star 1 -->
+            <polygon points="20,26 21.2,29.7 25.1,29.7 22.1,31.9 23.3,35.6 20,33.3 16.7,35.6 17.9,31.9 14.9,29.7 18.8,29.7" fill="#CAFF00"/>
+            <!-- star 2 -->
+            <polygon points="36,24 37.4,28.3 41.9,28.3 38.5,30.8 39.9,35.1 36,32.5 32.1,35.1 33.5,30.8 30.1,28.3 34.6,28.3" fill="#CAFF00"/>
+            <!-- star 3 — centre, slightly bigger -->
+            <polygon points="60,22 61.8,27.4 67.4,27.4 63.1,30.5 64.9,35.9 60,32.7 55.1,35.9 56.9,30.5 52.6,27.4 58.2,27.4" fill="#CAFF00"/>
+            <!-- star 4 -->
+            <polygon points="84,24 85.4,28.3 89.9,28.3 86.5,30.8 87.9,35.1 84,32.5 80.1,35.1 81.5,30.8 78.1,28.3 82.6,28.3" fill="#CAFF00"/>
+            <!-- star 5 -->
+            <polygon points="100,26 101.2,29.7 105.1,29.7 102.1,31.9 103.3,35.6 100,33.3 96.7,35.6 97.9,31.9 94.9,29.7 98.8,29.7" fill="#CAFF00"/>
+
+            <!-- ── OPEN BOOK ── -->
+            <!-- Left page: fans out from spine, top edge arcs upward-left -->
+            <path d="M60 42
+                     C 52 39, 36 41, 18 50
+                     L 18 84
+                     C 36 77, 52 75, 60 76
+                     Z"
+                  fill="url(#pgL_d)"/>
+
+            <!-- Right page: mirror -->
+            <path d="M60 42
+                     C 68 39, 84 41, 102 50
+                     L 102 84
+                     C 84 77, 68 75, 60 76
+                     Z"
+                  fill="url(#pgR_d)"/>
+
+            <!-- Spine highlight — thin wedge at center -->
+            <path d="M59 42 L59 76 L61 76 L61 42 Z" fill="#111" opacity="0.6"/>
+
+            <!-- Shadow under book pages (depth) -->
+            <ellipse cx="60" cy="86" rx="26" ry="3" fill="#000" opacity="0.15"/>
+
+            <!-- Page lines — LEFT -->
+            <line x1="25" y1="59" x2="55" y2="56.5" stroke="#111" stroke-width="1.8" stroke-linecap="round" opacity="0.28"/>
+            <line x1="24" y1="66" x2="55" y2="63.5" stroke="#111" stroke-width="1.8" stroke-linecap="round" opacity="0.28"/>
+            <line x1="24" y1="73" x2="55" y2="70.5" stroke="#111" stroke-width="1.8" stroke-linecap="round" opacity="0.28"/>
+
+            <!-- Page lines — RIGHT -->
+            <line x1="65" y1="56.5" x2="95" y2="59" stroke="#111" stroke-width="1.8" stroke-linecap="round" opacity="0.28"/>
+            <line x1="65" y1="63.5" x2="96" y2="66" stroke="#111" stroke-width="1.8" stroke-linecap="round" opacity="0.28"/>
+            <line x1="65" y1="70.5" x2="96" y2="73" stroke="#111" stroke-width="1.8" stroke-linecap="round" opacity="0.28"/>
+          </svg>
+        </div>
+        <span class="cap">Dark · Utama</span>
+      </div>
+
+      <!-- LIME -->
+      <div class="card">
+        <div style="width:200px;height:200px;background:#CAFF00;border-radius:46px;
+                    box-shadow:0 10px 40px rgba(0,0,0,0.10);
+                    display:flex;align-items:center;justify-content:center;">
+          <svg width="130" height="130" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="pgR_l" x1="60" y1="38" x2="100" y2="88" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#111111"/>
+                <stop offset="100%" stop-color="#2a2a2a"/>
+              </linearGradient>
+              <linearGradient id="pgL_l" x1="60" y1="38" x2="20" y2="88" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#111111"/>
+                <stop offset="100%" stop-color="#222222"/>
+              </linearGradient>
+            </defs>
+            <polygon points="20,26 21.2,29.7 25.1,29.7 22.1,31.9 23.3,35.6 20,33.3 16.7,35.6 17.9,31.9 14.9,29.7 18.8,29.7" fill="#111" opacity="0.5"/>
+            <polygon points="36,24 37.4,28.3 41.9,28.3 38.5,30.8 39.9,35.1 36,32.5 32.1,35.1 33.5,30.8 30.1,28.3 34.6,28.3" fill="#111" opacity="0.5"/>
+            <polygon points="60,22 61.8,27.4 67.4,27.4 63.1,30.5 64.9,35.9 60,32.7 55.1,35.9 56.9,30.5 52.6,27.4 58.2,27.4" fill="#111" opacity="0.7"/>
+            <polygon points="84,24 85.4,28.3 89.9,28.3 86.5,30.8 87.9,35.1 84,32.5 80.1,35.1 81.5,30.8 78.1,28.3 82.6,28.3" fill="#111" opacity="0.5"/>
+            <polygon points="100,26 101.2,29.7 105.1,29.7 102.1,31.9 103.3,35.6 100,33.3 96.7,35.6 97.9,31.9 94.9,29.7 98.8,29.7" fill="#111" opacity="0.5"/>
+            <path d="M60 42 C 52 39, 36 41, 18 50 L 18 84 C 36 77, 52 75, 60 76 Z" fill="url(#pgL_l)"/>
+            <path d="M60 42 C 68 39, 84 41, 102 50 L 102 84 C 84 77, 68 75, 60 76 Z" fill="url(#pgR_l)"/>
+            <path d="M59 42 L59 76 L61 76 L61 42 Z" fill="#CAFF00" opacity="0.5"/>
+            <ellipse cx="60" cy="86" rx="26" ry="3" fill="#000" opacity="0.08"/>
+            <line x1="25" y1="59" x2="55" y2="56.5" stroke="#CAFF00" stroke-width="1.8" stroke-linecap="round" opacity="0.3"/>
+            <line x1="24" y1="66" x2="55" y2="63.5" stroke="#CAFF00" stroke-width="1.8" stroke-linecap="round" opacity="0.3"/>
+            <line x1="24" y1="73" x2="55" y2="70.5" stroke="#CAFF00" stroke-width="1.8" stroke-linecap="round" opacity="0.3"/>
+            <line x1="65" y1="56.5" x2="95" y2="59" stroke="#CAFF00" stroke-width="1.8" stroke-linecap="round" opacity="0.3"/>
+            <line x1="65" y1="63.5" x2="96" y2="66" stroke="#CAFF00" stroke-width="1.8" stroke-linecap="round" opacity="0.3"/>
+            <line x1="65" y1="70.5" x2="96" y2="73" stroke="#CAFF00" stroke-width="1.8" stroke-linecap="round" opacity="0.3"/>
+          </svg>
+        </div>
+        <span class="cap">Lime</span>
+      </div>
+
+      <!-- WHITE -->
+      <div class="card">
+        <div style="width:200px;height:200px;background:#fff;border-radius:46px;
+                    border:1px solid #E2E8DF;box-shadow:0 4px 20px rgba(0,0,0,0.07);
+                    display:flex;align-items:center;justify-content:center;">
+          <svg width="130" height="130" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="pgR_w" x1="60" y1="38" x2="100" y2="88" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#CAFF00"/>
+                <stop offset="100%" stop-color="#96C200"/>
+              </linearGradient>
+              <linearGradient id="pgL_w" x1="60" y1="38" x2="20" y2="88" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#CAFF00"/>
+                <stop offset="100%" stop-color="#AADD00"/>
+              </linearGradient>
+            </defs>
+            <polygon points="20,26 21.2,29.7 25.1,29.7 22.1,31.9 23.3,35.6 20,33.3 16.7,35.6 17.9,31.9 14.9,29.7 18.8,29.7" fill="#111"/>
+            <polygon points="36,24 37.4,28.3 41.9,28.3 38.5,30.8 39.9,35.1 36,32.5 32.1,35.1 33.5,30.8 30.1,28.3 34.6,28.3" fill="#111"/>
+            <polygon points="60,22 61.8,27.4 67.4,27.4 63.1,30.5 64.9,35.9 60,32.7 55.1,35.9 56.9,30.5 52.6,27.4 58.2,27.4" fill="#111"/>
+            <polygon points="84,24 85.4,28.3 89.9,28.3 86.5,30.8 87.9,35.1 84,32.5 80.1,35.1 81.5,30.8 78.1,28.3 82.6,28.3" fill="#111"/>
+            <polygon points="100,26 101.2,29.7 105.1,29.7 102.1,31.9 103.3,35.6 100,33.3 96.7,35.6 97.9,31.9 94.9,29.7 98.8,29.7" fill="#111"/>
+            <path d="M60 42 C 52 39, 36 41, 18 50 L 18 84 C 36 77, 52 75, 60 76 Z" fill="url(#pgL_w)"/>
+            <path d="M60 42 C 68 39, 84 41, 102 50 L 102 84 C 84 77, 68 75, 60 76 Z" fill="url(#pgR_w)"/>
+            <path d="M59 42 L59 76 L61 76 L61 42 Z" fill="#fff" opacity="0.7"/>
+            <ellipse cx="60" cy="86" rx="26" ry="3" fill="#000" opacity="0.08"/>
+            <line x1="25" y1="59" x2="55" y2="56.5" stroke="#111" stroke-width="1.8" stroke-linecap="round" opacity="0.22"/>
+            <line x1="24" y1="66" x2="55" y2="63.5" stroke="#111" stroke-width="1.8" stroke-linecap="round" opacity="0.22"/>
+            <line x1="24" y1="73" x2="55" y2="70.5" stroke="#111" stroke-width="1.8" stroke-linecap="round" opacity="0.22"/>
+            <line x1="65" y1="56.5" x2="95" y2="59" stroke="#111" stroke-width="1.8" stroke-linecap="round" opacity="0.22"/>
+            <line x1="65" y1="63.5" x2="96" y2="66" stroke="#111" stroke-width="1.8" stroke-linecap="round" opacity="0.22"/>
+            <line x1="65" y1="70.5" x2="96" y2="73" stroke="#111" stroke-width="1.8" stroke-linecap="round" opacity="0.22"/>
+          </svg>
+        </div>
+        <span class="cap">White</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ──── ICON SIZES ──── -->
+  <div class="section">
+    <div class="section-label">Icon Sizes — Dark (Recommended)</div>
+    <div class="sizes-row">
+
+      <!-- 96 -->
+      <div class="size-item">
+        <div style="width:96px;height:96px;background:#111;border-radius:22px;display:flex;align-items:center;justify-content:center;">
+          <svg width="62" height="62" viewBox="0 0 120 120" fill="none">
+            <defs>
+              <linearGradient id="s96R" x1="60" y1="38" x2="100" y2="88" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#CAFF00"/><stop offset="100%" stop-color="#96C200"/></linearGradient>
+              <linearGradient id="s96L" x1="60" y1="38" x2="20" y2="88" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#CAFF00"/><stop offset="100%" stop-color="#AADD00"/></linearGradient>
+            </defs>
+            <polygon points="20,26 21.2,29.7 25.1,29.7 22.1,31.9 23.3,35.6 20,33.3 16.7,35.6 17.9,31.9 14.9,29.7 18.8,29.7" fill="#CAFF00"/>
+            <polygon points="36,24 37.4,28.3 41.9,28.3 38.5,30.8 39.9,35.1 36,32.5 32.1,35.1 33.5,30.8 30.1,28.3 34.6,28.3" fill="#CAFF00"/>
+            <polygon points="60,22 61.8,27.4 67.4,27.4 63.1,30.5 64.9,35.9 60,32.7 55.1,35.9 56.9,30.5 52.6,27.4 58.2,27.4" fill="#CAFF00"/>
+            <polygon points="84,24 85.4,28.3 89.9,28.3 86.5,30.8 87.9,35.1 84,32.5 80.1,35.1 81.5,30.8 78.1,28.3 82.6,28.3" fill="#CAFF00"/>
+            <polygon points="100,26 101.2,29.7 105.1,29.7 102.1,31.9 103.3,35.6 100,33.3 96.7,35.6 97.9,31.9 94.9,29.7 98.8,29.7" fill="#CAFF00"/>
+            <path d="M60 42 C 52 39, 36 41, 18 50 L 18 84 C 36 77, 52 75, 60 76 Z" fill="url(#s96L)"/>
+            <path d="M60 42 C 68 39, 84 41, 102 50 L 102 84 C 84 77, 68 75, 60 76 Z" fill="url(#s96R)"/>
+            <path d="M59 42 L59 76 L61 76 L61 42 Z" fill="#111" opacity="0.5"/>
+          </svg>
+        </div>
+        <span class="size-label">96 · App</span>
+      </div>
+
+      <!-- 72 -->
+      <div class="size-item">
+        <div style="width:72px;height:72px;background:#111;border-radius:16px;display:flex;align-items:center;justify-content:center;">
+          <svg width="46" height="46" viewBox="0 0 120 120" fill="none">
+            <defs>
+              <linearGradient id="s72R" x1="60" y1="38" x2="100" y2="88" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#CAFF00"/><stop offset="100%" stop-color="#96C200"/></linearGradient>
+              <linearGradient id="s72L" x1="60" y1="38" x2="20" y2="88" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#CAFF00"/><stop offset="100%" stop-color="#AADD00"/></linearGradient>
+            </defs>
+            <polygon points="20,26 21.2,29.7 25.1,29.7 22.1,31.9 23.3,35.6 20,33.3 16.7,35.6 17.9,31.9 14.9,29.7 18.8,29.7" fill="#CAFF00"/>
+            <polygon points="36,24 37.4,28.3 41.9,28.3 38.5,30.8 39.9,35.1 36,32.5 32.1,35.1 33.5,30.8 30.1,28.3 34.6,28.3" fill="#CAFF00"/>
+            <polygon points="60,22 61.8,27.4 67.4,27.4 63.1,30.5 64.9,35.9 60,32.7 55.1,35.9 56.9,30.5 52.6,27.4 58.2,27.4" fill="#CAFF00"/>
+            <polygon points="84,24 85.4,28.3 89.9,28.3 86.5,30.8 87.9,35.1 84,32.5 80.1,35.1 81.5,30.8 78.1,28.3 82.6,28.3" fill="#CAFF00"/>
+            <polygon points="100,26 101.2,29.7 105.1,29.7 102.1,31.9 103.3,35.6 100,33.3 96.7,35.6 97.9,31.9 94.9,29.7 98.8,29.7" fill="#CAFF00"/>
+            <path d="M60 42 C 52 39, 36 41, 18 50 L 18 84 C 36 77, 52 75, 60 76 Z" fill="url(#s72L)"/>
+            <path d="M60 42 C 68 39, 84 41, 102 50 L 102 84 C 84 77, 68 75, 60 76 Z" fill="url(#s72R)"/>
+            <path d="M59 42 L59 76 L61 76 L61 42 Z" fill="#111" opacity="0.5"/>
+          </svg>
+        </div>
+        <span class="size-label">72</span>
+      </div>
+
+      <!-- 48 -->
+      <div class="size-item">
+        <div style="width:48px;height:48px;background:#111;border-radius:11px;display:flex;align-items:center;justify-content:center;">
+          <svg width="32" height="32" viewBox="0 0 120 120" fill="none">
+            <path d="M60 42 C 52 39, 36 41, 18 50 L 18 84 C 36 77, 52 75, 60 76 Z" fill="#CAFF00"/>
+            <path d="M60 42 C 68 39, 84 41, 102 50 L 102 84 C 84 77, 68 75, 60 76 Z" fill="#A8D900"/>
+            <polygon points="20,26 21.2,29.7 25.1,29.7 22.1,31.9 23.3,35.6 20,33.3 16.7,35.6 17.9,31.9 14.9,29.7 18.8,29.7" fill="#CAFF00"/>
+            <polygon points="36,24 37.4,28.3 41.9,28.3 38.5,30.8 39.9,35.1 36,32.5 32.1,35.1 33.5,30.8 30.1,28.3 34.6,28.3" fill="#CAFF00"/>
+            <polygon points="60,22 61.8,27.4 67.4,27.4 63.1,30.5 64.9,35.9 60,32.7 55.1,35.9 56.9,30.5 52.6,27.4 58.2,27.4" fill="#CAFF00"/>
+            <polygon points="84,24 85.4,28.3 89.9,28.3 86.5,30.8 87.9,35.1 84,32.5 80.1,35.1 81.5,30.8 78.1,28.3 82.6,28.3" fill="#CAFF00"/>
+            <polygon points="100,26 101.2,29.7 105.1,29.7 102.1,31.9 103.3,35.6 100,33.3 96.7,35.6 97.9,31.9 94.9,29.7 98.8,29.7" fill="#CAFF00"/>
+          </svg>
+        </div>
+        <span class="size-label">48</span>
+      </div>
+
+      <!-- 32 -->
+      <div class="size-item">
+        <div style="width:32px;height:32px;background:#111;border-radius:7px;display:flex;align-items:center;justify-content:center;">
+          <svg width="22" height="22" viewBox="0 0 120 120" fill="none">
+            <path d="M60 42 C 52 39, 36 41, 18 50 L 18 84 C 36 77, 52 75, 60 76 Z" fill="#CAFF00"/>
+            <path d="M60 42 C 68 39, 84 41, 102 50 L 102 84 C 84 77, 68 75, 60 76 Z" fill="#A8D900"/>
+          </svg>
+        </div>
+        <span class="size-label">32</span>
+      </div>
+
+      <!-- 20 -->
+      <div class="size-item">
+        <div style="width:20px;height:20px;background:#111;border-radius:4px;display:flex;align-items:center;justify-content:center;">
+          <svg width="14" height="14" viewBox="0 0 120 120" fill="none">
+            <path d="M60 38 C 52 35, 34 38, 16 48 L 16 86 C 34 79, 52 77, 60 78 Z" fill="#CAFF00"/>
+            <path d="M60 38 C 68 35, 86 38, 104 48 L 104 86 C 86 79, 68 77, 60 78 Z" fill="#A8D900"/>
+          </svg>
+        </div>
+        <span class="size-label">20</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ──── WORDMARK ──── -->
+  <div class="section">
+    <div class="section-label">Wordmark Lockup</div>
+    <div class="wm-row">
+
+      <div class="wm-item">
+        <div class="wm-box" style="background:#111;">
+          <svg width="44" height="44" viewBox="0 0 120 120" fill="none">
+            <defs>
+              <linearGradient id="wmR_d" x1="60" y1="38" x2="100" y2="88" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#CAFF00"/><stop offset="100%" stop-color="#96C200"/></linearGradient>
+              <linearGradient id="wmL_d" x1="60" y1="38" x2="20" y2="88" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#CAFF00"/><stop offset="100%" stop-color="#AADD00"/></linearGradient>
+            </defs>
+            <polygon points="20,26 21.2,29.7 25.1,29.7 22.1,31.9 23.3,35.6 20,33.3 16.7,35.6 17.9,31.9 14.9,29.7 18.8,29.7" fill="#CAFF00"/>
+            <polygon points="36,24 37.4,28.3 41.9,28.3 38.5,30.8 39.9,35.1 36,32.5 32.1,35.1 33.5,30.8 30.1,28.3 34.6,28.3" fill="#CAFF00"/>
+            <polygon points="60,22 61.8,27.4 67.4,27.4 63.1,30.5 64.9,35.9 60,32.7 55.1,35.9 56.9,30.5 52.6,27.4 58.2,27.4" fill="#CAFF00"/>
+            <polygon points="84,24 85.4,28.3 89.9,28.3 86.5,30.8 87.9,35.1 84,32.5 80.1,35.1 81.5,30.8 78.1,28.3 82.6,28.3" fill="#CAFF00"/>
+            <polygon points="100,26 101.2,29.7 105.1,29.7 102.1,31.9 103.3,35.6 100,33.3 96.7,35.6 97.9,31.9 94.9,29.7 98.8,29.7" fill="#CAFF00"/>
+            <path d="M60 42 C 52 39, 36 41, 18 50 L 18 84 C 36 77, 52 75, 60 76 Z" fill="url(#wmL_d)"/>
+            <path d="M60 42 C 68 39, 84 41, 102 50 L 102 84 C 84 77, 68 75, 60 76 Z" fill="url(#wmR_d)"/>
+            <path d="M59 42 L59 76 L61 76 L61 42 Z" fill="#111" opacity="0.5"/>
+          </svg>
+          <span class="wm-text" style="color:#CAFF00;">ishari</span>
+        </div>
+        <span style="font-size:11px;font-weight:700;color:#888;letter-spacing:.5px;text-transform:uppercase;">Dark</span>
+      </div>
+
+      <div class="wm-item">
+        <div class="wm-box" style="background:#F0F5EE;border:1px solid #E2E8DF;">
+          <svg width="44" height="44" viewBox="0 0 120 120" fill="none">
+            <defs>
+              <linearGradient id="wmR_w2" x1="60" y1="38" x2="100" y2="88" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#CAFF00"/><stop offset="100%" stop-color="#96C200"/></linearGradient>
+              <linearGradient id="wmL_w2" x1="60" y1="38" x2="20" y2="88" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#CAFF00"/><stop offset="100%" stop-color="#AADD00"/></linearGradient>
+            </defs>
+            <polygon points="20,26 21.2,29.7 25.1,29.7 22.1,31.9 23.3,35.6 20,33.3 16.7,35.6 17.9,31.9 14.9,29.7 18.8,29.7" fill="#111"/>
+            <polygon points="36,24 37.4,28.3 41.9,28.3 38.5,30.8 39.9,35.1 36,32.5 32.1,35.1 33.5,30.8 30.1,28.3 34.6,28.3" fill="#111"/>
+            <polygon points="60,22 61.8,27.4 67.4,27.4 63.1,30.5 64.9,35.9 60,32.7 55.1,35.9 56.9,30.5 52.6,27.4 58.2,27.4" fill="#111"/>
+            <polygon points="84,24 85.4,28.3 89.9,28.3 86.5,30.8 87.9,35.1 84,32.5 80.1,35.1 81.5,30.8 78.1,28.3 82.6,28.3" fill="#111"/>
+            <polygon points="100,26 101.2,29.7 105.1,29.7 102.1,31.9 103.3,35.6 100,33.3 96.7,35.6 97.9,31.9 94.9,29.7 98.8,29.7" fill="#111"/>
+            <path d="M60 42 C 52 39, 36 41, 18 50 L 18 84 C 36 77, 52 75, 60 76 Z" fill="url(#wmL_w2)"/>
+            <path d="M60 42 C 68 39, 84 41, 102 50 L 102 84 C 84 77, 68 75, 60 76 Z" fill="url(#wmR_w2)"/>
+          </svg>
+          <span class="wm-text" style="color:#111;">ishari</span>
+        </div>
+        <span style="font-size:11px;font-weight:700;color:#888;letter-spacing:.5px;text-transform:uppercase;">Light</span>
+      </div>
+
+      <div class="wm-item">
+        <div class="wm-box" style="background:#CAFF00;">
+          <svg width="44" height="44" viewBox="0 0 120 120" fill="none">
+            <polygon points="20,26 21.2,29.7 25.1,29.7 22.1,31.9 23.3,35.6 20,33.3 16.7,35.6 17.9,31.9 14.9,29.7 18.8,29.7" fill="#111" opacity="0.6"/>
+            <polygon points="36,24 37.4,28.3 41.9,28.3 38.5,30.8 39.9,35.1 36,32.5 32.1,35.1 33.5,30.8 30.1,28.3 34.6,28.3" fill="#111" opacity="0.6"/>
+            <polygon points="60,22 61.8,27.4 67.4,27.4 63.1,30.5 64.9,35.9 60,32.7 55.1,35.9 56.9,30.5 52.6,27.4 58.2,27.4" fill="#111" opacity="0.8"/>
+            <polygon points="84,24 85.4,28.3 89.9,28.3 86.5,30.8 87.9,35.1 84,32.5 80.1,35.1 81.5,30.8 78.1,28.3 82.6,28.3" fill="#111" opacity="0.6"/>
+            <polygon points="100,26 101.2,29.7 105.1,29.7 102.1,31.9 103.3,35.6 100,33.3 96.7,35.6 97.9,31.9 94.9,29.7 98.8,29.7" fill="#111" opacity="0.6"/>
+            <path d="M60 42 C 52 39, 36 41, 18 50 L 18 84 C 36 77, 52 75, 60 76 Z" fill="#111"/>
+            <path d="M60 42 C 68 39, 84 41, 102 50 L 102 84 C 84 77, 68 75, 60 76 Z" fill="#1E1E1E"/>
+          </svg>
+          <span class="wm-text" style="color:#111;">ishari</span>
+        </div>
+        <span style="font-size:11px;font-weight:700;color:#888;letter-spacing:.5px;text-transform:uppercase;">Lime</span>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

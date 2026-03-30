@@ -64,7 +64,8 @@
       "mcp__supabase__apply_migration",
       "Bash(uname:*)",
       "Bash(FLUTTER_ROOT=/c/Users/aamar/fvm/versions/stable:*)",
-      "Bash(true:*)"
+      "Bash(true:*)",
+      "Bash(mkdir:*)"
     ]
   }
 }
