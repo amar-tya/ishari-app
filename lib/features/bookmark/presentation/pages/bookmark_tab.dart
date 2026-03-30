@@ -17,10 +17,10 @@ const _kCategories = [
   'Semua',
   'Diwan',
   'Diba',
+  // 'Syaraful Anam',
   'Muradah',
-  'Muhud',
+  // 'Muhud',
   'Rowi',
-  'Syaraful Anam',
 ];
 
 /// Bookmark tab — wraps BookmarkBloc and builds the full page.
@@ -34,9 +34,9 @@ class BookmarkTab extends StatelessWidget {
     return BlocProvider(
       create: (_) {
         final userId = context.read<AuthBloc>().state.maybeWhen(
-              authenticated: (user) => user.id,
-              orElse: () => null,
-            );
+          authenticated: (user) => user.id,
+          orElse: () => null,
+        );
         final bloc = sl<BookmarkBloc>();
         if (userId != null) bloc.add(BookmarkEvent.load(userId: userId));
         return bloc;
@@ -97,15 +97,15 @@ class _BookmarkTabBodyState extends State<_BookmarkTabBody> {
                   _showSearch = !_showSearch;
                   if (!_showSearch) {
                     _searchController.clear();
-                    context
-                        .read<BookmarkBloc>()
-                        .add(const BookmarkEvent.searchChanged(query: ''));
+                    context.read<BookmarkBloc>().add(
+                      const BookmarkEvent.searchChanged(query: ''),
+                    );
                   }
                 });
               },
-              onSearchChanged: (q) => context
-                  .read<BookmarkBloc>()
-                  .add(BookmarkEvent.searchChanged(query: q)),
+              onSearchChanged: (q) => context.read<BookmarkBloc>().add(
+                BookmarkEvent.searchChanged(query: q),
+              ),
             ),
             BlocBuilder<BookmarkBloc, BookmarkState>(
               builder: (context, state) {
@@ -114,149 +114,165 @@ class _BookmarkTabBodyState extends State<_BookmarkTabBody> {
                   loading: () => const Expanded(
                     child: Center(child: CircularProgressIndicator()),
                   ),
-                  loaded: (allBookmarks, filtered, selectedCategory,
-                      newestFirst, searchQuery) {
-                    return Expanded(
-                      child: Column(
-                        children: [
-                          // Filter chips
-                          const SizedBox(height: 4),
-                          FilterChipsRow(
-                            categories: _kCategories,
-                            selectedCategory: selectedCategory,
-                            onSelected: (cat) => context
-                                .read<BookmarkBloc>()
-                                .add(BookmarkEvent.filterChanged(
-                                  category: cat,
-                                )),
-                          ),
-                          const SizedBox(height: 4),
-                          // Summary bar
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 6, 20, 10),
-                            child: Row(
-                              children: [
-                                Text.rich(
-                                  TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: '${filtered.length}',
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w800,
-                                          color: _kDark,
-                                        ),
+                  loaded:
+                      (
+                        allBookmarks,
+                        filtered,
+                        selectedCategory,
+                        newestFirst,
+                        searchQuery,
+                      ) {
+                        return Expanded(
+                          child: Column(
+                            children: [
+                              // Filter chips
+                              const SizedBox(height: 4),
+                              FilterChipsRow(
+                                categories: _kCategories,
+                                selectedCategory: selectedCategory,
+                                onSelected: (cat) =>
+                                    context.read<BookmarkBloc>().add(
+                                      BookmarkEvent.filterChanged(
+                                        category: cat,
                                       ),
-                                      TextSpan(
-                                        text: ' tersimpan',
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                          color: _kMuted,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                              ),
+                              const SizedBox(height: 4),
+                              // Summary bar
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                  20,
+                                  6,
+                                  20,
+                                  10,
                                 ),
-                                const Spacer(),
-                                GestureDetector(
-                                  onTap: () => context
-                                      .read<BookmarkBloc>()
-                                      .add(const BookmarkEvent.toggleSort()),
-                                  child: Container(
-                                    height: 28,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius:
-                                          BorderRadius.circular(100),
-                                      border: Border.all(
-                                        color: _kBorder,
-                                        width: 1.5,
+                                child: Row(
+                                  children: [
+                                    Text.rich(
+                                      TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: '${filtered.length}',
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w800,
+                                              color: _kDark,
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: ' tersimpan',
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
+                                              color: _kMuted,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          newestFirst
-                                              ? Icons.arrow_downward_rounded
-                                              : Icons.arrow_upward_rounded,
-                                          size: 12,
-                                          color: _kMuted,
+                                    const Spacer(),
+                                    GestureDetector(
+                                      onTap: () =>
+                                          context.read<BookmarkBloc>().add(
+                                            const BookmarkEvent.toggleSort(),
+                                          ),
+                                      child: Container(
+                                        height: 28,
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12,
                                         ),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          newestFirst ? 'Terbaru' : 'Terlama',
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w700,
-                                            color: _kMuted,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(
+                                            100,
+                                          ),
+                                          border: Border.all(
+                                            color: _kBorder,
+                                            width: 1.5,
                                           ),
                                         ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          // Content
-                          if (filtered.isEmpty)
-                            Expanded(
-                              child: _EmptyState(
-                                isFiltered: selectedCategory != 'Semua' ||
-                                    searchQuery.isNotEmpty,
-                              ),
-                            )
-                          else
-                            Expanded(
-                              child: ListView.separated(
-                                padding: const EdgeInsets.fromLTRB(
-                                  16,
-                                  0,
-                                  16,
-                                  24,
-                                ),
-                                itemCount: filtered.length,
-                                separatorBuilder: (_, index) =>
-                                    const SizedBox(height: 10),
-                                itemBuilder: (context, i) {
-                                  final b = filtered[i];
-                                  final userId = _getUserId();
-                                  return BookmarkCard(
-                                    bookmark: b,
-                                    onTap: () => context.push(
-                                      '/chapter/${b.chapterId}',
-                                    ),
-                                    onRemove: userId == null
-                                        ? () {}
-                                        : () => context
-                                            .read<BookmarkBloc>()
-                                            .add(
-                                              BookmarkEvent.removeBookmark(
-                                                verseId: b.verseId,
-                                                userId: userId,
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              newestFirst
+                                                  ? Icons.arrow_downward_rounded
+                                                  : Icons.arrow_upward_rounded,
+                                              size: 12,
+                                              color: _kMuted,
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              newestFirst
+                                                  ? 'Terbaru'
+                                                  : 'Terlama',
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w700,
+                                                color: _kMuted,
                                               ),
                                             ),
-                                    onEditNote: (note) => context
-                                        .read<BookmarkBloc>()
-                                        .add(
-                                          BookmarkEvent.updateNote(
-                                            verseId: b.verseId,
-                                            note: note,
-                                          ),
+                                          ],
                                         ),
-                                  );
-                                },
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                        ],
-                      ),
-                    );
-                  },
+                              // Content
+                              if (filtered.isEmpty)
+                                Expanded(
+                                  child: _EmptyState(
+                                    isFiltered:
+                                        selectedCategory != 'Semua' ||
+                                        searchQuery.isNotEmpty,
+                                  ),
+                                )
+                              else
+                                Expanded(
+                                  child: ListView.separated(
+                                    padding: const EdgeInsets.fromLTRB(
+                                      16,
+                                      0,
+                                      16,
+                                      24,
+                                    ),
+                                    itemCount: filtered.length,
+                                    separatorBuilder: (_, index) =>
+                                        const SizedBox(height: 10),
+                                    itemBuilder: (context, i) {
+                                      final b = filtered[i];
+                                      final userId = _getUserId();
+                                      return BookmarkCard(
+                                        bookmark: b,
+                                        onTap: () => context.push(
+                                          '/chapter/${b.chapterId}',
+                                        ),
+                                        onRemove: userId == null
+                                            ? () {}
+                                            : () => context
+                                                  .read<BookmarkBloc>()
+                                                  .add(
+                                                    BookmarkEvent.removeBookmark(
+                                                      verseId: b.verseId,
+                                                      userId: userId,
+                                                    ),
+                                                  ),
+                                        onEditNote: (note) =>
+                                            context.read<BookmarkBloc>().add(
+                                              BookmarkEvent.updateNote(
+                                                verseId: b.verseId,
+                                                note: note,
+                                              ),
+                                            ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                            ],
+                          ),
+                        );
+                      },
                   error: (message) => Expanded(
                     child: Center(
                       child: Padding(

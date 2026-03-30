@@ -5,6 +5,7 @@ import 'package:ishari/core/app_state.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ishari/features/auth/presentation/pages/home_page.dart';
 import 'package:ishari/features/introduction/presentation/pages/introduction_page.dart';
+import 'package:ishari/features/splash/presentation/widgets/book_logo_painter.dart';
 import 'package:ishari/features/splash/presentation/widgets/loading_bar.dart';
 
 const _bg = Color(0xFFF0F5EE);
@@ -80,6 +81,8 @@ class _SplashPageState extends State<SplashPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  const BookLogoWidget(size: 96),
+                  const SizedBox(height: 28),
                   IntrinsicWidth(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,

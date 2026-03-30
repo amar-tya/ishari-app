@@ -65,7 +65,14 @@
       "Bash(uname:*)",
       "Bash(FLUTTER_ROOT=/c/Users/aamar/fvm/versions/stable:*)",
       "Bash(true:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(python:*)",
+      "Bash(node:*)",
+      "Bash(npm init:*)",
+      "Bash(npm install:*)",
+      "Bash(writeFileSync:*)",
+      "Bash(console.log:*)",
+      "Bash(EOF:*)"
     ]
   }
 }

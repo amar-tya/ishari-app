@@ -6,10 +6,10 @@ import 'package:ishari/shared/widgets/filter_chips_row.dart';
 const _categories = [
   'Diwan',
   'Diba',
+  // 'Syaraful Anam',
   'Muradah',
-  'Muhud',
+  // 'Muhud',
   'Rowi',
-  'Syaraful Anam',
 ];
 
 /// Horizontally scrollable category filter chips for the home tab.
