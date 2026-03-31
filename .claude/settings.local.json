@@ -64,7 +64,15 @@
       "mcp__supabase__apply_migration",
       "Bash(uname:*)",
       "Bash(FLUTTER_ROOT=/c/Users/aamar/fvm/versions/stable:*)",
-      "Bash(true:*)"
+      "Bash(true:*)",
+      "Bash(rmdir:*)",
+      "Bash(node:*)",
+      "Bash(python:*)",
+      "Bash(npx 2:*)",
+      "Bash(npm list:*)",
+      "Bash(npx playwright:*)",
+      "Bash(mkdir:*)",
+      "Bash(npm install:*)"
     ]
   }
 }
