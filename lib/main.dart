@@ -5,6 +5,7 @@ import 'package:ishari/core/router/app_router.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ishari/injection_container.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,6 +21,9 @@ Future<void> main() async {
 
   // 3. Register all dependencies via get_it + injectable
   await configureDependencies();
+
+  // 4. Keep screen awake while app is running
+  await WakelockPlus.enable();
 
   runApp(const IshariApp());
 }

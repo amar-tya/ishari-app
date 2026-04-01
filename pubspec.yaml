@@ -58,6 +58,9 @@ dependencies:
   # SVG rendering
   flutter_svg: ^2.0.10+1
 
+  # Keep screen awake while app is in use
+  wakelock_plus: ^1.2.10
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
