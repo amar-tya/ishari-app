@@ -72,7 +72,10 @@
       "Bash(npm list:*)",
       "Bash(npx playwright:*)",
       "Bash(mkdir:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(powershell -Command \"\\(Get-Content -Raw ''C:\\\\Users\\\\aamar\\\\Dev\\\\git\\\\ishari\\\\ishari-flutter\\\\lib\\\\features\\\\home\\\\presentation\\\\pages\\\\home_page.dart'' -Encoding Byte | Select-Object -Last 10\\) -join '',''\")",
+      "Bash(powershell -Command \"$f = [System.IO.File]::ReadAllBytes\\(''C:\\\\Users\\\\aamar\\\\Dev\\\\git\\\\ishari\\\\ishari-flutter\\\\lib\\\\features\\\\home\\\\presentation\\\\pages\\\\home_page.dart''\\); $last10 = $f[-10..-1]; $last10 -join '',''\")",
+      "Bash(powershell -Command \"& { $bytes = [System.IO.File]::ReadAllBytes\\(''C:\\\\Users\\\\aamar\\\\Dev\\\\git\\\\ishari\\\\ishari-flutter\\\\lib\\\\features\\\\home\\\\presentation\\\\pages\\\\home_page.dart''\\); \\($bytes | Select-Object -Last 10\\) -join '','' }\")"
     ]
   }
 }
