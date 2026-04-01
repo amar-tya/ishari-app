@@ -20,8 +20,10 @@ class LoginPage extends StatelessWidget {
           );
         },
         builder: (context, state) {
-          final isLoading =
-              state.maybeWhen(loading: () => true, orElse: () => false);
+          final isLoading = state.maybeWhen(
+            loading: () => true,
+            orElse: () => false,
+          );
 
           return SafeArea(
             child: Padding(
@@ -36,26 +38,25 @@ class LoginPage extends StatelessWidget {
                   Text(
                     'Ishari',
                     textAlign: TextAlign.center,
-                    style:
-                        Theme.of(context).textTheme.headlineLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Sign in to continue',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey,
-                        ),
+                      color: Colors.grey,
+                    ),
                   ),
                   const Spacer(),
                   FilledButton.icon(
                     onPressed: isLoading
                         ? null
-                        : () => context
-                            .read<AuthBloc>()
-                            .add(const AuthEvent.signInWithGoogle()),
+                        : () => context.read<AuthBloc>().add(
+                            const AuthEvent.signInWithGoogle(),
+                          ),
                     icon: isLoading
                         ? const SizedBox(
                             width: 20,

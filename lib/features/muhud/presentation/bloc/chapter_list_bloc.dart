@@ -7,7 +7,7 @@ import 'package:ishari/features/muhud/presentation/bloc/chapter_list_state.dart'
 @injectable
 class ChapterListBloc extends Bloc<ChapterListEvent, ChapterListState> {
   ChapterListBloc({required this.getAllChapters})
-      : super(const ChapterListState.initial()) {
+    : super(const ChapterListState.initial()) {
     on<ChapterListEvent>((event, emit) async {
       await event.when(load: () => _onLoad(emit));
     });

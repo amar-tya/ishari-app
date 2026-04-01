@@ -28,9 +28,11 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
   }) : super(const MuhudState.initial()) {
     on<MuhudEvent>((event, emit) async {
       await event.when(
-        loadChapter: (chapterId, userId) => _onLoadChapter(chapterId, userId, emit),
+        loadChapter: (chapterId, userId) =>
+            _onLoadChapter(chapterId, userId, emit),
         toggleTranslation: () async => _onToggleTranslation(emit),
-        toggleBookmark: (verseId, note) async => _onToggleBookmark(verseId, note, emit),
+        toggleBookmark: (verseId, note) async =>
+            _onToggleBookmark(verseId, note, emit),
         playVerse: (verseId, hadiId, recitationType, mediaId) =>
             _onPlayVerse(verseId, mediaId, emit),
         stopAudio: () => _onStopAudio(emit),
@@ -39,7 +41,8 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
         setArabFontSize: (size) async => _onSetArabFontSize(size, emit),
         setTransliterationFontSize: (size) async =>
             _onSetTransliterationFontSize(size, emit),
-        setTranslationFontSize: (size) async => _onSetTranslationFontSize(size, emit),
+        setTranslationFontSize: (size) async =>
+            _onSetTranslationFontSize(size, emit),
         resetFontSizes: () async => _onResetFontSizes(emit),
       );
     });
@@ -62,7 +65,11 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
     return super.close();
   }
 
-  Future<void> _onLoadChapter(int chapterId, String userId, Emitter<MuhudState> emit) async {
+  Future<void> _onLoadChapter(
+    int chapterId,
+    String userId,
+    Emitter<MuhudState> emit,
+  ) async {
     debugPrint('[MuhudBloc] _onLoadChapter START - chapterId: $chapterId');
     _userId = userId;
     emit(const MuhudState.loading());
@@ -78,7 +85,9 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
 
       debugPrint('[MuhudBloc] Waiting for verses result...');
       final versesResult = await versesFuture;
-      debugPrint('[MuhudBloc] Verses result received: ${versesResult.fold((f) => 'Error: ${f.message}', (v) => '${v.length} verses')}');
+      debugPrint(
+        '[MuhudBloc] Verses result received: ${versesResult.fold((f) => 'Error: ${f.message}', (v) => '${v.length} verses')}',
+      );
 
       chapterResult.fold(
         (failure) {
@@ -93,7 +102,9 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
               emit(MuhudState.error(message: failure.message));
             },
             (verses) {
-              debugPrint('[MuhudBloc] Both chapter and verses loaded, emitting loaded state...');
+              debugPrint(
+                '[MuhudBloc] Both chapter and verses loaded, emitting loaded state...',
+              );
               emit(
                 MuhudState.loaded(
                   chapter: chapter,
@@ -144,15 +155,22 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
 
   void _onToggleTransliteration(Emitter<MuhudState> emit) {
     state.mapOrNull(
-      loaded: (l) => emit(l.copyWith(showTransliteration: !l.showTransliteration)),
+      loaded: (l) =>
+          emit(l.copyWith(showTransliteration: !l.showTransliteration)),
     );
   }
 
-  Future<void> _onToggleBookmark(int verseId, String? note, Emitter<MuhudState> emit) async {
+  Future<void> _onToggleBookmark(
+    int verseId,
+    String? note,
+    Emitter<MuhudState> emit,
+  ) async {
     // Optimistic update
-    final wasBookmarked = state.mapOrNull(
-      loaded: (l) => l.bookmarkedVerseIds.contains(verseId),
-    ) ?? false;
+    final wasBookmarked =
+        state.mapOrNull(
+          loaded: (l) => l.bookmarkedVerseIds.contains(verseId),
+        ) ??
+        false;
 
     state.mapOrNull(
       loaded: (l) {
@@ -264,9 +282,9 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
     state.mapOrNull(
       loaded: (l) => emit(
         l.copyWith(
-          arabFontSize: 22.0,
-          transliterationFontSize: 11.0,
-          translationFontSize: 14.0,
+          arabFontSize: 22,
+          transliterationFontSize: 11,
+          translationFontSize: 14,
         ),
       ),
     );

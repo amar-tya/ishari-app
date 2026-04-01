@@ -32,8 +32,9 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   @override
   Future<UserModel> getCachedUser() async {
     try {
-      final jsonString =
-          await _secureStorage.read(key: _StorageKeys.cachedUser);
+      final jsonString = await _secureStorage.read(
+        key: _StorageKeys.cachedUser,
+      );
       if (jsonString == null) {
         throw const CacheException(message: 'No cached user found');
       }

@@ -94,8 +94,9 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
     await _toggleBookmark(event.verseId, event.userId);
     state.mapOrNull(
       loaded: (l) {
-        final updated =
-            l.allBookmarks.where((b) => b.verseId != event.verseId).toList();
+        final updated = l.allBookmarks
+            .where((b) => b.verseId != event.verseId)
+            .toList();
         final filtered = _applyFilters(
           updated,
           l.selectedCategory,
@@ -113,9 +114,8 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
   ) async {
     state.mapOrNull(
       loaded: (l) {
-        final updater = (BookmarkedVerseEntity b) => b.verseId == event.verseId
-            ? b.copyWith(note: event.note)
-            : b;
+        BookmarkedVerseEntity updater(BookmarkedVerseEntity b) =>
+            b.verseId == event.verseId ? b.copyWith(note: event.note) : b;
         emit(
           l.copyWith(
             allBookmarks: l.allBookmarks.map(updater).toList(),

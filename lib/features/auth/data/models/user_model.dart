@@ -35,9 +35,9 @@ abstract class UserModel with _$UserModel {
 
   /// Convert to domain entity.
   UserEntity toEntity() => UserEntity(
-        id: id,
-        email: email,
-        displayName: displayName,
-        avatarUrl: avatarUrl,
-      );
+    id: id,
+    email: email,
+    displayName: displayName,
+    avatarUrl: avatarUrl,
+  );
 }

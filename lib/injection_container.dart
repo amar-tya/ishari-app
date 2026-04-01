@@ -14,7 +14,6 @@ final GetIt sl = GetIt.instance;
   preferRelativeImports: true,
   asExtension: false,
 )
-
 /// Registers all dependencies.
 /// Call this once from [main] after Supabase is initialized.
 Future<void> configureDependencies() async => initDependencies(sl);
@@ -31,10 +30,10 @@ abstract class RegisterModule {
 
   @lazySingleton
   FlutterSecureStorage get secureStorage => const FlutterSecureStorage(
-        iOptions: IOSOptions(
-          accessibility: KeychainAccessibility.first_unlock_this_device,
-        ),
-      );
+    iOptions: IOSOptions(
+      accessibility: KeychainAccessibility.first_unlock_this_device,
+    ),
+  );
 
   @preResolve
   @singleton

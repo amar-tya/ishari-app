@@ -12,9 +12,8 @@ class AudioSelectionSheet extends StatefulWidget {
 
   /// Shows the bottom sheet and returns `(hadiId, recitationType, mediaId)` if
   /// user taps Putar, or `null` if dismissed.
-  static Future<
-    ({String hadiId, VerseMediaType recitationType, int mediaId})?
-  > show(
+  static Future<({String hadiId, VerseMediaType recitationType, int mediaId})?>
+  show(
     BuildContext context,
     VerseWithDetailsEntity verse,
   ) {
@@ -167,8 +166,9 @@ class _AudioSelectionSheetState extends State<AudioSelectionSheet> {
                           _selectedHadiId = hadi.id;
                           final avail = _availableMedia;
                           if (!avail.any((m) => m.id == _selectedMediaId)) {
-                            _selectedMediaId =
-                                avail.isNotEmpty ? avail.first.id : null;
+                            _selectedMediaId = avail.isNotEmpty
+                                ? avail.first.id
+                                : null;
                           }
                         });
                       },
@@ -206,8 +206,7 @@ class _AudioSelectionSheetState extends State<AudioSelectionSheet> {
                                       child: Image.network(
                                         hadi.photoUrl!,
                                         fit: BoxFit.cover,
-                                        errorBuilder: (_, __, ___) =>
-                                            _HadiInitial(
+                                        errorBuilder: (_, _, _) => _HadiInitial(
                                           name: hadi.name,
                                           selected: selected,
                                         ),
@@ -308,8 +307,9 @@ class _AudioSelectionSheetState extends State<AudioSelectionSheet> {
               child: GestureDetector(
                 onTap: _canPlay
                     ? () {
-                        final selectedMedia = widget.verse.mediaList
-                            .firstWhere((m) => m.id == _selectedMediaId);
+                        final selectedMedia = widget.verse.mediaList.firstWhere(
+                          (m) => m.id == _selectedMediaId,
+                        );
                         Navigator.of(context).pop((
                           hadiId: _selectedHadiId!,
                           recitationType: selectedMedia.type,

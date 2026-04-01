@@ -4,9 +4,9 @@ import 'package:ishari/features/home/domain/entities/chapter_entity.dart';
 /// Full-width gradient card for the featured / last-read chapter.
 class FeaturedChapterCard extends StatelessWidget {
   const FeaturedChapterCard({
-    super.key,
     required this.chapter,
     required this.isGuest,
+    super.key,
     this.onTap,
   });
 

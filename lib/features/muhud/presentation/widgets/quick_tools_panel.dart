@@ -176,12 +176,12 @@ class _BaitTabContent extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         // Font Arab row
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12),
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 12),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Font Arab',
                 style: TextStyle(
                   fontSize: 14,
@@ -189,7 +189,7 @@ class _BaitTabContent extends StatelessWidget {
                   color: Color(0xFF111111),
                 ),
               ),
-              const Row(
+              Row(
                 children: [
                   Text(
                     'Scheherazade New',
@@ -407,7 +407,7 @@ class _ToggleRow extends StatelessWidget {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: Colors.white,
+            activeThumbColor: Colors.white,
             activeTrackColor: const Color(0xFF111111),
             inactiveThumbColor: Colors.white,
             inactiveTrackColor: const Color(0xFFD0D8CE),

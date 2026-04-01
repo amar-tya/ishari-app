@@ -13,6 +13,5 @@ class ToggleBookmark {
     int verseId,
     String userId, {
     String? note,
-  }) =>
-      repository.toggleBookmark(verseId, userId, note: note);
+  }) => repository.toggleBookmark(verseId, userId, note: note);
 }

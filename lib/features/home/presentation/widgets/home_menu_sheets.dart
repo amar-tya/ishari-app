@@ -82,7 +82,7 @@ class _LogoutSheet extends StatelessWidget {
           Text(
             displayName != null
                 ? 'Kamu akan keluar dari akun $displayName. '
-                    'Progres dan bookmark tetap tersimpan.'
+                      'Progres dan bookmark tetap tersimpan.'
                 : 'Kamu akan keluar dari aplikasi.',
             textAlign: TextAlign.center,
             style: const TextStyle(

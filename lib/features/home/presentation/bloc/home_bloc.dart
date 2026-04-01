@@ -68,8 +68,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Future<void> _onRefresh(_Refresh event, Emitter<HomeState> emit) async {
     final current = state;
-    final category =
-        current is _Loaded ? current.selectedCategory : _kDefaultCategory;
+    final category = current is _Loaded
+        ? current.selectedCategory
+        : _kDefaultCategory;
     // Emit loading first so the stream always fires, even when the fetched data
     // is identical to the current state (BlocBase.emit deduplicates equal states).
     emit(const HomeState.loading());
@@ -82,10 +83,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     String? userId,
   }) async {
     // Start all 3 fetches in parallel
-    final featuredFuture =
-        _getFeaturedChapter(const FeaturedChapterParams());
-    final chaptersFuture =
-        _getChaptersByCategory(CategoryParams(category));
+    final featuredFuture = _getFeaturedChapter(const FeaturedChapterParams());
+    final chaptersFuture = _getChaptersByCategory(CategoryParams(category));
     final hadiFuture = _getHadiList(const NoParams());
 
     final featuredResult = await featuredFuture;
@@ -113,13 +112,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     emit(
       HomeState.loaded(
-        featuredChapter:
-            featuredResult.getOrElse((_) => throw StateError('unreachable')),
-        chapters:
-            chaptersResult.getOrElse((_) => throw StateError('unreachable')),
+        featuredChapter: featuredResult.getOrElse(
+          (_) => throw StateError('unreachable'),
+        ),
+        chapters: chaptersResult.getOrElse(
+          (_) => throw StateError('unreachable'),
+        ),
         selectedCategory: category,
-        hadiList:
-            hadiResult.getOrElse((_) => throw StateError('unreachable')),
+        hadiList: hadiResult.getOrElse((_) => throw StateError('unreachable')),
       ),
     );
   }

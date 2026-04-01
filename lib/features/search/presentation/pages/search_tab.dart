@@ -109,8 +109,7 @@ class _SearchTabBodyState extends State<_SearchTabBody> {
                       query: query,
                       category: category,
                     ),
-                    empty: (query, category) =>
-                        SearchEmptyView(query: query),
+                    empty: (query, category) => SearchEmptyView(query: query),
                     error: (message) => _ErrorView(message: message),
                   );
                 },
@@ -190,9 +189,9 @@ class _SearchHeader extends StatelessWidget {
                 categories: _kSearchCategories,
                 selectedCategory: selectedCategory,
                 onSelected: (cat) {
-                  context
-                      .read<SearchBloc>()
-                      .add(SearchEvent.categorySelected(cat));
+                  context.read<SearchBloc>().add(
+                    SearchEvent.categorySelected(cat),
+                  );
                 },
               ),
             ],

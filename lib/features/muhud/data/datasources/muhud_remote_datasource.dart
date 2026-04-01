@@ -65,7 +65,9 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
   @override
   Future<ChapterEntity> getChapterById(int chapterId) async {
     try {
-      debugPrint('[RemoteDataSource] getChapterById START - chapterId: $chapterId');
+      debugPrint(
+        '[RemoteDataSource] getChapterById START - chapterId: $chapterId',
+      );
       final data = await _supabaseClient
           .from('chapters')
           .select()
@@ -75,12 +77,16 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
       final chapterNumber = data['chapter_number'];
       int? number;
       if (chapterNumber != null) {
-        number = chapterNumber is int ? chapterNumber : int.parse(chapterNumber.toString());
+        number = chapterNumber is int
+            ? chapterNumber
+            : int.parse(chapterNumber.toString());
       }
       final totalVerses = data['total_verses'];
-      int verseCount = 0;
+      var verseCount = 0;
       if (totalVerses != null) {
-        verseCount = totalVerses is int ? totalVerses : int.parse(totalVerses.toString());
+        verseCount = totalVerses is int
+            ? totalVerses
+            : int.parse(totalVerses.toString());
       }
       final result = ChapterEntity(
         id: data['id'].toString(),
@@ -101,40 +107,44 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
   @override
   Future<List<VerseWithDetailsModel>> getVersesByChapter(int chapterId) async {
     try {
-      debugPrint('[RemoteDataSource] getVersesByChapter START - chapterId: $chapterId');
+      debugPrint(
+        '[RemoteDataSource] getVersesByChapter START - chapterId: $chapterId',
+      );
       final data = await _supabaseClient
           .from('verses')
           .select('*, translations(*), verse_media(*, hadi(*))')
           .eq('chapter_id', chapterId)
           .order('verse_number', ascending: true);
 
-      debugPrint('[RemoteDataSource] Verses data received: ${(data as List<dynamic>).length} verses');
+      debugPrint(
+        '[RemoteDataSource] Verses data received: ${(data as List<dynamic>).length} verses',
+      );
 
-      final result = (data as List<dynamic>)
-          .map((item) {
-            final itemMap = item as Map<String, dynamic>;
-            final verse = VerseModel.fromJson(itemMap);
+      final result = (data as List<dynamic>).map((item) {
+        final itemMap = item as Map<String, dynamic>;
+        final verse = VerseModel.fromJson(itemMap);
 
-            final translationsList =
-                (itemMap['translations'] ?? <dynamic>[]) as List<dynamic>;
-            final translations = translationsList
-                .map((t) => _createTranslationModel(t as Map<String, dynamic>))
-                .toList();
+        final translationsList =
+            (itemMap['translations'] ?? <dynamic>[]) as List<dynamic>;
+        final translations = translationsList
+            .map((t) => _createTranslationModel(t as Map<String, dynamic>))
+            .toList();
 
-            final mediaList =
-                (itemMap['verse_media'] ?? <dynamic>[]) as List<dynamic>;
-            final media = mediaList
-                .map((m) => _createVerseMediaModel(m as Map<String, dynamic>))
-                .toList();
+        final mediaList =
+            (itemMap['verse_media'] ?? <dynamic>[]) as List<dynamic>;
+        final media = mediaList
+            .map((m) => _createVerseMediaModel(m as Map<String, dynamic>))
+            .toList();
 
-            return VerseWithDetailsModel(
-              verse: verse,
-              translations: translations,
-              mediaList: media,
-            );
-          })
-          .toList();
-      debugPrint('[RemoteDataSource] getVersesByChapter SUCCESS - parsed ${result.length} verses');
+        return VerseWithDetailsModel(
+          verse: verse,
+          translations: translations,
+          mediaList: media,
+        );
+      }).toList();
+      debugPrint(
+        '[RemoteDataSource] getVersesByChapter SUCCESS - parsed ${result.length} verses',
+      );
       return result;
     } catch (e, stackTrace) {
       debugPrint('[RemoteDataSource] getVersesByChapter ERROR: $e');
@@ -156,7 +166,9 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
   /// Lookup the integer `public.users.id` for the currently authenticated user.
   Future<int> _getPublicUserId() async {
     final email = _supabaseClient.auth.currentUser?.email;
-    if (email == null) throw const ServerException(message: 'Not authenticated');
+    if (email == null) {
+      throw const ServerException(message: 'Not authenticated');
+    }
     final data = await _supabaseClient
         .from('users')
         .select('id')
@@ -167,7 +179,11 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
   }
 
   @override
-  Future<bool> toggleBookmark(int verseId, String userId, {String? note}) async {
+  Future<bool> toggleBookmark(
+    int verseId,
+    String userId, {
+    String? note,
+  }) async {
     try {
       final publicUserId = await _getPublicUserId();
 
@@ -201,16 +217,12 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
   Future<List<int>> getBookmarkedVerseIds(String userId) async {
     try {
       // RLS filters rows to the current auth user automatically.
-      final data = await _supabaseClient
-          .from('bookmarks')
-          .select('verse_id');
+      final data = await _supabaseClient.from('bookmarks').select('verse_id');
 
-      return (data as List<dynamic>)
-          .map((item) {
-            final verseId = (item as Map<String, dynamic>)['verse_id'];
-            return verseId is int ? verseId : int.parse(verseId.toString());
-          })
-          .toList();
+      return (data as List<dynamic>).map((item) {
+        final verseId = (item as Map<String, dynamic>)['verse_id'];
+        return verseId is int ? verseId : int.parse(verseId.toString());
+      }).toList();
     } catch (e) {
       throw ServerException(message: e.toString());
     }

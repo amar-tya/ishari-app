@@ -10,8 +10,8 @@ enum ChapterCardVariant { light, dark, lime }
 /// Arabic title is displayed large with a graffiti-style text shadow.
 class ChapterCard extends StatelessWidget {
   const ChapterCard({
-    super.key,
     required this.chapter,
+    super.key,
     this.variant = ChapterCardVariant.light,
     this.onTap,
   });
@@ -161,12 +161,10 @@ class _ColorsForVariant {
           Shadow(
             color: Color(0xFFCAFF00),
             offset: Offset(3, 3),
-            blurRadius: 0,
           ),
           Shadow(
             color: Color(0x2DCAFF00),
             offset: Offset(6, 6),
-            blurRadius: 0,
           ),
         ];
         arabicFontSize = 48;
@@ -185,7 +183,6 @@ class _ColorsForVariant {
           Shadow(
             color: Color(0x33CAFF00),
             offset: Offset(3, 3),
-            blurRadius: 0,
           ),
         ];
         arabicFontSize = 36;
@@ -204,7 +201,6 @@ class _ColorsForVariant {
           Shadow(
             color: Color(0x1A000000),
             offset: Offset(3, 3),
-            blurRadius: 0,
           ),
         ];
         arabicFontSize = 36;

@@ -10,7 +10,7 @@ const _avatarColors = [
 
 /// Vertical list of Pimpinan Shalawat (hadi) cards.
 class HadiSection extends StatelessWidget {
-  const HadiSection({super.key, required this.hadiList});
+  const HadiSection({required this.hadiList, super.key});
 
   final List<HadiEntity> hadiList;
 
@@ -19,11 +19,11 @@ class HadiSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
+            children: [
               Text(
                 'Pimpinan Shalawat',
                 style: TextStyle(

@@ -40,8 +40,7 @@ class FilterChipsRow extends StatelessWidget {
               height: 34,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color:
-                    isActive ? const Color(0xFF111111) : Colors.transparent,
+                color: isActive ? const Color(0xFF111111) : Colors.transparent,
                 borderRadius: BorderRadius.circular(100),
                 border: isActive
                     ? null
@@ -56,9 +55,7 @@ class FilterChipsRow extends StatelessWidget {
                 style: GoogleFonts.poppins(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
-                  color: isActive
-                      ? Colors.white
-                      : const Color(0xFF777777),
+                  color: isActive ? Colors.white : const Color(0xFF777777),
                 ),
               ),
             ),

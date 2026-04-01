@@ -7,8 +7,7 @@ class HomeEvent with _$HomeEvent {
   const factory HomeEvent.load({String? userId}) = _Load;
 
   /// User tapped a category chip.
-  const factory HomeEvent.categorySelected(String category) =
-      _CategorySelected;
+  const factory HomeEvent.categorySelected(String category) = _CategorySelected;
 
   /// Pull-to-refresh.
   const factory HomeEvent.refresh({String? userId}) = _Refresh;

@@ -11,8 +11,10 @@ String _idToString(dynamic v) => v.toString();
 abstract class VerseModel with _$VerseModel {
   const factory VerseModel({
     @JsonKey(fromJson: _idToString) required String id,
-    @JsonKey(name: 'chapter_id', fromJson: _idToString) required String chapterId,
-    @JsonKey(name: 'verse_number', fromJson: _idToString) required String verseNumber,
+    @JsonKey(name: 'chapter_id', fromJson: _idToString)
+    required String chapterId,
+    @JsonKey(name: 'verse_number', fromJson: _idToString)
+    required String verseNumber,
     @JsonKey(name: 'arabic_text') required String arabicText,
     required String transliteration,
   }) = _VerseModel;
@@ -24,7 +26,9 @@ abstract class VerseModel with _$VerseModel {
 
   VerseEntity toEntity() {
     try {
-      debugPrint('[VerseModel] Converting to entity - id: $id, chapterId: $chapterId, verseNumber: $verseNumber');
+      debugPrint(
+        '[VerseModel] Converting to entity - id: $id, chapterId: $chapterId, verseNumber: $verseNumber',
+      );
       return VerseEntity(
         id: int.parse(id),
         chapterId: int.parse(chapterId),
@@ -35,8 +39,12 @@ abstract class VerseModel with _$VerseModel {
     } catch (e) {
       debugPrint('[VerseModel] ERROR in toEntity: $e');
       debugPrint('[VerseModel] id=$id (type: ${id.runtimeType})');
-      debugPrint('[VerseModel] chapterId=$chapterId (type: ${chapterId.runtimeType})');
-      debugPrint('[VerseModel] verseNumber=$verseNumber (type: ${verseNumber.runtimeType})');
+      debugPrint(
+        '[VerseModel] chapterId=$chapterId (type: ${chapterId.runtimeType})',
+      );
+      debugPrint(
+        '[VerseModel] verseNumber=$verseNumber (type: ${verseNumber.runtimeType})',
+      );
       rethrow;
     }
   }

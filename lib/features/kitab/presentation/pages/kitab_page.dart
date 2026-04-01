@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -185,105 +187,107 @@ class _BookCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => _showUnderDevelopmentSheet(context, book.title),
       child: Container(
-      decoration: BoxDecoration(
-        color: cardBg,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0F000000),
-            blurRadius: 3,
-            offset: Offset(0, 1),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Top row: label + arrow
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: labelBg,
-                  border: Border.all(color: labelBorder),
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 3,
-                ),
-                child: Text(
-                  'Kitab',
-                  style: GoogleFonts.dmSans(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: labelColor,
-                    letterSpacing: 0.3,
+        decoration: BoxDecoration(
+          color: cardBg,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x0F000000),
+              blurRadius: 3,
+              offset: Offset(0, 1),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Top row: label + arrow
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: labelBg,
+                    border: Border.all(color: labelBorder),
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 3,
+                  ),
+                  child: Text(
+                    'Kitab',
+                    style: GoogleFonts.dmSans(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: labelColor,
+                      letterSpacing: 0.3,
+                    ),
                   ),
                 ),
-              ),
-              Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: arrowBg,
-                  shape: BoxShape.circle,
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: arrowBg,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.chevron_right_rounded,
+                    color: arrowColor,
+                    size: 18,
+                  ),
                 ),
-                child: Icon(
-                  Icons.chevron_right_rounded,
-                  color: arrowColor,
-                  size: 18,
+              ],
+            ),
+
+            const SizedBox(height: 10),
+
+            // Title
+            Text(
+              book.description ?? '-',
+              textDirection: TextDirection.rtl,
+              style: GoogleFonts.scheherazadeNew(
+                fontSize: 40,
+                fontWeight: FontWeight.w900,
+                color: titleColor,
+                height: 1.2,
+                letterSpacing: -1,
+                shadows: titleShadows,
+              ),
+            ),
+
+            ...[
+              const SizedBox(height: 4),
+              Text(
+                [
+                  book.title,
+                  if (book.author != null) book.author!,
+                ].join(' — '),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.dmSans(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: subtitleColor,
+                  letterSpacing: 0.1,
                 ),
               ),
             ],
-          ),
-
-          const SizedBox(height: 10),
-
-          // Title
-          Text(
-            book.description ?? '-',
-            textDirection: TextDirection.rtl,
-            style: GoogleFonts.scheherazadeNew(
-              fontSize: 40,
-              fontWeight: FontWeight.w900,
-              color: titleColor,
-              height: 1.2,
-              letterSpacing: -1,
-              shadows: titleShadows,
-            ),
-          ),
-
-          ...[
-            const SizedBox(height: 4),
-            Text(
-              [
-                book.title,
-                if (book.author != null) book.author!,
-              ].join(' — '),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.dmSans(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: subtitleColor,
-                letterSpacing: 0.1,
-              ),
-            ),
           ],
-        ],
+        ),
       ),
-    ),
     );
   }
 
   void _showUnderDevelopmentSheet(BuildContext context, String title) {
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (_) => _UnderDevelopmentSheet(title: title),
+    unawaited(
+      showModalBottomSheet<void>(
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (_) => _UnderDevelopmentSheet(title: title),
+      ),
     );
   }
 }
@@ -322,7 +326,11 @@ class _UnderDevelopmentSheet extends StatelessWidget {
               color: _kLime,
               borderRadius: BorderRadius.circular(16),
             ),
-            child: const Icon(Icons.construction_rounded, color: _kDark, size: 28),
+            child: const Icon(
+              Icons.construction_rounded,
+              color: _kDark,
+              size: 28,
+            ),
           ),
           const SizedBox(height: 16),
           Text(

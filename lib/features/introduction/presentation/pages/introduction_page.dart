@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -11,21 +13,21 @@ import 'package:ishari/features/introduction/presentation/widgets/intro_illustra
 /// Shows 5 slides (PageView) before the user signs in or continues as guest.
 /// Design follows the Ishari Design System: Lime (#CAFF00) primary, DM Sans.
 class IntroductionPage extends StatefulWidget {
-  static const routePath = '/introduction';
-
   const IntroductionPage({super.key});
+
+  static const routePath = '/introduction';
 
   @override
   State<IntroductionPage> createState() => _IntroductionPageState();
 }
 
 // ── Design System Tokens ───────────────────────────────────────────────────
-const _clrPrimary    = Color(0xFFCAFF00);   // Lime / brand accent
-const _clrDark       = Color(0xFF111111);   // Near-black
-const _clrSurface    = Color(0xFFFFFFFF);   // White
-const _clrBg         = Color(0xFFF0F5EE);   // App background (light sage)
-const _clrMuted      = Color(0xFF777777);   // Secondary text
-const _clrBorderDark = Color(0xFFD0D8CE);   // Stronger borders
+const _clrPrimary = Color(0xFFCAFF00); // Lime / brand accent
+const _clrDark = Color(0xFF111111); // Near-black
+const _clrSurface = Color(0xFFFFFFFF); // White
+const _clrBg = Color(0xFFF0F5EE); // App background (light sage)
+const _clrMuted = Color(0xFF777777); // Secondary text
+const _clrBorderDark = Color(0xFFD0D8CE); // Stronger borders
 
 // ── Title inline badge styles ──────────────────────────────────────────────
 enum _BadgeStyle { dark, lime }
@@ -55,66 +57,66 @@ class _SlideData {
 }
 
 List<_SlideData> _buildSlides() => [
-      _SlideData(
-        label: 'QS Al-Ahzab: 56',
-        titleParts: const [
-          _TitlePart('Baca Shalawat '),
-          _TitlePart('Mudah', badge: _BadgeStyle.dark),
-          _TitlePart(' & Kapanpun'),
-        ],
-        description:
-            'Ratusan bait dari kitab Diwan, Syaraful Anam,\nDiba\', dan lainnya — dalam genggamanmu.',
-        illustrationBg: _clrBg,
-        buildIllustration: (_) => const ShalawatCardsIllustration(),
-      ),
-      _SlideData(
-        label: 'Pimpinan Shalawat',
-        titleParts: const [
-          _TitlePart('Dengarkan '),
-          _TitlePart('dengan Khidmat', badge: _BadgeStyle.dark),
-        ],
-        description:
-            'Nikmati bacaan shalawat dengan audio\nberkualitas dari Pimpinan Shalawat terpilih.',
-        illustrationBg: _clrBg,
-        buildIllustration: (_) => const AudioPlayerIllustration(),
-      ),
-      _SlideData(
-        label: 'Koleksi Favoritmu',
-        titleParts: const [
-          _TitlePart('Simpan '),
-          _TitlePart('Favoritmu', badge: _BadgeStyle.lime),
-          _TitlePart(' Kapan Saja'),
-        ],
-        description:
-            'Tandai shalawat kesukaan dan akses\nkembali kapan saja dengan mudah.',
-        illustrationBg: _clrBg,
-        buildIllustration: (_) => const BookmarkListIllustration(),
-      ),
-      _SlideData(
-        label: 'Warisan Ulama Nusantara',
-        titleParts: const [
-          _TitlePart('Mari '),
-          _TitlePart('Lestarikan', badge: _BadgeStyle.dark),
-          _TitlePart(' Budaya Ulama'),
-        ],
-        description:
-            'Mudah didengar, mudah disimpan,\ndan mudah diakses kapan saja.',
-        illustrationBg: _clrBg,
-        buildIllustration: (_) => const CultureGridIllustration(),
-      ),
-      _SlideData(
-        label: 'Mulai Perjalananmu',
-        titleParts: const [
-          _TitlePart('Masuk & Mulai '),
-          _TitlePart('Bershalawat', badge: _BadgeStyle.lime),
-          _TitlePart(' Sekarang'),
-        ],
-        description:
-            'Simpan progres, tandai bait favorit, dan\nakses riwayat bacaanmu di semua perangkat.',
-        illustrationBg: _clrBg,
-        buildIllustration: (_) => const SignInPreviewIllustration(),
-      ),
-    ];
+  _SlideData(
+    label: 'QS Al-Ahzab: 56',
+    titleParts: const [
+      _TitlePart('Baca Shalawat '),
+      _TitlePart('Mudah', badge: _BadgeStyle.dark),
+      _TitlePart(' & Kapanpun'),
+    ],
+    description:
+        "Ratusan bait dari kitab Diwan, Syaraful Anam,\nDiba', dan lainnya — dalam genggamanmu.",
+    illustrationBg: _clrBg,
+    buildIllustration: (_) => const ShalawatCardsIllustration(),
+  ),
+  _SlideData(
+    label: 'Pimpinan Shalawat',
+    titleParts: const [
+      _TitlePart('Dengarkan '),
+      _TitlePart('dengan Khidmat', badge: _BadgeStyle.dark),
+    ],
+    description:
+        'Nikmati bacaan shalawat dengan audio\nberkualitas dari Pimpinan Shalawat terpilih.',
+    illustrationBg: _clrBg,
+    buildIllustration: (_) => const AudioPlayerIllustration(),
+  ),
+  _SlideData(
+    label: 'Koleksi Favoritmu',
+    titleParts: const [
+      _TitlePart('Simpan '),
+      _TitlePart('Favoritmu', badge: _BadgeStyle.lime),
+      _TitlePart(' Kapan Saja'),
+    ],
+    description:
+        'Tandai shalawat kesukaan dan akses\nkembali kapan saja dengan mudah.',
+    illustrationBg: _clrBg,
+    buildIllustration: (_) => const BookmarkListIllustration(),
+  ),
+  _SlideData(
+    label: 'Warisan Ulama Nusantara',
+    titleParts: const [
+      _TitlePart('Mari '),
+      _TitlePart('Lestarikan', badge: _BadgeStyle.dark),
+      _TitlePart(' Budaya Ulama'),
+    ],
+    description:
+        'Mudah didengar, mudah disimpan,\ndan mudah diakses kapan saja.',
+    illustrationBg: _clrBg,
+    buildIllustration: (_) => const CultureGridIllustration(),
+  ),
+  _SlideData(
+    label: 'Mulai Perjalananmu',
+    titleParts: const [
+      _TitlePart('Masuk & Mulai '),
+      _TitlePart('Bershalawat', badge: _BadgeStyle.lime),
+      _TitlePart(' Sekarang'),
+    ],
+    description:
+        'Simpan progres, tandai bait favorit, dan\nakses riwayat bacaanmu di semua perangkat.',
+    illustrationBg: _clrBg,
+    buildIllustration: (_) => const SignInPreviewIllustration(),
+  ),
+];
 
 // ── Page ───────────────────────────────────────────────────────────────────
 class _IntroductionPageState extends State<IntroductionPage> {
@@ -135,17 +137,21 @@ class _IntroductionPageState extends State<IntroductionPage> {
   }
 
   void _goNext() {
-    _pageController.nextPage(
-      duration: const Duration(milliseconds: 320),
-      curve: Curves.easeInOut,
+    unawaited(
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 320),
+        curve: Curves.easeInOut,
+      ),
     );
   }
 
   void _skipToLast() {
-    _pageController.animateToPage(
-      _slides.length - 1,
-      duration: const Duration(milliseconds: 400),
-      curve: Curves.easeInOut,
+    unawaited(
+      _pageController.animateToPage(
+        _slides.length - 1,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+      ),
     );
   }
 
@@ -365,7 +371,7 @@ class _SkipButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.9),
+          color: Colors.white.withValues(alpha: 0.9),
           borderRadius: BorderRadius.circular(100),
           border: Border.all(color: _clrBorderDark, width: 1.5),
         ),
@@ -525,9 +531,9 @@ class _GoogleSignInButton extends StatelessWidget {
         return GestureDetector(
           onTap: isLoading
               ? null
-              : () => context
-                  .read<AuthBloc>()
-                  .add(const AuthEvent.signInWithGoogle()),
+              : () => context.read<AuthBloc>().add(
+                  const AuthEvent.signInWithGoogle(),
+                ),
           child: Container(
             width: double.infinity,
             height: 52,
@@ -611,10 +617,10 @@ class _GuestButton extends StatelessWidget {
 
 // ── Google G logo painter ──────────────────────────────────────────────────
 class _GoogleGPainter extends CustomPainter {
-  static const _blue   = Color(0xFF4285F4);
-  static const _green  = Color(0xFF34A853);
+  static const _blue = Color(0xFF4285F4);
+  static const _green = Color(0xFF34A853);
   static const _yellow = Color(0xFFFBBC05);
-  static const _red    = Color(0xFFEA4335);
+  static const _red = Color(0xFFEA4335);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -634,21 +640,20 @@ class _GoogleGPainter extends CustomPainter {
 
     canvas
       ..drawArc(rect, 195 * deg, 105 * deg, false, paint..color = _red)
-      ..drawArc(rect, 135 * deg,  60 * deg, false, paint..color = _yellow)
-      ..drawArc(rect,  45 * deg,  90 * deg, false, paint..color = _green)
-      ..drawArc(rect, -45 * deg,  90 * deg, false, paint..color = _blue);
-
-    canvas.drawRect(
-      Rect.fromLTWH(
-        center.dx,
-        center.dy - (strokeW / 2),
-        radius + (strokeW / 2),
-        strokeW,
-      ),
-      Paint()
-        ..color = _blue
-        ..style = PaintingStyle.fill,
-    );
+      ..drawArc(rect, 135 * deg, 60 * deg, false, paint..color = _yellow)
+      ..drawArc(rect, 45 * deg, 90 * deg, false, paint..color = _green)
+      ..drawArc(rect, -45 * deg, 90 * deg, false, paint..color = _blue)
+      ..drawRect(
+        Rect.fromLTWH(
+          center.dx,
+          center.dy - (strokeW / 2),
+          radius + (strokeW / 2),
+          strokeW,
+        ),
+        Paint()
+          ..color = _blue
+          ..style = PaintingStyle.fill,
+      );
   }
 
   @override

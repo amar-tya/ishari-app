@@ -29,8 +29,8 @@ class ShalawatCardsIllustration extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => const _ScreenshotIllustration(
-        assetPath: 'assets/images/intro/slide_1_chapters.png',
-      );
+    assetPath: 'assets/images/intro/slide_1_chapters.png',
+  );
 }
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -41,8 +41,8 @@ class AudioPlayerIllustration extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => const _ScreenshotIllustration(
-        assetPath: 'assets/images/intro/slide_2_reader.png',
-      );
+    assetPath: 'assets/images/intro/slide_2_reader.png',
+  );
 }
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -53,8 +53,8 @@ class BookmarkListIllustration extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => const _ScreenshotIllustration(
-        assetPath: 'assets/images/intro/slide_3_bookmark.png',
-      );
+    assetPath: 'assets/images/intro/slide_3_bookmark.png',
+  );
 }
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -65,8 +65,8 @@ class CultureGridIllustration extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => const _ScreenshotIllustration(
-        assetPath: 'assets/images/intro/slide_4_kitab.png',
-      );
+    assetPath: 'assets/images/intro/slide_4_kitab.png',
+  );
 }
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -77,6 +77,6 @@ class SignInPreviewIllustration extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => const _ScreenshotIllustration(
-        assetPath: 'assets/images/intro/slide_5_search.png',
-      );
+    assetPath: 'assets/images/intro/slide_5_search.png',
+  );
 }

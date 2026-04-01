@@ -10,8 +10,8 @@ import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 /// - Logged-in: shows bookmark count + navigate arrow.
 class BookmarkSection extends StatelessWidget {
   const BookmarkSection({
-    super.key,
     required this.isGuest,
+    super.key,
     this.bookmarkCount = 0,
     this.onTap,
   });
@@ -43,7 +43,9 @@ class BookmarkSection extends StatelessWidget {
                   color: const Color(0xFF10B981).withValues(alpha: 0.35),
                 ),
               ),
-              child: isGuest ? const _GuestContent() : _LoggedInContent(count: bookmarkCount),
+              child: isGuest
+                  ? const _GuestContent()
+                  : _LoggedInContent(count: bookmarkCount),
             ),
           ),
         ),
@@ -107,13 +109,13 @@ class _LoggedInContent extends StatelessWidget {
           ),
         ),
         // Color dots
-        Row(
+        const Row(
           children: [
-            _Dot(color: const Color(0xFF34D399)),
-            const SizedBox(width: 5),
-            _Dot(color: const Color(0xFF818CF8)),
-            const SizedBox(width: 5),
-            _Dot(color: const Color(0xFFF472B6)),
+            _Dot(color: Color(0xFF34D399)),
+            SizedBox(width: 5),
+            _Dot(color: Color(0xFF818CF8)),
+            SizedBox(width: 5),
+            _Dot(color: Color(0xFFF472B6)),
           ],
         ),
         const SizedBox(width: 10),
@@ -183,9 +185,8 @@ class _GuestContent extends StatelessWidget {
           ),
         ),
         GestureDetector(
-          onTap: () => context
-              .read<AuthBloc>()
-              .add(const AuthEvent.signInWithGoogle()),
+          onTap: () =>
+              context.read<AuthBloc>().add(const AuthEvent.signInWithGoogle()),
           child: Container(
             width: 30,
             height: 30,
@@ -194,7 +195,11 @@ class _GuestContent extends StatelessWidget {
               borderRadius: BorderRadius.circular(9),
               border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
             ),
-            child: const Icon(Icons.chevron_right, color: Colors.white, size: 18),
+            child: const Icon(
+              Icons.chevron_right,
+              color: Colors.white,
+              size: 18,
+            ),
           ),
         ),
       ],

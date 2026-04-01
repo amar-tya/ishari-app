@@ -44,8 +44,8 @@ class _ChapterReaderBodyState extends State<ChapterReaderBody> {
   double _headerOffset = 0;
   final ScrollController _scrollController = ScrollController();
 
-  static const double _appBarHeight = 52.0;
-  static const double _chapterHeaderHeight = 170.0;
+  static const double _appBarHeight = 52;
+  static const double _chapterHeaderHeight = 170;
 
   @override
   void initState() {

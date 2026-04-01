@@ -88,9 +88,7 @@ class _VerseCardState extends State<VerseCard>
           ? const EdgeInsets.symmetric(horizontal: 8, vertical: 2)
           : EdgeInsets.zero,
       decoration: BoxDecoration(
-        color: widget.isPlaying
-            ? const Color(0xFFEDFFC0)
-            : Colors.white,
+        color: widget.isPlaying ? const Color(0xFFEDFFC0) : Colors.white,
         borderRadius: widget.isPlaying ? BorderRadius.circular(16) : null,
         border: widget.isPlaying
             ? const Border(
@@ -233,7 +231,7 @@ class _VerseNumberBadge extends StatelessWidget {
           if (isPlaying)
             AnimatedBuilder(
               animation: pulseAnim,
-              builder: (_, __) => Transform.scale(
+              builder: (_, _) => Transform.scale(
                 scale: pulseAnim.value,
                 child: Container(
                   height: 22,

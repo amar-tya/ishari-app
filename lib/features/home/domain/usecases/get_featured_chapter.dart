@@ -22,6 +22,5 @@ class GetFeaturedChapter
   @override
   Future<Either<Failure, ChapterEntity>> call(
     FeaturedChapterParams params,
-  ) =>
-      _repository.getFeaturedChapter(params.lastChapterId);
+  ) => _repository.getFeaturedChapter(params.lastChapterId);
 }

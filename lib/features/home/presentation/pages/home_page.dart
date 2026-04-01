@@ -56,10 +56,10 @@ class _HomeTabBodyState extends State<_HomeTabBody> {
   Widget build(BuildContext context) {
     return BlocConsumer<HomeBloc, HomeState>(
       listenWhen: (_, state) =>
-          state.maybeWhen(loaded: (_, __, ___, ____) => true, orElse: () => false),
+          state.maybeWhen(loaded: (_, _, _, _) => true, orElse: () => false),
       listener: (context, state) {
         state.maybeWhen(
-          loaded: (_, chapters, category, __) {
+          loaded: (_, chapters, category, _) {
             _cachedChapters = chapters;
             _cachedCategory = category;
           },
@@ -75,11 +75,14 @@ class _HomeTabBodyState extends State<_HomeTabBody> {
             final chapters = _cachedChapters;
             final category = _cachedCategory;
             if (chapters != null && category != null) {
-              return _LoadedView(chapters: chapters, selectedCategory: category);
+              return _LoadedView(
+                chapters: chapters,
+                selectedCategory: category,
+              );
             }
             return const _LoadingView();
           },
-          loaded: (_, chapters, category, __) => _LoadedView(
+          loaded: (_, chapters, category, _) => _LoadedView(
             chapters: chapters,
             selectedCategory: category,
           ),
@@ -197,7 +200,7 @@ class _LoadedView extends StatelessWidget {
               final bloc = context.read<HomeBloc>();
               final future = bloc.stream.firstWhere(
                 (s) => s.maybeWhen(
-                  loaded: (_, __, ___, ____) => true,
+                  loaded: (_, _, _, _) => true,
                   error: (_) => true,
                   orElse: () => false,
                 ),
@@ -222,10 +225,14 @@ class _LoadedView extends StatelessWidget {
                         chapters: chapters,
                         onChapterTap: (chapter) {
                           final id = int.tryParse(chapter.id);
-                          if (id != null) unawaited(context.push('/chapter/$id'));
+                          if (id != null) {
+                            unawaited(context.push('/chapter/$id'));
+                          }
                         },
                       ),
-                      SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
+                      SizedBox(
+                        height: MediaQuery.of(context).padding.bottom + 8,
+                      ),
                     ],
                   ),
                 ),
@@ -237,4 +244,3 @@ class _LoadedView extends StatelessWidget {
     );
   }
 }
-

@@ -5,8 +5,18 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ishari/features/muhud/domain/entities/bookmarked_verse_entity.dart';
 
 const _kMonths = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
-  'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des',
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'Mei',
+  'Jun',
+  'Jul',
+  'Agu',
+  'Sep',
+  'Okt',
+  'Nov',
+  'Des',
 ];
 
 String _formatDate(DateTime dt) =>
@@ -283,51 +293,57 @@ class BookmarkCard extends StatelessWidget {
   }
 
   void _showOptionsSheet(BuildContext context) {
-    unawaited(showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (_) => _OptionsSheet(
-        hasNote: bookmark.note != null && bookmark.note!.isNotEmpty,
-        onEditNote: () {
-          Navigator.of(context).pop();
-          _showEditNoteSheet(context);
-        },
-        onRemove: () {
-          Navigator.of(context).pop();
-          _showRemoveSheet(context);
-        },
+    unawaited(
+      showModalBottomSheet<void>(
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (_) => _OptionsSheet(
+          hasNote: bookmark.note != null && bookmark.note!.isNotEmpty,
+          onEditNote: () {
+            Navigator.of(context).pop();
+            _showEditNoteSheet(context);
+          },
+          onRemove: () {
+            Navigator.of(context).pop();
+            _showRemoveSheet(context);
+          },
+        ),
       ),
-    ));
+    );
   }
 
   void _showEditNoteSheet(BuildContext context) {
-    unawaited(showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (_) => _EditNoteSheet(
-        initialNote: bookmark.note,
-        onSave: (note) {
-          Navigator.of(context).pop();
-          onEditNote(note);
-        },
+    unawaited(
+      showModalBottomSheet<void>(
+        context: context,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        builder: (_) => _EditNoteSheet(
+          initialNote: bookmark.note,
+          onSave: (note) {
+            Navigator.of(context).pop();
+            onEditNote(note);
+          },
+        ),
       ),
-    ));
+    );
   }
 
   void _showRemoveSheet(BuildContext context) {
-    unawaited(showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (_) => _RemoveSheet(
-        chapterTitle: bookmark.chapterTitle,
-        verseNumber: bookmark.verseNumber,
-        onConfirm: () {
-          Navigator.of(context).pop();
-          onRemove();
-        },
+    unawaited(
+      showModalBottomSheet<void>(
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (_) => _RemoveSheet(
+          chapterTitle: bookmark.chapterTitle,
+          verseNumber: bookmark.verseNumber,
+          onConfirm: () {
+            Navigator.of(context).pop();
+            onRemove();
+          },
+        ),
       ),
-    ));
+    );
   }
 }
 
@@ -509,7 +525,9 @@ class _OptionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isDestructive ? const Color(0xFFFF4D4F) : const Color(0xFF111111);
+    final color = isDestructive
+        ? const Color(0xFFFF4D4F)
+        : const Color(0xFF111111);
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,

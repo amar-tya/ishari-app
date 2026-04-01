@@ -20,8 +20,8 @@ abstract class HadiModel with _$HadiModel {
       _$HadiModelFromJson(json);
 
   HadiEntity toEntity() => HadiEntity(
-        id: id,
-        name: name,
-        photoUrl: photoUrl,
-      );
+    id: id,
+    name: name,
+    photoUrl: photoUrl,
+  );
 }

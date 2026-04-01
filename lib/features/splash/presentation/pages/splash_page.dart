@@ -84,7 +84,7 @@ class _SplashPageState extends State<SplashPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        const Text(
+                        Text(
                           'ISHARI',
                           style: TextStyle(
                             fontFamily: 'DM Sans',
@@ -98,8 +98,8 @@ class _SplashPageState extends State<SplashPage> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  const Text(
+                  SizedBox(height: 16),
+                  Text(
                     'Membaca & Mendengarkan shalawat',
                     style: TextStyle(
                       fontSize: 11,

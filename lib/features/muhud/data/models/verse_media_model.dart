@@ -36,7 +36,7 @@ abstract class VerseMediaModel with _$VerseMediaModel {
 
       // Handle null or "null" duration by defaulting to 0
       var parsedDuration = 0;
-      if (duration != 'null' && duration.toString().isNotEmpty) {
+      if (duration != 'null' && duration.isNotEmpty) {
         parsedDuration = int.parse(duration);
       }
 

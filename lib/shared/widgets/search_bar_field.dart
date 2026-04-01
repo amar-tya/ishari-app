@@ -37,9 +37,7 @@ class SearchBarField extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(100),
         border: Border.all(
-          color: isFocused
-              ? const Color(0xFF111111)
-              : const Color(0xFFE2E8DF),
+          color: isFocused ? const Color(0xFF111111) : const Color(0xFFE2E8DF),
           width: 1.5,
         ),
         boxShadow: const [

@@ -35,7 +35,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final _googleSignIn = GoogleSignIn(
     serverClientId: AppEnv.googleWebClientId,
     scopes: ['email', 'profile'],
-    signInOption: SignInOption.standard,
   );
 
   @override

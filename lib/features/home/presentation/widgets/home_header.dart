@@ -15,8 +15,9 @@ class HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isGuest = user == null;
-    final displayName =
-        isGuest ? 'Tamu' : (user!.displayName?.split(' ').first ?? 'Sahabat');
+    final displayName = isGuest
+        ? 'Tamu'
+        : (user!.displayName?.split(' ').first ?? 'Sahabat');
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -167,8 +168,7 @@ class _MoreButton extends StatelessWidget {
           case _MenuAction.login:
             context.read<AuthBloc>().add(const AuthEvent.signInWithGoogle());
           case _MenuAction.logout:
-            final name =
-                isGuest ? null : user?.displayName?.split(' ').first;
+            final name = isGuest ? null : user?.displayName?.split(' ').first;
             unawaited(showLogoutSheet(context, displayName: name));
         }
       },

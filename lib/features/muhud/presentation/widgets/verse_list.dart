@@ -72,10 +72,12 @@ class VerseList extends StatelessWidget {
       // Tampilkan sheet untuk note opsional
       final note = await AddBookmarkSheet.show(context);
       if (note == null || !context.mounted) return; // user cancel
-      bloc.add(MuhudEvent.toggleBookmark(
-        verseId: verse.verse.id,
-        note: note.isEmpty ? null : note,
-      ));
+      bloc.add(
+        MuhudEvent.toggleBookmark(
+          verseId: verse.verse.id,
+          note: note.isEmpty ? null : note,
+        ),
+      );
     }
   }
 

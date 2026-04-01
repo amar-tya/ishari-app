@@ -25,10 +25,12 @@ class ChapterReaderPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (ctx) => sl<MuhudBloc>()
-        ..add(MuhudEvent.loadChapter(
-          chapterId: chapterId,
-          userId: _resolveUserId(ctx),
-        )),
+        ..add(
+          MuhudEvent.loadChapter(
+            chapterId: chapterId,
+            userId: _resolveUserId(ctx),
+          ),
+        ),
       child: BlocBuilder<MuhudBloc, MuhudState>(
         builder: (context, state) {
           return state.when(
@@ -42,11 +44,20 @@ class ChapterReaderPage extends StatelessWidget {
                 child: CircularProgressIndicator(color: Color(0xFFCAFF00)),
               ),
             ),
-            loaded: (chapter, verses, bookmarked, showTranslation,
-                    playingVerseId, isAudioLoading, showArabic,
-                    showTransliteration, arabFontSize, transliterationFontSize,
-                    translationFontSize) =>
-                ChapterReaderBody(
+            loaded:
+                (
+                  chapter,
+                  verses,
+                  bookmarked,
+                  showTranslation,
+                  playingVerseId,
+                  isAudioLoading,
+                  showArabic,
+                  showTransliteration,
+                  arabFontSize,
+                  transliterationFontSize,
+                  translationFontSize,
+                ) => ChapterReaderBody(
                   chapter: chapter,
                   verses: verses,
                   bookmarkedVerseIds: bookmarked,
@@ -79,12 +90,12 @@ class ChapterReaderPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 24),
                       FilledButton.icon(
-                        onPressed: () => context
-                            .read<MuhudBloc>()
-                            .add(MuhudEvent.loadChapter(
-                              chapterId: chapterId,
-                              userId: _resolveUserId(context),
-                            )),
+                        onPressed: () => context.read<MuhudBloc>().add(
+                          MuhudEvent.loadChapter(
+                            chapterId: chapterId,
+                            userId: _resolveUserId(context),
+                          ),
+                        ),
                         icon: const Icon(Icons.refresh),
                         label: const Text('Coba Lagi'),
                         style: FilledButton.styleFrom(
