@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:ishari/features/splash/presentation/widgets/book_logo_painter.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -33,7 +34,7 @@ class LoginPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const Spacer(),
-                  const Icon(Icons.water_drop_outlined, size: 80),
+                  const BookLogoWidget(size: 100),
                   const SizedBox(height: 24),
                   Text(
                     'Ishari',

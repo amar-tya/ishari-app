@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ishari/core/app_state.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
@@ -564,9 +565,9 @@ class _GoogleSignInButton extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CustomPaint(painter: _GoogleGPainter()),
+                        width: 24,
+                        height: 24,
+                        child: SvgPicture.asset('assets/icons/google_icon.svg'),
                       ),
                       const SizedBox(width: 10),
                       const Text(
@@ -613,49 +614,4 @@ class _GuestButton extends StatelessWidget {
       ),
     );
   }
-}
-
-// ── Google G logo painter ──────────────────────────────────────────────────
-class _GoogleGPainter extends CustomPainter {
-  static const _blue = Color(0xFF4285F4);
-  static const _green = Color(0xFF34A853);
-  static const _yellow = Color(0xFFFBBC05);
-  static const _red = Color(0xFFEA4335);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final w = size.width;
-    final h = size.height;
-    final center = Offset(w / 2, h / 2);
-    final radius = w * 0.42;
-    final strokeW = w * 0.22;
-
-    final paint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeW
-      ..strokeCap = StrokeCap.butt;
-
-    final rect = Rect.fromCircle(center: center, radius: radius);
-    const deg = 3.14159265 / 180;
-
-    canvas
-      ..drawArc(rect, 195 * deg, 105 * deg, false, paint..color = _red)
-      ..drawArc(rect, 135 * deg, 60 * deg, false, paint..color = _yellow)
-      ..drawArc(rect, 45 * deg, 90 * deg, false, paint..color = _green)
-      ..drawArc(rect, -45 * deg, 90 * deg, false, paint..color = _blue)
-      ..drawRect(
-        Rect.fromLTWH(
-          center.dx,
-          center.dy - (strokeW / 2),
-          radius + (strokeW / 2),
-          strokeW,
-        ),
-        Paint()
-          ..color = _blue
-          ..style = PaintingStyle.fill,
-      );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

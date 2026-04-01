@@ -55,6 +55,9 @@ dependencies:
   # Launch external URLs (WhatsApp, email)
   url_launcher: ^6.3.1
 
+  # SVG rendering
+  flutter_svg: ^2.0.10+1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -69,9 +72,21 @@ dev_dependencies:
   injectable_generator: ^2.12.1
   json_serializable: ^6.13.0
 
+  # Launcher icon generator
+  flutter_launcher_icons: ^0.14.3
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: 'assets/icons/ishari_launcher.png'
+  min_sdk_android: 21
+  adaptive_icon_background: '#111111'
+  adaptive_icon_foreground: 'assets/icons/ishari_launcher.png'
+
 flutter:
   uses-material-design: true
   generate: true
 
   assets:
     - assets/images/intro/
+    - assets/icons/

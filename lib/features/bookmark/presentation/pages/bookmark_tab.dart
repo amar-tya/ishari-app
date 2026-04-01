@@ -17,10 +17,10 @@ const _kCategories = [
   'Semua',
   'Diwan',
   'Diba',
+  // 'Syaraful Anam',
   'Muradah',
-  'Muhud',
+  // 'Muhud',
   'Rowi',
-  'Syaraful Anam',
 ];
 
 /// Bookmark tab — wraps BookmarkBloc and builds the full page.

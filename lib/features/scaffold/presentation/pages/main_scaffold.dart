@@ -191,6 +191,43 @@ class _NavItem extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Placeholder tabs
+// ─────────────────────────────────────────────────────────────────────────────
+
+// class _PlaceholderTab extends StatelessWidget {
+//   const _PlaceholderTab({required this.icon, required this.label});
+
+//   final IconData icon;
+//   final String label;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Center(
+//       child: Column(
+//         mainAxisSize: MainAxisSize.min,
+//         children: [
+//           Icon(icon, size: 48, color: Colors.grey.shade300),
+//           const SizedBox(height: 12),
+//           Text(
+//             label,
+//             style: TextStyle(
+//               fontSize: 16,
+//               color: Colors.grey.shade400,
+//               fontWeight: FontWeight.w500,
+//             ),
+//           ),
+//           const SizedBox(height: 8),
+//           Text(
+//             'Coming soon',
+//             style: TextStyle(fontSize: 13, color: Colors.grey.shade400),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Bookmark lock bottom sheet (for guest users tapping Bookmark tab)
 // ─────────────────────────────────────────────────────────────────────────────
 

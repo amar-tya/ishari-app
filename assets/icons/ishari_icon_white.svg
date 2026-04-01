@@ -1,0 +1,42 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="pgL" x1="60" y1="42" x2="18" y2="84" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#CAFF00"/>
+      <stop offset="100%" stop-color="#AADD00"/>
+    </linearGradient>
+    <linearGradient id="pgR" x1="60" y1="42" x2="102" y2="84" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#CAFF00"/>
+      <stop offset="100%" stop-color="#96C200"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="120" height="120" rx="26" fill="#FFFFFF"/>
+
+  <!-- Stars — 5 bintang, tengah lebih besar -->
+  <polygon points="20,26 21.2,29.7 25.1,29.7 22.1,31.9 23.3,35.6 20,33.3 16.7,35.6 17.9,31.9 14.9,29.7 18.8,29.7" fill="#111111"/>
+  <polygon points="36,24 37.4,28.3 41.9,28.3 38.5,30.8 39.9,35.1 36,32.5 32.1,35.1 33.5,30.8 30.1,28.3 34.6,28.3" fill="#111111"/>
+  <polygon points="60,22 61.8,27.4 67.4,27.4 63.1,30.5 64.9,35.9 60,32.7 55.1,35.9 56.9,30.5 52.6,27.4 58.2,27.4" fill="#111111"/>
+  <polygon points="84,24 85.4,28.3 89.9,28.3 86.5,30.8 87.9,35.1 84,32.5 80.1,35.1 81.5,30.8 78.1,28.3 82.6,28.3" fill="#111111"/>
+  <polygon points="100,26 101.2,29.7 105.1,29.7 102.1,31.9 103.3,35.6 100,33.3 96.7,35.6 97.9,31.9 94.9,29.7 98.8,29.7" fill="#111111"/>
+
+  <!-- Open book — left page -->
+  <path d="M60 42 C52 39 36 41 18 50 L18 84 C36 77 52 75 60 76 Z" fill="url(#pgL)"/>
+  <!-- Open book — right page -->
+  <path d="M60 42 C68 39 84 41 102 50 L102 84 C84 77 68 75 60 76 Z" fill="url(#pgR)"/>
+  <!-- Spine -->
+  <rect x="59" y="42" width="2" height="34" fill="#FFFFFF" opacity="0.7"/>
+
+  <!-- Text lines — left page -->
+  <line x1="25" y1="59" x2="55" y2="56.5" stroke="#111111" stroke-width="1.8" stroke-linecap="round" opacity="0.22"/>
+  <line x1="24" y1="66" x2="55" y2="63.5" stroke="#111111" stroke-width="1.8" stroke-linecap="round" opacity="0.22"/>
+  <line x1="24" y1="73" x2="55" y2="70.5" stroke="#111111" stroke-width="1.8" stroke-linecap="round" opacity="0.22"/>
+
+  <!-- Text lines — right page -->
+  <line x1="65" y1="56.5" x2="95" y2="59" stroke="#111111" stroke-width="1.8" stroke-linecap="round" opacity="0.22"/>
+  <line x1="65" y1="63.5" x2="96" y2="66" stroke="#111111" stroke-width="1.8" stroke-linecap="round" opacity="0.22"/>
+  <line x1="65" y1="70.5" x2="96" y2="73" stroke="#111111" stroke-width="1.8" stroke-linecap="round" opacity="0.22"/>
+
+  <!-- Shadow -->
+  <ellipse cx="60" cy="86" rx="26" ry="3" fill="#000000" opacity="0.06"/>
+</svg>
