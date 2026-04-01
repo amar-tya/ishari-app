@@ -7,6 +7,9 @@ class ChapterAppBar extends StatelessWidget {
     required this.onOpenQuickTools,
     this.title,
     this.showTitle = false,
+    this.showSplitButton = false,
+    this.isSplitView = false,
+    this.onToggleSplitView,
     super.key,
   });
 
@@ -14,6 +17,9 @@ class ChapterAppBar extends StatelessWidget {
   final VoidCallback onOpenQuickTools;
   final String? title;
   final bool showTitle;
+  final bool showSplitButton;
+  final bool isSplitView;
+  final VoidCallback? onToggleSplitView;
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +51,70 @@ class ChapterAppBar extends StatelessWidget {
               ),
             ),
           ),
+          if (showSplitButton) ...[
+            const SizedBox(width: 8),
+            _SplitBtn(
+              active: isSplitView,
+              onTap: onToggleSplitView ?? () {},
+            ),
+          ],
+          const SizedBox(width: 8),
           _IconBtn(
             icon: Icons.tune_rounded,
             onTap: onOpenQuickTools,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _SplitBtn extends StatelessWidget {
+  const _SplitBtn({required this.active, required this.onTap});
+
+  final bool active;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        height: 34,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+          color: active ? const Color(0xFF111111) : Colors.white,
+          borderRadius: BorderRadius.circular(17),
+          border: Border.all(
+            color: active ? const Color(0xFF111111) : const Color(0xFFE2E8DF),
+            width: 1.5,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.horizontal_split_rounded,
+              size: 14,
+              color: active
+                  ? const Color(0xFFCAFF00)
+                  : const Color(0xFF111111),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              'Diba / Diwan',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: active
+                    ? const Color(0xFFCAFF00)
+                    : const Color(0xFF111111),
+                letterSpacing: 0.1,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
