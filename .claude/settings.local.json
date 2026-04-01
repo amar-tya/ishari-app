@@ -78,7 +78,8 @@
       "Bash(powershell -Command \"& { $bytes = [System.IO.File]::ReadAllBytes\\(''C:\\\\Users\\\\aamar\\\\Dev\\\\git\\\\ishari\\\\ishari-flutter\\\\lib\\\\features\\\\home\\\\presentation\\\\pages\\\\home_page.dart''\\); \\($bytes | Select-Object -Last 10\\) -join '','' }\")",
       "Bash(writeFileSync:*)",
       "Bash(console.log:*)",
-      "Bash(EOF:*)"
+      "Bash(EOF:*)",
+      "Bash(powershell.exe:*)"
     ]
   }
 }

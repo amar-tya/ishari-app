@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:ishari/features/muhud/domain/usecases/get_all_chapters.dart';
+import 'package:ishari/features/muhud/domain/usecases/get_verses_by_chapter.dart';
 import 'package:ishari/features/muhud/presentation/bloc/muhud_bloc.dart';
 import 'package:ishari/features/muhud/presentation/bloc/muhud_event.dart';
 import 'package:ishari/features/muhud/presentation/bloc/muhud_state.dart';
+import 'package:ishari/features/muhud/presentation/bloc/split_panel_cubit.dart';
 import 'package:ishari/features/muhud/presentation/widgets/chapter_reader_body.dart';
 import 'package:ishari/injection_container.dart';
 
@@ -23,14 +26,24 @@ class ChapterReaderPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (ctx) => sl<MuhudBloc>()
-        ..add(
-          MuhudEvent.loadChapter(
-            chapterId: chapterId,
-            userId: _resolveUserId(ctx),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (ctx) => sl<MuhudBloc>()
+            ..add(
+              MuhudEvent.loadChapter(
+                chapterId: chapterId,
+                userId: _resolveUserId(ctx),
+              ),
+            ),
+        ),
+        BlocProvider(
+          create: (_) => SplitPanelCubit(
+            getAllChapters: sl<GetAllChapters>(),
+            getVersesByChapter: sl<GetVersesByChapter>(),
           ),
         ),
+      ],
       child: BlocBuilder<MuhudBloc, MuhudState>(
         builder: (context, state) {
           return state.when(
@@ -57,7 +70,8 @@ class ChapterReaderPage extends StatelessWidget {
                   arabFontSize,
                   transliterationFontSize,
                   translationFontSize,
-                ) => ChapterReaderBody(
+                ) =>
+                    ChapterReaderBody(
                   chapter: chapter,
                   verses: verses,
                   bookmarkedVerseIds: bookmarked,
