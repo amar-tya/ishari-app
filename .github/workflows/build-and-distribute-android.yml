@@ -18,11 +18,17 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.41.6'   # Ubah kalau SDK kamu berbeda
+          flutter-version: '3.41.6'
           channel: 'stable'
 
       - name: Get dependencies
         run: flutter pub get
+
+      - name: Install cider (version bump tool)
+        run: dart pub global activate cider
+
+      - name: Add cider to PATH
+        run: echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
 
       - name: Bump version with cider
         run: cider bump --auto
