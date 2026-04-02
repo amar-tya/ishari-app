@@ -67,3 +67,12 @@ nimbalyst-local/
 
 # FVM Version Cache
 .fvm/
+
+# Keystore
+upload-keystore.jks
+keystore-base64.txt
+android/key.properties
+android/app/upload-keystore.jks
+
+# Firebase
+google-services.json

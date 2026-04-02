@@ -1,0 +1,71 @@
+name: Build & Distribute Ishari Android
+
+on:
+  push:
+    branches: [ develop, master ]
+  workflow_dispatch:
+
+jobs:
+  build-and-distribute:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.x'     # Ubah kalau SDK kamu berbeda
+          channel: 'stable'
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Bump version with cider
+        run: cider bump --auto
+
+      - name: Commit version bump
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add pubspec.yaml
+          git commit -m "chore(release): bump version to $(cider version)" || echo "No version change"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
+          cat <<EOF > android/key.properties
+          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword=${{ secrets.KEY_PASSWORD }}
+          keyAlias=${{ secrets.KEY_ALIAS }}
+          storeFile=upload-keystore.jks
+          EOF
+
+      - name: Build APK & AAB
+        run: |
+          flutter build apk --release --split-per-abi
+          flutter build appbundle --release
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ishari-apk
+          path: build/app/outputs/flutter-apk/app-*-release.apk
+
+      - name: Distribute to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{ secrets.FIREBASE_ANDROID_APP_ID }}
+          token: ${{ secrets.FIREBASE_TOKEN }}
+          groups: ishari-testers
+          releaseNotes: |
+            Automated build from GitHub Actions
+            Commit: ${{ github.sha }}
+            Version: $(cider version)
+          file: build/app/outputs/flutter-apk/app-*-release.apk
