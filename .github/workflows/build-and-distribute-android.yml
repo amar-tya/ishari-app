@@ -8,12 +8,15 @@ on:
 jobs:
   build-and-distribute:
     runs-on: ubuntu-latest
+    # PENTING: Izin menulis konten diperlukan agar GitHub Actions bisa push perubahan versi
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # Mengambil seluruh history agar git log bisa dibaca
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -24,21 +27,62 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
+      - name: Setup Environment
+        run: |
+          cat <<EOF > env/current.env
+          APP_ENV=production
+          SUPABASE_URL=${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+          GOOGLE_WEB_CLIENT_ID=${{ secrets.GOOGLE_WEB_CLIENT_ID }}
+          EOF
+          dart run build_runner build --delete-conflicting-outputs
+
       - name: Install cider (version bump tool)
         run: dart pub global activate cider
 
       - name: Add cider to PATH
         run: echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
 
-      - name: Bump version with cider
-        run: cider bump --auto
-
-      - name: Commit version bump
+      - name: Detect Commit Message & Bump Version
+        id: bump_logic
         run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add pubspec.yaml
-          git commit -m "chore(release): bump version to $(cider version)" || echo "No version change"
+          # Ambil pesan commit terakhir
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          echo "Last commit message: $COMMIT_MSG"
+
+          # Default bump adalah patch
+          BUMP_TYPE="patch"
+
+          # Logika Conventional Commits
+          if [[ "$COMMIT_MSG" == *"BREAKING CHANGE"* ]] || [[ "$COMMIT_MSG" == *"!:"* ]]; then
+            echo "Detected Breaking Change..."
+            BUMP_TYPE="major"
+          elif [[ "$COMMIT_MSG" == "feat"* ]]; then
+            echo "Detected New Feature..."
+            BUMP_TYPE="minor"
+          elif [[ "$COMMIT_MSG" == "fix"* ]]; then
+            echo "Detected Fix..."
+            BUMP_TYPE="patch"
+          fi
+
+          # Eksekusi bump versi (Major/Minor/Patch)
+          cider bump $BUMP_TYPE
+
+          # Selalu naikkan nomor build (+1) agar unik untuk Android (build number)
+          cider bump build
+
+          # Simpan versi terbaru ke variabel env untuk langkah selanjutnya
+          NEW_VER=$(cider version)
+          echo "NEW_VERSION=$NEW_VER" >> $GITHUB_ENV
+
+      - name: Commit & Push version bump
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          git add pubspec.yaml CHANGELOG.md
+          # Commit hanya jika ada perubahan
+          git commit -m "chore(release): bump version to ${{ env.NEW_VERSION }} [skip ci]" || echo "No changes to commit"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -73,5 +117,5 @@ jobs:
           releaseNotes: |
             Automated build from GitHub Actions
             Commit: ${{ github.sha }}
-            Version: $(cider version)
-          file: build/app/outputs/flutter-apk/app-*-release.apk
+            Version: ${{ env.NEW_VERSION }}
+          file: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
