@@ -6,6 +6,7 @@ import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ishari/features/bookmark/presentation/bloc/bookmark_bloc.dart';
 import 'package:ishari/features/bookmark/presentation/widgets/bookmark_card.dart';
 import 'package:ishari/injection_container.dart';
+import 'package:ishari/shared/widgets/banner_ad_widget.dart';
 import 'package:ishari/shared/widgets/filter_chips_row.dart';
 
 const _kBg = Color(0xFFF0F5EE);
@@ -230,41 +231,62 @@ class _BookmarkTabBodyState extends State<_BookmarkTabBody> {
                                 )
                               else
                                 Expanded(
-                                  child: ListView.separated(
+                                  child: ListView.builder(
                                     padding: const EdgeInsets.fromLTRB(
                                       16,
                                       0,
                                       16,
                                       24,
                                     ),
-                                    itemCount: filtered.length,
-                                    separatorBuilder: (_, index) =>
-                                        const SizedBox(height: 10),
+                                    // +1 for the banner ad slot
+                                    itemCount: filtered.length + 1,
                                     itemBuilder: (context, i) {
-                                      final b = filtered[i];
+                                      // Insert banner after 2nd item
+                                      // (or at end if fewer than 2 items)
+                                      final adPosition =
+                                          filtered.length < 2
+                                              ? filtered.length
+                                              : 2;
+                                      if (i == adPosition) {
+                                        return const Padding(
+                                          padding: EdgeInsets.only(bottom: 10),
+                                          child: BannerAdWidget(),
+                                        );
+                                      }
+                                      final realIndex =
+                                          i < adPosition ? i : i - 1;
+                                      final b = filtered[realIndex];
                                       final userId = _getUserId();
-                                      return BookmarkCard(
-                                        bookmark: b,
-                                        onTap: () => context.push(
-                                          '/chapter/${b.chapterId}',
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                          bottom: 10,
                                         ),
-                                        onRemove: userId == null
-                                            ? () {}
-                                            : () => context
+                                        child: BookmarkCard(
+                                          bookmark: b,
+                                          onTap: () => context.push(
+                                            '/chapter/${b.chapterId}',
+                                          ),
+                                          onRemove: userId == null
+                                              ? () {}
+                                              : () => context
+                                                    .read<BookmarkBloc>()
+                                                    .add(
+                                                      BookmarkEvent
+                                                          .removeBookmark(
+                                                        verseId: b.verseId,
+                                                        userId: userId,
+                                                      ),
+                                                    ),
+                                          onEditNote: (note) =>
+                                              context
                                                   .read<BookmarkBloc>()
                                                   .add(
-                                                    BookmarkEvent.removeBookmark(
+                                                    BookmarkEvent.updateNote(
                                                       verseId: b.verseId,
-                                                      userId: userId,
+                                                      note: note,
                                                     ),
                                                   ),
-                                        onEditNote: (note) =>
-                                            context.read<BookmarkBloc>().add(
-                                              BookmarkEvent.updateNote(
-                                                verseId: b.verseId,
-                                                note: note,
-                                              ),
-                                            ),
+                                        ),
                                       );
                                     },
                                   ),

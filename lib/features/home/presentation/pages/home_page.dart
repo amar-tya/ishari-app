@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ishari/core/ads/interstitial_ad_manager.dart';
 import 'package:ishari/core/app_state.dart';
 import 'package:ishari/features/auth/domain/entities/user_entity.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
@@ -13,6 +14,7 @@ import 'package:ishari/features/home/presentation/widgets/chapter_masonry_grid.d
 import 'package:ishari/features/home/presentation/widgets/home_header.dart';
 import 'package:ishari/features/home/presentation/widgets/home_hero.dart';
 import 'package:ishari/injection_container.dart';
+import 'package:ishari/shared/widgets/banner_ad_widget.dart';
 
 const _kBg = Color(0xFFF0F5EE);
 
@@ -221,12 +223,15 @@ class _LoadedView extends StatelessWidget {
                       const HomeHero(),
                       const SizedBox(height: 14),
                       CategoryChips(selectedCategory: selectedCategory),
+                      const BannerAdWidget(),
                       ChapterMasonryGrid(
                         chapters: chapters,
                         onChapterTap: (chapter) {
                           final id = int.tryParse(chapter.id);
                           if (id != null) {
-                            unawaited(context.push('/chapter/$id'));
+                            InterstitialAdManager.instance.showIfReady(() {
+                              unawaited(context.push('/chapter/$id'));
+                            });
                           }
                         },
                       ),

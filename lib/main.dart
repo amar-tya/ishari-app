@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:ishari/core/ads/interstitial_ad_manager.dart';
 import 'package:ishari/core/env/app_env.dart';
 import 'package:ishari/core/router/app_router.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
@@ -22,7 +24,24 @@ Future<void> main() async {
   // 3. Register all dependencies via get_it + injectable
   await configureDependencies();
 
-  // 4. Keep screen awake while app is running
+  // 4. Initialize AdMob
+  await MobileAds.instance.initialize();
+
+  // Register test device IDs in development so real ad clicks are not counted.
+  // Get your device ID from logcat on first run, then add to ADMOB_TEST_DEVICE_IDS in dev.env.
+  if (AppEnv.isDevelopment) {
+    final testIds = AppEnv.admobTestDeviceIds;
+    if (testIds.isNotEmpty) {
+      await MobileAds.instance.updateRequestConfiguration(
+        RequestConfiguration(testDeviceIds: testIds),
+      );
+    }
+  }
+
+  // Preload first interstitial
+  InterstitialAdManager.instance.preload();
+
+  // 5. Keep screen awake while app is running
   await WakelockPlus.enable();
 
   runApp(const IshariApp());

@@ -10,6 +10,7 @@ import 'package:ishari/features/search/presentation/bloc/search_bloc.dart';
 import 'package:ishari/features/search/presentation/widgets/search_empty_view.dart';
 import 'package:ishari/features/search/presentation/widgets/search_idle_view.dart';
 import 'package:ishari/injection_container.dart';
+import 'package:ishari/shared/widgets/banner_ad_widget.dart';
 import 'package:ishari/shared/widgets/filter_chips_row.dart';
 import 'package:ishari/shared/widgets/search_bar_field.dart';
 
@@ -267,6 +268,7 @@ class _ResultsView extends StatelessWidget {
             ),
           ),
         ),
+        const SliverToBoxAdapter(child: BannerAdWidget()),
         SliverToBoxAdapter(
           child: ChapterMasonryGrid(
             chapters: chapters,

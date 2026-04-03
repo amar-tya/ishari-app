@@ -16,6 +16,13 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(keystorePropertiesFile.inputStream())
 }
 
+// Read AdMob App ID from env/current.env for manifest placeholder injection
+val envFile = rootProject.file("../env/current.env")
+val envProps = Properties()
+if (envFile.exists()) {
+    envProps.load(envFile.inputStream())
+}
+
 android {
     namespace = "com.ishari.app"
     compileSdk = flutter.compileSdkVersion
@@ -37,6 +44,11 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        // Inject AdMob App ID from env/current.env (fallback to test ID)
+        manifestPlaceholders["admobAppId"] = envProps.getProperty(
+            "ADMOB_APP_ID",
+            "ca-app-pub-3940256099942544~3347511713",
+        )
     }
 
     signingConfigs {

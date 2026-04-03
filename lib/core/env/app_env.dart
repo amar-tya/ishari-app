@@ -34,6 +34,31 @@ abstract final class AppEnv {
   static String get googleWebClientId => Env.googleWebClientId;
 
   // ---------------------------------------------------------------------------
+  // AdMob
+  // ---------------------------------------------------------------------------
+
+  /// AdMob Android App ID.
+  static String get admobAppId => Env.admobAppId;
+
+  /// AdMob Banner Ad Unit ID.
+  static String get admobBannerUnitId => Env.admobBannerUnitId;
+
+  /// AdMob Native Ad Unit ID.
+  static String get admobNativeUnitId => Env.admobNativeUnitId;
+
+  /// AdMob Interstitial Ad Unit ID.
+  static String get admobInterstitialUnitId => Env.admobInterstitialUnitId;
+
+  /// Test device IDs for AdMob (dev only).
+  /// Comma-separated list from ADMOB_TEST_DEVICE_IDS in dev.env.
+  /// Get your device ID from logcat after first run.
+  static List<String> get admobTestDeviceIds {
+    final raw = Env.admobTestDeviceIds.trim();
+    if (raw.isEmpty) return [];
+    return raw.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+  }
+
+  // ---------------------------------------------------------------------------
   // Validation
   // ---------------------------------------------------------------------------
 

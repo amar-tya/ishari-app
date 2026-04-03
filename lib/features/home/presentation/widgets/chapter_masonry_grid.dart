@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:ishari/features/home/domain/entities/chapter_entity.dart';
 import 'package:ishari/features/home/presentation/widgets/chapter_card.dart';
+import 'package:ishari/shared/widgets/native_ad_card.dart';
 
-/// True 2-column masonry grid: odd-indexed chapters go in the left column,
-/// even-indexed in the right. Each card takes its natural height.
+/// True 2-column masonry grid.
 ///
-/// Cards cycle through [light → dark → lime → light …] variants.
+/// Builds a flat list of [_GridItem]s — chapters interspersed with ad slots
+/// every 4 chapters — then distributes them across left and right columns
+/// (even flat-index → left, odd → right). Native ads appear as single-column
+/// items matching the visual size of a chapter card.
 class ChapterMasonryGrid extends StatelessWidget {
   const ChapterMasonryGrid({
     required this.chapters,
@@ -15,6 +18,15 @@ class ChapterMasonryGrid extends StatelessWidget {
 
   final List<ChapterEntity> chapters;
   final void Function(ChapterEntity)? onChapterTap;
+
+  static const List<ChapterCardVariant> _variants = [
+    ChapterCardVariant.light,
+    ChapterCardVariant.dark,
+    ChapterCardVariant.lime,
+  ];
+
+  ChapterCardVariant _variant(int chapterIndex) =>
+      _variants[chapterIndex % _variants.length];
 
   @override
   Widget build(BuildContext context) {
@@ -28,14 +40,21 @@ class ChapterMasonryGrid extends StatelessWidget {
       );
     }
 
-    // Distribute: index 0,2,4… → left column; 1,3,5… → right column
-    final left = <(int, ChapterEntity)>[];
-    final right = <(int, ChapterEntity)>[];
+    // Build flat list: insert an ad marker after every 4 chapters.
+    final items = <_GridItem>[];
     for (var i = 0; i < chapters.length; i++) {
+      items.add(_ChapterItem(chapters[i], i));
+      if ((i + 1) % 4 == 0) items.add(const _AdItem());
+    }
+
+    // Distribute to columns: even flat-index → left, odd → right.
+    final left = <_GridItem>[];
+    final right = <_GridItem>[];
+    for (var i = 0; i < items.length; i++) {
       if (i.isEven) {
-        left.add((i, chapters[i]));
+        left.add(items[i]);
       } else {
-        right.add((i, chapters[i]));
+        right.add(items[i]);
       }
     }
 
@@ -45,11 +64,19 @@ class ChapterMasonryGrid extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            child: _MasonryColumn(items: left, onTap: onChapterTap),
+            child: _MasonryColumn(
+              items: left,
+              onTap: onChapterTap,
+              variant: _variant,
+            ),
           ),
           const SizedBox(width: 10),
           Expanded(
-            child: _MasonryColumn(items: right, onTap: onChapterTap),
+            child: _MasonryColumn(
+              items: right,
+              onTap: onChapterTap,
+              variant: _variant,
+            ),
           ),
         ],
       ),
@@ -57,31 +84,53 @@ class ChapterMasonryGrid extends StatelessWidget {
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Grid item types
+// ─────────────────────────────────────────────────────────────────────────────
+
+sealed class _GridItem {
+  const _GridItem();
+}
+
+class _ChapterItem extends _GridItem {
+  const _ChapterItem(this.chapter, this.index);
+  final ChapterEntity chapter;
+  final int index;
+}
+
+class _AdItem extends _GridItem {
+  const _AdItem();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Column
+// ─────────────────────────────────────────────────────────────────────────────
+
 class _MasonryColumn extends StatelessWidget {
-  const _MasonryColumn({required this.items, this.onTap});
+  const _MasonryColumn({
+    required this.items,
+    required this.variant,
+    this.onTap,
+  });
 
-  final List<(int, ChapterEntity)> items;
+  final List<_GridItem> items;
+  final ChapterCardVariant Function(int chapterIndex) variant;
   final void Function(ChapterEntity)? onTap;
-
-  static const List<ChapterCardVariant> _variants = [
-    ChapterCardVariant.light,
-    ChapterCardVariant.dark,
-    ChapterCardVariant.lime,
-  ];
-
-  ChapterCardVariant _variant(int index) => _variants[index % _variants.length];
 
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        for (final (index, chapter) in items) ...[
-          ChapterCard(
-            chapter: chapter,
-            variant: _variant(index),
-            onTap: () => onTap?.call(chapter),
-          ),
+        for (final item in items) ...[
+          switch (item) {
+            _ChapterItem(:final chapter, :final index) => ChapterCard(
+                chapter: chapter,
+                variant: variant(index),
+                onTap: () => onTap?.call(chapter),
+              ),
+            _AdItem() => const NativeAdCard(),
+          },
           const SizedBox(height: 10),
         ],
       ],

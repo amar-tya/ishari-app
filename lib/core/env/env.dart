@@ -22,4 +22,23 @@ abstract class Env {
 
   @EnviedField()
   static final String googleWebClientId = _Env.googleWebClientId;
+
+  // ---------------------------------------------------------------------------
+  // AdMob
+  // ---------------------------------------------------------------------------
+
+  @EnviedField()
+  static final String admobAppId = _Env.admobAppId;
+
+  @EnviedField()
+  static final String admobBannerUnitId = _Env.admobBannerUnitId;
+
+  @EnviedField()
+  static final String admobNativeUnitId = _Env.admobNativeUnitId;
+
+  @EnviedField()
+  static final String admobInterstitialUnitId = _Env.admobInterstitialUnitId;
+
+  @EnviedField(defaultValue: '')
+  static final String admobTestDeviceIds = _Env.admobTestDeviceIds;
 }
