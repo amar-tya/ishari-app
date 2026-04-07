@@ -77,6 +77,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       return UserModel.fromSupabaseUser(user.toJson());
     } on ServerException {
       rethrow;
+    } on GoogleSignInException catch (e) {
+      final desc = e.description ?? '';
+      // Deskripsi dengan kode error dalam bracket (e.g. "[16]") = bukan user cancel biasa
+      final isUserCancel = e.code == GoogleSignInExceptionCode.canceled
+          && !RegExp(r'^\[\d+\]').hasMatch(desc);
+
+      if (isUserCancel) {
+        throw const CanceledSignInException();
+      }
+      appLogger.e('[GoogleSignIn] GoogleSignInException', error: e);
+      throw const ServerException(
+        message: 'Gagal login dengan Google. Pastikan koneksi internet dan coba lagi.',
+      );
     } catch (e, stackTrace) {
       appLogger.e('[GoogleSignIn] ERROR', error: e, stackTrace: stackTrace);
       throw ServerException(message: e.toString());

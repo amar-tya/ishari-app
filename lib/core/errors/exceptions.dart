@@ -27,3 +27,8 @@ class NetworkException implements Exception {
   @override
   String toString() => 'NetworkException: $message';
 }
+
+/// Thrown when user explicitly cancels the Google Sign-In flow.
+class CanceledSignInException implements Exception {
+  const CanceledSignInException();
+}

@@ -37,3 +37,8 @@ final class NetworkFailure extends Failure {
 final class UnknownFailure extends Failure {
   const UnknownFailure({super.message = 'Unknown failure'});
 }
+
+/// Failure when user cancels the sign-in flow (not an error — no toast needed).
+final class CanceledFailure extends Failure {
+  const CanceledFailure() : super(message: 'login_canceled');
+}

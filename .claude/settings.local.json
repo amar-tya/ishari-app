@@ -84,7 +84,11 @@
       "Bash(scripts/use_dev.bat:*)",
       "mcp__Supabase__apply_migration",
       "Bash(git ls-files:*)",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "mcp__mcp-server-context7__resolve-library-id",
+      "mcp__mcp-server-context7__query-docs",
+      "Bash(keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android)",
+      "Bash(\"/c/Program Files/Java/jdk-21/bin/keytool.exe\" -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android)"
     ]
   }
 }

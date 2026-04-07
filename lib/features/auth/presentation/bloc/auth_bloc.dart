@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:ishari/core/errors/failures.dart';
 import 'package:ishari/core/usecases/usecase.dart';
 import 'package:ishari/features/auth/domain/entities/user_entity.dart';
 import 'package:ishari/features/auth/domain/usecases/get_current_user.dart';
@@ -48,7 +49,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(const AuthState.loading());
     final result = await _signInWithGoogle(const NoParams());
     result.fold(
-      (failure) => emit(AuthState.error(failure.message)),
+      (failure) => failure is CanceledFailure
+          ? emit(const AuthState.unauthenticated())
+          : emit(AuthState.error(failure.message)),
       (user) => emit(AuthState.authenticated(user)),
     );
   }

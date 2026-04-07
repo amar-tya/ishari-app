@@ -34,6 +34,8 @@ class AuthRepositoryImpl implements AuthRepository {
       final model = await _remote.signInWithGoogle();
       await _local.cacheUser(model);
       return right(model.toEntity());
+    } on CanceledSignInException {
+      return left(const CanceledFailure());
     } on ServerException catch (e) {
       return left(ServerFailure(message: e.message));
     }
