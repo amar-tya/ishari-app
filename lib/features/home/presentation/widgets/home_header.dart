@@ -2,28 +2,71 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ishari/features/auth/domain/entities/user_entity.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:ishari/features/home/presentation/widgets/about_sheet.dart';
 import 'package:ishari/features/home/presentation/widgets/home_menu_sheets.dart';
+import 'package:ishari/features/notifications/presentation/bloc/notifications_bloc.dart';
+import 'package:ishari/features/notifications/presentation/pages/notifications_page.dart';
 
 /// Compact header: avatar + greeting + name (left), bell + more-menu (right).
-class HomeHeader extends StatelessWidget {
+class HomeHeader extends StatefulWidget {
   const HomeHeader({super.key, this.user});
 
   final UserEntity? user;
 
   @override
+  State<HomeHeader> createState() => _HomeHeaderState();
+}
+
+class _HomeHeaderState extends State<HomeHeader> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final bloc = context.read<NotificationsBloc>();
+      if (bloc.state.maybeWhen(initial: () => true, orElse: () => false)) {
+        _loadNotifications();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && mounted) {
+      _loadNotifications();
+    }
+  }
+
+  void _loadNotifications() {
+    final userId = context.read<AuthBloc>().state.maybeWhen(
+          authenticated: (user) => user.id,
+          orElse: () => null,
+        );
+    context.read<NotificationsBloc>().add(NotificationsEvent.load(userId: userId));
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final isGuest = user == null;
+    final isGuest = widget.user == null;
     final displayName = isGuest
         ? 'Tamu'
-        : (user!.displayName?.split(' ').first ?? 'Sahabat');
+        : (widget.user!.displayName?.split(' ').first ?? 'Sahabat');
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         children: [
-          _Avatar(user: user),
+          _Avatar(user: widget.user),
           const SizedBox(width: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,9 +93,21 @@ class HomeHeader extends StatelessWidget {
             ],
           ),
           const Spacer(),
-          _BellButton(hasNotification: !isGuest),
+          BlocBuilder<NotificationsBloc, NotificationsState>(
+            buildWhen: (prev, curr) =>
+                prev.mapOrNull(loaded: (s) => s.unreadCount) !=
+                curr.mapOrNull(loaded: (s) => s.unreadCount),
+            builder: (context, state) {
+              final unreadCount =
+                  state.mapOrNull(loaded: (s) => s.unreadCount) ?? 0;
+              return _BellButton(
+                hasNotification: unreadCount > 0,
+                onTap: () => context.push(NotificationsPage.routePath),
+              );
+            },
+          ),
           const SizedBox(width: 8),
-          _MoreButton(user: user, isGuest: isGuest),
+          _MoreButton(user: widget.user, isGuest: isGuest),
         ],
       ),
     );
@@ -99,53 +154,58 @@ class _Avatar extends StatelessWidget {
 }
 
 class _BellButton extends StatelessWidget {
-  const _BellButton({required this.hasNotification});
+  const _BellButton({required this.hasNotification, this.onTap});
 
   final bool hasNotification;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 38,
-      height: 38,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.white,
-        border: Border.all(color: const Color(0xFFE2E8DF), width: 1.5),
-      ),
-      child: Stack(
-        children: [
-          const Center(
-            child: Icon(
-              Icons.notifications_outlined,
-              size: 18,
-              color: Color(0xFF555555),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 38,
+        height: 38,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.white,
+          border: Border.all(color: const Color(0xFFE2E8DF), width: 1.5),
+        ),
+        child: Stack(
+          children: [
+            const Center(
+              child: Icon(
+                Icons.notifications_outlined,
+                size: 18,
+                color: Color(0xFF555555),
+              ),
             ),
-          ),
-          if (hasNotification)
-            Positioned(
-              top: 7,
-              right: 7,
-              child: Container(
-                width: 6,
-                height: 6,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFF4D4F),
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: const Color(0xFFF0F5EE),
-                    width: 1.5,
+            if (hasNotification)
+              Positioned(
+                top: 7,
+                right: 7,
+                child: Container(
+                  width: 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFF4D4F),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: const Color(0xFFF0F5EE),
+                      width: 1.5,
+                    ),
                   ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
 
-enum _MenuAction { contactUs, login, logout }
+
+enum _MenuAction { aboutUs, contactUs, login, logout }
 
 class _MoreButton extends StatelessWidget {
   const _MoreButton({required this.user, required this.isGuest});
@@ -163,6 +223,8 @@ class _MoreButton extends StatelessWidget {
       shadowColor: Colors.black26,
       onSelected: (action) {
         switch (action) {
+          case _MenuAction.aboutUs:
+            unawaited(showAboutSheet(context));
           case _MenuAction.contactUs:
             unawaited(showContactSheet(context));
           case _MenuAction.login:
@@ -173,6 +235,17 @@ class _MoreButton extends StatelessWidget {
         }
       },
       itemBuilder: (_) => [
+        const PopupMenuItem(
+          value: _MenuAction.aboutUs,
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          child: _MenuItemContent(
+            iconBg: Color(0xFFEEF2FF),
+            icon: Icons.info_outline_rounded,
+            iconColor: Color(0xFF5C6BC0),
+            label: 'Tentang Aplikasi',
+            subtitle: 'Versi & informasi app',
+          ),
+        ),
         const PopupMenuItem(
           value: _MenuAction.contactUs,
           padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),

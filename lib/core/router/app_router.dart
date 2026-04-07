@@ -7,7 +7,11 @@ import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ishari/features/auth/presentation/pages/home_page.dart';
 import 'package:ishari/features/introduction/presentation/pages/introduction_page.dart';
 import 'package:ishari/features/muhud/presentation/pages/chapter_reader_page.dart';
+import 'package:ishari/features/notifications/domain/entities/notification_entity.dart';
+import 'package:ishari/features/notifications/presentation/pages/notification_detail_page.dart';
+import 'package:ishari/features/notifications/presentation/pages/notifications_page.dart';
 import 'package:ishari/features/splash/presentation/pages/splash_page.dart';
+import 'package:ishari/features/tatanan/presentation/pages/tatanan_detail_page.dart';
 
 /// Application router powered by [GoRouter].
 ///
@@ -62,6 +66,28 @@ GoRouter createRouter(AuthBloc authBloc) {
           final chapterId = int.parse(state.pathParameters['chapterId'] ?? '0');
           return ChapterReaderPage(chapterId: chapterId);
         },
+      ),
+      GoRoute(
+        path: TatananDetailPage.routePath,
+        name: 'tatanan-detail',
+        builder: (context, state) => TatananDetailPage(
+          tatananId: state.pathParameters['tatananId']!,
+        ),
+      ),
+      GoRoute(
+        path: NotificationsPage.routePath,
+        name: 'notifications',
+        builder: (context, state) => const NotificationsPage(),
+        routes: [
+          GoRoute(
+            path: ':id',
+            name: 'notification-detail',
+            builder: (context, state) {
+              final notification = state.extra! as NotificationEntity;
+              return NotificationDetailPage(notification: notification);
+            },
+          ),
+        ],
       ),
     ],
     errorBuilder: (context, state) => Scaffold(

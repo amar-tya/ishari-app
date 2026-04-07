@@ -1,5 +1,5 @@
-import 'package:flutter/rendering.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:ishari/core/utils/app_logger.dart';
 import 'package:ishari/features/muhud/data/models/hadi_media_model.dart';
 import 'package:ishari/features/muhud/domain/entities/verse_media_entity.dart';
 import 'package:ishari/features/muhud/domain/entities/verse_media_type.dart';
@@ -30,10 +30,6 @@ abstract class VerseMediaModel with _$VerseMediaModel {
 
   VerseMediaEntity toEntity() {
     try {
-      debugPrint(
-        '[VerseMediaModel] Converting to entity - id: $id, verseId: $verseId, duration: $duration, type: $type',
-      );
-
       // Handle null or "null" duration by defaulting to 0
       var parsedDuration = 0;
       if (duration != 'null' && duration.isNotEmpty) {
@@ -49,15 +45,11 @@ abstract class VerseMediaModel with _$VerseMediaModel {
         type: VerseMediaTypeExt.tryFromString(type) ?? VerseMediaType.joz,
       );
     } catch (e) {
-      debugPrint('[VerseMediaModel] ERROR in toEntity: $e');
-      debugPrint('[VerseMediaModel] id=$id (type: ${id.runtimeType})');
-      debugPrint(
-        '[VerseMediaModel] verseId=$verseId (type: ${verseId.runtimeType})',
+      appLogger.e(
+        '[VerseMediaModel] ERROR — '
+            'id=$id verseId=$verseId duration=$duration type=$type',
+        error: e,
       );
-      debugPrint(
-        '[VerseMediaModel] duration=$duration (type: ${duration.runtimeType})',
-      );
-      debugPrint('[VerseMediaModel] type=$type (type: ${type.runtimeType})');
       rethrow;
     }
   }

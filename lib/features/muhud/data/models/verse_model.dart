@@ -1,5 +1,5 @@
-import 'package:flutter/rendering.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:ishari/core/utils/app_logger.dart';
 import 'package:ishari/features/muhud/domain/entities/verse_entity.dart';
 
 part 'verse_model.freezed.dart';
@@ -26,9 +26,6 @@ abstract class VerseModel with _$VerseModel {
 
   VerseEntity toEntity() {
     try {
-      debugPrint(
-        '[VerseModel] Converting to entity - id: $id, chapterId: $chapterId, verseNumber: $verseNumber',
-      );
       return VerseEntity(
         id: int.parse(id),
         chapterId: int.parse(chapterId),
@@ -37,13 +34,10 @@ abstract class VerseModel with _$VerseModel {
         transliteration: transliteration,
       );
     } catch (e) {
-      debugPrint('[VerseModel] ERROR in toEntity: $e');
-      debugPrint('[VerseModel] id=$id (type: ${id.runtimeType})');
-      debugPrint(
-        '[VerseModel] chapterId=$chapterId (type: ${chapterId.runtimeType})',
-      );
-      debugPrint(
-        '[VerseModel] verseNumber=$verseNumber (type: ${verseNumber.runtimeType})',
+      appLogger.e(
+        '[VerseModel] ERROR — '
+            'id=$id chapterId=$chapterId verseNumber=$verseNumber',
+        error: e,
       );
       rethrow;
     }

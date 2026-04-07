@@ -56,14 +56,26 @@ dependencies:
   # Launch external URLs (WhatsApp, email)
   url_launcher: ^6.3.1
 
+  # Render markdown content in notification detail
+  flutter_markdown: ^0.7.7
+
   # SVG rendering
   flutter_svg: ^2.0.10+1
 
   # Keep screen awake while app is in use
   wakelock_plus: ^1.2.10
 
+  # Read app version & build number
+  package_info_plus: ^8.0.0
+
   # AdMob ads
   google_mobile_ads: ^5.2.0
+
+  # Logging
+  logger: ^2.5.0
+
+  # Crash reporting
+  sentry_flutter: ^8.14.2
 
 dev_dependencies:
   flutter_test:

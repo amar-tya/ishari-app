@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:ishari/core/utils/app_logger.dart';
 import 'package:ishari/features/muhud/domain/usecases/get_bookmarked_verse_ids.dart';
 import 'package:ishari/features/muhud/domain/usecases/get_chapter_by_id.dart';
 import 'package:ishari/features/muhud/domain/usecases/get_verses_by_chapter.dart';
@@ -44,6 +44,9 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
         setTranslationFontSize: (size) async =>
             _onSetTranslationFontSize(size, emit),
         resetFontSizes: () async => _onResetFontSizes(emit),
+        clearSnackbar: () async => state.mapOrNull(
+          loaded: (l) => emit(l.copyWith(snackbarMessage: null)),
+        ),
       );
     });
   }
@@ -70,41 +73,29 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
     String userId,
     Emitter<MuhudState> emit,
   ) async {
-    debugPrint('[MuhudBloc] _onLoadChapter START - chapterId: $chapterId');
+    appLogger.d('[MuhudBloc] _onLoadChapter START - chapterId: $chapterId');
     _userId = userId;
     emit(const MuhudState.loading());
 
     try {
-      debugPrint('[MuhudBloc] Starting chapter and verses requests...');
       final chapterFuture = getChapterById(chapterId);
       final versesFuture = getVersesByChapter(chapterId);
 
-      debugPrint('[MuhudBloc] Waiting for chapter result...');
       final chapterResult = await chapterFuture;
-      debugPrint('[MuhudBloc] Chapter result received: $chapterResult');
-
-      debugPrint('[MuhudBloc] Waiting for verses result...');
       final versesResult = await versesFuture;
-      debugPrint(
-        '[MuhudBloc] Verses result received: ${versesResult.fold((f) => 'Error: ${f.message}', (v) => '${v.length} verses')}',
-      );
 
       chapterResult.fold(
         (failure) {
-          debugPrint('[MuhudBloc] Chapter error: ${failure.message}');
+          appLogger.w('[MuhudBloc] Chapter error: ${failure.message}');
           emit(MuhudState.error(message: failure.message));
         },
         (chapter) {
-          debugPrint('[MuhudBloc] Chapter loaded: ${chapter.title}');
           versesResult.fold(
             (failure) {
-              debugPrint('[MuhudBloc] Verses error: ${failure.message}');
+              appLogger.w('[MuhudBloc] Verses error: ${failure.message}');
               emit(MuhudState.error(message: failure.message));
             },
             (verses) {
-              debugPrint(
-                '[MuhudBloc] Both chapter and verses loaded, emitting loaded state...',
-              );
               emit(
                 MuhudState.loaded(
                   chapter: chapter,
@@ -118,7 +109,6 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
                       prefs.getDouble(_kTranslationFontSize) ?? 14.0,
                 ),
               );
-              debugPrint('[MuhudBloc] Loaded state emitted successfully');
             },
           );
         },
@@ -128,15 +118,20 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
       if (userId.isNotEmpty) {
         final bookmarksResult = await getBookmarkedVerseIds(userId);
         bookmarksResult.fold(
-          (_) {}, // silent fail — tampil tanpa bookmark
+          (failure) => appLogger.w(
+            '[MuhudBloc] Bookmark load failed: ${failure.message}',
+          ),
           (ids) => state.mapOrNull(
             loaded: (l) => emit(l.copyWith(bookmarkedVerseIds: ids.toSet())),
           ),
         );
       }
     } on Exception catch (e, stackTrace) {
-      debugPrint('[MuhudBloc] Exception in _onLoadChapter: $e');
-      debugPrint('[MuhudBloc] StackTrace: $stackTrace');
+      appLogger.e(
+        '[MuhudBloc] Exception in _onLoadChapter',
+        error: e,
+        stackTrace: stackTrace,
+      );
       emit(MuhudState.error(message: 'Error: $e'));
     }
   }
@@ -189,8 +184,9 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
 
     final result = await toggleBookmark(verseId, _userId, note: note);
     result.fold(
-      (_) {
-        // Revert optimistic update on failure
+      (failure) {
+        // Revert optimistic update on failure and notify user
+        appLogger.w('[MuhudBloc] Bookmark toggle failed: ${failure.message}');
         state.mapOrNull(
           loaded: (l) {
             final reverted = Set<int>.from(l.bookmarkedVerseIds);
@@ -199,7 +195,12 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
             } else {
               reverted.remove(verseId);
             }
-            emit(l.copyWith(bookmarkedVerseIds: reverted));
+            emit(
+              l.copyWith(
+                bookmarkedVerseIds: reverted,
+                snackbarMessage: 'Gagal menyimpan bookmark. Coba lagi.',
+              ),
+            );
           },
         );
       },
@@ -235,8 +236,19 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
 
           _audioPlayer.play().ignore();
           emit(l.copyWith(playingVerseId: verseId, isAudioLoading: false));
-        } on Exception catch (_) {
-          emit(l.copyWith(playingVerseId: null, isAudioLoading: false));
+        } on Exception catch (e, stackTrace) {
+          appLogger.e(
+            '[MuhudBloc] Audio playback failed',
+            error: e,
+            stackTrace: stackTrace,
+          );
+          emit(
+            l.copyWith(
+              playingVerseId: null,
+              isAudioLoading: false,
+              snackbarMessage: 'Gagal memutar audio. Periksa koneksi internet.',
+            ),
+          );
         }
       },
     );

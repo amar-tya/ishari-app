@@ -1,6 +1,6 @@
-import 'package:flutter/rendering.dart';
 import 'package:injectable/injectable.dart';
 import 'package:ishari/core/errors/exceptions.dart';
+import 'package:ishari/core/utils/app_logger.dart';
 import 'package:ishari/features/home/domain/entities/chapter_entity.dart';
 import 'package:ishari/features/muhud/data/models/translation_model.dart';
 import 'package:ishari/features/muhud/data/models/verse_media_model.dart';
@@ -65,7 +65,7 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
   @override
   Future<ChapterEntity> getChapterById(int chapterId) async {
     try {
-      debugPrint(
+      appLogger.d(
         '[RemoteDataSource] getChapterById START - chapterId: $chapterId',
       );
       final data = await _supabaseClient
@@ -73,7 +73,6 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
           .select()
           .eq('id', chapterId)
           .single();
-      debugPrint('[RemoteDataSource] Chapter data received: ${data['title']}');
       final chapterNumber = data['chapter_number'];
       int? number;
       if (chapterNumber != null) {
@@ -96,10 +95,9 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
         verseCount: verseCount,
         number: number,
       );
-      debugPrint('[RemoteDataSource] getChapterById SUCCESS');
       return result;
     } catch (e) {
-      debugPrint('[RemoteDataSource] getChapterById ERROR: $e');
+      appLogger.e('[RemoteDataSource] getChapterById ERROR', error: e);
       throw ServerException(message: e.toString());
     }
   }
@@ -107,7 +105,7 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
   @override
   Future<List<VerseWithDetailsModel>> getVersesByChapter(int chapterId) async {
     try {
-      debugPrint(
+      appLogger.d(
         '[RemoteDataSource] getVersesByChapter START - chapterId: $chapterId',
       );
       final data = await _supabaseClient
@@ -115,10 +113,6 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
           .select('*, translations(*), verse_media(*, hadi(*))')
           .eq('chapter_id', chapterId)
           .order('verse_number', ascending: true);
-
-      debugPrint(
-        '[RemoteDataSource] Verses data received: ${(data as List<dynamic>).length} verses',
-      );
 
       final result = (data as List<dynamic>).map((item) {
         final itemMap = item as Map<String, dynamic>;
@@ -142,13 +136,13 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
           mediaList: media,
         );
       }).toList();
-      debugPrint(
-        '[RemoteDataSource] getVersesByChapter SUCCESS - parsed ${result.length} verses',
-      );
       return result;
     } catch (e, stackTrace) {
-      debugPrint('[RemoteDataSource] getVersesByChapter ERROR: $e');
-      debugPrint('[RemoteDataSource] StackTrace: $stackTrace');
+      appLogger.e(
+        '[RemoteDataSource] getVersesByChapter ERROR',
+        error: e,
+        stackTrace: stackTrace,
+      );
       throw ServerException(message: e.toString());
     }
   }

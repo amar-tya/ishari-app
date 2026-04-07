@@ -53,10 +53,17 @@ abstract final class AppEnv {
   /// Comma-separated list from ADMOB_TEST_DEVICE_IDS in dev.env.
   /// Get your device ID from logcat after first run.
   static List<String> get admobTestDeviceIds {
-    final raw = Env.admobTestDeviceIds.trim();
+    final raw = Env.admobTestDeviceIds?.trim() ?? '';
     if (raw.isEmpty) return [];
     return raw.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
   }
+
+  // ---------------------------------------------------------------------------
+  // Sentry
+  // ---------------------------------------------------------------------------
+
+  /// Sentry DSN for crash reporting. Optional — if empty, Sentry is disabled.
+  static String get sentryDsn => Env.sentryDsn?.trim() ?? '';
 
   // ---------------------------------------------------------------------------
   // Validation

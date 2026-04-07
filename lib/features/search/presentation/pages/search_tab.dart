@@ -111,7 +111,12 @@ class _SearchTabBodyState extends State<_SearchTabBody> {
                       category: category,
                     ),
                     empty: (query, category) => SearchEmptyView(query: query),
-                    error: (message) => _ErrorView(message: message),
+                    error: (message) => _ErrorView(
+                      message: message,
+                      onRetry: () => context
+                          .read<SearchBloc>()
+                          .add(const SearchEvent.cleared()),
+                    ),
                   );
                 },
               ),
@@ -291,9 +296,10 @@ class _ResultsView extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _ErrorView extends StatelessWidget {
-  const _ErrorView({required this.message});
+  const _ErrorView({required this.message, required this.onRetry});
 
   final String message;
+  final VoidCallback onRetry;
 
   @override
   Widget build(BuildContext context) {
@@ -316,6 +322,11 @@ class _ErrorView extends StatelessWidget {
                 fontSize: 13,
                 color: const Color(0xFF777777),
               ),
+            ),
+            const SizedBox(height: 16),
+            TextButton(
+              onPressed: onRetry,
+              child: const Text('Coba Lagi'),
             ),
           ],
         ),

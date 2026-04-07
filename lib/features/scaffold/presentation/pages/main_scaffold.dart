@@ -8,13 +8,15 @@ import 'package:ishari/features/bookmark/presentation/pages/bookmark_tab.dart';
 import 'package:ishari/features/home/presentation/pages/home_page.dart';
 import 'package:ishari/features/kitab/presentation/pages/kitab_tab.dart';
 import 'package:ishari/features/search/presentation/pages/search_tab.dart';
+import 'package:ishari/features/tatanan/presentation/pages/tatanan_tab.dart';
 
-/// Root scaffold providing the 4-tab floating pill navigation bar.
+/// Root scaffold providing the 5-tab floating pill navigation bar.
 ///
-/// Tab 0 — Beranda (HomeTab, fully implemented)
-/// Tab 1 — Cari (placeholder)
+/// Tab 0 — Beranda (HomeTab)
+/// Tab 1 — Cari (SearchTab)
 /// Tab 2 — Kitab (KitabTab)
-/// Tab 3 — Bookmark (placeholder, guest-gated)
+/// Tab 3 — Bookmark (guest-gated)
+/// Tab 4 — Tatanan (guest-gated)
 class MainScaffold extends StatefulWidget {
   const MainScaffold({super.key});
 
@@ -26,39 +28,55 @@ class _MainScaffoldState extends State<MainScaffold> {
   int _selectedIndex = 0;
 
   void _onTabSelected(int index) {
-    if (index == 3 && AppState.isGuestMode.value) {
-      _showBookmarkLockSheet();
+    if ((index == 3 || index == 4) && AppState.isGuestMode.value) {
+      _showGuestLockSheet(index);
       return;
     }
     setState(() => _selectedIndex = index);
   }
 
-  void _showBookmarkLockSheet() {
+  void _showGuestLockSheet(int index) {
+    final feature = index == 4 ? 'Tatanan' : 'Bookmark';
+    final subtitle = index == 4
+        ? 'Buat dan kelola tatanan ayat shalawatmu.'
+        : 'Simpan shalawat favoritmu dan akses kapan saja.';
     unawaited(
       showModalBottomSheet<void>(
         context: context,
-        builder: (_) => const _BookmarkLockSheet(),
+        builder: (_) => _GuestLockSheet(feature: feature, subtitle: subtitle),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF0F5EE),
-      extendBody: true,
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: [
-          const HomeTab(),
-          const SearchTab(),
-          const KitabTab(),
-          BookmarkTab(isActive: _selectedIndex == 3),
-        ],
-      ),
-      bottomNavigationBar: _FloatingNavBar(
-        selectedIndex: _selectedIndex,
-        onTap: _onTabSelected,
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        state.whenOrNull(
+          authenticated: (_) {
+            if (AppState.isGuestMode.value) {
+              AppState.isGuestMode.value = false;
+            }
+          },
+        );
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF0F5EE),
+        extendBody: true,
+        body: IndexedStack(
+          index: _selectedIndex,
+          children: [
+            const HomeTab(),
+            const SearchTab(),
+            const KitabTab(),
+            BookmarkTab(isActive: _selectedIndex == 3),
+            TatananTab(isActive: _selectedIndex == 4),
+          ],
+        ),
+        bottomNavigationBar: _FloatingNavBar(
+          selectedIndex: _selectedIndex,
+          onTap: _onTabSelected,
+        ),
       ),
     );
   }
@@ -86,6 +104,7 @@ class _FloatingNavBar extends StatelessWidget {
     _NavItemData(icon: Icons.search_rounded, label: 'Cari'),
     _NavItemData(icon: Icons.menu_book_rounded, label: 'Kitab'),
     _NavItemData(icon: Icons.bookmark_outline, label: 'Bookmark'),
+    _NavItemData(icon: Icons.format_list_numbered_rounded, label: 'Tatanan'),
   ];
 
   @override
@@ -231,8 +250,14 @@ class _NavItem extends StatelessWidget {
 // Bookmark lock bottom sheet (for guest users tapping Bookmark tab)
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _BookmarkLockSheet extends StatelessWidget {
-  const _BookmarkLockSheet();
+class _GuestLockSheet extends StatelessWidget {
+  const _GuestLockSheet({
+    required this.feature,
+    required this.subtitle,
+  });
+
+  final String feature;
+  final String subtitle;
 
   @override
   Widget build(BuildContext context) {
@@ -244,15 +269,15 @@ class _BookmarkLockSheet extends StatelessWidget {
           children: [
             const Icon(Icons.lock_outline, size: 48, color: _kDark),
             const SizedBox(height: 16),
-            const Text(
-              'Masuk untuk mengakses Bookmark',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+            Text(
+              'Masuk untuk mengakses $feature',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Simpan shalawat favoritmu dan akses kapan saja.',
-              style: TextStyle(fontSize: 14, color: Color(0xFF79747E)),
+            Text(
+              subtitle,
+              style: const TextStyle(fontSize: 14, color: Color(0xFF79747E)),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),

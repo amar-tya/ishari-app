@@ -39,4 +39,6 @@ sealed class MuhudEvent with _$MuhudEvent {
       _SetTranslationFontSize;
 
   const factory MuhudEvent.resetFontSizes() = _ResetFontSizes;
+
+  const factory MuhudEvent.clearSnackbar() = _ClearSnackbar;
 }

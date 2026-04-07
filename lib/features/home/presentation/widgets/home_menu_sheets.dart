@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ishari/core/app_state.dart';
+import 'package:ishari/core/config/app_config.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -214,16 +215,16 @@ class _ContactSheet extends StatelessWidget {
             icon: Icons.chat_rounded,
             iconColor: const Color(0xFF25D366),
             label: 'WhatsApp',
-            value: '+62 812-3456-7890',
-            onTap: () => _launch('https://wa.me/6281234567890'),
+            value: 'Chat dengan kami di WhatsApp',
+            onTap: () => _launch(AppConfig.whatsappGroupUrl),
           ),
           _ContactItem(
             iconBg: const Color(0xFFE8F0FF),
             icon: Icons.email_rounded,
             iconColor: const Color(0xFF4285F4),
             label: 'Email',
-            value: 'support@ishari.app',
-            onTap: () => _launch('mailto:support@ishari.app'),
+            value: 'Hubungi kami di email',
+            onTap: () => _launch(AppConfig.contactEmailUrl),
           ),
         ],
       ),
