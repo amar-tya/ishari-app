@@ -27,10 +27,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   final SupabaseClient _supabaseClient;
 
-  // google_sign_in v6: instantiate directly with serverClientId (Web Client ID).
+  // google_sign_in v7: Use GoogleSignIn.instance and initialize separately.
   // serverClientId is required on Android so that an idToken is included
   // in the authentication response.
-  final _googleSignIn = GoogleSignIn(
+  late final Future<void> _initializationFuture =
+      GoogleSignIn.instance.initialize(
     serverClientId: AppEnv.googleWebClientId,
     scopes: ['email', 'profile'],
   );
@@ -40,8 +41,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       appLogger.d('[GoogleSignIn] Starting signIn...');
 
+      // Ensure GoogleSignIn is initialized
+      await _initializationFuture;
+
       // Step 1: Open the Google account picker dialog
-      final googleUser = await _googleSignIn.signIn();
+      final googleUser = await GoogleSignIn.instance.signIn();
 
       if (googleUser == null) {
         throw const ServerException(
@@ -91,7 +95,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       await Future.wait<void>([
         _supabaseClient.auth.signOut(),
-        _googleSignIn.signOut(),
+        GoogleSignIn.instance.signOut(),
       ]);
     } catch (e) {
       throw ServerException(message: e.toString());
