@@ -6,6 +6,9 @@
 -keep class io.flutter.** { *; }
 -keep class io.flutter.plugins.** { *; }
 
+# Play Core (referenced by Flutter engine deferred components — not used in this app)
+-dontwarn com.google.android.play.core.**
+
 # Kotlin
 -keep class kotlin.** { *; }
 -keep class kotlinx.** { *; }
