@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ishari/features/notifications/domain/entities/notification_entity.dart';
 import 'package:ishari/features/notifications/presentation/bloc/notifications_bloc.dart';
@@ -16,8 +16,7 @@ class NotificationDetailPage extends StatefulWidget {
   static String routePath(String id) => '/notifications/$id';
 
   @override
-  State<NotificationDetailPage> createState() =>
-      _NotificationDetailPageState();
+  State<NotificationDetailPage> createState() => _NotificationDetailPageState();
 }
 
 class _NotificationDetailPageState extends State<NotificationDetailPage> {
@@ -27,16 +26,16 @@ class _NotificationDetailPageState extends State<NotificationDetailPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || widget.notification.isRead) return;
       final userId = context.read<AuthBloc>().state.maybeWhen(
-            authenticated: (user) => user.id,
-            orElse: () => null,
-          );
+        authenticated: (user) => user.id,
+        orElse: () => null,
+      );
       if (userId == null) return;
       context.read<NotificationsBloc>().add(
-            NotificationsEvent.markAllRead(
-              userId: userId,
-              notificationIds: [widget.notification.id],
-            ),
-          );
+        NotificationsEvent.markAllRead(
+          userId: userId,
+          notificationIds: [widget.notification.id],
+        ),
+      );
     });
   }
 
@@ -127,8 +126,11 @@ class _NotificationDetailPageState extends State<NotificationDetailPage> {
                   // Content
                   MarkdownBody(
                     data: notification.content ?? notification.body,
-                    onTapLink: (_, href, _) {
-                      if (href != null) unawaited(_launchUrl(href));
+                    onTapLink: (text, href, title) {
+                      // ← Perubahan di sini
+                      if (href != null) {
+                        unawaited(_launchUrl(href));
+                      }
                     },
                     styleSheet: MarkdownStyleSheet(
                       p: const TextStyle(
@@ -175,8 +177,9 @@ class _NotificationDetailPageState extends State<NotificationDetailPage> {
                       blockquoteDecoration: BoxDecoration(
                         border: Border(
                           left: BorderSide(
-                            color: const Color(0xFFCAFF00)
-                                .withValues(alpha: 0.8),
+                            color: const Color(
+                              0xFFCAFF00,
+                            ).withValues(alpha: 0.8),
                             width: 4,
                           ),
                         ),
@@ -186,9 +189,13 @@ class _NotificationDetailPageState extends State<NotificationDetailPage> {
                         color: Color(0xFF444444),
                       ),
                       a: const TextStyle(
+                        // ← Link style tetap sama
                         color: Color(0xFF4CAF50),
                         decoration: TextDecoration.underline,
                       ),
+
+                      // Tambahan opsional (bagus untuk future-proof)
+                      // textScaler: TextScaler.linear(1.0),   // kalau mau kontrol scaling eksplisit
                     ),
                   ),
                 ],
@@ -227,8 +234,18 @@ class _NotificationDetailPageState extends State<NotificationDetailPage> {
 
   String _formatDate(DateTime date) {
     final months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
-      'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'Mei',
+      'Jun',
+      'Jul',
+      'Agu',
+      'Sep',
+      'Okt',
+      'Nov',
+      'Des',
     ];
     return '${date.day} ${months[date.month - 1]} ${date.year}';
   }
@@ -248,32 +265,32 @@ class _TypeBadge extends StatelessWidget {
   final String type;
 
   String get _label => switch (type) {
-        'update' => 'Pembaruan',
-        'warning' => 'Peringatan',
-        'promo' => 'Promo',
-        _ => 'Info',
-      };
+    'update' => 'Pembaruan',
+    'warning' => 'Peringatan',
+    'promo' => 'Promo',
+    _ => 'Info',
+  };
 
   Color get _bgColor => switch (type) {
-        'update' => const Color(0xFFE8F4FD),
-        'warning' => const Color(0xFFFFF8E1),
-        'promo' => const Color(0xFFF3E5F5),
-        _ => const Color(0xFFE8F5E9),
-      };
+    'update' => const Color(0xFFE8F4FD),
+    'warning' => const Color(0xFFFFF8E1),
+    'promo' => const Color(0xFFF3E5F5),
+    _ => const Color(0xFFE8F5E9),
+  };
 
   Color get _textColor => switch (type) {
-        'update' => const Color(0xFF2196F3),
-        'warning' => const Color(0xFFFFA000),
-        'promo' => const Color(0xFF9C27B0),
-        _ => const Color(0xFF4CAF50),
-      };
+    'update' => const Color(0xFF2196F3),
+    'warning' => const Color(0xFFFFA000),
+    'promo' => const Color(0xFF9C27B0),
+    _ => const Color(0xFF4CAF50),
+  };
 
   IconData get _icon => switch (type) {
-        'update' => Icons.system_update_rounded,
-        'warning' => Icons.warning_amber_rounded,
-        'promo' => Icons.local_offer_rounded,
-        _ => Icons.info_outline_rounded,
-      };
+    'update' => Icons.system_update_rounded,
+    'warning' => Icons.warning_amber_rounded,
+    'promo' => Icons.local_offer_rounded,
+    _ => Icons.info_outline_rounded,
+  };
 
   @override
   Widget build(BuildContext context) {

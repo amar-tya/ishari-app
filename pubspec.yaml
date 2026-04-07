@@ -57,7 +57,7 @@ dependencies:
   url_launcher: ^6.3.1
 
   # Render markdown content in notification detail
-  flutter_markdown: ^0.7.7
+  flutter_markdown_plus: ^1.0.7
 
   # SVG rendering
   flutter_svg: ^2.0.10+1

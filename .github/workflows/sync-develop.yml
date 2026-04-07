@@ -1,0 +1,37 @@
+name: Sync Master to Develop
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'pubspec.yaml'           # Hanya jalan ketika version bump terjadi
+
+jobs:
+  sync-to-develop:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write           # Diperlukan agar bisa push ke develop
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0        # Penting: ambil seluruh history untuk merge
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Merge master into develop
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          echo "→ Checkout develop branch"
+          git checkout develop
+          git pull origin develop --ff-only || true
+
+          echo "→ Merging master into develop"
+          git merge origin/master --no-ff -m "chore: auto sync develop with master after version bump"
+
+          echo "→ Pushing updated develop branch"
+          git push origin develop
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
