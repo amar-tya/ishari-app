@@ -1,17 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:ishari/core/ads/interstitial_ad_manager.dart';
 import 'package:ishari/core/env/app_env.dart';
 import 'package:ishari/core/router/app_router.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:ishari/features/notifications/presentation/bloc/notifications_bloc.dart';
 import 'package:ishari/injection_container.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 Future<void> main() async {
+  await SentryFlutter.init(
+    (options) {
+      options
+        ..dsn = AppEnv.sentryDsn
+        ..environment =
+            AppEnv.isDevelopment ? 'development' : 'production'
+        // Only send events in production to avoid noise during development
+        ..tracesSampleRate = AppEnv.isProduction ? 0.2 : 0.0;
+    },
+    appRunner: _appRunner,
+  );
+}
+
+Future<void> _appRunner() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // 1. Validate all required env variables are present.
-  //    Run with: flutter run --dart-define-from-file=env/dev.json
   AppEnv.validate();
 
   // 2. Initialize Supabase using env values
@@ -20,11 +37,28 @@ Future<void> main() async {
     anonKey: AppEnv.supabaseAnonKey,
   );
 
-  // 3. Initialize Google Sign-In singleton (required once before use)
-  await GoogleSignIn.instance.initialize(clientId: AppEnv.googleWebClientId);
-
-  // 4. Register all dependencies via get_it + injectable
+  // 3. Register all dependencies via get_it + injectable
   await configureDependencies();
+
+  // 4. Initialize AdMob
+  await MobileAds.instance.initialize();
+
+  // Register test device IDs in development so real ad clicks are not counted.
+  // Get your device ID from logcat on first run, then add to ADMOB_TEST_DEVICE_IDS in dev.env.
+  if (AppEnv.isDevelopment) {
+    final testIds = AppEnv.admobTestDeviceIds;
+    if (testIds.isNotEmpty) {
+      await MobileAds.instance.updateRequestConfiguration(
+        RequestConfiguration(testDeviceIds: testIds),
+      );
+    }
+  }
+
+  // Preload first interstitial
+  InterstitialAdManager.instance.preload();
+
+  // 5. Keep screen awake while app is running
+  await WakelockPlus.enable();
 
   runApp(const IshariApp());
 }
@@ -34,8 +68,16 @@ class IshariApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<AuthBloc>(
-      create: (_) => sl<AuthBloc>()..add(const AuthEvent.checkAuthStatus()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthBloc>(
+          create: (_) =>
+              sl<AuthBloc>()..add(const AuthEvent.checkAuthStatus()),
+        ),
+        BlocProvider<NotificationsBloc>.value(
+          value: sl<NotificationsBloc>(),
+        ),
+      ],
       child: Builder(
         builder: (context) {
           final router = createRouter(context.read<AuthBloc>());
@@ -43,7 +85,9 @@ class IshariApp extends StatelessWidget {
             title: 'Ishari',
             debugShowCheckedModeBanner: AppEnv.isDevelopment,
             theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
+              colorScheme: ColorScheme.fromSeed(
+                seedColor: const Color(0xFF51C878),
+              ),
               useMaterial3: true,
             ),
             routerConfig: router,

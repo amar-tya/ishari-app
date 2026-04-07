@@ -1,0 +1,132 @@
+name: Build & Distribute Ishari Android
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build-and-distribute:
+    runs-on: ubuntu-latest
+    # PENTING: Izin menulis konten diperlukan agar GitHub Actions bisa push perubahan versi
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Mengambil seluruh history agar git log bisa dibaca
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.6'
+          channel: 'stable'
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Setup Environment
+        run: |
+          cat <<EOF > env/current.env
+          APP_ENV=production
+          SUPABASE_URL=${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+          GOOGLE_WEB_CLIENT_ID=${{ secrets.GOOGLE_WEB_CLIENT_ID }}
+          ADMOB_APP_ID=${{ secrets.ADMOB_APP_ID }}
+          ADMOB_BANNER_UNIT_ID=${{ secrets.ADMOB_BANNER_UNIT_ID }}
+          ADMOB_NATIVE_UNIT_ID=${{ secrets.ADMOB_NATIVE_UNIT_ID }}
+          ADMOB_INTERSTITIAL_UNIT_ID=${{ secrets.ADMOB_INTERSTITIAL_UNIT_ID }}
+          ADMOB_TEST_DEVICE_IDS=${{ secrets.ADMOB_TEST_DEVICE_IDS }}
+          SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+          EOF
+          dart run build_runner build --delete-conflicting-outputs
+
+      - name: Install cider (version bump tool)
+        run: dart pub global activate cider
+
+      - name: Add cider to PATH
+        run: echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
+
+      - name: Detect Commit Message & Bump Version
+        id: bump_logic
+        run: |
+          # Ambil pesan commit terakhir
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          echo "Last commit message: $COMMIT_MSG"
+
+          # Default bump adalah patch
+          BUMP_TYPE="patch"
+
+          # Logika Conventional Commits
+          if [[ "$COMMIT_MSG" == *"BREAKING CHANGE"* ]] || [[ "$COMMIT_MSG" == *"!:"* ]]; then
+            echo "Detected Breaking Change..."
+            BUMP_TYPE="major"
+          elif [[ "$COMMIT_MSG" == "feat"* ]]; then
+            echo "Detected New Feature..."
+            BUMP_TYPE="minor"
+          elif [[ "$COMMIT_MSG" == "fix"* ]]; then
+            echo "Detected Fix..."
+            BUMP_TYPE="patch"
+          fi
+
+          # Eksekusi bump versi (Major/Minor/Patch)
+          cider bump $BUMP_TYPE
+
+          # Selalu naikkan nomor build (+1) agar unik untuk Android (build number)
+          cider bump build
+
+          # Simpan versi terbaru ke variabel env untuk langkah selanjutnya
+          NEW_VER=$(cider version)
+          echo "NEW_VERSION=$NEW_VER" >> $GITHUB_ENV
+
+      - name: Commit & Push version bump
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          git add pubspec.yaml CHANGELOG.md
+          # Commit hanya jika ada perubahan
+          git commit -m "chore(release): bump version to ${{ env.NEW_VERSION }} [skip ci]" || echo "No changes to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Google Services
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: echo "$GOOGLE_SERVICES_JSON" > android/app/google-services.json
+
+      - name: Setup Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode --ignore-garbage > android/app/upload-keystore.jks
+          cat <<EOF > android/key.properties
+          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword=${{ secrets.KEY_PASSWORD }}
+          keyAlias=${{ secrets.KEY_ALIAS }}
+          storeFile=upload-keystore.jks
+          EOF
+
+      - name: Build APK & AAB
+        run: |
+          flutter build apk --release --split-per-abi
+          flutter build appbundle --release
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ishari-apk
+          path: build/app/outputs/flutter-apk/app-*-release.apk
+
+      - name: Distribute to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{ secrets.FIREBASE_ANDROID_APP_ID }}
+          token: ${{ secrets.FIREBASE_TOKEN }}
+          groups: ishari-testers
+          releaseNotes: |
+            Automated build from GitHub Actions
+            Commit: ${{ github.sha }}
+            Version: ${{ env.NEW_VERSION }}
+          file: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk

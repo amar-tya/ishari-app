@@ -1,3 +1,5 @@
+import 'package:ishari/core/env/env.dart';
+
 /// App environment configuration.
 ///
 /// Values are injected at build time via `--dart-define-from-file`.
@@ -9,13 +11,8 @@ abstract final class AppEnv {
   // Environment identifier
   // ---------------------------------------------------------------------------
 
-  static const String _env = String.fromEnvironment(
-    'APP_ENV',
-    defaultValue: 'development',
-  );
-
-  static bool get isDevelopment => _env == 'development';
-  static bool get isProduction => _env == 'production';
+  static bool get isDevelopment => Env.appEnv == 'development';
+  static bool get isProduction => Env.appEnv == 'production';
 
   // ---------------------------------------------------------------------------
   // Supabase
@@ -23,11 +20,10 @@ abstract final class AppEnv {
 
   /// Supabase project URL.
   /// Example: https://xxxxxxxxxxxx.supabase.co
-  static const String supabaseUrl = String.fromEnvironment('SUPABASE_URL');
+  static String get supabaseUrl => Env.supabaseUrl;
 
   /// Supabase anonymous/public key.
-  static const String supabaseAnonKey =
-      String.fromEnvironment('SUPABASE_ANON_KEY');
+  static String get supabaseAnonKey => Env.supabaseAnonKey;
 
   // ---------------------------------------------------------------------------
   // Google Sign-In
@@ -35,8 +31,39 @@ abstract final class AppEnv {
 
   /// Google OAuth Web Client ID for native sign-in.
   /// Used as serverClientId for GoogleSignIn to obtain idToken.
-  static const String googleWebClientId =
-      String.fromEnvironment('GOOGLE_WEB_CLIENT_ID');
+  static String get googleWebClientId => Env.googleWebClientId;
+
+  // ---------------------------------------------------------------------------
+  // AdMob
+  // ---------------------------------------------------------------------------
+
+  /// AdMob Android App ID.
+  static String get admobAppId => Env.admobAppId;
+
+  /// AdMob Banner Ad Unit ID.
+  static String get admobBannerUnitId => Env.admobBannerUnitId;
+
+  /// AdMob Native Ad Unit ID.
+  static String get admobNativeUnitId => Env.admobNativeUnitId;
+
+  /// AdMob Interstitial Ad Unit ID.
+  static String get admobInterstitialUnitId => Env.admobInterstitialUnitId;
+
+  /// Test device IDs for AdMob (dev only).
+  /// Comma-separated list from ADMOB_TEST_DEVICE_IDS in dev.env.
+  /// Get your device ID from logcat after first run.
+  static List<String> get admobTestDeviceIds {
+    final raw = Env.admobTestDeviceIds?.trim() ?? '';
+    if (raw.isEmpty) return [];
+    return raw.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Sentry
+  // ---------------------------------------------------------------------------
+
+  /// Sentry DSN for crash reporting. Optional — if empty, Sentry is disabled.
+  static String get sentryDsn => Env.sentryDsn?.trim() ?? '';
 
   // ---------------------------------------------------------------------------
   // Validation
@@ -47,9 +74,9 @@ abstract final class AppEnv {
   static void validate() {
     final missing = <String>[];
 
-    if (supabaseUrl.isEmpty) missing.add('SUPABASE_URL');
-    if (supabaseAnonKey.isEmpty) missing.add('SUPABASE_ANON_KEY');
-    if (googleWebClientId.isEmpty) missing.add('GOOGLE_WEB_CLIENT_ID');
+    if (Env.supabaseUrl.isEmpty) missing.add('SUPABASE_URL');
+    if (Env.supabaseAnonKey.isEmpty) missing.add('SUPABASE_ANON_KEY');
+    if (Env.googleWebClientId.isEmpty) missing.add('GOOGLE_WEB_CLIENT_ID');
 
     if (missing.isNotEmpty) {
       throw StateError(

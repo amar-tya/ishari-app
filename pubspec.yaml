@@ -1,7 +1,7 @@
 name: ishari
 description: "Ishari app with Clean Architecture, Google Sign-In, and Supabase."
-publish_to: 'none'
-version: 1.0.0+1
+publish_to: "none"
+version: 1.1.1+1
 
 environment:
   sdk: ^3.11.0
@@ -23,6 +23,9 @@ dependencies:
   # @immutable annotation
   meta: ^1.17.0
 
+  # Environment variables
+  envied: ^1.0.0
+
   # Code generation annotations
   freezed_annotation: ^3.1.0
   json_annotation: ^4.11.0
@@ -30,15 +33,49 @@ dependencies:
   # Backend & Auth
   supabase_flutter: ^2.7.0
   google_sign_in: ^7.2.0
+  firebase_core: ^4.6.0
 
   # Secure token storage
   flutter_secure_storage: ^10.0.0
+
+  # User preferences (reader font size settings)
+  shared_preferences: ^2.3.2
 
   # Network check
   internet_connection_checker_plus: ^2.5.1
 
   # Navigation
   go_router: ^17.1.0
+
+  # Audio playback
+  just_audio: ^0.10.0
+
+  # Google Fonts (scheherazadeNew for Arabic text)
+  google_fonts: ^8.0.2
+
+  # Launch external URLs (WhatsApp, email)
+  url_launcher: ^6.3.1
+
+  # Render markdown content in notification detail
+  flutter_markdown: ^0.7.7
+
+  # SVG rendering
+  flutter_svg: ^2.0.10+1
+
+  # Keep screen awake while app is in use
+  wakelock_plus: ^1.2.10
+
+  # Read app version & build number
+  package_info_plus: ^9.0.1
+
+  # AdMob ads
+  google_mobile_ads: ^7.0.0
+
+  # Logging
+  logger: ^2.5.0
+
+  # Crash reporting
+  sentry_flutter: ^9.16.0
 
 dev_dependencies:
   flutter_test:
@@ -49,10 +86,29 @@ dev_dependencies:
 
   # Code generation
   build_runner: ^2.12.2
+  envied_generator: ^1.0.0
   freezed: ^3.2.5
   injectable_generator: ^2.12.1
   json_serializable: ^6.13.0
 
+  # Launcher icon generator
+  flutter_launcher_icons: ^0.14.3
+
+  # CI
+  cider: ^0.2.10
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: 'assets/icons/ishari_launcher.png'
+  min_sdk_android: 21
+  adaptive_icon_background: '#111111'
+  adaptive_icon_foreground: 'assets/icons/ishari_launcher.png'
+
 flutter:
   uses-material-design: true
   generate: true
+
+  assets:
+    - assets/images/intro/
+    - assets/icons/

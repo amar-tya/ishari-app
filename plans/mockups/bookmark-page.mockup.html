@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ishari App — Bookmark Page Mockup</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;0,9..40,900;1,9..40,400&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
+
+    /* ── Design Tokens ─────────────────────────────────────────── */
+    :root {
+      --clr-primary:       #CAFF00;
+      --clr-primary-dim:   #A8D900;
+      --clr-primary-soft:  #EDFFC0;
+      --clr-dark:          #111111;
+      --clr-dark-2:        #1E1E1E;
+      --clr-surface:       #FFFFFF;
+      --clr-bg:            #F0F5EE;
+      --clr-bg-alt:        #E8F0E6;
+      --clr-muted:         #777777;
+      --clr-muted-light:   #AAAAAA;
+      --clr-border:        #E2E8DF;
+      --clr-border-dark:   #D0D8CE;
+      --clr-error:         #FF4D4F;
+      --clr-success:       #22C55E;
+      --font:              'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --radius-xs:   6px;
+      --radius-sm:   10px;
+      --radius-md:   16px;
+      --radius-lg:   22px;
+      --radius-xl:   28px;
+      --radius-pill: 100px;
+      --shadow-xs: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-sm: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #DEDEDE;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 40px 40px 80px;
+      font-family: var(--font);
+      gap: 36px;
+      flex-wrap: wrap;
+    }
+
+    /* ── Phone Wrapper ─────────────────────────────────────────── */
+    .phone-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .screen-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #555;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .phone {
+      width: 375px;
+      background: #111;
+      border-radius: 52px;
+      padding: 14px;
+      box-shadow: 0 0 0 1px #2a2a2a, 0 40px 100px rgba(0,0,0,0.5);
+      position: relative;
+    }
+
+    .phone::before {
+      content: '';
+      position: absolute;
+      left: -3px; top: 110px;
+      width: 3px; height: 32px;
+      background: #222;
+      border-radius: 2px 0 0 2px;
+      box-shadow: 0 44px 0 #222, 0 88px 0 #222;
+    }
+
+    .phone::after {
+      content: '';
+      position: absolute;
+      right: -3px; top: 140px;
+      width: 3px; height: 64px;
+      background: #222;
+      border-radius: 0 2px 2px 0;
+    }
+
+    .screen {
+      background: var(--clr-bg);
+      border-radius: 40px;
+      overflow: hidden;
+    }
+
+    /* ── Status Bar ─────────────────────────────────────────────── */
+    .status-bar {
+      background: var(--clr-bg);
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      position: relative;
+    }
+
+    .status-bar::after {
+      content: '';
+      position: absolute;
+      top: 10px; left: 50%;
+      transform: translateX(-50%);
+      width: 118px; height: 28px;
+      background: #111;
+      border-radius: 20px;
+    }
+
+    .status-time {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--clr-dark);
+      z-index: 1;
+      letter-spacing: -0.3px;
+    }
+
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      z-index: 1;
+    }
+
+    /* ── Scroll Area ────────────────────────────────────────────── */
+    .scroll-area {
+      height: 720px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: var(--clr-bg);
+      scrollbar-width: none;
+    }
+    .scroll-area::-webkit-scrollbar { display: none; }
+
+    /* ── App Bar ────────────────────────────────────────────────── */
+    .app-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px 10px;
+      background: var(--clr-bg);
+    }
+
+    .app-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .back-btn {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--clr-surface);
+      border: 1.5px solid var(--clr-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .app-bar-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--clr-dark);
+      letter-spacing: -0.4px;
+    }
+
+    .icon-btn {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--clr-surface);
+      border: 1.5px solid var(--clr-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── Filter Chips ────────────────────────────────────────────── */
+    .chips-scroll {
+      display: flex;
+      gap: 8px;
+      padding: 8px 20px 12px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .chips-scroll::-webkit-scrollbar { display: none; }
+
+    .chip {
+      flex-shrink: 0;
+      height: 32px;
+      border-radius: var(--radius-pill);
+      padding: 0 14px;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+      font-family: var(--font);
+    }
+
+    .chip-active {
+      background: var(--clr-dark);
+      color: #fff;
+    }
+
+    .chip-inactive {
+      background: transparent;
+      color: var(--clr-muted);
+      border: 1.5px solid var(--clr-border-dark);
+    }
+
+    /* ── Summary Bar ─────────────────────────────────────────────── */
+    .summary-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px 14px;
+    }
+
+    .summary-count {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--clr-muted);
+    }
+
+    .summary-count strong {
+      color: var(--clr-dark);
+      font-weight: 800;
+    }
+
+    .sort-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--clr-muted);
+      background: var(--clr-surface);
+      border: 1.5px solid var(--clr-border);
+      border-radius: var(--radius-pill);
+      height: 28px;
+      padding: 0 12px;
+      font-family: var(--font);
+    }
+
+    /* ── Bookmark List ────────────────────────────────────────────── */
+    .bookmark-list {
+      padding: 0 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* ── Bookmark Card ────────────────────────────────────────────── */
+    .bookmark-card {
+      background: var(--clr-surface);
+      border-radius: var(--radius-lg);
+      border: 1.5px solid var(--clr-border);
+      box-shadow: var(--shadow-xs);
+      overflow: hidden;
+    }
+
+    .bookmark-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px 8px;
+    }
+
+    .bookmark-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .category-badge {
+      height: 22px;
+      border-radius: var(--radius-pill);
+      padding: 0 10px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      display: flex;
+      align-items: center;
+    }
+
+    .badge-muhud    { background: #EDE9FE; color: #6D28D9; }
+    .badge-diba     { background: #FEF3C7; color: #92400E; }
+    .badge-diwan    { background: #D1FAE5; color: #065F46; }
+    .badge-syaraful { background: #FEE2E2; color: #991B1B; }
+    .badge-rowi     { background: #DBEAFE; color: #1E40AF; }
+    .badge-muradah  { background: var(--clr-primary-soft); color: #3A5C00; }
+
+    .chapter-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--clr-muted);
+    }
+
+    .more-dots {
+      width: 28px; height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-xs);
+      color: var(--clr-muted-light);
+    }
+
+    .bookmark-body {
+      padding: 0 14px 10px;
+    }
+
+    .verse-arabic {
+      font-family: 'Noto Naskh Arabic', 'Traditional Arabic', serif;
+      font-size: 20px;
+      font-weight: 600;
+      direction: rtl;
+      text-align: right;
+      color: var(--clr-dark);
+      line-height: 1.7;
+      margin-bottom: 6px;
+    }
+
+    .verse-transliteration {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--clr-muted);
+      font-style: italic;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* Note row */
+    .note-row {
+      margin: 8px 14px 0;
+      background: var(--clr-bg-alt);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .note-icon {
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .note-text {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--clr-muted);
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* Footer */
+    .bookmark-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 14px 12px;
+      border-top: 1px solid var(--clr-border);
+      margin-top: 8px;
+    }
+
+    .verse-num-badge {
+      height: 22px;
+      background: var(--clr-bg);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-pill);
+      padding: 0 10px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--clr-muted);
+      display: flex;
+      align-items: center;
+    }
+
+    .bookmark-date {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--clr-muted-light);
+    }
+
+    .bookmark-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .action-btn {
+      width: 28px; height: 28px;
+      border-radius: var(--radius-xs);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .action-play {
+      background: var(--clr-primary);
+    }
+
+    .action-read {
+      background: var(--clr-bg);
+      border: 1px solid var(--clr-border);
+    }
+
+    /* ── Bottom Nav ──────────────────────────────────────────────── */
+    .bottom-nav {
+      background: var(--clr-surface);
+      border-top: 1px solid var(--clr-border);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 10px 0 20px;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .nav-icon {
+      width: 28px; height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--clr-muted-light);
+    }
+
+    .nav-label-active {
+      color: var(--clr-dark);
+    }
+
+    .nav-icon-active-dot {
+      width: 4px; height: 4px;
+      background: var(--clr-primary);
+      border-radius: 50%;
+      margin-top: -2px;
+    }
+
+    /* ── Empty State ─────────────────────────────────────────────── */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 32px 40px;
+      text-align: center;
+      gap: 12px;
+    }
+
+    .empty-icon {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: var(--clr-bg-alt);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 8px;
+    }
+
+    .empty-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--clr-dark);
+      letter-spacing: -0.3px;
+    }
+
+    .empty-subtitle {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--clr-muted);
+      line-height: 1.5;
+      max-width: 220px;
+    }
+
+    .empty-cta {
+      height: 42px;
+      padding: 0 24px;
+      background: var(--clr-dark);
+      color: #fff;
+      border-radius: var(--radius-pill);
+      font-size: 13px;
+      font-weight: 700;
+      font-family: var(--font);
+      border: none;
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    /* ── Delete Confirmation Bottom Sheet ────────────────────────── */
+    .bottom-sheet-overlay {
+      position: relative;
+    }
+
+    .bottom-sheet {
+      background: var(--clr-surface);
+      border-radius: 24px 24px 0 0;
+      padding: 12px 20px 32px;
+      border-top: 1px solid var(--clr-border);
+    }
+
+    .sheet-handle {
+      width: 36px; height: 4px;
+      background: var(--clr-border-dark);
+      border-radius: 2px;
+      margin: 0 auto 16px;
+    }
+
+    .sheet-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--clr-dark);
+      letter-spacing: -0.3px;
+      margin-bottom: 4px;
+    }
+
+    .sheet-subtitle {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--clr-muted);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .sheet-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sheet-btn {
+      height: 48px;
+      border-radius: var(--radius-pill);
+      font-family: var(--font);
+      font-size: 15px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .sheet-btn-danger {
+      background: var(--clr-error);
+      color: #fff;
+    }
+
+    .sheet-btn-ghost {
+      background: transparent;
+      color: var(--clr-muted);
+      border: 1.5px solid var(--clr-border);
+    }
+
+    /* ── Note Edit Overlay (inline on card) ──────────────────────── */
+    .edit-note-card {
+      background: var(--clr-dark-2);
+      border-radius: var(--radius-lg);
+      border: 1.5px solid #2e2e2e;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .edit-note-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px 8px;
+    }
+
+    .edit-note-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .edit-note-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .edit-note-body {
+      padding: 0 14px 12px;
+    }
+
+    .edit-note-arabic {
+      font-family: 'Noto Naskh Arabic', 'Traditional Arabic', serif;
+      font-size: 20px;
+      font-weight: 600;
+      direction: rtl;
+      text-align: right;
+      color: rgba(255,255,255,0.9);
+      line-height: 1.7;
+      margin-bottom: 6px;
+    }
+
+    .edit-note-field {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      margin-top: 10px;
+    }
+
+    .edit-note-field-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: rgba(202,255,0,0.8);
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .edit-note-field-text {
+      font-size: 13px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.75);
+      line-height: 1.5;
+    }
+
+    .edit-note-cursor {
+      display: inline-block;
+      width: 2px; height: 14px;
+      background: var(--clr-primary);
+      vertical-align: text-bottom;
+      border-radius: 1px;
+      animation: blink 1s step-start infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    .edit-note-footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 8px 14px 14px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      margin-top: 4px;
+    }
+
+    .edit-save-btn {
+      height: 34px;
+      padding: 0 16px;
+      background: var(--clr-primary);
+      color: var(--clr-dark);
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 800;
+      font-family: var(--font);
+      border: none;
+      display: flex;
+      align-items: center;
+    }
+
+    .edit-cancel-btn {
+      height: 34px;
+      padding: 0 16px;
+      background: transparent;
+      color: rgba(255,255,255,0.4);
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 700;
+      font-family: var(--font);
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+    }
+
+    /* ── Bottom padding spacer ───────────────────────────────────── */
+    .bottom-spacer { height: 16px; }
+
+    /* ── SVG icons (inline) ──────────────────────────────────────── */
+    svg { display: block; }
+
+    /* ── Screen 3 specific: with bottom sheet dimmed bg ─────────── */
+    .dimmed-scroll {
+      position: relative;
+    }
+    .dim-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 100%;
+      background: rgba(0,0,0,0.35);
+      z-index: 2;
+    }
+    .sheet-absolute {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      z-index: 3;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SCREEN 1 — Bookmark List (Filled State)
+       ═══════════════════════════════════════════════════════ -->
+  <div class="phone-wrap">
+    <div class="screen-label">Halaman Bookmark</div>
+    <div class="phone">
+      <div class="screen">
+        <!-- Status Bar -->
+        <div class="status-bar">
+          <span class="status-time">9:41</span>
+          <div class="status-icons">
+            <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
+              <rect x="0" y="3" width="3" height="9" rx="1" fill="#111" opacity="0.4"/>
+              <rect x="4.5" y="2" width="3" height="10" rx="1" fill="#111" opacity="0.6"/>
+              <rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#111"/>
+              <rect x="13.5" y="0.5" width="3" height="11.5" rx="1" fill="#111"/>
+            </svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+              <path d="M8 2.5C10.2 2.5 12.2 3.4 13.6 4.9L15 3.5C13.2 1.7 10.7 0.5 8 0.5C5.3 0.5 2.8 1.7 1 3.5L2.4 4.9C3.8 3.4 5.8 2.5 8 2.5Z" fill="#111"/>
+              <path d="M8 5.5C9.4 5.5 10.7 6.1 11.6 7.1L13 5.7C11.7 4.3 9.9 3.5 8 3.5C6.1 3.5 4.3 4.3 3 5.7L4.4 7.1C5.3 6.1 6.6 5.5 8 5.5Z" fill="#111"/>
+              <circle cx="8" cy="10" r="1.5" fill="#111"/>
+            </svg>
+            <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+              <rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#111" stroke-opacity="0.35"/>
+              <rect x="2" y="2" width="16" height="8" rx="2" fill="#111"/>
+              <path d="M23 4.5C23.8 4.9 24.5 5.4 24.5 6C24.5 6.6 23.8 7.1 23 7.5V4.5Z" fill="#111" fill-opacity="0.4"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="scroll-area">
+          <!-- App Bar -->
+          <div class="app-bar">
+            <div class="app-bar-left">
+              <div class="back-btn">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M10 3L5 8L10 13" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <span class="app-bar-title">Bookmark</span>
+            </div>
+            <div class="icon-btn">
+              <!-- Search icon -->
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <circle cx="7" cy="7" r="4.5" stroke="#777" stroke-width="1.6"/>
+                <path d="M10.5 10.5L13.5 13.5" stroke="#777" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Filter Chips -->
+          <div class="chips-scroll">
+            <div class="chip chip-active">Semua</div>
+            <div class="chip chip-inactive">Muhud</div>
+            <div class="chip chip-inactive">Diba</div>
+            <div class="chip chip-inactive">Diwan</div>
+            <div class="chip chip-inactive">Rowi</div>
+            <div class="chip chip-inactive">Syaraful Anam</div>
+          </div>
+
+          <!-- Summary Bar -->
+          <div class="summary-bar">
+            <span class="summary-count"><strong>12</strong> bookmark tersimpan</span>
+            <button class="sort-btn">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M1 3H11M3 6H9M5 9H7" stroke="#777" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              Terbaru
+            </button>
+          </div>
+
+          <!-- Bookmark List -->
+          <div class="bookmark-list">
+
+            <!-- Card 1 — With note -->
+            <div class="bookmark-card">
+              <div class="bookmark-card-top">
+                <div class="bookmark-meta">
+                  <span class="category-badge badge-muhud">Muhud</span>
+                  <span class="chapter-name">Bab Nurul Anwar</span>
+                </div>
+                <div class="more-dots">
+                  <svg width="16" height="4" viewBox="0 0 16 4" fill="none">
+                    <circle cx="2" cy="2" r="1.5" fill="#AAA"/>
+                    <circle cx="8" cy="2" r="1.5" fill="#AAA"/>
+                    <circle cx="14" cy="2" r="1.5" fill="#AAA"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="bookmark-body">
+                <div class="verse-arabic">يَا رَبِّ صَلِّ وَسَلِّمْ دَائِمًا أَبَدًا</div>
+                <div class="verse-transliteration">Yaa Rabbi shalli wasallim daa-iman abadan 'alaa habiibika khoiril khalqi kullihimi</div>
+              </div>
+              <div class="note-row">
+                <div class="note-icon">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <path d="M2 2H10C10.6 2 11 2.4 11 3V8C11 8.6 10.6 9 10 9H7L5 11V9H2C1.4 9 1 8.6 1 8V3C1 2.4 1.4 2 2 2Z" stroke="#777" stroke-width="1.2" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <span class="note-text">Dibaca saat setelah subuh, sangat menenangkan hati dan pikiran...</span>
+              </div>
+              <div class="bookmark-footer">
+                <span class="verse-num-badge">Bait 12</span>
+                <div class="bookmark-actions">
+                  <span class="bookmark-date">2 hari lalu</span>
+                  <div class="action-btn action-play">
+                    <svg width="11" height="13" viewBox="0 0 11 13" fill="none">
+                      <path d="M1.5 1.5L9.5 6.5L1.5 11.5V1.5Z" fill="#111" stroke="#111" stroke-width="0.5" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                  <div class="action-btn action-read">
+                    <svg width="13" height="11" viewBox="0 0 13 11" fill="none">
+                      <path d="M1 1H5C5.6 1 6 1.4 6 2V9C6 9.6 5.6 10 5 10H1V1Z" stroke="#777" stroke-width="1.3" stroke-linejoin="round"/>
+                      <path d="M12 1H8C7.4 1 7 1.4 7 2V9C7 9.6 7.4 10 8 10H12V1Z" stroke="#777" stroke-width="1.3" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2 — No note, different category -->
+            <div class="bookmark-card">
+              <div class="bookmark-card-top">
+                <div class="bookmark-meta">
+                  <span class="category-badge badge-diba">Diba</span>
+                  <span class="chapter-name">Bab Maulid Nabi</span>
+                </div>
+                <div class="more-dots">
+                  <svg width="16" height="4" viewBox="0 0 16 4" fill="none">
+                    <circle cx="2" cy="2" r="1.5" fill="#AAA"/>
+                    <circle cx="8" cy="2" r="1.5" fill="#AAA"/>
+                    <circle cx="14" cy="2" r="1.5" fill="#AAA"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="bookmark-body">
+                <div class="verse-arabic">اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ</div>
+                <div class="verse-transliteration">Allahumma sholli 'alaa sayyidinaa Muhammadin wa 'alaa aali sayyidinaa Muhammad</div>
+              </div>
+              <div class="bookmark-footer">
+                <span class="verse-num-badge">Bait 3</span>
+                <div class="bookmark-actions">
+                  <span class="bookmark-date">5 hari lalu</span>
+                  <div class="action-btn action-play">
+                    <svg width="11" height="13" viewBox="0 0 11 13" fill="none">
+                      <path d="M1.5 1.5L9.5 6.5L1.5 11.5V1.5Z" fill="#111" stroke="#111" stroke-width="0.5" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                  <div class="action-btn action-read">
+                    <svg width="13" height="11" viewBox="0 0 13 11" fill="none">
+                      <path d="M1 1H5C5.6 1 6 1.4 6 2V9C6 9.6 5.6 10 5 10H1V1Z" stroke="#777" stroke-width="1.3" stroke-linejoin="round"/>
+                      <path d="M12 1H8C7.4 1 7 1.4 7 2V9C7 9.6 7.4 10 8 10H12V1Z" stroke="#777" stroke-width="1.3" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 3 — Diwan category -->
+            <div class="bookmark-card">
+              <div class="bookmark-card-top">
+                <div class="bookmark-meta">
+                  <span class="category-badge badge-diwan">Diwan</span>
+                  <span class="chapter-name">Bab Qasidah Burdah</span>
+                </div>
+                <div class="more-dots">
+                  <svg width="16" height="4" viewBox="0 0 16 4" fill="none">
+                    <circle cx="2" cy="2" r="1.5" fill="#AAA"/>
+                    <circle cx="8" cy="2" r="1.5" fill="#AAA"/>
+                    <circle cx="14" cy="2" r="1.5" fill="#AAA"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="bookmark-body">
+                <div class="verse-arabic">أَمِنْ تَذَكُّرِ جِيرَانٍ بِذِي سَلَمِ</div>
+                <div class="verse-transliteration">Amin tadzakkuri jiiraanin bi dzii salami mazajta dam'an jaraa min muqlatin bi dami</div>
+              </div>
+              <div class="note-row">
+                <div class="note-icon">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <path d="M2 2H10C10.6 2 11 2.4 11 3V8C11 8.6 10.6 9 10 9H7L5 11V9H2C1.4 9 1 8.6 1 8V3C1 2.4 1.4 2 2 2Z" stroke="#777" stroke-width="1.2" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <span class="note-text">Bait pembuka yang indah, menggambarkan kerinduan kepada Nabi</span>
+              </div>
+              <div class="bookmark-footer">
+                <span class="verse-num-badge">Bait 1</span>
+                <div class="bookmark-actions">
+                  <span class="bookmark-date">1 minggu lalu</span>
+                  <div class="action-btn action-play">
+                    <svg width="11" height="13" viewBox="0 0 11 13" fill="none">
+                      <path d="M1.5 1.5L9.5 6.5L1.5 11.5V1.5Z" fill="#111" stroke="#111" stroke-width="0.5" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                  <div class="action-btn action-read">
+                    <svg width="13" height="11" viewBox="0 0 13 11" fill="none">
+                      <path d="M1 1H5C5.6 1 6 1.4 6 2V9C6 9.6 5.6 10 5 10H1V1Z" stroke="#777" stroke-width="1.3" stroke-linejoin="round"/>
+                      <path d="M12 1H8C7.4 1 7 1.4 7 2V9C7 9.6 7.4 10 8 10H12V1Z" stroke="#777" stroke-width="1.3" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="bottom-spacer"></div>
+        </div>
+
+        <!-- Bottom Nav -->
+        <div class="bottom-nav">
+          <div class="nav-item">
+            <div class="nav-icon">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <path d="M3 9.5L11 3L19 9.5V19C19 19.6 18.6 20 18 20H14V15H8V20H4C3.4 20 3 19.6 3 19V9.5Z" stroke="#AAA" stroke-width="1.7" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <span class="nav-label">Beranda</span>
+          </div>
+          <div class="nav-item">
+            <div class="nav-icon">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <circle cx="10" cy="10" r="6.5" stroke="#AAA" stroke-width="1.7"/>
+                <path d="M15 15L19 19" stroke="#AAA" stroke-width="1.7" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="nav-label">Cari</span>
+          </div>
+          <div class="nav-item">
+            <div class="nav-icon">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <path d="M5 3H17C17.6 3 18 3.4 18 4V19L11 16L4 19V4C4 3.4 4.4 3 5 3Z" fill="#111" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="nav-icon-active-dot"></div>
+            <span class="nav-label nav-label-active">Bookmark</span>
+          </div>
+          <div class="nav-item">
+            <div class="nav-icon">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <circle cx="11" cy="8" r="4" stroke="#AAA" stroke-width="1.7"/>
+                <path d="M3 20C3 16.7 6.6 14 11 14C15.4 14 19 16.7 19 20" stroke="#AAA" stroke-width="1.7" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="nav-label">Profil</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SCREEN 2 — Empty State
+       ═══════════════════════════════════════════════════════ -->
+  <div class="phone-wrap">
+    <div class="screen-label">State Kosong</div>
+    <div class="phone">
+      <div class="screen">
+        <div class="status-bar">
+          <span class="status-time">9:41</span>
+          <div class="status-icons">
+            <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
+              <rect x="0" y="3" width="3" height="9" rx="1" fill="#111" opacity="0.4"/>
+              <rect x="4.5" y="2" width="3" height="10" rx="1" fill="#111" opacity="0.6"/>
+              <rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#111"/>
+              <rect x="13.5" y="0.5" width="3" height="11.5" rx="1" fill="#111"/>
+            </svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+              <path d="M8 2.5C10.2 2.5 12.2 3.4 13.6 4.9L15 3.5C13.2 1.7 10.7 0.5 8 0.5C5.3 0.5 2.8 1.7 1 3.5L2.4 4.9C3.8 3.4 5.8 2.5 8 2.5Z" fill="#111"/>
+              <path d="M8 5.5C9.4 5.5 10.7 6.1 11.6 7.1L13 5.7C11.7 4.3 9.9 3.5 8 3.5C6.1 3.5 4.3 4.3 3 5.7L4.4 7.1C5.3 6.1 6.6 5.5 8 5.5Z" fill="#111"/>
+              <circle cx="8" cy="10" r="1.5" fill="#111"/>
+            </svg>
+            <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+              <rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#111" stroke-opacity="0.35"/>
+              <rect x="2" y="2" width="16" height="8" rx="2" fill="#111"/>
+              <path d="M23 4.5C23.8 4.9 24.5 5.4 24.5 6C24.5 6.6 23.8 7.1 23 7.5V4.5Z" fill="#111" fill-opacity="0.4"/>
+            </svg>
+          </div>
+        </div>
+        <div class="scroll-area">
+          <div class="app-bar">
+            <div class="app-bar-left">
+              <div class="back-btn">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M10 3L5 8L10 13" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <span class="app-bar-title">Bookmark</span>
+            </div>
+          </div>
+
+          <div class="empty-state">
+            <div class="empty-icon">
+              <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+                <path d="M8 6H28C29.1 6 30 6.9 30 8V30L18 25L6 30V8C6 6.9 6.9 6 8 6Z" stroke="#AAAAAA" stroke-width="2.2" stroke-linejoin="round"/>
+                <path d="M13 15H23" stroke="#AAAAAA" stroke-width="2" stroke-linecap="round"/>
+                <path d="M13 20H19" stroke="#AAAAAA" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h3 class="empty-title">Belum Ada Bookmark</h3>
+            <p class="empty-subtitle">Tandai bait-bait favoritmu saat membaca shalawat untuk diakses kembali dengan mudah.</p>
+            <button class="empty-cta">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M2.5 2H11.5C12.1 2 12.5 2.4 12.5 3V12.5L7 10L1.5 12.5V3C1.5 2.4 1.9 2 2.5 2Z" fill="#fff" stroke="#fff" stroke-width="0.5" stroke-linejoin="round"/>
+              </svg>
+              Mulai Baca Shalawat
+            </button>
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-item">
+            <div class="nav-icon">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <path d="M3 9.5L11 3L19 9.5V19C19 19.6 18.6 20 18 20H14V15H8V20H4C3.4 20 3 19.6 3 19V9.5Z" stroke="#AAA" stroke-width="1.7" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <span class="nav-label">Beranda</span>
+          </div>
+          <div class="nav-item">
+            <div class="nav-icon">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <circle cx="10" cy="10" r="6.5" stroke="#AAA" stroke-width="1.7"/>
+                <path d="M15 15L19 19" stroke="#AAA" stroke-width="1.7" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="nav-label">Cari</span>
+          </div>
+          <div class="nav-item">
+            <div class="nav-icon">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <path d="M5 3H17C17.6 3 18 3.4 18 4V19L11 16L4 19V4C4 3.4 4.4 3 5 3Z" fill="#111" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="nav-icon-active-dot"></div>
+            <span class="nav-label nav-label-active">Bookmark</span>
+          </div>
+          <div class="nav-item">
+            <div class="nav-icon">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <circle cx="11" cy="8" r="4" stroke="#AAA" stroke-width="1.7"/>
+                <path d="M3 20C3 16.7 6.6 14 11 14C15.4 14 19 16.7 19 20" stroke="#AAA" stroke-width="1.7" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="nav-label">Profil</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SCREEN 3 — Delete Confirmation Bottom Sheet
+       ═══════════════════════════════════════════════════════ -->
+  <div class="phone-wrap">
+    <div class="screen-label">Hapus Bookmark</div>
+    <div class="phone">
+      <div class="screen">
+        <div class="status-bar">
+          <span class="status-time">9:41</span>
+          <div class="status-icons">
+            <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
+              <rect x="0" y="3" width="3" height="9" rx="1" fill="#111" opacity="0.4"/>
+              <rect x="4.5" y="2" width="3" height="10" rx="1" fill="#111" opacity="0.6"/>
+              <rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#111"/>
+              <rect x="13.5" y="0.5" width="3" height="11.5" rx="1" fill="#111"/>
+            </svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+              <path d="M8 2.5C10.2 2.5 12.2 3.4 13.6 4.9L15 3.5C13.2 1.7 10.7 0.5 8 0.5C5.3 0.5 2.8 1.7 1 3.5L2.4 4.9C3.8 3.4 5.8 2.5 8 2.5Z" fill="#111"/>
+              <path d="M8 5.5C9.4 5.5 10.7 6.1 11.6 7.1L13 5.7C11.7 4.3 9.9 3.5 8 3.5C6.1 3.5 4.3 4.3 3 5.7L4.4 7.1C5.3 6.1 6.6 5.5 8 5.5Z" fill="#111"/>
+              <circle cx="8" cy="10" r="1.5" fill="#111"/>
+            </svg>
+            <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+              <rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#111" stroke-opacity="0.35"/>
+              <rect x="2" y="2" width="16" height="8" rx="2" fill="#111"/>
+              <path d="M23 4.5C23.8 4.9 24.5 5.4 24.5 6C24.5 6.6 23.8 7.1 23 7.5V4.5Z" fill="#111" fill-opacity="0.4"/>
+            </svg>
+          </div>
+        </div>
+
+        <div style="position:relative; height: 720px; overflow: hidden; background: var(--clr-bg);">
+          <!-- Dimmed background content -->
+          <div style="padding: 0; opacity: 0.4;">
+            <div class="app-bar">
+              <div class="app-bar-left">
+                <div class="back-btn"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8L10 13" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <span class="app-bar-title">Bookmark</span>
+              </div>
+            </div>
+            <div style="padding: 0 16px; display: flex; flex-direction: column; gap: 10px;">
+              <div class="bookmark-card">
+                <div class="bookmark-card-top">
+                  <div class="bookmark-meta">
+                    <span class="category-badge badge-muhud">Muhud</span>
+                    <span class="chapter-name">Bab Nurul Anwar</span>
+                  </div>
+                </div>
+                <div class="bookmark-body">
+                  <div class="verse-arabic">يَا رَبِّ صَلِّ وَسَلِّمْ دَائِمًا أَبَدًا</div>
+                </div>
+                <div class="bookmark-footer">
+                  <span class="verse-num-badge">Bait 12</span>
+                  <span class="bookmark-date">2 hari lalu</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dim overlay -->
+          <div style="position:absolute; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.4); z-index:2;"></div>
+
+          <!-- Bottom Sheet -->
+          <div style="position:absolute; bottom:0; left:0; right:0; z-index:3;">
+            <div class="bottom-sheet">
+              <div class="sheet-handle"></div>
+              <div class="sheet-title">Hapus Bookmark?</div>
+              <div class="sheet-subtitle">Bookmark ini akan dihapus secara permanen dan tidak dapat dikembalikan.</div>
+              <div class="sheet-actions">
+                <button class="sheet-btn sheet-btn-danger">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path d="M2 4H12M5 4V2H9V4M5.5 6.5V10.5M8.5 6.5V10.5M3 4L3.5 11.5C3.5 12.1 3.9 12.5 4.5 12.5H9.5C10.1 12.5 10.5 12.1 10.5 11.5L11 4H3Z" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  Hapus Bookmark
+                </button>
+                <button class="sheet-btn sheet-btn-ghost">Batal</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bottom-nav">
+          <div class="nav-item">
+            <div class="nav-icon">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <path d="M3 9.5L11 3L19 9.5V19C19 19.6 18.6 20 18 20H14V15H8V20H4C3.4 20 3 19.6 3 19V9.5Z" stroke="#AAA" stroke-width="1.7" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <span class="nav-label">Beranda</span>
+          </div>
+          <div class="nav-item">
+            <div class="nav-icon">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <circle cx="10" cy="10" r="6.5" stroke="#AAA" stroke-width="1.7"/>
+                <path d="M15 15L19 19" stroke="#AAA" stroke-width="1.7" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="nav-label">Cari</span>
+          </div>
+          <div class="nav-item">
+            <div class="nav-icon">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <path d="M5 3H17C17.6 3 18 3.4 18 4V19L11 16L4 19V4C4 3.4 4.4 3 5 3Z" fill="#111" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="nav-icon-active-dot"></div>
+            <span class="nav-label nav-label-active">Bookmark</span>
+          </div>
+          <div class="nav-item">
+            <div class="nav-icon">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <circle cx="11" cy="8" r="4" stroke="#AAA" stroke-width="1.7"/>
+                <path d="M3 20C3 16.7 6.6 14 11 14C15.4 14 19 16.7 19 20" stroke="#AAA" stroke-width="1.7" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="nav-label">Profil</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SCREEN 4 — Edit Note (Dark Card)
+       ═══════════════════════════════════════════════════════ -->
+  <div class="phone-wrap">
+    <div class="screen-label">Edit Catatan</div>
+    <div class="phone">
+      <div class="screen">
+        <div class="status-bar">
+          <span class="status-time">9:41</span>
+          <div class="status-icons">
+            <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
+              <rect x="0" y="3" width="3" height="9" rx="1" fill="#111" opacity="0.4"/>
+              <rect x="4.5" y="2" width="3" height="10" rx="1" fill="#111" opacity="0.6"/>
+              <rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#111"/>
+              <rect x="13.5" y="0.5" width="3" height="11.5" rx="1" fill="#111"/>
+            </svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+              <path d="M8 2.5C10.2 2.5 12.2 3.4 13.6 4.9L15 3.5C13.2 1.7 10.7 0.5 8 0.5C5.3 0.5 2.8 1.7 1 3.5L2.4 4.9C3.8 3.4 5.8 2.5 8 2.5Z" fill="#111"/>
+              <path d="M8 5.5C9.4 5.5 10.7 6.1 11.6 7.1L13 5.7C11.7 4.3 9.9 3.5 8 3.5C6.1 3.5 4.3 4.3 3 5.7L4.4 7.1C5.3 6.1 6.6 5.5 8 5.5Z" fill="#111"/>
+              <circle cx="8" cy="10" r="1.5" fill="#111"/>
+            </svg>
+            <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+              <rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#111" stroke-opacity="0.35"/>
+              <rect x="2" y="2" width="16" height="8" rx="2" fill="#111"/>
+              <path d="M23 4.5C23.8 4.9 24.5 5.4 24.5 6C24.5 6.6 23.8 7.1 23 7.5V4.5Z" fill="#111" fill-opacity="0.4"/>
+            </svg>
+          </div>
+        </div>
+        <div class="scroll-area">
+          <div class="app-bar">
+            <div class="app-bar-left">
+              <div class="back-btn">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M10 3L5 8L10 13" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <span class="app-bar-title">Edit Catatan</span>
+            </div>
+          </div>
+
+          <div style="padding: 8px 16px; display: flex; flex-direction: column; gap: 10px;">
+            <!-- Normal card above -->
+            <div class="bookmark-card" style="opacity: 0.5;">
+              <div class="bookmark-card-top">
+                <div class="bookmark-meta">
+                  <span class="category-badge badge-diba">Diba</span>
+                  <span class="chapter-name">Bab Maulid Nabi</span>
+                </div>
+              </div>
+              <div class="bookmark-body">
+                <div class="verse-arabic" style="font-size:16px;">اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ</div>
+              </div>
+              <div class="bookmark-footer">
+                <span class="verse-num-badge">Bait 3</span>
+                <span class="bookmark-date">5 hari lalu</span>
+              </div>
+            </div>
+
+            <!-- Active edit card (dark) -->
+            <div class="edit-note-card">
+              <div class="edit-note-top">
+                <div class="edit-note-meta">
+                  <span class="category-badge badge-muhud" style="background: rgba(202,255,0,0.15); color: #CAFF00;">Muhud</span>
+                  <span class="edit-note-title">Bab Nurul Anwar · Bait 12</span>
+                </div>
+                <div style="color: rgba(255,255,255,0.3);">
+                  <svg width="16" height="4" viewBox="0 0 16 4" fill="none">
+                    <circle cx="2" cy="2" r="1.5" fill="currentColor"/>
+                    <circle cx="8" cy="2" r="1.5" fill="currentColor"/>
+                    <circle cx="14" cy="2" r="1.5" fill="currentColor"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="edit-note-body">
+                <div class="edit-note-arabic">يَا رَبِّ صَلِّ وَسَلِّمْ دَائِمًا أَبَدًا</div>
+                <div style="font-size:12px; font-style:italic; color:rgba(255,255,255,0.4); margin-bottom:10px;">Yaa Rabbi shalli wasallim daa-iman abadan...</div>
+                <div class="edit-note-field">
+                  <div class="edit-note-field-label">CATATAN</div>
+                  <div class="edit-note-field-text">
+                    Dibaca saat setelah subuh, sangat menenangkan hati<span class="edit-note-cursor"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="edit-note-footer">
+                <button class="edit-cancel-btn">Batal</button>
+                <button class="edit-save-btn">Simpan</button>
+              </div>
+            </div>
+          </div>
+          <div class="bottom-spacer"></div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-item">
+            <div class="nav-icon">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <path d="M3 9.5L11 3L19 9.5V19C19 19.6 18.6 20 18 20H14V15H8V20H4C3.4 20 3 19.6 3 19V9.5Z" stroke="#AAA" stroke-width="1.7" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <span class="nav-label">Beranda</span>
+          </div>
+          <div class="nav-item">
+            <div class="nav-icon">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <circle cx="10" cy="10" r="6.5" stroke="#AAA" stroke-width="1.7"/>
+                <path d="M15 15L19 19" stroke="#AAA" stroke-width="1.7" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="nav-label">Cari</span>
+          </div>
+          <div class="nav-item">
+            <div class="nav-icon">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <path d="M5 3H17C17.6 3 18 3.4 18 4V19L11 16L4 19V4C4 3.4 4.4 3 5 3Z" fill="#111" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="nav-icon-active-dot"></div>
+            <span class="nav-label nav-label-active">Bookmark</span>
+          </div>
+          <div class="nav-item">
+            <div class="nav-icon">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <circle cx="11" cy="8" r="4" stroke="#AAA" stroke-width="1.7"/>
+                <path d="M3 20C3 16.7 6.6 14 11 14C15.4 14 19 16.7 19 20" stroke="#AAA" stroke-width="1.7" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="nav-label">Profil</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

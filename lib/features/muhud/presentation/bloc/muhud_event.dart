@@ -1,0 +1,44 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:ishari/features/muhud/domain/entities/verse_media_type.dart';
+
+part 'muhud_event.freezed.dart';
+
+@freezed
+sealed class MuhudEvent with _$MuhudEvent {
+  const factory MuhudEvent.loadChapter({
+    required int chapterId,
+    required String userId,
+  }) = _LoadChapter;
+
+  const factory MuhudEvent.toggleTranslation() = _ToggleTranslation;
+
+  const factory MuhudEvent.toggleBookmark({
+    required int verseId,
+    String? note,
+  }) = _ToggleBookmark;
+
+  const factory MuhudEvent.playVerse({
+    required int verseId,
+    required String hadiId,
+    required VerseMediaType recitationType,
+    required int mediaId,
+  }) = _PlayVerse;
+
+  const factory MuhudEvent.stopAudio() = _StopAudio;
+
+  const factory MuhudEvent.toggleArabic() = _ToggleArabic;
+
+  const factory MuhudEvent.toggleTransliteration() = _ToggleTransliteration;
+
+  const factory MuhudEvent.setArabFontSize(double size) = _SetArabFontSize;
+
+  const factory MuhudEvent.setTransliterationFontSize(double size) =
+      _SetTransliterationFontSize;
+
+  const factory MuhudEvent.setTranslationFontSize(double size) =
+      _SetTranslationFontSize;
+
+  const factory MuhudEvent.resetFontSizes() = _ResetFontSizes;
+
+  const factory MuhudEvent.clearSnackbar() = _ClearSnackbar;
+}

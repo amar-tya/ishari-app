@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ishari App — Homepage Mockup</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;0,9..40,900;1,9..40,400&display=swap');
+
+    /* ── Design Tokens ───────────────────────────────────────── */
+    :root {
+      --clr-primary: #CAFF00;
+      --clr-primary-dim: #A8D900;
+      --clr-primary-soft: #EDFFC0;
+      --clr-dark: #111111;
+      --clr-dark-2: #1E1E1E;
+      --clr-surface: #FFFFFF;
+      --clr-bg: #F0F5EE;
+      --clr-bg-alt: #E8F0E6;
+      --clr-muted: #777777;
+      --clr-muted-light: #AAAAAA;
+      --clr-border: #E2E8DF;
+      --clr-border-dark: #D0D8CE;
+      --clr-error: #FF4D4F;
+      --clr-success: #22C55E;
+      --font: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --radius-xs: 6px;
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 22px;
+      --radius-xl: 28px;
+      --radius-pill: 100px;
+      --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #DEDEDE;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 40px 20px 60px;
+      font-family: var(--font);
+    }
+
+    /* ── Phone Shell ─────────────────────────────────────────── */
+    .phone {
+      width: 375px;
+      background: #111;
+      border-radius: 52px;
+      padding: 14px;
+      box-shadow: 0 0 0 1px #2a2a2a, 0 40px 100px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    .phone::before {
+      content: '';
+      position: absolute;
+      left: -3px;
+      top: 110px;
+      width: 3px;
+      height: 32px;
+      background: #222;
+      border-radius: 2px 0 0 2px;
+      box-shadow: 0 44px 0 #222, 0 88px 0 #222;
+    }
+
+    .phone::after {
+      content: '';
+      position: absolute;
+      right: -3px;
+      top: 140px;
+      width: 3px;
+      height: 64px;
+      background: #222;
+      border-radius: 0 2px 2px 0;
+    }
+
+    .screen {
+      background: var(--clr-bg);
+      border-radius: 40px;
+      overflow: hidden;
+    }
+
+    /* ── Status Bar ──────────────────────────────────────────── */
+    .status-bar {
+      background: var(--clr-bg);
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      position: relative;
+    }
+
+    .status-bar::after {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 118px;
+      height: 28px;
+      background: #111;
+      border-radius: 20px;
+    }
+
+    .status-time {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--clr-dark);
+      z-index: 1;
+      letter-spacing: -0.3px;
+    }
+
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      z-index: 1;
+    }
+
+    /* ── Scroll Area ─────────────────────────────────────────── */
+    .scroll-area {
+      height: 720px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: var(--clr-bg);
+      scrollbar-width: none;
+    }
+
+    .scroll-area::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* ── Header ──────────────────────────────────────────────── */
+    .header {
+      padding: 16px 20px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .avatar-circle {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--clr-primary);
+      color: var(--clr-dark);
+      font-size: 14px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .user-greeting {
+      font-size: 10px;
+      color: var(--clr-muted);
+      font-weight: 500;
+      margin-bottom: 1px;
+    }
+
+    .user-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--clr-dark);
+      letter-spacing: -0.2px;
+    }
+
+    .bell-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--clr-surface);
+      border: 1.5px solid var(--clr-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .bell-dot {
+      position: absolute;
+      top: 7px;
+      right: 7px;
+      width: 6px;
+      height: 6px;
+      background: var(--clr-error);
+      border-radius: 50%;
+      border: 1.5px solid var(--clr-bg);
+    }
+
+    /* ── Hero Headline ───────────────────────────────────────── */
+    .hero {
+      padding: 18px 20px 0;
+    }
+
+    .qs-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--clr-muted);
+      letter-spacing: 0.4px;
+      margin-bottom: 6px;
+    }
+
+    .headline {
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--clr-dark);
+      letter-spacing: -0.6px;
+      line-height: 1.2;
+    }
+
+    .headline-badge {
+      background: var(--clr-primary);
+      border-radius: 6px;
+      padding: 0 5px;
+      display: inline;
+    }
+    .headline-word {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: var(--clr-dark);
+      color: #fff;
+      border-radius: 8px;
+      padding: 1px 8px 2px;
+      font-size: 0.9em;
+      vertical-align: middle;
+      position: relative;
+      top: -1px;
+    }
+    .headline-word-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--clr-primary);
+      flex-shrink: 0;
+    }
+
+    /* ── Category Chips ──────────────────────────────────────── */
+    .chips-scroll {
+      overflow-x: auto;
+      display: flex;
+      gap: 8px;
+      padding: 14px 20px 0;
+      scrollbar-width: none;
+    }
+
+    .chips-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chip {
+      flex-shrink: 0;
+      height: 32px;
+      border-radius: var(--radius-pill);
+      padding: 0 14px;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      font-family: var(--font);
+    }
+
+    .chip-active {
+      background: var(--clr-dark);
+      color: #fff;
+    }
+
+    .chip-inactive {
+      background: transparent;
+      color: var(--clr-muted);
+      border: 1.5px solid var(--clr-border-dark);
+    }
+
+    /* ── Section Header ──────────────────────────────────────── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 20px 12px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--clr-dark);
+      letter-spacing: -0.3px;
+    }
+
+    .see-all {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--clr-muted);
+    }
+
+    /* ── Chapter Event Card ──────────────────────────────────── */
+    .ecard {
+      margin: 0 16px 10px;
+      background: var(--clr-surface);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: var(--shadow-xs);
+    }
+
+    .ecard-src {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--clr-muted);
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .ecard-title {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      line-height: 1.25;
+      color: var(--clr-dark);
+      margin-bottom: 12px;
+    }
+
+    .ecard-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* arrow button */
+    .arrow-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--clr-dark);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── Masonry grid ────────────────────────────────────────── */
+    .masonry {
+      columns: 2;
+      column-gap: 10px;
+      padding: 14px 16px 0;
+    }
+    .masonry .ecard {
+      margin: 0 0 10px;
+      break-inside: avoid;
+    }
+
+    /* ── Chapter Card (redesigned) ──────────────────────────── */
+    .ecard-arabic {
+      font-family: 'Noto Naskh Arabic', 'Noto Sans Arabic', 'Traditional Arabic', serif;
+      font-size: 48px;
+      font-weight: 900;
+      direction: rtl;
+      text-align: right;
+      color: var(--clr-dark);
+      line-height: 1.15;
+      letter-spacing: -1px;
+      margin: 8px 0 6px;
+      /* graffiti feel: slight paint-stroke shadow */
+      text-shadow: 3px 3px 0px var(--clr-primary), 6px 6px 0px rgba(202,255,0,0.18);
+    }
+    .ecard-arabic-sm {
+      font-size: 36px;
+    }
+    .ecard-latin {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--clr-muted);
+      letter-spacing: 0.2px;
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+    .ecard-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 22px;
+      padding: 0 8px;
+      border-radius: var(--radius-pill);
+      background: var(--clr-bg-alt);
+      border: 1px solid var(--clr-border);
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--clr-muted);
+      margin-bottom: 4px;
+    }
+
+    /* ── Floating Bottom Nav ─────────────────────────────────── */
+    .nav-wrap {
+      background: var(--clr-bg);
+      padding: 8px 16px 16px;
+    }
+    .bottom-nav {
+      background: var(--clr-surface);
+      border-radius: var(--radius-pill);
+      height: 60px;
+      display: flex;
+      align-items: center;
+      padding: 0 6px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      height: 44px;
+      border-radius: var(--radius-pill);
+      transition: all 120ms ease;
+    }
+    .nav-active {
+      background: var(--clr-primary);
+      flex: 1.6;
+    }
+    .nav-label {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+      white-space: nowrap;
+    }
+    .nav-active .nav-label {
+      color: var(--clr-dark);
+    }
+    .nav-inactive .nav-label {
+      display: none;
+    }
+    .home-indicator {
+      background: var(--clr-bg);
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-bottom: 4px;
+    }
+    .home-bar {
+      width: 100px;
+      height: 4px;
+      background: var(--clr-dark);
+      border-radius: 2px;
+      opacity: 0.1;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="phone">
+    <div class="screen">
+
+      <!-- STATUS BAR -->
+      <div class="status-bar">
+        <span class="status-time">9:41</span>
+        <div class="status-icons">
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+            <rect x="0" y="8" width="3" height="4" rx="1" fill="#111" />
+            <rect x="4.5" y="5" width="3" height="7" rx="1" fill="#111" />
+            <rect x="9" y="2" width="3" height="10" rx="1" fill="#111" />
+            <rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="#111" opacity="0.3" />
+          </svg>
+          <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+            <rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="#111" stroke-opacity="0.3" />
+            <rect x="1.5" y="1.5" width="17" height="9" rx="2" fill="#111" />
+            <path d="M23 4v4a2 2 0 000-4z" fill="#111" opacity="0.4" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- SCROLL AREA -->
+      <div class="scroll-area">
+
+        <!-- HEADER -->
+        <div class="header">
+          <div class="header-user">
+            <div class="avatar-circle">A</div>
+            <div>
+              <div class="user-greeting">Selamat Datang 👋</div>
+              <div class="user-name">Ahmad Jamil</div>
+            </div>
+          </div>
+          <div class="bell-btn">
+            <div class="bell-dot"></div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 22a2 2 0 001.995-1.85L14 20h-4a2 2 0 001.85 1.995L12 22zm7-5H5l1-1V11a6 6 0 014.033-5.667 2 2 0 013.934 0A6 6 0 0118 11v5l1 1z"
+                fill="#555" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- HERO -->
+        <div class="hero">
+          <div class="qs-label">QS Al-Ahzab: 56</div>
+          <div class="headline">
+            Sesungguhnya <span class="headline-word"><span class="headline-word-dot"></span>Allah</span> dan para <span class="headline-word"><span class="headline-word-dot"></span>malaikat-Nya</span> bershalawat untuk Nabi.
+          </div>
+        </div>
+
+        <!-- CATEGORY CHIPS -->
+        <div class="chips-scroll">
+          <div class="chip chip-active">Diwan</div>
+          <div class="chip chip-inactive">Diba</div>
+          <div class="chip chip-inactive">Muradah</div>
+          <div class="chip chip-inactive">Rowi</div>
+          <div class="chip chip-inactive">Syaraful Anam</div>
+        </div>
+
+        <!-- CHAPTER CARDS — MASONRY -->
+        <div class="masonry">
+
+          <!-- CARD 1 -->
+          <div class="ecard">
+            <div class="ecard-num">01</div>
+            <div class="ecard-arabic">الاِبْتِدَاء</div>
+            <div class="ecard-latin">Ibtida — Pembukaan</div>
+            <div class="ecard-footer">
+              <div class="ecard-src"><span>Diwan · 12 bait</span></div>
+              <div class="arrow-btn">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                  <path d="M9 18l6-6-6-6" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 2 (dark accent) -->
+          <div class="ecard" style="background:var(--clr-dark);">
+            <div class="ecard-num" style="background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.12);color:rgba(255,255,255,0.5);">02</div>
+            <div class="ecard-arabic ecard-arabic-sm" style="color:#CAFF00;text-shadow:3px 3px 0 rgba(202,255,0,0.2);">المَدْحُ النَّبَوِيّ</div>
+            <div class="ecard-latin" style="color:rgba(255,255,255,0.45);">Madhu Nabawi</div>
+            <div class="ecard-footer">
+              <div class="ecard-src" style="color:rgba(255,255,255,0.35);"><span>Diwan · 8 bait</span></div>
+              <div class="arrow-btn" style="background:var(--clr-primary);">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                  <path d="M9 18l6-6-6-6" stroke="#111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 3 (lime accent) -->
+          <div class="ecard" style="background:var(--clr-primary);">
+            <div class="ecard-num" style="background:rgba(0,0,0,0.08);border-color:rgba(0,0,0,0.1);color:rgba(0,0,0,0.5);">03</div>
+            <div class="ecard-arabic ecard-arabic-sm" style="color:#111;text-shadow:3px 3px 0 rgba(0,0,0,0.1);">الشَّفَاعَة</div>
+            <div class="ecard-latin" style="color:rgba(0,0,0,0.55);">Syafa'ah — Syafaat</div>
+            <div class="ecard-footer">
+              <div class="ecard-src" style="color:rgba(0,0,0,0.45);"><span>Diwan · 10 bait</span></div>
+              <div class="arrow-btn">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                  <path d="M9 18l6-6-6-6" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 4 -->
+          <div class="ecard">
+            <div class="ecard-num">04</div>
+            <div class="ecard-arabic">التَّوَسُّل</div>
+            <div class="ecard-latin">Tawassul — Perantaraan</div>
+            <div class="ecard-footer">
+              <div class="ecard-src"><span>Diwan · 7 bait</span></div>
+              <div class="arrow-btn">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                  <path d="M9 18l6-6-6-6" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /masonry -->
+
+        <div style="height: 20px;"></div>
+      </div><!-- /scroll-area -->
+
+      <!-- FLOATING BOTTOM NAV -->
+      <div class="nav-wrap">
+        <div class="bottom-nav">
+
+          <!-- BERANDA (active) -->
+          <div class="nav-item nav-active">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path d="M3 12L12 4l9 8v9a1 1 0 01-1 1h-5v-5h-6v5H4a1 1 0 01-1-1v-9z" fill="#111"/>
+            </svg>
+            <span class="nav-label">Beranda</span>
+          </div>
+
+          <!-- CARI -->
+          <div class="nav-item nav-inactive">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <circle cx="11" cy="11" r="8" stroke="#AAAAAA" stroke-width="2" fill="none"/>
+              <path d="M21 21l-4.35-4.35" stroke="#AAAAAA" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span class="nav-label">Cari</span>
+          </div>
+
+          <!-- KITAB -->
+          <div class="nav-item nav-inactive">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="3" width="18" height="18" rx="2" stroke="#AAAAAA" stroke-width="2" fill="none"/>
+              <path d="M7 8h10M7 12h7" stroke="#AAAAAA" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span class="nav-label">Kitab</span>
+          </div>
+
+          <!-- BOOKMARK -->
+          <div class="nav-item nav-inactive">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M5 3h14a1 1 0 011 1v17l-8-4-8 4V4a1 1 0 011-1z" stroke="#AAAAAA" stroke-width="2" fill="none" stroke-linejoin="round"/>
+            </svg>
+            <span class="nav-label">Bookmark</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="home-indicator">
+        <div class="home-bar"></div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+
+</html>

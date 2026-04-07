@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ishari App — Splash Screen Mockup</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;0,9..40,900;1,9..40,400&display=swap');
+
+    /* ── Design Tokens ───────────────────────────────────────── */
+    :root {
+      --clr-primary: #CAFF00;
+      --clr-primary-dim: #A8D900;
+      --clr-primary-soft: #EDFFC0;
+      --clr-dark: #111111;
+      --clr-dark-2: #1E1E1E;
+      --clr-surface: #FFFFFF;
+      --clr-bg: #F0F5EE;
+      --clr-bg-alt: #E8F0E6;
+      --clr-muted: #777777;
+      --clr-muted-light: #AAAAAA;
+      --clr-border: #E2E8DF;
+      --clr-border-dark: #D0D8CE;
+      --clr-error: #FF4D4F;
+      --clr-success: #22C55E;
+      --font: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --radius-xs: 6px;
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 22px;
+      --radius-xl: 28px;
+      --radius-pill: 100px;
+      --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #DEDEDE;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 40px 20px 60px;
+      font-family: var(--font);
+    }
+
+    /* ── Phone Shell ─────────────────────────────────────────── */
+    .phone {
+      width: 375px;
+      background: #111;
+      border-radius: 52px;
+      padding: 14px;
+      box-shadow: 0 0 0 1px #2a2a2a, 0 40px 100px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    .phone::before {
+      content: '';
+      position: absolute;
+      left: -3px;
+      top: 110px;
+      width: 3px;
+      height: 32px;
+      background: #222;
+      border-radius: 2px 0 0 2px;
+      box-shadow: 0 44px 0 #222, 0 88px 0 #222;
+    }
+
+    .phone::after {
+      content: '';
+      position: absolute;
+      right: -3px;
+      top: 140px;
+      width: 3px;
+      height: 64px;
+      background: #222;
+      border-radius: 0 2px 2px 0;
+    }
+
+    .screen {
+      background: var(--clr-bg);
+      border-radius: 40px;
+      overflow: hidden;
+    }
+
+    /* ── Status Bar ──────────────────────────────────────────── */
+    .status-bar {
+      background: var(--clr-bg);
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      position: relative;
+    }
+
+    .status-bar::after {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 118px;
+      height: 28px;
+      background: #000;
+      border-radius: 20px;
+    }
+
+    .status-time {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--clr-dark);
+      z-index: 1;
+      letter-spacing: -0.3px;
+    }
+
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      z-index: 1;
+    }
+
+    /* ── Splash Content ──────────────────────────────────────── */
+    .splash {
+      background: var(--clr-bg);
+      height: 764px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Decorative dots */
+    .dot-grid {
+      position: absolute;
+      bottom: 120px;
+      right: 24px;
+      display: grid;
+      grid-template-columns: repeat(4, 5px);
+      gap: 5px;
+    }
+    .dot-grid span {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgba(17, 17, 17, 0.1);
+      display: block;
+    }
+
+    /* ── Logo / Brand Mark ───────────────────────────────────── */
+    .logo-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* "ISHARI" wordmark — simple, bold */
+    .wordmark-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .wordmark {
+      font-family: var(--font);
+      font-size: 58px;
+      font-weight: 900;
+      letter-spacing: -2px;
+      color: var(--clr-dark);
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .wordmark-underline {
+      height: 4px;
+      background: var(--clr-primary);
+      border-radius: 2px;
+      margin-top: 8px;
+      width: 100%;
+    }
+
+    /* Tagline under wordmark */
+    .tagline {
+      margin-top: 16px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--clr-muted);
+      letter-spacing: 1px;
+      text-transform: none;
+    }
+
+    /* ── Loading bar ─────────────────────────────────────────── */
+    .loading-area {
+      position: absolute;
+      bottom: 56px;
+      left: 0;
+      right: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      z-index: 2;
+    }
+
+    .loading-track {
+      width: 100px;
+      height: 3px;
+      background: rgba(17,17,17,0.08);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .loading-fill {
+      width: 60%;
+      height: 100%;
+      background: var(--clr-primary-dim);
+      border-radius: 2px;
+    }
+
+    .loading-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--clr-muted-light);
+      letter-spacing: 0.5px;
+    }
+
+    /* ── Home Indicator ──────────────────────────────────────── */
+    .home-indicator {
+      background: var(--clr-bg);
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-bottom: 4px;
+    }
+
+    .home-bar {
+      width: 100px;
+      height: 4px;
+      background: var(--clr-dark);
+      border-radius: 2px;
+      opacity: 0.15;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="phone">
+    <div class="screen">
+
+      <!-- STATUS BAR -->
+      <div class="status-bar">
+        <span class="status-time">9:41</span>
+        <div class="status-icons">
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+            <rect x="0" y="8" width="3" height="4" rx="1" fill="#111" opacity="0.6"/>
+            <rect x="4.5" y="5" width="3" height="7" rx="1" fill="#111" opacity="0.6"/>
+            <rect x="9" y="2" width="3" height="10" rx="1" fill="#111" opacity="0.6"/>
+            <rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="#111" opacity="0.2"/>
+          </svg>
+          <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+            <rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="#111" stroke-opacity="0.3"/>
+            <rect x="1.5" y="1.5" width="17" height="9" rx="2" fill="#111" opacity="0.6"/>
+            <path d="M23 4v4a2 2 0 000-4z" fill="#111" opacity="0.4"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- SPLASH CONTENT -->
+      <div class="splash">
+
+        <!-- Dot grid decoration -->
+        <div class="dot-grid">
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+        </div>
+
+        <!-- Logo -->
+        <div class="logo-area">
+          <div class="wordmark-wrap">
+            <div class="wordmark">ISHARI</div>
+          </div>
+          <div class="tagline">Membaca &amp; Mendengarkan shalawat</div>
+        </div>
+
+        <!-- Loading indicator -->
+        <div class="loading-area">
+          <div class="loading-track">
+            <div class="loading-fill"></div>
+          </div>
+          <div class="loading-label">Memuat konten…</div>
+        </div>
+
+      </div>
+
+      <!-- HOME INDICATOR -->
+      <div class="home-indicator">
+        <div class="home-bar"></div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+
+</html>

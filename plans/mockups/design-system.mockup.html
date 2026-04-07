@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ishari — Design System</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;0,9..40,900;1,9..40,400&display=swap');
+
+    /* ══════════════════════════════════════════════════════════
+       DESIGN TOKENS — single source of truth
+       ══════════════════════════════════════════════════════════ */
+    :root {
+      /* Colours */
+      --clr-primary:       #CAFF00;   /* Lime / brand accent */
+      --clr-primary-dim:   #A8D900;   /* Pressed / darker lime */
+      --clr-primary-soft:  #EDFFC0;   /* Light lime tint */
+      --clr-dark:          #111111;   /* Near-black text / dark fills */
+      --clr-dark-2:        #1E1E1E;   /* Slightly lighter dark */
+      --clr-surface:       #FFFFFF;   /* Card / surface white */
+      --clr-bg:            #F0F5EE;   /* App background (light sage) */
+      --clr-bg-alt:        #E8F0E6;   /* Alternate section bg */
+      --clr-muted:         #777777;   /* Secondary text */
+      --clr-muted-light:   #AAAAAA;   /* Tertiary / disabled text */
+      --clr-border:        #E2E8DF;   /* Dividers, card borders */
+      --clr-border-dark:   #D0D8CE;   /* Stronger borders */
+      --clr-error:         #FF4D4F;
+      --clr-success:       #22C55E;
+      --clr-warning:       #FACC15;
+      --clr-info:          #3B82F6;
+
+      /* Typography */
+      --font:              'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+
+      /* Border radii */
+      --radius-xs:   6px;
+      --radius-sm:   10px;
+      --radius-md:   16px;
+      --radius-lg:   22px;
+      --radius-xl:   28px;
+      --radius-pill: 100px;
+
+      /* Spacing */
+      --sp-1:  4px;
+      --sp-2:  8px;
+      --sp-3:  12px;
+      --sp-4:  16px;
+      --sp-5:  20px;
+      --sp-6:  24px;
+      --sp-8:  32px;
+      --sp-10: 40px;
+      --sp-12: 48px;
+      --sp-16: 64px;
+
+      /* Elevation / Shadow */
+      --shadow-xs: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-sm: 0 4px 12px rgba(0,0,0,0.08);
+      --shadow-md: 0 8px 24px rgba(0,0,0,0.10);
+      --shadow-lg: 0 16px 40px rgba(0,0,0,0.12);
+
+      /* Transition */
+      --t-fast:   120ms ease;
+      --t-normal: 220ms ease;
+    }
+
+    /* ─── Reset ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font);
+      background: #DEDEDE;
+      color: var(--clr-dark);
+      padding: 48px 32px 80px;
+      min-height: 100vh;
+    }
+
+    /* ─── Page shell ─────────────────────────────────────────── */
+    .page { max-width: 1140px; margin: 0 auto; }
+
+    .ds-title {
+      font-size: 36px; font-weight: 900; letter-spacing: -1px;
+      margin-bottom: 4px;
+    }
+    .ds-subtitle {
+      font-size: 15px; font-weight: 400; color: #555;
+      margin-bottom: 48px;
+    }
+    .ds-subtitle strong { color: var(--clr-dark); }
+
+    /* ─── Section wrapper ────────────────────────────────────── */
+    .section {
+      background: #fff;
+      border-radius: 24px;
+      padding: 36px;
+      margin-bottom: 28px;
+      box-shadow: var(--shadow-xs);
+    }
+    .section-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 1.4px;
+      text-transform: uppercase; color: #999; margin-bottom: 20px;
+    }
+    .section-title-lg {
+      font-size: 22px; font-weight: 800; letter-spacing: -0.4px; margin-bottom: 24px;
+    }
+
+    /* ─── Two-column grid ────────────────────────────────────── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    @media (max-width: 768px) {
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       1. COLOUR PALETTE
+       ══════════════════════════════════════════════════════════ */
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
+    }
+    .swatch {
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-xs);
+    }
+    .swatch-color {
+      height: 80px;
+    }
+    .swatch-info {
+      padding: 10px 12px;
+      background: var(--clr-surface);
+      border-top: 1px solid var(--clr-border);
+    }
+    .swatch-name { font-size: 12px; font-weight: 700; color: #111; }
+    .swatch-hex  { font-size: 11px; font-weight: 400; color: #888; margin-top: 1px; font-family: monospace; }
+
+    /* ══════════════════════════════════════════════════════════
+       2. TYPOGRAPHY
+       ══════════════════════════════════════════════════════════ */
+    .type-row {
+      display: flex; align-items: baseline; gap: 20px;
+      padding: 14px 0; border-bottom: 1px solid var(--clr-border);
+    }
+    .type-row:last-child { border-bottom: none; }
+    .type-meta {
+      width: 140px; flex-shrink: 0;
+      font-size: 11px; font-weight: 500; color: #999;
+      font-family: monospace;
+    }
+    .type-meta strong { display: block; font-weight: 700; color: #555; margin-bottom: 2px; }
+
+    /* ══════════════════════════════════════════════════════════
+       3. SPACING
+       ══════════════════════════════════════════════════════════ */
+    .spacing-row {
+      display: flex; align-items: center; gap: 16px;
+      padding: 8px 0;
+    }
+    .sp-bar {
+      height: 20px;
+      background: var(--clr-primary);
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+    .sp-label {
+      font-size: 12px; color: #555; font-family: monospace;
+    }
+    .sp-label strong { color: #111; }
+
+    /* ══════════════════════════════════════════════════════════
+       4. BORDER RADIUS
+       ══════════════════════════════════════════════════════════ */
+    .radius-grid {
+      display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end;
+    }
+    .radius-item { text-align: center; }
+    .radius-box {
+      width: 64px; height: 64px;
+      background: var(--clr-primary);
+      margin: 0 auto 8px;
+    }
+    .radius-label { font-size: 11px; color: #888; font-family: monospace; }
+    .radius-label strong { display: block; color: #111; font-size: 12px; }
+
+    /* ══════════════════════════════════════════════════════════
+       5. BUTTONS
+       ══════════════════════════════════════════════════════════ */
+    .btn-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+
+    /* Base button */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 7px; height: 48px; padding: 0 24px;
+      border-radius: var(--radius-pill); border: none; cursor: pointer;
+      font-family: var(--font); font-size: 15px; font-weight: 700;
+      letter-spacing: -0.2px; transition: var(--t-fast);
+      text-decoration: none; white-space: nowrap;
+    }
+    .btn-sm { height: 38px; padding: 0 18px; font-size: 13px; }
+    .btn-lg { height: 56px; padding: 0 32px; font-size: 16px; }
+
+    /* Variants */
+    .btn-primary   { background: var(--clr-primary); color: var(--clr-dark); }
+    .btn-dark      { background: var(--clr-dark);    color: #fff; }
+    .btn-outline   { background: transparent; color: var(--clr-dark); border: 2px solid var(--clr-dark); }
+    .btn-ghost     { background: transparent; color: var(--clr-muted); border: 1.5px solid var(--clr-border); }
+    .btn-danger    { background: var(--clr-error); color: #fff; }
+    .btn-disabled  { background: var(--clr-border); color: var(--clr-muted-light); pointer-events: none; }
+
+    /* Icon button (circle) */
+    .btn-icon {
+      width: 48px; height: 48px; padding: 0; border-radius: 50%;
+      background: var(--clr-surface); border: 1.5px solid var(--clr-border);
+      display: inline-flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: var(--t-fast);
+    }
+    .btn-icon-dark { background: var(--clr-dark); border-color: var(--clr-dark); }
+    .btn-icon-primary { background: var(--clr-primary); border-color: var(--clr-primary); }
+
+    /* FAB */
+    .fab {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--clr-dark); border: none; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      box-shadow: var(--shadow-md);
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       6. CHIPS / TAGS
+       ══════════════════════════════════════════════════════════ */
+    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      height: 34px; border-radius: var(--radius-pill); padding: 0 16px;
+      font-family: var(--font); font-size: 13px; font-weight: 700;
+      border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+      white-space: nowrap;
+    }
+    .chip-active   { background: var(--clr-dark); color: #fff; }
+    .chip-inactive { background: transparent; color: var(--clr-muted); border: 1.5px solid var(--clr-border-dark); }
+    .chip-primary  { background: var(--clr-primary-soft); color: var(--clr-dark); border: 1.5px solid var(--clr-primary); }
+    .chip-tag      { height: 26px; padding: 0 10px; font-size: 11px; background: var(--clr-bg-alt); color: var(--clr-muted); border: 1px solid var(--clr-border); border-radius: var(--radius-pill); }
+
+    /* ══════════════════════════════════════════════════════════
+       7. CARDS
+       ══════════════════════════════════════════════════════════ */
+    /* Event card (from reference) */
+    .event-card {
+      background: var(--clr-surface);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+    }
+    .event-card-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .event-source {
+      font-size: 11px; font-weight: 600; color: var(--clr-muted);
+      letter-spacing: 0.2px;
+    }
+    .event-date {
+      font-size: 11px; font-weight: 600; color: var(--clr-muted);
+    }
+    .event-title {
+      font-size: 18px; font-weight: 800; color: var(--clr-dark);
+      letter-spacing: -0.4px; line-height: 1.3; margin-bottom: 14px;
+    }
+    .event-footer {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .avatar-group { display: flex; align-items: center; }
+    .avatar-sm {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 2px solid var(--clr-surface);
+      margin-left: -8px; font-size: 10px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+    }
+    .avatar-sm:first-child { margin-left: 0; }
+    .avatar-sm-more {
+      background: var(--clr-border); color: var(--clr-muted); font-size: 9px;
+    }
+
+    /* Circular progress */
+    .progress-ring {
+      position: relative; width: 52px; height: 52px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .progress-ring svg { position: absolute; top: 0; left: 0; transform: rotate(-90deg); }
+    .progress-ring-label {
+      font-size: 11px; font-weight: 800; color: var(--clr-dark);
+      text-align: center; line-height: 1.2; z-index: 1;
+    }
+    .progress-ring-sub {
+      font-size: 8px; font-weight: 500; color: var(--clr-muted);
+    }
+
+    /* Detail card */
+    .detail-card {
+      background: var(--clr-bg);
+      border-radius: var(--radius-xl);
+      padding: 20px 18px;
+    }
+    .detail-card-tag {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .tag-badge {
+      font-size: 11px; font-weight: 700; color: var(--clr-muted); letter-spacing: 0.2px;
+    }
+    .more-btn {
+      width: 28px; height: 28px; border-radius: var(--radius-xs);
+      display: flex; align-items: center; justify-content: center;
+      background: transparent; border: none; cursor: pointer;
+    }
+    .detail-title {
+      font-size: 22px; font-weight: 900; color: var(--clr-dark);
+      letter-spacing: -0.6px; line-height: 1.25; margin-bottom: 12px;
+    }
+    .time-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      height: 28px; padding: 0 12px;
+      background: var(--clr-dark); color: #fff;
+      border-radius: var(--radius-pill); font-size: 12px; font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .member-info {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .member-label { font-size: 12px; font-weight: 600; color: var(--clr-muted); }
+
+    /* Content card (chapter / shalawat) */
+    .content-card {
+      border-radius: var(--radius-lg); padding: 14px;
+      display: flex; flex-direction: column; justify-content: space-between;
+      min-height: 160px; position: relative; overflow: hidden;
+    }
+    .cc-light { background: var(--clr-surface); border: 1.5px solid var(--clr-border); box-shadow: var(--shadow-xs); }
+    .cc-accent { background: var(--clr-primary); border: none; }
+    .cc-dark   { background: var(--clr-dark);   border: none; }
+    .cc-sage   { background: var(--clr-bg-alt);  border: 1.5px solid var(--clr-border); }
+
+    .cc-num { font-size: 10px; font-weight: 700; opacity: 0.4; letter-spacing: 0.5px; }
+    .cc-body { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+    .cc-arabic-text {
+      font-family: 'Noto Sans Arabic', 'Traditional Arabic', serif;
+      font-size: 18px; font-weight: 700; direction: rtl; text-align: right;
+      line-height: 1.7;
+    }
+    .cc-footer-row { display: flex; align-items: flex-end; justify-content: space-between; }
+    .cc-meta-name { font-size: 13px; font-weight: 800; letter-spacing: -0.2px; }
+    .cc-meta-sub  { font-size: 10px; font-weight: 500; opacity: 0.5; }
+
+    /* Stat/info card */
+    .stat-card {
+      background: var(--clr-surface); border-radius: var(--radius-lg);
+      padding: 20px; display: flex; flex-direction: column; gap: 6px;
+      box-shadow: var(--shadow-xs);
+    }
+    .stat-icon {
+      width: 40px; height: 40px; border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 8px;
+    }
+    .stat-value { font-size: 28px; font-weight: 900; letter-spacing: -0.8px; }
+    .stat-label { font-size: 13px; font-weight: 500; color: var(--clr-muted); }
+
+    /* ══════════════════════════════════════════════════════════
+       8. LIST ITEM
+       ══════════════════════════════════════════════════════════ */
+    .list-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 0; border-bottom: 1px solid var(--clr-border);
+    }
+    .list-item:last-child { border-bottom: none; }
+    .list-thumb {
+      width: 52px; height: 52px; border-radius: var(--radius-md);
+      background: var(--clr-bg-alt); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Noto Sans Arabic', serif; font-size: 20px; direction: rtl;
+    }
+    .list-body { flex: 1; min-width: 0; }
+    .list-title { font-size: 15px; font-weight: 700; color: var(--clr-dark); letter-spacing: -0.2px; }
+    .list-sub   { font-size: 12px; font-weight: 500; color: var(--clr-muted); margin-top: 2px; }
+    .list-right { flex-shrink: 0; }
+
+    /* ══════════════════════════════════════════════════════════
+       9. BOTTOM NAV
+       ══════════════════════════════════════════════════════════ */
+    .bottom-nav-demo {
+      background: var(--clr-surface);
+      border-radius: var(--radius-xl);
+      border: 1.5px solid var(--clr-border);
+      display: flex; align-items: stretch;
+      padding: 0 8px; height: 68px;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+    .nav-item {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 4px;
+      border-radius: var(--radius-md);
+      cursor: pointer; transition: var(--t-fast);
+    }
+    .nav-active   .nav-label { color: var(--clr-dark); }
+    .nav-inactive .nav-label { color: var(--clr-muted-light); }
+    .nav-label { font-size: 9px; font-weight: 700; letter-spacing: -0.1px; }
+    .nav-pill-wrap {
+      position: relative;
+    }
+    .nav-active-pill {
+      position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%);
+      width: 4px; height: 4px; border-radius: 50%;
+      background: var(--clr-primary);
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       10. FORM INPUTS
+       ══════════════════════════════════════════════════════════ */
+    .input-field {
+      width: 100%; height: 52px; padding: 0 16px;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--clr-border);
+      background: var(--clr-surface);
+      font-family: var(--font); font-size: 15px; font-weight: 500; color: var(--clr-dark);
+      outline: none; transition: border-color var(--t-fast);
+    }
+    .input-field:focus { border-color: var(--clr-dark); }
+    .input-field::placeholder { color: var(--clr-muted-light); }
+    .input-wrapper {
+      position: relative; margin-bottom: 12px;
+    }
+    .input-icon {
+      position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+    }
+    .input-with-icon { padding-left: 44px; }
+    .input-label {
+      font-size: 13px; font-weight: 700; color: var(--clr-dark);
+      margin-bottom: 6px; display: block;
+    }
+    .input-error { border-color: var(--clr-error); }
+    .input-error-msg { font-size: 12px; color: var(--clr-error); font-weight: 500; margin-top: 4px; }
+
+    /* ══════════════════════════════════════════════════════════
+       11. ELEVATION / SHADOWS
+       ══════════════════════════════════════════════════════════ */
+    .shadow-demo {
+      display: flex; gap: 20px; flex-wrap: wrap; padding: 20px 0;
+    }
+    .shadow-box {
+      width: 100px; height: 100px;
+      background: var(--clr-surface);
+      border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 4px;
+    }
+    .shadow-label { font-size: 11px; font-weight: 600; color: var(--clr-muted); text-align: center; }
+
+    /* ══════════════════════════════════════════════════════════
+       12. PHONE PREVIEW SHELL
+       ══════════════════════════════════════════════════════════ */
+    .preview-wrap {
+      display: flex; gap: 32px; flex-wrap: wrap; align-items: flex-start;
+    }
+    .phone-shell {
+      width: 320px; flex-shrink: 0;
+      background: #111; border-radius: 46px; padding: 12px;
+      box-shadow: 0 0 0 1px #2a2a2a, 0 40px 80px rgba(0,0,0,0.45);
+      position: relative;
+    }
+    .phone-shell::before {
+      content: ''; position: absolute;
+      left: -3px; top: 100px;
+      width: 3px; height: 28px;
+      background: #222; border-radius: 2px 0 0 2px;
+      box-shadow: 0 40px 0 #222, 0 80px 0 #222;
+    }
+    .phone-shell::after {
+      content: ''; position: absolute;
+      right: -3px; top: 130px;
+      width: 3px; height: 56px;
+      background: #222; border-radius: 0 2px 2px 0;
+    }
+    .phone-screen {
+      background: var(--clr-bg);
+      border-radius: 36px;
+      overflow: hidden;
+    }
+    .phone-status {
+      background: var(--clr-bg); height: 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 22px; position: relative;
+    }
+    .phone-status::after {
+      content: ''; position: absolute;
+      top: 8px; left: 50%; transform: translateX(-50%);
+      width: 100px; height: 24px;
+      background: #111; border-radius: 16px;
+    }
+    .phone-status-time { font-size: 13px; font-weight: 700; z-index: 1; }
+    .phone-body {
+      height: 560px; overflow-y: auto; overflow-x: hidden;
+      scrollbar-width: none; padding-bottom: 16px;
+    }
+    .phone-body::-webkit-scrollbar { display: none; }
+
+    /* ── Preview screen: Home ────────────────────────────────── */
+    .px-header {
+      padding: 14px 18px 0;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .px-user { display: flex; align-items: center; gap: 9px; }
+    .px-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--clr-primary); color: var(--clr-dark);
+      font-size: 13px; font-weight: 900;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .px-name { font-size: 14px; font-weight: 700; }
+    .px-bell {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--clr-surface); border: 1.5px solid var(--clr-border);
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .px-bell-dot {
+      position: absolute; top: 7px; right: 7px;
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--clr-error); border: 1.5px solid var(--clr-bg);
+    }
+    .px-hero { padding: 16px 18px 0; }
+    .px-hero-sub { font-size: 11px; font-weight: 700; color: var(--clr-muted); letter-spacing: 0.4px; margin-bottom: 4px; }
+    .px-headline { font-size: 22px; font-weight: 900; letter-spacing: -0.6px; line-height: 1.2; color: var(--clr-dark); }
+    .px-headline span {
+      background: var(--clr-primary); border-radius: 6px; padding: 0 4px;
+    }
+    .px-chips {
+      display: flex; gap: 7px; overflow-x: auto;
+      padding: 12px 18px 0; scrollbar-width: none;
+    }
+    .px-chips::-webkit-scrollbar { display: none; }
+    .px-chip {
+      flex-shrink: 0; height: 30px; border-radius: var(--radius-pill);
+      padding: 0 13px; font-size: 12px; font-weight: 700;
+    }
+    .px-chip-on  { background: var(--clr-dark); color: #fff; }
+    .px-chip-off { background: transparent; color: var(--clr-muted); border: 1.5px solid var(--clr-border); }
+
+    .px-sec { padding: 16px 18px 10px; display: flex; align-items: center; justify-content: space-between; }
+    .px-sec-title { font-size: 15px; font-weight: 800; }
+    .px-sec-link  { font-size: 12px; font-weight: 600; color: var(--clr-muted); }
+
+    /* small event card inside phone preview */
+    .px-ecard {
+      margin: 0 16px 10px;
+      background: var(--clr-surface);
+      border-radius: 18px; padding: 14px;
+      box-shadow: var(--shadow-xs);
+    }
+    .px-ecard-src  { font-size: 10px; font-weight: 600; color: var(--clr-muted); margin-bottom: 4px; display: flex; justify-content: space-between; }
+    .px-ecard-title { font-size: 16px; font-weight: 800; letter-spacing: -0.3px; line-height: 1.25; margin-bottom: 10px; }
+    .px-ecard-ft { display: flex; align-items: center; justify-content: space-between; }
+    .px-avatars { display: flex; }
+    .px-av {
+      width: 22px; height: 22px; border-radius: 50%;
+      border: 2px solid #fff; margin-left: -6px;
+      font-size: 8px; font-weight: 800; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .px-av:first-child { margin-left: 0; }
+    .px-progress {
+      position: relative; width: 44px; height: 44px;
+    }
+    .px-progress svg { position: absolute; top: 0; left: 0; transform: rotate(-90deg); }
+    .px-progress-label {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 900; color: var(--clr-dark);
+    }
+    .px-progress-sub { font-size: 7px; font-weight: 500; color: var(--clr-muted); }
+    .px-arrow {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--clr-dark); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* phone bottom nav */
+    .px-nav {
+      background: var(--clr-surface); height: 64px;
+      display: flex; align-items: center;
+      padding: 0 6px; border-top: 1px solid var(--clr-border);
+    }
+    .px-nav-item {
+      flex: 1; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 3px; height: 100%;
+    }
+    .px-nav-label { font-size: 8px; font-weight: 700; }
+    .px-nav-on  .px-nav-label { color: var(--clr-dark); }
+    .px-nav-off .px-nav-label { color: #ccc; }
+
+    /* ── Preview screen: Detail ──────────────────────────────── */
+    .phone-screen-detail { background: var(--clr-bg); }
+    .px-det-back {
+      padding: 14px 18px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .px-back-btn {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--clr-surface); border: 1.5px solid var(--clr-border);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .px-det-hero { padding: 0 18px 14px; }
+    .px-det-sub { font-size: 10px; font-weight: 700; color: var(--clr-muted); margin-bottom: 4px; letter-spacing: 0.2px; }
+    .px-det-title { font-size: 26px; font-weight: 900; letter-spacing: -0.7px; line-height: 1.15; }
+    .px-det-meta { display: flex; align-items: center; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+    .px-time-pill {
+      display: inline-flex; align-items: center;
+      height: 26px; padding: 0 11px; border-radius: var(--radius-pill);
+      background: var(--clr-dark); color: #fff;
+      font-size: 11px; font-weight: 700;
+    }
+    .px-member { font-size: 11px; font-weight: 600; color: var(--clr-muted); display: flex; align-items: center; gap: 5px; }
+    .px-thumb {
+      margin: 0 16px 14px;
+      height: 130px; border-radius: 18px;
+      overflow: hidden; position: relative;
+    }
+    .px-thumb-img {
+      width: 100%; height: 100%;
+      background: linear-gradient(135deg, #7C3AED 0%, #EC4899 50%, #F97316 100%);
+    }
+    .px-thumb-badge {
+      position: absolute; bottom: 10px; right: 10px;
+      background: var(--clr-primary); border-radius: 50%;
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 900; color: var(--clr-dark);
+    }
+    .px-cta {
+      margin: 4px 16px 16px;
+      background: var(--clr-surface); border-radius: var(--radius-pill);
+      height: 52px; display: flex; align-items: center; padding: 0 8px 0 20px;
+      box-shadow: var(--shadow-sm); gap: 12px;
+    }
+    .px-cta-text { flex: 1; font-size: 14px; font-weight: 700; color: var(--clr-dark); }
+    .px-cta-btn {
+      height: 38px; padding: 0 20px; border-radius: var(--radius-pill);
+      background: var(--clr-primary); color: var(--clr-dark);
+      font-size: 13px; font-weight: 800; border: none;
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       UTILITY
+       ══════════════════════════════════════════════════════════ */
+    .text-muted { color: var(--clr-muted); }
+    .mt-8  { margin-top: 8px; }
+    .mt-16 { margin-top: 16px; }
+    .mt-24 { margin-top: 24px; }
+    .divider { height: 1px; background: var(--clr-border); margin: 20px 0; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- PAGE HEADER -->
+  <div class="ds-title">Ishari Design System</div>
+  <div class="ds-subtitle">Visual language & component library — <strong>v1.0</strong> · 2026</div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       SECTION 0 — PHONE PREVIEW
+       ══════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-label">Preview</div>
+    <div class="section-title-lg">App Screens</div>
+
+    <div class="preview-wrap">
+
+      <!-- HOME SCREEN -->
+      <div class="phone-shell">
+        <div class="phone-screen">
+          <!-- status bar -->
+          <div class="phone-status">
+            <span class="phone-status-time">9:41</span>
+            <div style="display:flex;gap:5px;z-index:1;">
+              <svg width="15" height="11" viewBox="0 0 16 12" fill="none">
+                <rect x="0" y="8" width="3" height="4" rx="1" fill="#111"/>
+                <rect x="4.5" y="5" width="3" height="7" rx="1" fill="#111"/>
+                <rect x="9" y="2" width="3" height="10" rx="1" fill="#111"/>
+                <rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="#111" opacity="0.3"/>
+              </svg>
+              <svg width="22" height="11" viewBox="0 0 25 12" fill="none">
+                <rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="#111" stroke-opacity="0.3"/>
+                <rect x="1.5" y="1.5" width="16" height="9" rx="2" fill="#111"/>
+                <path d="M23 4v4a2 2 0 000-4z" fill="#111" opacity="0.4"/>
+              </svg>
+            </div>
+          </div>
+          <!-- scrollable body -->
+          <div class="phone-body">
+            <!-- header -->
+            <div class="px-header">
+              <div class="px-user">
+                <div class="px-avatar">A</div>
+                <div>
+                  <div style="font-size:10px;color:var(--clr-muted);font-weight:500;">Selamat Datang 👋</div>
+                  <div class="px-name">Ahmad Jamil</div>
+                </div>
+              </div>
+              <div class="px-bell">
+                <div class="px-bell-dot"></div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 22a2 2 0 001.995-1.85L14 20h-4a2 2 0 001.85 1.995L12 22zm7-5H5l1-1V11a6 6 0 014.033-5.667 2 2 0 013.934 0A6 6 0 0118 11v5l1 1z" fill="#555"/></svg>
+              </div>
+            </div>
+            <!-- hero -->
+            <div class="px-hero">
+              <div class="px-hero-sub">QS Al-Ahzab: 56</div>
+              <div class="px-headline">Semua Shalawat <span>(30)</span></div>
+            </div>
+            <!-- chips -->
+            <div class="px-chips">
+              <div class="px-chip px-chip-on">Semua</div>
+              <div class="px-chip px-chip-off">Diwan</div>
+              <div class="px-chip px-chip-off">Diba</div>
+              <div class="px-chip px-chip-off">Rowi</div>
+            </div>
+            <!-- section -->
+            <div class="px-sec">
+              <span class="px-sec-title">Chapter Unggulan</span>
+              <span class="px-sec-link">Lihat Semua</span>
+            </div>
+            <!-- event card 1 -->
+            <div class="px-ecard">
+              <div class="px-ecard-src">
+                <span>Diwan</span><span>12 bait</span>
+              </div>
+              <div class="px-ecard-title">Bagaimana Cara Membaca Shalawat Diwan</div>
+              <div class="px-ecard-ft">
+                <div class="px-avatars">
+                  <div class="px-av" style="background:#10B981;">A</div>
+                  <div class="px-av" style="background:#8B5CF6;">B</div>
+                  <div class="px-av" style="background:#F59E0B;">C</div>
+                  <div class="px-av" style="background:#E5E7EB;color:#555;font-size:7px;">+25</div>
+                </div>
+                <div class="px-progress">
+                  <svg width="44" height="44" viewBox="0 0 44 44">
+                    <circle cx="22" cy="22" r="18" stroke="#E5E7EB" stroke-width="3" fill="none"/>
+                    <circle cx="22" cy="22" r="18" stroke="#CAFF00" stroke-width="3" fill="none"
+                      stroke-dasharray="113" stroke-dashoffset="34" stroke-linecap="round"/>
+                  </svg>
+                  <div class="px-progress-label">70%<div class="px-progress-sub">dibaca</div></div>
+                </div>
+                <div class="px-arrow">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+              </div>
+            </div>
+            <!-- event card 2 -->
+            <div class="px-ecard">
+              <div class="px-ecard-src">
+                <span>Diba'i</span><span>8 bait</span>
+              </div>
+              <div class="px-ecard-title">Shalawat Diba'i Lengkap Beserta Terjemah</div>
+              <div class="px-ecard-ft">
+                <div class="px-avatars">
+                  <div class="px-av" style="background:#EC4899;">D</div>
+                  <div class="px-av" style="background:#3B82F6;">E</div>
+                  <div class="px-av" style="background:#E5E7EB;color:#555;font-size:7px;">+18</div>
+                </div>
+                <div class="px-progress">
+                  <svg width="44" height="44" viewBox="0 0 44 44">
+                    <circle cx="22" cy="22" r="18" stroke="#E5E7EB" stroke-width="3" fill="none"/>
+                    <circle cx="22" cy="22" r="18" stroke="#CAFF00" stroke-width="3" fill="none"
+                      stroke-dasharray="113" stroke-dashoffset="57" stroke-linecap="round"/>
+                  </svg>
+                  <div class="px-progress-label">50%<div class="px-progress-sub">dibaca</div></div>
+                </div>
+                <div class="px-arrow">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- bottom nav -->
+          <div class="px-nav">
+            <div class="px-nav-item px-nav-on">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 12L12 4l9 8v9a1 1 0 01-1 1h-5v-5h-6v5H4a1 1 0 01-1-1v-9z" fill="#111"/></svg>
+              <span class="px-nav-label">Beranda</span>
+            </div>
+            <div class="px-nav-item px-nav-off">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="#ccc" stroke-width="1.8" fill="none"/><path d="M21 21l-4-4" stroke="#ccc" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <span class="px-nav-label">Cari</span>
+            </div>
+            <div class="px-nav-item px-nav-off">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="#ccc" stroke-width="1.8" fill="none"/><path d="M7 8h10M7 12h7" stroke="#ccc" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <span class="px-nav-label">Kitab</span>
+            </div>
+            <div class="px-nav-item px-nav-off">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 3h14a1 1 0 011 1v17l-8-4-8 4V4a1 1 0 011-1z" stroke="#ccc" stroke-width="1.8" fill="none" stroke-linejoin="round"/></svg>
+              <span class="px-nav-label">Bookmark</span>
+            </div>
+            <div class="px-nav-item px-nav-off">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="9" r="4" stroke="#ccc" stroke-width="1.8" fill="none"/><path d="M4 21c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="#ccc" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg>
+              <span class="px-nav-label">Profil</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DETAIL SCREEN -->
+      <div class="phone-shell">
+        <div class="phone-screen phone-screen-detail">
+          <div class="phone-status">
+            <span class="phone-status-time">9:41</span>
+            <div style="display:flex;gap:5px;z-index:1;">
+              <svg width="15" height="11" viewBox="0 0 16 12" fill="none">
+                <rect x="0" y="8" width="3" height="4" rx="1" fill="#111"/>
+                <rect x="4.5" y="5" width="3" height="7" rx="1" fill="#111"/>
+                <rect x="9" y="2" width="3" height="10" rx="1" fill="#111"/>
+                <rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="#111" opacity="0.3"/>
+              </svg>
+              <svg width="22" height="11" viewBox="0 0 25 12" fill="none">
+                <rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="#111" stroke-opacity="0.3"/>
+                <rect x="1.5" y="1.5" width="16" height="9" rx="2" fill="#111"/>
+              </svg>
+            </div>
+          </div>
+          <div class="phone-body">
+            <div class="px-det-back">
+              <div class="px-back-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="#111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="px-bell">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 22a2 2 0 001.995-1.85L14 20h-4a2 2 0 001.85 1.995L12 22zm7-5H5l1-1V11a6 6 0 014.033-5.667 2 2 0 013.934 0A6 6 0 0118 11v5l1 1z" fill="#555"/></svg>
+              </div>
+            </div>
+            <div class="px-det-hero">
+              <div class="px-det-sub">Diwan · 30 Anggota Membaca</div>
+              <div class="px-det-title">Bagaimana Cara Membaca Shalawat Diwan</div>
+              <div class="px-det-meta">
+                <div class="px-time-pill">Bab 01–12</div>
+                <div class="px-member">
+                  <div style="display:flex;">
+                    <div class="px-av" style="background:#10B981;width:20px;height:20px;font-size:7px;">A</div>
+                    <div class="px-av" style="background:#8B5CF6;width:20px;height:20px;font-size:7px;margin-left:-5px;">B</div>
+                  </div>
+                  50 Anggota
+                </div>
+              </div>
+            </div>
+            <!-- thumbnail -->
+            <div class="px-thumb">
+              <div class="px-thumb-img" style="background:linear-gradient(135deg,#064E3B,#10B981 60%,#CAFF00 100%);display:flex;align-items:center;justify-content:center;">
+                <span style="font-family:'Noto Sans Arabic',serif;font-size:32px;color:rgba(255,255,255,0.9);direction:rtl;">اللَّهُمَّ صَلِّ</span>
+              </div>
+              <div class="px-thumb-badge">✦</div>
+            </div>
+            <!-- second thumb -->
+            <div class="px-thumb" style="margin-top:-4px;">
+              <div class="px-thumb-img" style="background:linear-gradient(135deg,#1E1B4B,#7C3AED 60%,#EC4899 100%);display:flex;align-items:center;justify-content:center;">
+                <span style="font-family:'Noto Sans Arabic',serif;font-size:26px;color:rgba(255,255,255,0.85);direction:rtl;">يَا نَبِيَّ اللهِ</span>
+              </div>
+            </div>
+            <!-- cta -->
+            <div class="px-cta">
+              <div class="px-cta-text">Mulai Membaca</div>
+              <button class="px-cta-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="#111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Buka
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOTES -->
+      <div style="flex:1;min-width:220px;">
+        <div class="section-label" style="margin-bottom:12px;">Screen notes</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="padding:14px;background:var(--clr-primary-soft);border-radius:var(--radius-md);border:1.5px solid var(--clr-primary);">
+            <div style="font-size:12px;font-weight:800;margin-bottom:4px;">Home Screen</div>
+            <div style="font-size:12px;color:var(--clr-muted);line-height:1.5;">Header dengan avatar + nama · Hero headline dengan count badge · Filter chips horizontal scroll · Section header + See More · Event/Chapter cards dengan progress ring · Bottom navigation</div>
+          </div>
+          <div style="padding:14px;background:var(--clr-bg-alt);border-radius:var(--radius-md);border:1.5px solid var(--clr-border);">
+            <div style="font-size:12px;font-weight:800;margin-bottom:4px;">Detail Screen</div>
+            <div style="font-size:12px;color:var(--clr-muted);line-height:1.5;">Back + Bell nav · Section tag + headline besar · Meta: time pill + member count · Thumbnail image card · CTA bar dengan tombol lime</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       SECTION 1 — COLOURS
+       ══════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-label">Foundation · 01</div>
+    <div class="section-title-lg">Colour Palette</div>
+
+    <div class="palette-grid">
+      <div class="swatch">
+        <div class="swatch-color" style="background:#CAFF00;"></div>
+        <div class="swatch-info"><div class="swatch-name">Primary</div><div class="swatch-hex">#CAFF00</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#A8D900;"></div>
+        <div class="swatch-info"><div class="swatch-name">Primary Dim</div><div class="swatch-hex">#A8D900</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#EDFFC0;border:1px solid #E2E8DF;"></div>
+        <div class="swatch-info"><div class="swatch-name">Primary Soft</div><div class="swatch-hex">#EDFFC0</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#111111;"></div>
+        <div class="swatch-info"><div class="swatch-name">Dark</div><div class="swatch-hex">#111111</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#1E1E1E;"></div>
+        <div class="swatch-info"><div class="swatch-name">Dark 2</div><div class="swatch-hex">#1E1E1E</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#FFFFFF;border:1px solid #E2E8DF;"></div>
+        <div class="swatch-info"><div class="swatch-name">Surface</div><div class="swatch-hex">#FFFFFF</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#F0F5EE;border:1px solid #E2E8DF;"></div>
+        <div class="swatch-info"><div class="swatch-name">Background</div><div class="swatch-hex">#F0F5EE</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#E8F0E6;border:1px solid #E2E8DF;"></div>
+        <div class="swatch-info"><div class="swatch-name">BG Alt</div><div class="swatch-hex">#E8F0E6</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#777777;"></div>
+        <div class="swatch-info"><div class="swatch-name">Muted</div><div class="swatch-hex">#777777</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#E2E8DF;border:1px solid #D0D8CE;"></div>
+        <div class="swatch-info"><div class="swatch-name">Border</div><div class="swatch-hex">#E2E8DF</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#FF4D4F;"></div>
+        <div class="swatch-info"><div class="swatch-name">Error</div><div class="swatch-hex">#FF4D4F</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#22C55E;"></div>
+        <div class="swatch-info"><div class="swatch-name">Success</div><div class="swatch-hex">#22C55E</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       SECTION 2 — TYPOGRAPHY
+       ══════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-label">Foundation · 02</div>
+    <div class="section-title-lg">Typography · DM Sans</div>
+
+    <div class="type-row">
+      <div class="type-meta"><strong>Display</strong>36px / 900</div>
+      <div style="font-size:36px;font-weight:900;letter-spacing:-1px;line-height:1.1;">Shalawat Diwan</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta"><strong>Heading 1</strong>28px / 900</div>
+      <div style="font-size:28px;font-weight:900;letter-spacing:-0.7px;line-height:1.2;">Semua Chapter Shalawat</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta"><strong>Heading 2</strong>22px / 800</div>
+      <div style="font-size:22px;font-weight:800;letter-spacing:-0.5px;line-height:1.25;">Chapter Unggulan Hari Ini</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta"><strong>Heading 3</strong>18px / 800</div>
+      <div style="font-size:18px;font-weight:800;letter-spacing:-0.3px;line-height:1.3;">Bagaimana Membaca Shalawat</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta"><strong>Body Large</strong>16px / 500</div>
+      <div style="font-size:16px;font-weight:500;line-height:1.5;">Shalawat adalah doa dan pujian kepada Nabi Muhammad SAW yang dianjurkan bagi setiap muslim.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta"><strong>Body</strong>14px / 400</div>
+      <div style="font-size:14px;font-weight:400;color:#555;line-height:1.6;">Membaca shalawat merupakan amalan yang sangat dianjurkan dalam Islam. Allah berfirman dalam QS. Al-Ahzab: 56.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta"><strong>Label</strong>13px / 700</div>
+      <div style="font-size:13px;font-weight:700;letter-spacing:-0.1px;">Diwan · 12 Bait · Aktif</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta"><strong>Caption</strong>11px / 600</div>
+      <div style="font-size:11px;font-weight:600;color:#777;letter-spacing:0.2px;">QS AL-AHZAB: 56 · SHALAWAT</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta"><strong>Arabic</strong>20px / 700</div>
+      <div style="font-family:'Noto Sans Arabic','Traditional Arabic',serif;font-size:20px;font-weight:700;direction:rtl;text-align:right;color:#111;line-height:1.8;">اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       SECTION 3 — SPACING & RADIUS
+       ══════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-label">Foundation · 03</div>
+    <div class="section-title-lg">Spacing & Border Radius</div>
+
+    <div class="grid-2">
+      <!-- Spacing -->
+      <div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:16px;">Spacing Scale</div>
+        <div class="spacing-row"><div class="sp-bar" style="width:4px;"></div><div class="sp-label"><strong>sp-1</strong> · 4px</div></div>
+        <div class="spacing-row"><div class="sp-bar" style="width:8px;"></div><div class="sp-label"><strong>sp-2</strong> · 8px</div></div>
+        <div class="spacing-row"><div class="sp-bar" style="width:12px;"></div><div class="sp-label"><strong>sp-3</strong> · 12px</div></div>
+        <div class="spacing-row"><div class="sp-bar" style="width:16px;"></div><div class="sp-label"><strong>sp-4</strong> · 16px</div></div>
+        <div class="spacing-row"><div class="sp-bar" style="width:20px;"></div><div class="sp-label"><strong>sp-5</strong> · 20px</div></div>
+        <div class="spacing-row"><div class="sp-bar" style="width:24px;"></div><div class="sp-label"><strong>sp-6</strong> · 24px</div></div>
+        <div class="spacing-row"><div class="sp-bar" style="width:32px;"></div><div class="sp-label"><strong>sp-8</strong> · 32px</div></div>
+        <div class="spacing-row"><div class="sp-bar" style="width:40px;"></div><div class="sp-label"><strong>sp-10</strong> · 40px</div></div>
+        <div class="spacing-row"><div class="sp-bar" style="width:48px;"></div><div class="sp-label"><strong>sp-12</strong> · 48px</div></div>
+        <div class="spacing-row"><div class="sp-bar" style="width:64px;"></div><div class="sp-label"><strong>sp-16</strong> · 64px</div></div>
+      </div>
+
+      <!-- Radius -->
+      <div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:16px;">Border Radius</div>
+        <div class="radius-grid">
+          <div class="radius-item"><div class="radius-box" style="border-radius:6px;"></div><div class="radius-label"><strong>xs</strong>6px</div></div>
+          <div class="radius-item"><div class="radius-box" style="border-radius:10px;"></div><div class="radius-label"><strong>sm</strong>10px</div></div>
+          <div class="radius-item"><div class="radius-box" style="border-radius:16px;"></div><div class="radius-label"><strong>md</strong>16px</div></div>
+          <div class="radius-item"><div class="radius-box" style="border-radius:22px;"></div><div class="radius-label"><strong>lg</strong>22px</div></div>
+          <div class="radius-item"><div class="radius-box" style="border-radius:28px;"></div><div class="radius-label"><strong>xl</strong>28px</div></div>
+          <div class="radius-item"><div class="radius-box" style="border-radius:100px;"></div><div class="radius-label"><strong>pill</strong>full</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       SECTION 4 — BUTTONS
+       ══════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-label">Components · 04</div>
+    <div class="section-title-lg">Buttons</div>
+
+    <div style="font-size:13px;font-weight:700;color:#999;margin-bottom:10px;">Variants</div>
+    <div class="btn-row">
+      <button class="btn btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="#111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Primary
+      </button>
+      <button class="btn btn-dark">Dark</button>
+      <button class="btn btn-outline">Outline</button>
+      <button class="btn btn-ghost">Ghost</button>
+      <button class="btn btn-danger">Danger</button>
+      <button class="btn btn-disabled">Disabled</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <div style="font-size:13px;font-weight:700;color:#999;margin-bottom:10px;">Sizes</div>
+    <div class="btn-row">
+      <button class="btn btn-dark btn-sm">Small</button>
+      <button class="btn btn-dark">Default</button>
+      <button class="btn btn-dark btn-lg">Large</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <div style="font-size:13px;font-weight:700;color:#999;margin-bottom:10px;">Icon Buttons & FAB</div>
+    <div class="btn-row">
+      <button class="btn-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="btn-icon btn-icon-dark">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="btn-icon btn-icon-primary" style="width:48px;height:48px;border-radius:50%;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#111" stroke-width="2.5" stroke-linecap="round"/></svg>
+      </button>
+      <button class="fab">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <div class="divider"></div>
+
+    <div style="font-size:13px;font-weight:700;color:#999;margin-bottom:10px;">CTA Bar (Book / Mulai)</div>
+    <div style="background:var(--clr-surface);border-radius:var(--radius-pill);height:60px;display:flex;align-items:center;padding:0 8px 0 24px;box-shadow:var(--shadow-sm);gap:12px;max-width:380px;">
+      <div style="flex:1;font-size:15px;font-weight:700;">Mulai Membaca Sekarang</div>
+      <button class="btn btn-primary btn-sm">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="#111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Buka
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       SECTION 5 — CHIPS / TAGS
+       ══════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-label">Components · 05</div>
+    <div class="section-title-lg">Chips & Tags</div>
+
+    <div style="font-size:13px;font-weight:700;color:#999;margin-bottom:10px;">Filter Chips</div>
+    <div class="chip-row">
+      <button class="chip chip-active">Semua</button>
+      <button class="chip chip-inactive">Diwan</button>
+      <button class="chip chip-inactive">Diba'i</button>
+      <button class="chip chip-inactive">Muradah</button>
+      <button class="chip chip-inactive">Rowi</button>
+      <button class="chip chip-inactive">Syaraful Anam</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <div style="font-size:13px;font-weight:700;color:#999;margin-bottom:10px;">Accent Chips</div>
+    <div class="chip-row">
+      <button class="chip chip-primary">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#111" stroke-width="2.5" stroke-linecap="round"/></svg>
+        Tambah Bookmark
+      </button>
+      <button class="chip chip-primary">✓ Sudah Dibaca</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <div style="font-size:13px;font-weight:700;color:#999;margin-bottom:10px;">Small Tags</div>
+    <div class="chip-row">
+      <span class="chip-tag">Diwan</span>
+      <span class="chip-tag">12 Bait</span>
+      <span class="chip-tag">50 Anggota</span>
+      <span class="chip-tag">Populer</span>
+    </div>
+
+    <div class="divider"></div>
+
+    <div style="font-size:13px;font-weight:700;color:#999;margin-bottom:10px;">Time / Info Pill</div>
+    <div class="chip-row">
+      <div class="time-pill">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#fff" stroke-width="1.8" fill="none"/><path d="M12 7v5l3 3" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Bab 01–12
+      </div>
+      <div class="time-pill" style="background:var(--clr-primary);color:var(--clr-dark);">Aktif</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       SECTION 6 — CARDS
+       ══════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-label">Components · 06</div>
+    <div class="section-title-lg">Cards</div>
+
+    <div class="grid-2">
+
+      <!-- Event Card -->
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#999;margin-bottom:12px;">Event / Chapter Card</div>
+        <div class="event-card">
+          <div class="event-card-header">
+            <span class="event-source">TED Talks</span>
+            <span class="event-date">20 Mar, 24</span>
+          </div>
+          <div class="event-title">Bagaimana Cara Membaca Shalawat Diwan</div>
+          <div class="event-footer">
+            <div class="avatar-group">
+              <div class="avatar-sm" style="background:#10B981;">A</div>
+              <div class="avatar-sm" style="background:#8B5CF6;">B</div>
+              <div class="avatar-sm" style="background:#F59E0B;">C</div>
+              <div class="avatar-sm avatar-sm-more">+25</div>
+            </div>
+            <div class="progress-ring">
+              <svg width="52" height="52" viewBox="0 0 52 52">
+                <circle cx="26" cy="26" r="22" stroke="#E5E7EB" stroke-width="4" fill="none"/>
+                <circle cx="26" cy="26" r="22" stroke="#CAFF00" stroke-width="4" fill="none"
+                  stroke-dasharray="138.2" stroke-dashoffset="41.5" stroke-linecap="round"/>
+              </svg>
+              <div class="progress-ring-label">70%<div class="progress-ring-sub">dibaca</div></div>
+            </div>
+            <button class="fab" style="width:38px;height:38px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail Card -->
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#999;margin-bottom:12px;">Detail Info Card</div>
+        <div class="detail-card">
+          <div class="detail-card-tag">
+            <span class="tag-badge">Diwan</span>
+            <button class="more-btn">
+              <svg width="18" height="4" viewBox="0 0 18 4" fill="none"><circle cx="2" cy="2" r="2" fill="#999"/><circle cx="9" cy="2" r="2" fill="#999"/><circle cx="16" cy="2" r="2" fill="#999"/></svg>
+            </button>
+          </div>
+          <div class="detail-title">Bagaimana Cara Membaca Shalawat Diwan dengan Benar</div>
+          <div class="time-pill mt-8">Bab 01–12</div>
+          <div class="member-info mt-8">
+            <div class="avatar-group">
+              <div class="avatar-sm" style="background:#10B981;width:24px;height:24px;font-size:9px;">A</div>
+              <div class="avatar-sm" style="background:#8B5CF6;width:24px;height:24px;font-size:9px;">B</div>
+              <div class="avatar-sm avatar-sm-more" style="width:24px;height:24px;font-size:9px;">+8</div>
+            </div>
+            <span class="member-label">50 Anggota Membaca</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content Cards -->
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#999;margin-bottom:12px;">Content / Chapter Cards</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="content-card cc-light" style="grid-row:span 2;min-height:200px;">
+            <span class="cc-num" style="color:#999;">01</span>
+            <div class="cc-body">
+              <div class="cc-arabic-text" style="color:#111;font-size:20px;">اللَّهُمَّ صَلِّ</div>
+            </div>
+            <div class="cc-footer-row">
+              <div><div class="cc-meta-name">Ibtida'</div><div class="cc-meta-sub" style="color:#999;">7 bait</div></div>
+            </div>
+          </div>
+          <div class="content-card cc-accent">
+            <span class="cc-num" style="color:rgba(0,0,0,0.4);">02</span>
+            <div class="cc-body">
+              <div class="cc-arabic-text" style="color:var(--clr-dark);font-size:16px;">يَا نَبِيّ</div>
+            </div>
+            <div class="cc-footer-row">
+              <div><div class="cc-meta-name" style="color:#111;">Nadhom</div><div class="cc-meta-sub" style="color:rgba(0,0,0,0.4);">12 bait</div></div>
+            </div>
+          </div>
+          <div class="content-card cc-dark">
+            <span class="cc-num" style="color:rgba(255,255,255,0.4);">03</span>
+            <div class="cc-body">
+              <div class="cc-arabic-text" style="color:rgba(255,255,255,0.9);font-size:16px;">مَدَائِح</div>
+            </div>
+            <div class="cc-footer-row">
+              <div><div class="cc-meta-name" style="color:#fff;">Madaih</div><div class="cc-meta-sub" style="color:rgba(255,255,255,0.4);">9 bait</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stat Cards -->
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#999;margin-bottom:12px;">Stat / Info Cards</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="stat-card">
+            <div class="stat-icon" style="background:var(--clr-primary-soft);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 3h14a1 1 0 011 1v17l-8-4-8 4V4a1 1 0 011-1z" fill="#111"/></svg>
+            </div>
+            <div class="stat-value">12</div>
+            <div class="stat-label">Bookmark</div>
+          </div>
+          <div class="stat-card" style="background:var(--clr-dark);">
+            <div class="stat-icon" style="background:rgba(255,255,255,0.1);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z" fill="#CAFF00"/></svg>
+            </div>
+            <div class="stat-value" style="color:#fff;">30</div>
+            <div class="stat-label" style="color:rgba(255,255,255,0.5);">Shalawat Tersedia</div>
+          </div>
+          <div class="stat-card" style="background:var(--clr-primary);">
+            <div class="stat-icon" style="background:rgba(0,0,0,0.1);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#111" stroke-width="1.8" fill="none"/><path d="M10 8l6 4-6 4V8z" fill="#111"/></svg>
+            </div>
+            <div class="stat-value" style="color:#111;">5</div>
+            <div class="stat-label" style="color:rgba(0,0,0,0.5);">Audio Tersimpan</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#EEF2FF;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="9" r="4" fill="#6366F1"/><path d="M4 21c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="#6366F1" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+            </div>
+            <div class="stat-value">3</div>
+            <div class="stat-label">Hadi Favorit</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       SECTION 7 — LIST ITEMS
+       ══════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-label">Components · 07</div>
+    <div class="section-title-lg">List Items</div>
+
+    <div class="list-item">
+      <div class="list-thumb">صَلِّ</div>
+      <div class="list-body">
+        <div class="list-title">Shalawat Ibtida'</div>
+        <div class="list-sub">Diwan · 7 bait</div>
+      </div>
+      <div class="list-right">
+        <div class="time-pill" style="font-size:11px;height:26px;">Bab 1</div>
+      </div>
+    </div>
+    <div class="list-item">
+      <div class="list-thumb" style="background:var(--clr-dark);">
+        <span style="color:#CAFF00;font-family:'Noto Sans Arabic',serif;">نَبِيّ</span>
+      </div>
+      <div class="list-body">
+        <div class="list-title">Shalawat Nadhom</div>
+        <div class="list-sub">Diwan · 12 bait</div>
+      </div>
+      <div class="list-right">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--clr-primary);display:flex;align-items:center;justify-content:center;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="#111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+    </div>
+    <div class="list-item">
+      <div class="list-thumb" style="background:var(--clr-primary);">
+        <span style="color:#111;font-family:'Noto Sans Arabic',serif;font-size:16px;">مَدَح</span>
+      </div>
+      <div class="list-body">
+        <div class="list-title">Shalawat Madaih</div>
+        <div class="list-sub">Diba'i · 9 bait · <span style="color:var(--clr-success);font-weight:600;">Selesai</span></div>
+      </div>
+      <div class="list-right">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="var(--clr-success)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       SECTION 8 — NAVIGATION
+       ══════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-label">Components · 08</div>
+    <div class="section-title-lg">Navigation</div>
+
+    <div style="font-size:13px;font-weight:700;color:#999;margin-bottom:12px;">Bottom Navigation Bar</div>
+    <div class="bottom-nav-demo">
+
+      <div class="nav-item nav-active">
+        <div class="nav-pill-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 12L12 4l9 8v9a1 1 0 01-1 1h-5v-5h-6v5H4a1 1 0 01-1-1v-9z" fill="#111"/></svg>
+          <div class="nav-active-pill"></div>
+        </div>
+        <span class="nav-label">Beranda</span>
+      </div>
+
+      <div class="nav-item nav-inactive">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="#ccc" stroke-width="1.8" fill="none"/><path d="M21 21l-4-4" stroke="#ccc" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span class="nav-label">Cari</span>
+      </div>
+
+      <div class="nav-item nav-inactive">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="#ccc" stroke-width="1.8" fill="none"/><path d="M7 8h10M7 12h7" stroke="#ccc" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span class="nav-label">Kitab</span>
+      </div>
+
+      <div class="nav-item nav-inactive">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M5 3h14a1 1 0 011 1v17l-8-4-8 4V4a1 1 0 011-1z" stroke="#ccc" stroke-width="1.8" fill="none" stroke-linejoin="round"/></svg>
+        <span class="nav-label">Bookmark</span>
+      </div>
+
+      <div class="nav-item nav-inactive">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="9" r="4" stroke="#ccc" stroke-width="1.8" fill="none"/><path d="M4 21c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="#ccc" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg>
+        <span class="nav-label">Profil</span>
+      </div>
+
+    </div>
+
+    <div class="divider"></div>
+
+    <div style="font-size:13px;font-weight:700;color:#999;margin-bottom:12px;">App Bar / Header</div>
+    <div style="background:var(--clr-bg);border-radius:var(--radius-lg);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border:1.5px solid var(--clr-border);">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--clr-primary);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#111;">A</div>
+        <div>
+          <div style="font-size:11px;color:var(--clr-muted);font-weight:500;">Selamat Datang 👋</div>
+          <div style="font-size:14px;font-weight:800;">Ahmad Jamil</div>
+        </div>
+      </div>
+      <button class="btn-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 22a2 2 0 001.995-1.85L14 20h-4a2 2 0 001.85 1.995L12 22zm7-5H5l1-1V11a6 6 0 014.033-5.667 2 2 0 013.934 0A6 6 0 0118 11v5l1 1z" fill="#555"/></svg>
+      </button>
+    </div>
+
+    <div class="divider"></div>
+
+    <div style="font-size:13px;font-weight:700;color:#999;margin-bottom:12px;">Back Nav (Detail Page)</div>
+    <div style="background:var(--clr-bg);border-radius:var(--radius-lg);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border:1.5px solid var(--clr-border);">
+      <button class="btn-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="btn-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 22a2 2 0 001.995-1.85L14 20h-4a2 2 0 001.85 1.995L12 22zm7-5H5l1-1V11a6 6 0 014.033-5.667 2 2 0 013.934 0A6 6 0 0118 11v5l1 1z" fill="#555"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       SECTION 9 — FORM INPUTS
+       ══════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-label">Components · 09</div>
+    <div class="section-title-lg">Form Inputs</div>
+
+    <div class="grid-2">
+      <div>
+        <label class="input-label">Default Input</label>
+        <input class="input-field" placeholder="Cari shalawat…" />
+
+        <label class="input-label mt-16">With Icon</label>
+        <div class="input-wrapper">
+          <div class="input-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="#AAA" stroke-width="1.8" fill="none"/><path d="M21 21l-4-4" stroke="#AAA" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </div>
+          <input class="input-field input-with-icon" placeholder="Cari chapter atau bait…" />
+        </div>
+      </div>
+      <div>
+        <label class="input-label">Error State</label>
+        <input class="input-field input-error" value="nama_tidak_valid" />
+        <div class="input-error-msg">Format tidak valid. Gunakan huruf dan angka saja.</div>
+
+        <label class="input-label mt-16">Disabled</label>
+        <input class="input-field" style="background:#F5F5F5;color:#AAA;pointer-events:none;" value="Tidak dapat diubah" disabled />
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       SECTION 10 — ELEVATION / SHADOWS
+       ══════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-label">Foundation · 10</div>
+    <div class="section-title-lg">Elevation & Shadow</div>
+
+    <div class="shadow-demo">
+      <div class="shadow-box" style="box-shadow:var(--shadow-xs);">
+        <div class="shadow-label">xs<br><span style="font-family:monospace;font-size:9px;">0 1px 3px</span></div>
+      </div>
+      <div class="shadow-box" style="box-shadow:var(--shadow-sm);">
+        <div class="shadow-label">sm<br><span style="font-family:monospace;font-size:9px;">0 4px 12px</span></div>
+      </div>
+      <div class="shadow-box" style="box-shadow:var(--shadow-md);">
+        <div class="shadow-label">md<br><span style="font-family:monospace;font-size:9px;">0 8px 24px</span></div>
+      </div>
+      <div class="shadow-box" style="box-shadow:var(--shadow-lg);">
+        <div class="shadow-label">lg<br><span style="font-family:monospace;font-size:9px;">0 16px 40px</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       SECTION 11 — DESIGN TOKENS REFERENCE
+       ══════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-label">Reference · 11</div>
+    <div class="section-title-lg">Flutter Design Token Mapping</div>
+
+    <div style="background:#111;border-radius:var(--radius-lg);padding:24px;font-family:monospace;font-size:13px;color:#9AE6B4;line-height:1.8;overflow-x:auto;">
+      <span style="color:#68D391;">// lib/core/theme/app_colors.dart</span><br>
+      <span style="color:#FBD38D;">static const</span> Color primary     = Color(<span style="color:#CAFF00;background:rgba(202,255,0,0.15);padding:0 3px;border-radius:2px;">0xFFCAFF00</span>);<br>
+      <span style="color:#FBD38D;">static const</span> Color primaryDim   = Color(<span style="color:#A8D900;background:rgba(168,217,0,0.15);padding:0 3px;border-radius:2px;">0xFFA8D900</span>);<br>
+      <span style="color:#FBD38D;">static const</span> Color primarySoft  = Color(<span style="color:#EDFFC0;background:rgba(237,255,192,0.1);padding:0 3px;border-radius:2px;">0xFFEDFFC0</span>);<br>
+      <span style="color:#FBD38D;">static const</span> Color dark         = Color(0xFF111111);<br>
+      <span style="color:#FBD38D;">static const</span> Color surface      = Color(0xFFFFFFFF);<br>
+      <span style="color:#FBD38D;">static const</span> Color background   = Color(0xFFF0F5EE);<br>
+      <span style="color:#FBD38D;">static const</span> Color bgAlt        = Color(0xFFE8F0E6);<br>
+      <span style="color:#FBD38D;">static const</span> Color muted        = Color(0xFF777777);<br>
+      <span style="color:#FBD38D;">static const</span> Color border       = Color(0xFFE2E8DF);<br>
+      <span style="color:#FBD38D;">static const</span> Color error        = Color(0xFFFF4D4F);<br>
+      <span style="color:#FBD38D;">static const</span> Color success      = Color(0xFF22C55E);<br>
+      <br>
+      <span style="color:#68D391;">// lib/core/theme/app_radius.dart</span><br>
+      <span style="color:#FBD38D;">static const</span> double xs   = 6;<br>
+      <span style="color:#FBD38D;">static const</span> double sm   = 10;<br>
+      <span style="color:#FBD38D;">static const</span> double md   = 16;<br>
+      <span style="color:#FBD38D;">static const</span> double lg   = 22;<br>
+      <span style="color:#FBD38D;">static const</span> double xl   = 28;<br>
+      <span style="color:#FBD38D;">static const</span> double pill = 100;<br>
+      <br>
+      <span style="color:#68D391;">// lib/core/theme/app_spacing.dart</span><br>
+      <span style="color:#FBD38D;">static const</span> double sp1  = 4;<br>
+      <span style="color:#FBD38D;">static const</span> double sp2  = 8;<br>
+      <span style="color:#FBD38D;">static const</span> double sp3  = 12;<br>
+      <span style="color:#FBD38D;">static const</span> double sp4  = 16;<br>
+      <span style="color:#FBD38D;">static const</span> double sp5  = 20;<br>
+      <span style="color:#FBD38D;">static const</span> double sp6  = 24;<br>
+      <span style="color:#FBD38D;">static const</span> double sp8  = 32;<br>
+      <span style="color:#FBD38D;">static const</span> double sp10 = 40;<br>
+      <span style="color:#FBD38D;">static const</span> double sp12 = 48;<br>
+      <span style="color:#FBD38D;">static const</span> double sp16 = 64;
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

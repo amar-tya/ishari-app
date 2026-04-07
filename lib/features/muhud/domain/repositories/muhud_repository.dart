@@ -1,0 +1,37 @@
+import 'package:fpdart/fpdart.dart';
+import 'package:ishari/core/errors/failures.dart';
+import 'package:ishari/features/home/domain/entities/chapter_entity.dart';
+import 'package:ishari/features/muhud/domain/entities/bookmarked_verse_entity.dart';
+import 'package:ishari/features/muhud/domain/entities/verse_with_details_entity.dart';
+
+abstract interface class MuhudRepository {
+  /// Returns all chapters ordered by chapter_number.
+  Future<Either<Failure, List<ChapterEntity>>> getAllChapters();
+
+  /// Returns chapter details by id.
+  Future<Either<Failure, ChapterEntity>> getChapterById(int chapterId);
+
+  /// Returns all verses for a given chapter with translations and media.
+  Future<Either<Failure, List<VerseWithDetailsEntity>>> getVersesByChapter(
+    int chapterId,
+  );
+
+  /// Toggles bookmark status for a verse.
+  /// Returns true if bookmarked, false if removed.
+  Future<Either<Failure, bool>> toggleBookmark(
+    int verseId,
+    String userId, {
+    String? note,
+  });
+
+  /// Returns list of bookmarked verse IDs for a user.
+  Future<Either<Failure, List<int>>> getBookmarkedVerseIds(String userId);
+
+  /// Returns full bookmarked verses with chapter info, ordered newest first.
+  Future<Either<Failure, List<BookmarkedVerseEntity>>> getBookmarkedVerses(
+    String userId,
+  );
+
+  /// Updates the note for a bookmarked verse.
+  Future<Either<Failure, void>> updateBookmarkNote(int verseId, String? note);
+}

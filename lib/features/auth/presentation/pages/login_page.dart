@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:ishari/features/splash/presentation/widgets/book_logo_painter.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -20,8 +21,10 @@ class LoginPage extends StatelessWidget {
           );
         },
         builder: (context, state) {
-          final isLoading =
-              state.maybeWhen(loading: () => true, orElse: () => false);
+          final isLoading = state.maybeWhen(
+            loading: () => true,
+            orElse: () => false,
+          );
 
           return SafeArea(
             child: Padding(
@@ -31,31 +34,30 @@ class LoginPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const Spacer(),
-                  const Icon(Icons.water_drop_outlined, size: 80),
+                  const BookLogoWidget(size: 100),
                   const SizedBox(height: 24),
                   Text(
                     'Ishari',
                     textAlign: TextAlign.center,
-                    style:
-                        Theme.of(context).textTheme.headlineLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Sign in to continue',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey,
-                        ),
+                      color: Colors.grey,
+                    ),
                   ),
                   const Spacer(),
                   FilledButton.icon(
                     onPressed: isLoading
                         ? null
-                        : () => context
-                            .read<AuthBloc>()
-                            .add(const AuthEvent.signInWithGoogle()),
+                        : () => context.read<AuthBloc>().add(
+                            const AuthEvent.signInWithGoogle(),
+                          ),
                     icon: isLoading
                         ? const SizedBox(
                             width: 20,

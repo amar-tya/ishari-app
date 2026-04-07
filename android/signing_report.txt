@@ -1,0 +1,57 @@
+> Task :gradle:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :gradle:compileKotlin UP-TO-DATE
+> Task :gradle:compileJava NO-SOURCE
+> Task :gradle:compileGroovy NO-SOURCE
+> Task :gradle:pluginDescriptors UP-TO-DATE
+> Task :gradle:processResources UP-TO-DATE
+> Task :gradle:classes UP-TO-DATE
+> Task :gradle:jar UP-TO-DATE
+
+> Task :app:signingReport
+Variant: debug
+Config: debug
+Store: C:\Users\aamar\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: A2:CE:06:EA:3D:4F:02:6B:30:3B:C8:70:40:56:FC:C2
+SHA1: CA:DE:7E:DA:A9:74:DB:A3:F2:4C:D9:1D:22:A9:E1:8B:06:94:67:54
+SHA-256: 81:01:29:2A:53:9B:03:E2:3B:F4:F0:FF:1A:89:8F:F4:26:63:01:D8:83:52:E3:51:77:5A:6D:E5:08:C3:D5:6A
+Valid until: Sunday, February 1, 2054
+----------
+Variant: release
+Config: debug
+Store: C:\Users\aamar\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: A2:CE:06:EA:3D:4F:02:6B:30:3B:C8:70:40:56:FC:C2
+SHA1: CA:DE:7E:DA:A9:74:DB:A3:F2:4C:D9:1D:22:A9:E1:8B:06:94:67:54
+SHA-256: 81:01:29:2A:53:9B:03:E2:3B:F4:F0:FF:1A:89:8F:F4:26:63:01:D8:83:52:E3:51:77:5A:6D:E5:08:C3:D5:6A
+Valid until: Sunday, February 1, 2054
+----------
+Variant: profile
+Config: debug
+Store: C:\Users\aamar\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: A2:CE:06:EA:3D:4F:02:6B:30:3B:C8:70:40:56:FC:C2
+SHA1: CA:DE:7E:DA:A9:74:DB:A3:F2:4C:D9:1D:22:A9:E1:8B:06:94:67:54
+SHA-256: 81:01:29:2A:53:9B:03:E2:3B:F4:F0:FF:1A:89:8F:F4:26:63:01:D8:83:52:E3:51:77:5A:6D:E5:08:C3:D5:6A
+Valid until: Sunday, February 1, 2054
+----------
+Variant: debugAndroidTest
+Config: debug
+Store: C:\Users\aamar\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: A2:CE:06:EA:3D:4F:02:6B:30:3B:C8:70:40:56:FC:C2
+SHA1: CA:DE:7E:DA:A9:74:DB:A3:F2:4C:D9:1D:22:A9:E1:8B:06:94:67:54
+SHA-256: 81:01:29:2A:53:9B:03:E2:3B:F4:F0:FF:1A:89:8F:F4:26:63:01:D8:83:52:E3:51:77:5A:6D:E5:08:C3:D5:6A
+Valid until: Sunday, February 1, 2054
+----------
+
+[Incubating] Problems report is available at: file:///C:/Users/aamar/Data%20Amar/Project/mobile/ishari-app/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 3s
+5 actionable tasks: 1 executed, 4 up-to-date
