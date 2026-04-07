@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$NotificationModel {
 
- String get id; String get title; String get body; String get type;@JsonKey(name: 'image_url') String? get imageUrl;@JsonKey(name: 'action_url') String? get actionUrl;@JsonKey(name: 'published_at') DateTime get publishedAt;@JsonKey(name: 'expires_at') DateTime? get expiresAt;
+ String get id; String get title; String get body; String get type;@JsonKey(name: 'image_url') String? get imageUrl;@JsonKey(name: 'action_url') String? get actionUrl; String? get content;@JsonKey(name: 'published_at') DateTime get publishedAt;@JsonKey(name: 'expires_at') DateTime? get expiresAt;
 /// Create a copy of NotificationModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $NotificationModelCopyWith<NotificationModel> get copyWith => _$NotificationMode
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is NotificationModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.body, body) || other.body == body)&&(identical(other.type, type) || other.type == type)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.actionUrl, actionUrl) || other.actionUrl == actionUrl)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt)&&(identical(other.expiresAt, expiresAt) || other.expiresAt == expiresAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NotificationModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.body, body) || other.body == body)&&(identical(other.type, type) || other.type == type)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.actionUrl, actionUrl) || other.actionUrl == actionUrl)&&(identical(other.content, content) || other.content == content)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt)&&(identical(other.expiresAt, expiresAt) || other.expiresAt == expiresAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,body,type,imageUrl,actionUrl,publishedAt,expiresAt);
+int get hashCode => Object.hash(runtimeType,id,title,body,type,imageUrl,actionUrl,content,publishedAt,expiresAt);
 
 @override
 String toString() {
-  return 'NotificationModel(id: $id, title: $title, body: $body, type: $type, imageUrl: $imageUrl, actionUrl: $actionUrl, publishedAt: $publishedAt, expiresAt: $expiresAt)';
+  return 'NotificationModel(id: $id, title: $title, body: $body, type: $type, imageUrl: $imageUrl, actionUrl: $actionUrl, content: $content, publishedAt: $publishedAt, expiresAt: $expiresAt)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $NotificationModelCopyWith<$Res>  {
   factory $NotificationModelCopyWith(NotificationModel value, $Res Function(NotificationModel) _then) = _$NotificationModelCopyWithImpl;
 @useResult
 $Res call({
- String id, String title, String body, String type,@JsonKey(name: 'image_url') String? imageUrl,@JsonKey(name: 'action_url') String? actionUrl,@JsonKey(name: 'published_at') DateTime publishedAt,@JsonKey(name: 'expires_at') DateTime? expiresAt
+ String id, String title, String body, String type,@JsonKey(name: 'image_url') String? imageUrl,@JsonKey(name: 'action_url') String? actionUrl, String? content,@JsonKey(name: 'published_at') DateTime publishedAt,@JsonKey(name: 'expires_at') DateTime? expiresAt
 });
 
 
@@ -65,7 +65,7 @@ class _$NotificationModelCopyWithImpl<$Res>
 
 /// Create a copy of NotificationModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? body = null,Object? type = null,Object? imageUrl = freezed,Object? actionUrl = freezed,Object? publishedAt = null,Object? expiresAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? body = null,Object? type = null,Object? imageUrl = freezed,Object? actionUrl = freezed,Object? content = freezed,Object? publishedAt = null,Object? expiresAt = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -73,6 +73,7 @@ as String,body: null == body ? _self.body : body // ignore: cast_nullable_to_non
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as String,imageUrl: freezed == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
 as String?,actionUrl: freezed == actionUrl ? _self.actionUrl : actionUrl // ignore: cast_nullable_to_non_nullable
+as String?,content: freezed == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
 as String?,publishedAt: null == publishedAt ? _self.publishedAt : publishedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,expiresAt: freezed == expiresAt ? _self.expiresAt : expiresAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
@@ -160,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String body,  String type, @JsonKey(name: 'image_url')  String? imageUrl, @JsonKey(name: 'action_url')  String? actionUrl, @JsonKey(name: 'published_at')  DateTime publishedAt, @JsonKey(name: 'expires_at')  DateTime? expiresAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String body,  String type, @JsonKey(name: 'image_url')  String? imageUrl, @JsonKey(name: 'action_url')  String? actionUrl,  String? content, @JsonKey(name: 'published_at')  DateTime publishedAt, @JsonKey(name: 'expires_at')  DateTime? expiresAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _NotificationModel() when $default != null:
-return $default(_that.id,_that.title,_that.body,_that.type,_that.imageUrl,_that.actionUrl,_that.publishedAt,_that.expiresAt);case _:
+return $default(_that.id,_that.title,_that.body,_that.type,_that.imageUrl,_that.actionUrl,_that.content,_that.publishedAt,_that.expiresAt);case _:
   return orElse();
 
 }
@@ -181,10 +182,10 @@ return $default(_that.id,_that.title,_that.body,_that.type,_that.imageUrl,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String body,  String type, @JsonKey(name: 'image_url')  String? imageUrl, @JsonKey(name: 'action_url')  String? actionUrl, @JsonKey(name: 'published_at')  DateTime publishedAt, @JsonKey(name: 'expires_at')  DateTime? expiresAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String body,  String type, @JsonKey(name: 'image_url')  String? imageUrl, @JsonKey(name: 'action_url')  String? actionUrl,  String? content, @JsonKey(name: 'published_at')  DateTime publishedAt, @JsonKey(name: 'expires_at')  DateTime? expiresAt)  $default,) {final _that = this;
 switch (_that) {
 case _NotificationModel():
-return $default(_that.id,_that.title,_that.body,_that.type,_that.imageUrl,_that.actionUrl,_that.publishedAt,_that.expiresAt);case _:
+return $default(_that.id,_that.title,_that.body,_that.type,_that.imageUrl,_that.actionUrl,_that.content,_that.publishedAt,_that.expiresAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +202,10 @@ return $default(_that.id,_that.title,_that.body,_that.type,_that.imageUrl,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String body,  String type, @JsonKey(name: 'image_url')  String? imageUrl, @JsonKey(name: 'action_url')  String? actionUrl, @JsonKey(name: 'published_at')  DateTime publishedAt, @JsonKey(name: 'expires_at')  DateTime? expiresAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String body,  String type, @JsonKey(name: 'image_url')  String? imageUrl, @JsonKey(name: 'action_url')  String? actionUrl,  String? content, @JsonKey(name: 'published_at')  DateTime publishedAt, @JsonKey(name: 'expires_at')  DateTime? expiresAt)?  $default,) {final _that = this;
 switch (_that) {
 case _NotificationModel() when $default != null:
-return $default(_that.id,_that.title,_that.body,_that.type,_that.imageUrl,_that.actionUrl,_that.publishedAt,_that.expiresAt);case _:
+return $default(_that.id,_that.title,_that.body,_that.type,_that.imageUrl,_that.actionUrl,_that.content,_that.publishedAt,_that.expiresAt);case _:
   return null;
 
 }
@@ -216,7 +217,7 @@ return $default(_that.id,_that.title,_that.body,_that.type,_that.imageUrl,_that.
 @JsonSerializable()
 
 class _NotificationModel implements NotificationModel {
-  const _NotificationModel({required this.id, required this.title, required this.body, required this.type, @JsonKey(name: 'image_url') this.imageUrl, @JsonKey(name: 'action_url') this.actionUrl, @JsonKey(name: 'published_at') required this.publishedAt, @JsonKey(name: 'expires_at') this.expiresAt});
+  const _NotificationModel({required this.id, required this.title, required this.body, required this.type, @JsonKey(name: 'image_url') this.imageUrl, @JsonKey(name: 'action_url') this.actionUrl, this.content, @JsonKey(name: 'published_at') required this.publishedAt, @JsonKey(name: 'expires_at') this.expiresAt});
   factory _NotificationModel.fromJson(Map<String, dynamic> json) => _$NotificationModelFromJson(json);
 
 @override final  String id;
@@ -225,6 +226,7 @@ class _NotificationModel implements NotificationModel {
 @override final  String type;
 @override@JsonKey(name: 'image_url') final  String? imageUrl;
 @override@JsonKey(name: 'action_url') final  String? actionUrl;
+@override final  String? content;
 @override@JsonKey(name: 'published_at') final  DateTime publishedAt;
 @override@JsonKey(name: 'expires_at') final  DateTime? expiresAt;
 
@@ -241,16 +243,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _NotificationModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.body, body) || other.body == body)&&(identical(other.type, type) || other.type == type)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.actionUrl, actionUrl) || other.actionUrl == actionUrl)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt)&&(identical(other.expiresAt, expiresAt) || other.expiresAt == expiresAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _NotificationModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.body, body) || other.body == body)&&(identical(other.type, type) || other.type == type)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.actionUrl, actionUrl) || other.actionUrl == actionUrl)&&(identical(other.content, content) || other.content == content)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt)&&(identical(other.expiresAt, expiresAt) || other.expiresAt == expiresAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,body,type,imageUrl,actionUrl,publishedAt,expiresAt);
+int get hashCode => Object.hash(runtimeType,id,title,body,type,imageUrl,actionUrl,content,publishedAt,expiresAt);
 
 @override
 String toString() {
-  return 'NotificationModel(id: $id, title: $title, body: $body, type: $type, imageUrl: $imageUrl, actionUrl: $actionUrl, publishedAt: $publishedAt, expiresAt: $expiresAt)';
+  return 'NotificationModel(id: $id, title: $title, body: $body, type: $type, imageUrl: $imageUrl, actionUrl: $actionUrl, content: $content, publishedAt: $publishedAt, expiresAt: $expiresAt)';
 }
 
 
@@ -261,7 +263,7 @@ abstract mixin class _$NotificationModelCopyWith<$Res> implements $NotificationM
   factory _$NotificationModelCopyWith(_NotificationModel value, $Res Function(_NotificationModel) _then) = __$NotificationModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, String body, String type,@JsonKey(name: 'image_url') String? imageUrl,@JsonKey(name: 'action_url') String? actionUrl,@JsonKey(name: 'published_at') DateTime publishedAt,@JsonKey(name: 'expires_at') DateTime? expiresAt
+ String id, String title, String body, String type,@JsonKey(name: 'image_url') String? imageUrl,@JsonKey(name: 'action_url') String? actionUrl, String? content,@JsonKey(name: 'published_at') DateTime publishedAt,@JsonKey(name: 'expires_at') DateTime? expiresAt
 });
 
 
@@ -278,7 +280,7 @@ class __$NotificationModelCopyWithImpl<$Res>
 
 /// Create a copy of NotificationModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? body = null,Object? type = null,Object? imageUrl = freezed,Object? actionUrl = freezed,Object? publishedAt = null,Object? expiresAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? body = null,Object? type = null,Object? imageUrl = freezed,Object? actionUrl = freezed,Object? content = freezed,Object? publishedAt = null,Object? expiresAt = freezed,}) {
   return _then(_NotificationModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -286,6 +288,7 @@ as String,body: null == body ? _self.body : body // ignore: cast_nullable_to_non
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as String,imageUrl: freezed == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
 as String?,actionUrl: freezed == actionUrl ? _self.actionUrl : actionUrl // ignore: cast_nullable_to_non_nullable
+as String?,content: freezed == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
 as String?,publishedAt: null == publishedAt ? _self.publishedAt : publishedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,expiresAt: freezed == expiresAt ? _self.expiresAt : expiresAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,

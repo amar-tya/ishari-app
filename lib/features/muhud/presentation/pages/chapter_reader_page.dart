@@ -44,7 +44,21 @@ class ChapterReaderPage extends StatelessWidget {
           ),
         ),
       ],
-      child: BlocBuilder<MuhudBloc, MuhudState>(
+      child: BlocConsumer<MuhudBloc, MuhudState>(
+        listenWhen: (prev, curr) =>
+            curr.mapOrNull(
+              loaded: (l) => l.snackbarMessage,
+            ) !=
+            null,
+        listener: (context, state) {
+          final message = state.mapOrNull(loaded: (l) => l.snackbarMessage);
+          if (message != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(message)),
+            );
+            context.read<MuhudBloc>().add(const MuhudEvent.clearSnackbar());
+          }
+        },
         builder: (context, state) {
           return state.when(
             initial: () => const Scaffold(
@@ -70,6 +84,7 @@ class ChapterReaderPage extends StatelessWidget {
                   arabFontSize,
                   transliterationFontSize,
                   translationFontSize,
+                  snackbarMessage,
                 ) =>
                     ChapterReaderBody(
                   chapter: chapter,

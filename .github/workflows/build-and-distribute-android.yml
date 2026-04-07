@@ -39,6 +39,7 @@ jobs:
           ADMOB_NATIVE_UNIT_ID=${{ secrets.ADMOB_NATIVE_UNIT_ID }}
           ADMOB_INTERSTITIAL_UNIT_ID=${{ secrets.ADMOB_INTERSTITIAL_UNIT_ID }}
           ADMOB_TEST_DEVICE_IDS=${{ secrets.ADMOB_TEST_DEVICE_IDS }}
+          SENTRY_DSN=${{ secrets.SENTRY_DSN }}
           EOF
           dart run build_runner build --delete-conflicting-outputs
 

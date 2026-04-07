@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:ishari/core/ads/ad_config.dart';
+import 'package:ishari/core/utils/app_logger.dart';
 
 /// Singleton that manages loading and showing interstitial ads.
 ///
@@ -31,7 +32,7 @@ class InterstitialAdManager {
     _openCount++;
 
     if (_openCount % _showInterval == 0 && _ad != null) {
-      _show(onComplete);
+      unawaited(_show(onComplete));
     } else {
       onComplete();
     }
@@ -52,13 +53,13 @@ class InterstitialAdManager {
         onAdFailedToLoad: (error) {
           _ad = null;
           _isLoading = false;
-          debugPrint('InterstitialAd failed to load: $error');
+          appLogger.w('InterstitialAd failed to load: $error');
         },
       ),
     ));
   }
 
-  void _show(VoidCallback onComplete) {
+  Future<void> _show(VoidCallback onComplete) async {
     final ad = _ad;
     if (ad == null) {
       onComplete();
@@ -71,7 +72,7 @@ class InterstitialAdManager {
         _loadAd();
         onComplete();
       },
-      onAdFailedToShowFullScreenContent: (_, __) {
+      onAdFailedToShowFullScreenContent: (_, _) {
         _ad = null;
         _loadAd();
         onComplete();
@@ -79,11 +80,11 @@ class InterstitialAdManager {
     );
 
     _ad = null;
-    unawaited(ad.show());
+    await ad.show();
   }
 
-  void dispose() {
-    _ad?.dispose();
+  Future<void> dispose() async {
+    await _ad?.dispose();
     _ad = null;
   }
 }

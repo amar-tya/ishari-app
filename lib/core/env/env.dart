@@ -41,4 +41,11 @@ abstract class Env {
 
   @EnviedField(optional: true)
   static final String? admobTestDeviceIds = _Env.admobTestDeviceIds;
+
+  // ---------------------------------------------------------------------------
+  // Sentry
+  // ---------------------------------------------------------------------------
+
+  @EnviedField(optional: true)
+  static final String? sentryDsn = _Env.sentryDsn;
 }

@@ -20,21 +20,39 @@ class HomeHeader extends StatefulWidget {
   State<HomeHeader> createState() => _HomeHeaderState();
 }
 
-class _HomeHeaderState extends State<HomeHeader> {
+class _HomeHeaderState extends State<HomeHeader> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       final bloc = context.read<NotificationsBloc>();
       if (bloc.state.maybeWhen(initial: () => true, orElse: () => false)) {
-        final userId = context.read<AuthBloc>().state.maybeWhen(
-              authenticated: (user) => user.id,
-              orElse: () => null,
-            );
-        bloc.add(NotificationsEvent.load(userId: userId));
+        _loadNotifications();
       }
     });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && mounted) {
+      _loadNotifications();
+    }
+  }
+
+  void _loadNotifications() {
+    final userId = context.read<AuthBloc>().state.maybeWhen(
+          authenticated: (user) => user.id,
+          orElse: () => null,
+        );
+    context.read<NotificationsBloc>().add(NotificationsEvent.load(userId: userId));
   }
 
   @override

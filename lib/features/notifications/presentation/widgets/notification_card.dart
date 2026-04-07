@@ -1,81 +1,97 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ishari/features/notifications/domain/entities/notification_entity.dart';
+import 'package:ishari/features/notifications/presentation/pages/notification_detail_page.dart';
 
 class NotificationCard extends StatelessWidget {
-  const NotificationCard({super.key, required this.notification});
+  const NotificationCard({required this.notification, super.key});
 
   final NotificationEntity notification;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color:
-            notification.isRead ? Colors.white : const Color(0xFFF0FAE8),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: notification.isRead
-              ? const Color(0xFFE8EDE6)
-              : const Color(0xFFCAFF00).withValues(alpha: 0.6),
-        ),
+    return GestureDetector(
+      onTap: () => context.push(
+        NotificationDetailPage.routePath(notification.id),
+        extra: notification,
       ),
-      padding: const EdgeInsets.all(14),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _TypeIcon(type: notification.type),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        notification.title,
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: notification.isRead
-                              ? FontWeight.w600
-                              : FontWeight.w700,
-                          color: const Color(0xFF111111),
-                        ),
-                      ),
-                    ),
-                    if (!notification.isRead)
-                      Container(
-                        width: 6,
-                        height: 6,
-                        margin: const EdgeInsets.only(left: 6, top: 2),
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFFF4D4F),
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  notification.body,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF555555),
-                    height: 1.4,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  _formatDate(notification.publishedAt),
-                  style: const TextStyle(
-                    fontSize: 10,
-                    color: Color(0xFF999999),
-                  ),
-                ),
-              ],
-            ),
+      child: Container(
+        decoration: BoxDecoration(
+          color:
+              notification.isRead ? Colors.white : const Color(0xFFF0FAE8),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: notification.isRead
+                ? const Color(0xFFE8EDE6)
+                : const Color(0xFFCAFF00).withValues(alpha: 0.6),
           ),
-        ],
+        ),
+        padding: const EdgeInsets.all(14),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _TypeIcon(type: notification.type),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          notification.title,
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: notification.isRead
+                                ? FontWeight.w600
+                                : FontWeight.w700,
+                            color: const Color(0xFF111111),
+                          ),
+                        ),
+                      ),
+                      if (!notification.isRead)
+                        Container(
+                          width: 6,
+                          height: 6,
+                          margin: const EdgeInsets.only(left: 6, top: 2),
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFFF4D4F),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      const SizedBox(width: 4),
+                      const Icon(
+                        Icons.chevron_right_rounded,
+                        size: 16,
+                        color: Color(0xFFBBBBBB),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    notification.body,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFF555555),
+                      height: 1.4,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    _formatDate(notification.publishedAt),
+                    style: const TextStyle(
+                      fontSize: 10,
+                      color: Color(0xFF999999),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

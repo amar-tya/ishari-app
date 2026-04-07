@@ -50,9 +50,15 @@ class NotificationsBloc
     );
     state.mapOrNull(
       loaded: (s) {
-        final updated =
-            s.notifications.map((n) => n.copyWith(isRead: true)).toList();
-        emit(s.copyWith(notifications: updated, unreadCount: 0));
+        final idsToMark = event.notificationIds.toSet();
+        final updated = s.notifications.map((n) {
+          if (idsToMark.isEmpty || idsToMark.contains(n.id)) {
+            return n.copyWith(isRead: true);
+          }
+          return n;
+        }).toList();
+        final unreadCount = updated.where((n) => !n.isRead).length;
+        emit(s.copyWith(notifications: updated, unreadCount: unreadCount));
       },
     );
   }

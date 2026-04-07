@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:ishari/core/ads/ad_config.dart';
+import 'package:ishari/core/utils/app_logger.dart';
 
 /// Displays a 320×50 AdMob banner ad styled to match the app's design.
 ///
@@ -35,7 +35,7 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
           if (mounted) setState(() => _isLoaded = true);
         },
         onAdFailedToLoad: (ad, error) {
-          debugPrint('BannerAd failed to load: $error');
+          appLogger.w('BannerAd failed to load: $error');
           ad.dispose();
         },
       ),

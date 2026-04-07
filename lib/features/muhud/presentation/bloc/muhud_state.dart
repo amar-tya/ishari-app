@@ -22,6 +22,8 @@ sealed class MuhudState with _$MuhudState {
     @Default(22.0) double arabFontSize,
     @Default(11.0) double transliterationFontSize,
     @Default(14.0) double translationFontSize,
+    // Transient snackbar message — null means no message to show
+    String? snackbarMessage,
   }) = _Loaded;
 
   const factory MuhudState.error({required String message}) = _Error;

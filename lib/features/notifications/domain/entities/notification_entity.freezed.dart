@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 mixin _$NotificationEntity {
 
  String get id; String get title; String get body; String get type;// 'info' | 'update' | 'warning' | 'promo'
- String? get imageUrl; String? get actionUrl; DateTime get publishedAt; DateTime? get expiresAt; bool get isRead;
+ String? get imageUrl; String? get actionUrl; String? get content; DateTime get publishedAt; DateTime? get expiresAt; bool get isRead;
 /// Create a copy of NotificationEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $NotificationEntityCopyWith<NotificationEntity> get copyWith => _$NotificationEn
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is NotificationEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.body, body) || other.body == body)&&(identical(other.type, type) || other.type == type)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.actionUrl, actionUrl) || other.actionUrl == actionUrl)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt)&&(identical(other.expiresAt, expiresAt) || other.expiresAt == expiresAt)&&(identical(other.isRead, isRead) || other.isRead == isRead));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NotificationEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.body, body) || other.body == body)&&(identical(other.type, type) || other.type == type)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.actionUrl, actionUrl) || other.actionUrl == actionUrl)&&(identical(other.content, content) || other.content == content)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt)&&(identical(other.expiresAt, expiresAt) || other.expiresAt == expiresAt)&&(identical(other.isRead, isRead) || other.isRead == isRead));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,body,type,imageUrl,actionUrl,publishedAt,expiresAt,isRead);
+int get hashCode => Object.hash(runtimeType,id,title,body,type,imageUrl,actionUrl,content,publishedAt,expiresAt,isRead);
 
 @override
 String toString() {
-  return 'NotificationEntity(id: $id, title: $title, body: $body, type: $type, imageUrl: $imageUrl, actionUrl: $actionUrl, publishedAt: $publishedAt, expiresAt: $expiresAt, isRead: $isRead)';
+  return 'NotificationEntity(id: $id, title: $title, body: $body, type: $type, imageUrl: $imageUrl, actionUrl: $actionUrl, content: $content, publishedAt: $publishedAt, expiresAt: $expiresAt, isRead: $isRead)';
 }
 
 
@@ -46,7 +46,7 @@ abstract mixin class $NotificationEntityCopyWith<$Res>  {
   factory $NotificationEntityCopyWith(NotificationEntity value, $Res Function(NotificationEntity) _then) = _$NotificationEntityCopyWithImpl;
 @useResult
 $Res call({
- String id, String title, String body, String type, String? imageUrl, String? actionUrl, DateTime publishedAt, DateTime? expiresAt, bool isRead
+ String id, String title, String body, String type, String? imageUrl, String? actionUrl, String? content, DateTime publishedAt, DateTime? expiresAt, bool isRead
 });
 
 
@@ -63,7 +63,7 @@ class _$NotificationEntityCopyWithImpl<$Res>
 
 /// Create a copy of NotificationEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? body = null,Object? type = null,Object? imageUrl = freezed,Object? actionUrl = freezed,Object? publishedAt = null,Object? expiresAt = freezed,Object? isRead = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? body = null,Object? type = null,Object? imageUrl = freezed,Object? actionUrl = freezed,Object? content = freezed,Object? publishedAt = null,Object? expiresAt = freezed,Object? isRead = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -71,6 +71,7 @@ as String,body: null == body ? _self.body : body // ignore: cast_nullable_to_non
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as String,imageUrl: freezed == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
 as String?,actionUrl: freezed == actionUrl ? _self.actionUrl : actionUrl // ignore: cast_nullable_to_non_nullable
+as String?,content: freezed == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
 as String?,publishedAt: null == publishedAt ? _self.publishedAt : publishedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,expiresAt: freezed == expiresAt ? _self.expiresAt : expiresAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,isRead: null == isRead ? _self.isRead : isRead // ignore: cast_nullable_to_non_nullable
@@ -159,10 +160,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String body,  String type,  String? imageUrl,  String? actionUrl,  DateTime publishedAt,  DateTime? expiresAt,  bool isRead)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String body,  String type,  String? imageUrl,  String? actionUrl,  String? content,  DateTime publishedAt,  DateTime? expiresAt,  bool isRead)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _NotificationEntity() when $default != null:
-return $default(_that.id,_that.title,_that.body,_that.type,_that.imageUrl,_that.actionUrl,_that.publishedAt,_that.expiresAt,_that.isRead);case _:
+return $default(_that.id,_that.title,_that.body,_that.type,_that.imageUrl,_that.actionUrl,_that.content,_that.publishedAt,_that.expiresAt,_that.isRead);case _:
   return orElse();
 
 }
@@ -180,10 +181,10 @@ return $default(_that.id,_that.title,_that.body,_that.type,_that.imageUrl,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String body,  String type,  String? imageUrl,  String? actionUrl,  DateTime publishedAt,  DateTime? expiresAt,  bool isRead)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String body,  String type,  String? imageUrl,  String? actionUrl,  String? content,  DateTime publishedAt,  DateTime? expiresAt,  bool isRead)  $default,) {final _that = this;
 switch (_that) {
 case _NotificationEntity():
-return $default(_that.id,_that.title,_that.body,_that.type,_that.imageUrl,_that.actionUrl,_that.publishedAt,_that.expiresAt,_that.isRead);case _:
+return $default(_that.id,_that.title,_that.body,_that.type,_that.imageUrl,_that.actionUrl,_that.content,_that.publishedAt,_that.expiresAt,_that.isRead);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -200,10 +201,10 @@ return $default(_that.id,_that.title,_that.body,_that.type,_that.imageUrl,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String body,  String type,  String? imageUrl,  String? actionUrl,  DateTime publishedAt,  DateTime? expiresAt,  bool isRead)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String body,  String type,  String? imageUrl,  String? actionUrl,  String? content,  DateTime publishedAt,  DateTime? expiresAt,  bool isRead)?  $default,) {final _that = this;
 switch (_that) {
 case _NotificationEntity() when $default != null:
-return $default(_that.id,_that.title,_that.body,_that.type,_that.imageUrl,_that.actionUrl,_that.publishedAt,_that.expiresAt,_that.isRead);case _:
+return $default(_that.id,_that.title,_that.body,_that.type,_that.imageUrl,_that.actionUrl,_that.content,_that.publishedAt,_that.expiresAt,_that.isRead);case _:
   return null;
 
 }
@@ -215,7 +216,7 @@ return $default(_that.id,_that.title,_that.body,_that.type,_that.imageUrl,_that.
 
 
 class _NotificationEntity implements NotificationEntity {
-  const _NotificationEntity({required this.id, required this.title, required this.body, required this.type, this.imageUrl, this.actionUrl, required this.publishedAt, this.expiresAt, this.isRead = false});
+  const _NotificationEntity({required this.id, required this.title, required this.body, required this.type, this.imageUrl, this.actionUrl, this.content, required this.publishedAt, this.expiresAt, this.isRead = false});
   
 
 @override final  String id;
@@ -225,6 +226,7 @@ class _NotificationEntity implements NotificationEntity {
 // 'info' | 'update' | 'warning' | 'promo'
 @override final  String? imageUrl;
 @override final  String? actionUrl;
+@override final  String? content;
 @override final  DateTime publishedAt;
 @override final  DateTime? expiresAt;
 @override@JsonKey() final  bool isRead;
@@ -239,16 +241,16 @@ _$NotificationEntityCopyWith<_NotificationEntity> get copyWith => __$Notificatio
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _NotificationEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.body, body) || other.body == body)&&(identical(other.type, type) || other.type == type)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.actionUrl, actionUrl) || other.actionUrl == actionUrl)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt)&&(identical(other.expiresAt, expiresAt) || other.expiresAt == expiresAt)&&(identical(other.isRead, isRead) || other.isRead == isRead));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _NotificationEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.body, body) || other.body == body)&&(identical(other.type, type) || other.type == type)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.actionUrl, actionUrl) || other.actionUrl == actionUrl)&&(identical(other.content, content) || other.content == content)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt)&&(identical(other.expiresAt, expiresAt) || other.expiresAt == expiresAt)&&(identical(other.isRead, isRead) || other.isRead == isRead));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,body,type,imageUrl,actionUrl,publishedAt,expiresAt,isRead);
+int get hashCode => Object.hash(runtimeType,id,title,body,type,imageUrl,actionUrl,content,publishedAt,expiresAt,isRead);
 
 @override
 String toString() {
-  return 'NotificationEntity(id: $id, title: $title, body: $body, type: $type, imageUrl: $imageUrl, actionUrl: $actionUrl, publishedAt: $publishedAt, expiresAt: $expiresAt, isRead: $isRead)';
+  return 'NotificationEntity(id: $id, title: $title, body: $body, type: $type, imageUrl: $imageUrl, actionUrl: $actionUrl, content: $content, publishedAt: $publishedAt, expiresAt: $expiresAt, isRead: $isRead)';
 }
 
 
@@ -259,7 +261,7 @@ abstract mixin class _$NotificationEntityCopyWith<$Res> implements $Notification
   factory _$NotificationEntityCopyWith(_NotificationEntity value, $Res Function(_NotificationEntity) _then) = __$NotificationEntityCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, String body, String type, String? imageUrl, String? actionUrl, DateTime publishedAt, DateTime? expiresAt, bool isRead
+ String id, String title, String body, String type, String? imageUrl, String? actionUrl, String? content, DateTime publishedAt, DateTime? expiresAt, bool isRead
 });
 
 
@@ -276,7 +278,7 @@ class __$NotificationEntityCopyWithImpl<$Res>
 
 /// Create a copy of NotificationEntity
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? body = null,Object? type = null,Object? imageUrl = freezed,Object? actionUrl = freezed,Object? publishedAt = null,Object? expiresAt = freezed,Object? isRead = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? body = null,Object? type = null,Object? imageUrl = freezed,Object? actionUrl = freezed,Object? content = freezed,Object? publishedAt = null,Object? expiresAt = freezed,Object? isRead = null,}) {
   return _then(_NotificationEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -284,6 +286,7 @@ as String,body: null == body ? _self.body : body // ignore: cast_nullable_to_non
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as String,imageUrl: freezed == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
 as String?,actionUrl: freezed == actionUrl ? _self.actionUrl : actionUrl // ignore: cast_nullable_to_non_nullable
+as String?,content: freezed == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
 as String?,publishedAt: null == publishedAt ? _self.publishedAt : publishedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,expiresAt: freezed == expiresAt ? _self.expiresAt : expiresAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,isRead: null == isRead ? _self.isRead : isRead // ignore: cast_nullable_to_non_nullable

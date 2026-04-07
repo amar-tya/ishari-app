@@ -316,6 +316,18 @@ class _BookmarkTabBodyState extends State<_BookmarkTabBody> {
                                 color: _kMuted,
                               ),
                             ),
+                            const SizedBox(height: 16),
+                            TextButton(
+                              onPressed: () {
+                                final userId = _getUserId();
+                                if (userId != null) {
+                                  context.read<BookmarkBloc>().add(
+                                    BookmarkEvent.load(userId: userId),
+                                  );
+                                }
+                              },
+                              child: const Text('Coba Lagi'),
+                            ),
                           ],
                         ),
                       ),

@@ -21,7 +21,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
   @override
   void initState() {
     super.initState();
-    // Guest: update last_seen_at immediately on page open, regardless of load state
+    // Guest: update last_seen_at immediately on page open, regardless of load
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       final isGuest = context.read<AuthBloc>().state.maybeWhen(
@@ -31,7 +31,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
       if (isGuest && !_hasMarkedSeen) {
         _hasMarkedSeen = true;
         context.read<NotificationsBloc>().add(
-              const NotificationsEvent.markAllRead(userId: null),
+              const NotificationsEvent.markAllRead(),
             );
       }
     });
@@ -72,7 +72,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
         elevation: 0,
         surfaceTintColor: Colors.transparent,
         title: const Text(
-          'Pesan dari Developer',
+          'Notifikasi',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w700,

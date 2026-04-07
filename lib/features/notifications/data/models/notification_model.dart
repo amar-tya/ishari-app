@@ -13,6 +13,7 @@ abstract class NotificationModel with _$NotificationModel {
     required String type,
     @JsonKey(name: 'image_url') String? imageUrl,
     @JsonKey(name: 'action_url') String? actionUrl,
+    String? content,
     @JsonKey(name: 'published_at') required DateTime publishedAt,
     @JsonKey(name: 'expires_at') DateTime? expiresAt,
   }) = _NotificationModel;
@@ -29,6 +30,7 @@ extension NotificationModelX on NotificationModel {
         type: type,
         imageUrl: imageUrl,
         actionUrl: actionUrl,
+        content: content,
         publishedAt: publishedAt,
         expiresAt: expiresAt,
         isRead: isRead,

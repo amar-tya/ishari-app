@@ -82,7 +82,9 @@
       "Bash(powershell.exe:*)",
       "Bash(grep:*)",
       "Bash(scripts/use_dev.bat:*)",
-      "mcp__Supabase__apply_migration"
+      "mcp__Supabase__apply_migration",
+      "Bash(git ls-files:*)",
+      "Bash(git log:*)"
     ]
   }
 }

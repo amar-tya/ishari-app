@@ -1,10 +1,8 @@
-import 'dart:developer' as developer;
-
-import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:injectable/injectable.dart';
 import 'package:ishari/core/env/app_env.dart';
 import 'package:ishari/core/errors/exceptions.dart';
+import 'package:ishari/core/utils/app_logger.dart';
 import 'package:ishari/features/auth/data/models/user_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -40,11 +38,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<UserModel> signInWithGoogle() async {
     try {
-      developer.log('[GoogleSignIn] Starting signIn...', name: 'auth');
+      appLogger.d('[GoogleSignIn] Starting signIn...');
 
       // Step 1: Open the Google account picker dialog
       final googleUser = await _googleSignIn.signIn();
-      developer.log('[GoogleSignIn] googleUser: $googleUser', name: 'auth');
 
       if (googleUser == null) {
         throw const ServerException(
@@ -53,23 +50,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       }
 
       // Step 2: Ambil authentication (idToken & accessToken)
-      developer.log(
-        '[GoogleSignIn] Fetching authentication tokens...',
-        name: 'auth',
-      );
       final googleAuth = await googleUser.authentication;
 
       final idToken = googleAuth.idToken;
       final accessToken = googleAuth.accessToken;
-
-      developer.log(
-        '[GoogleSignIn] idToken: ${idToken != null ? 'ada' : 'NULL'}',
-        name: 'auth',
-      );
-      developer.log(
-        '[GoogleSignIn] accessToken: ${accessToken != null ? 'ada' : 'NULL'}',
-        name: 'auth',
-      );
 
       if (idToken == null) {
         throw const ServerException(
@@ -79,10 +63,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       }
 
       // Step 3: Exchange Google tokens with Supabase
-      developer.log(
-        '[GoogleSignIn] Signing in to Supabase with idToken...',
-        name: 'auth',
-      );
       final response = await _supabaseClient.auth.signInWithIdToken(
         provider: OAuthProvider.google,
         idToken: idToken,
@@ -90,10 +70,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
 
       final user = response.user;
-      developer.log(
-        '[GoogleSignIn] Supabase user: ${user?.email}',
-        name: 'auth',
-      );
 
       if (user == null) {
         throw const ServerException(
@@ -105,8 +81,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } on ServerException {
       rethrow;
     } catch (e, stackTrace) {
-      debugPrint('[GoogleSignIn] ERROR: $e');
-      debugPrint('[GoogleSignIn] StackTrace: $stackTrace');
+      appLogger.e('[GoogleSignIn] ERROR', error: e, stackTrace: stackTrace);
       throw ServerException(message: e.toString());
     }
   }

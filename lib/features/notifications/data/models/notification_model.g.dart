@@ -14,6 +14,7 @@ _NotificationModel _$NotificationModelFromJson(Map<String, dynamic> json) =>
       type: json['type'] as String,
       imageUrl: json['image_url'] as String?,
       actionUrl: json['action_url'] as String?,
+      content: json['content'] as String?,
       publishedAt: DateTime.parse(json['published_at'] as String),
       expiresAt: json['expires_at'] == null
           ? null
@@ -28,6 +29,7 @@ Map<String, dynamic> _$NotificationModelToJson(_NotificationModel instance) =>
       'type': instance.type,
       'image_url': instance.imageUrl,
       'action_url': instance.actionUrl,
+      'content': instance.content,
       'published_at': instance.publishedAt.toIso8601String(),
       'expires_at': instance.expiresAt?.toIso8601String(),
     };
