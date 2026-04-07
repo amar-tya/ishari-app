@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   Native ad layout for AdMob NativeAdView.
-  Widget IDs must match the setters called in NativeAdCard Dart widget.
+  Widget IDs must match the setters called in NativeAdFactoryImpl.kt.
 -->
 <com.google.android.gms.ads.nativead.NativeAdView
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -13,6 +13,66 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="12dp">
+
+        <!-- Full-width media area for image/video (min 120x120dp required by AdMob) -->
+        <com.google.android.gms.ads.nativead.MediaView
+            android:id="@+id/ad_media"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- App icon + headline + body row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+
+            <ImageView
+                android:id="@+id/ad_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="8dp"
+                android:scaleType="fitCenter"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/ad_headline"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:textColor="#111111"
+                    android:maxLines="2"/>
+
+                <TextView
+                    android:id="@+id/ad_body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="9sp"
+                    android:textColor="#777777"
+                    android:maxLines="2"
+                    android:layout_marginTop="2dp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- CTA button -->
+        <Button
+            android:id="@+id/ad_call_to_action"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:textColor="#111111"
+            android:backgroundTint="#CAFF00"
+            android:layout_marginBottom="6dp"/>
 
         <!-- Ad attribution label -->
         <TextView
@@ -26,46 +86,7 @@
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
             android:paddingTop="2dp"
-            android:paddingBottom="2dp"
-            android:layout_marginBottom="6dp"/>
-
-        <!-- App icon -->
-        <com.google.android.gms.ads.nativead.MediaView
-            android:id="@+id/ad_media"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginBottom="6dp"/>
-
-        <!-- Headline -->
-        <TextView
-            android:id="@+id/ad_headline"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="11sp"
-            android:textStyle="bold"
-            android:textColor="#111111"
-            android:maxLines="2"/>
-
-        <!-- Body text -->
-        <TextView
-            android:id="@+id/ad_body"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="9sp"
-            android:textColor="#777777"
-            android:maxLines="2"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="8dp"/>
-
-        <!-- CTA button -->
-        <Button
-            android:id="@+id/ad_call_to_action"
-            android:layout_width="match_parent"
-            android:layout_height="32dp"
-            android:textSize="10sp"
-            android:textStyle="bold"
-            android:textColor="#111111"
-            android:backgroundTint="#CAFF00"/>
+            android:paddingBottom="2dp"/>
 
     </LinearLayout>
 

@@ -221,9 +221,11 @@ class _LoadedView extends StatelessWidget {
                       HomeHeader(user: isGuest ? null : user),
                       const SizedBox(height: 18),
                       const HomeHero(),
+                      // const SizedBox(height: 14),
+                      // const BannerAdWidget(),
                       const SizedBox(height: 14),
                       CategoryChips(selectedCategory: selectedCategory),
-                      const BannerAdWidget(),
+                      const SizedBox(height: 14),
                       ChapterMasonryGrid(
                         chapters: chapters,
                         onChapterTap: (chapter) {
@@ -235,6 +237,7 @@ class _LoadedView extends StatelessWidget {
                           }
                         },
                       ),
+                      const BannerAdWidget(),
                       SizedBox(
                         height: MediaQuery.of(context).padding.bottom + 8,
                       ),

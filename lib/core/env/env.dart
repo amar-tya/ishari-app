@@ -39,6 +39,6 @@ abstract class Env {
   @EnviedField()
   static final String admobInterstitialUnitId = _Env.admobInterstitialUnitId;
 
-  @EnviedField(defaultValue: '')
-  static final String admobTestDeviceIds = _Env.admobTestDeviceIds;
+  @EnviedField(optional: true)
+  static final String? admobTestDeviceIds = _Env.admobTestDeviceIds;
 }

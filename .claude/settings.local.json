@@ -80,7 +80,9 @@
       "Bash(console.log:*)",
       "Bash(EOF:*)",
       "Bash(powershell.exe:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(scripts/use_dev.bat:*)",
+      "mcp__Supabase__apply_migration"
     ]
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:ishari/core/ads/ad_config.dart';
@@ -39,7 +41,7 @@ class InterstitialAdManager {
     if (_isLoading) return;
     _isLoading = true;
 
-    InterstitialAd.load(
+    unawaited(InterstitialAd.load(
       adUnitId: AdConfig.interstitialUnitId,
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
@@ -53,7 +55,7 @@ class InterstitialAdManager {
           debugPrint('InterstitialAd failed to load: $error');
         },
       ),
-    );
+    ));
   }
 
   void _show(VoidCallback onComplete) {
@@ -77,7 +79,7 @@ class InterstitialAdManager {
     );
 
     _ad = null;
-    ad.show();
+    unawaited(ad.show());
   }
 
   void dispose() {

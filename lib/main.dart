@@ -5,6 +5,7 @@ import 'package:ishari/core/ads/interstitial_ad_manager.dart';
 import 'package:ishari/core/env/app_env.dart';
 import 'package:ishari/core/router/app_router.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:ishari/features/notifications/presentation/bloc/notifications_bloc.dart';
 import 'package:ishari/injection_container.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
@@ -52,8 +53,16 @@ class IshariApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<AuthBloc>(
-      create: (_) => sl<AuthBloc>()..add(const AuthEvent.checkAuthStatus()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthBloc>(
+          create: (_) =>
+              sl<AuthBloc>()..add(const AuthEvent.checkAuthStatus()),
+        ),
+        BlocProvider<NotificationsBloc>.value(
+          value: sl<NotificationsBloc>(),
+        ),
+      ],
       child: Builder(
         builder: (context) {
           final router = createRouter(context.read<AuthBloc>());
