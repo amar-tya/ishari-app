@@ -9,10 +9,10 @@ abstract class NotificationEntity with _$NotificationEntity {
     required String title,
     required String body,
     required String type, // 'info' | 'update' | 'warning' | 'promo'
+    required DateTime publishedAt,
     String? imageUrl,
     String? actionUrl,
     String? content,
-    required DateTime publishedAt,
     DateTime? expiresAt,
     @Default(false) bool isRead,
   }) = _NotificationEntity;

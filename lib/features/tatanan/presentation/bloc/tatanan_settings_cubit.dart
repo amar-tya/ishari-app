@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -31,7 +33,7 @@ class TatananSettingsState {
 
 class TatananSettingsCubit extends Cubit<TatananSettingsState> {
   TatananSettingsCubit() : super(const TatananSettingsState()) {
-    _load();
+    unawaited(_load());
   }
 
   static const _kArab = 'tatanan_arab_font_size';
@@ -63,10 +65,10 @@ class TatananSettingsCubit extends Cubit<TatananSettingsState> {
   }
 
   void resetFontSizes() {
-    emit(state.copyWith(arabFontSize: 20.0, transliterationFontSize: 12.0));
-    SharedPreferences.getInstance().then((prefs) {
-      prefs.setDouble(_kArab, 20.0);
-      prefs.setDouble(_kTranslit, 12.0);
-    });
+    emit(state.copyWith(arabFontSize: 20, transliterationFontSize: 12));
+    unawaited(SharedPreferences.getInstance().then((prefs) async {
+      await prefs.setDouble(_kArab, 20);
+      await prefs.setDouble(_kTranslit, 12);
+    }));
   }
 }

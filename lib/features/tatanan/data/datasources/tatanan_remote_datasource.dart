@@ -111,12 +111,12 @@ class TatananRemoteDataSourceImpl implements TatananRemoteDataSource {
             'user_id': userId,
             'chapter_id': chapterId,
             'name': name,
-            if (description != null) 'description': description,
+            'description': ?description,
           })
           .select('id')
           .single();
 
-      return (data)['id'] as String;
+      return data['id'] as String;
     } catch (e) {
       throw ServerException(message: e.toString());
     }

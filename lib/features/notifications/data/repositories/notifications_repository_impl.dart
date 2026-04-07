@@ -89,7 +89,7 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
         DateTime.now().toIso8601String(),
       );
       return right(unit);
-    } catch (_) {
+    } on Exception catch (_) {
       return left(const CacheFailure());
     }
   }

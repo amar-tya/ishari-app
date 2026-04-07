@@ -6,12 +6,12 @@ class TatananModel {
     required this.userId,
     required this.chapterId,
     required this.name,
-    this.description,
     required this.createdAt,
     required this.updatedAt,
     required this.verseCount,
     required this.chapterTitle,
     required this.category,
+    this.description,
     this.chapterNumber,
   });
 

@@ -29,11 +29,7 @@ class NotificationsRemoteDatasourceImpl
           .select()
           .eq('is_active', true)
           .order('published_at', ascending: false);
-      return data
-          .map(
-            (json) => NotificationModel.fromJson(json),
-          )
-          .toList();
+      return data.map(NotificationModel.fromJson).toList();
     } catch (e) {
       throw ServerException(message: e.toString());
     }

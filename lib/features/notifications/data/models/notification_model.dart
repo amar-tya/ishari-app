@@ -11,10 +11,10 @@ abstract class NotificationModel with _$NotificationModel {
     required String title,
     required String body,
     required String type,
+    @JsonKey(name: 'published_at') required DateTime publishedAt,
     @JsonKey(name: 'image_url') String? imageUrl,
     @JsonKey(name: 'action_url') String? actionUrl,
     String? content,
-    @JsonKey(name: 'published_at') required DateTime publishedAt,
     @JsonKey(name: 'expires_at') DateTime? expiresAt,
   }) = _NotificationModel;
 

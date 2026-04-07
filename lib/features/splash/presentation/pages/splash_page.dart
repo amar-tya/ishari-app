@@ -81,8 +81,8 @@ class _SplashPageState extends State<SplashPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const BookLogoWidget(size: 96),
-                  const SizedBox(height: 28),
+                  BookLogoWidget(size: 96),
+                  SizedBox(height: 28),
                   IntrinsicWidth(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,

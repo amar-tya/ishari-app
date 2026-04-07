@@ -29,7 +29,6 @@ class BookLogoWidget extends StatelessWidget {
       _asset,
       width: size,
       height: size,
-      fit: BoxFit.contain,
     );
   }
 }
