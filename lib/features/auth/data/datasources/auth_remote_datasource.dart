@@ -33,7 +33,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   late final Future<void> _initializationFuture =
       GoogleSignIn.instance.initialize(
     serverClientId: AppEnv.googleWebClientId,
-    scopes: ['email', 'profile'],
   );
 
   @override
@@ -45,19 +44,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       await _initializationFuture;
 
       // Step 1: Open the Google account picker dialog
-      final googleUser = await GoogleSignIn.instance.signIn();
+      // authenticate() throws GoogleSignInException on cancel/failure (no null return)
+      final googleUser = await GoogleSignIn.instance.authenticate();
 
-      if (googleUser == null) {
-        throw const ServerException(
-          message: 'Google Sign-In cancelled by user',
-        );
-      }
-
-      // Step 2: Ambil authentication (idToken & accessToken)
-      final googleAuth = await googleUser.authentication;
+      // Step 2: Ambil authentication (idToken) — synchronous in v7
+      final googleAuth = googleUser.authentication;
 
       final idToken = googleAuth.idToken;
-      final accessToken = googleAuth.accessToken;
+      // accessToken moved to authorizationClient in v7 — not needed for Supabase idToken exchange
 
       if (idToken == null) {
         throw const ServerException(
@@ -70,7 +64,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final response = await _supabaseClient.auth.signInWithIdToken(
         provider: OAuthProvider.google,
         idToken: idToken,
-        accessToken: accessToken,
       );
 
       final user = response.user;

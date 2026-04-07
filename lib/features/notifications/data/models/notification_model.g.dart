@@ -12,10 +12,10 @@ _NotificationModel _$NotificationModelFromJson(Map<String, dynamic> json) =>
       title: json['title'] as String,
       body: json['body'] as String,
       type: json['type'] as String,
+      publishedAt: DateTime.parse(json['published_at'] as String),
       imageUrl: json['image_url'] as String?,
       actionUrl: json['action_url'] as String?,
       content: json['content'] as String?,
-      publishedAt: DateTime.parse(json['published_at'] as String),
       expiresAt: json['expires_at'] == null
           ? null
           : DateTime.parse(json['expires_at'] as String),
@@ -27,9 +27,9 @@ Map<String, dynamic> _$NotificationModelToJson(_NotificationModel instance) =>
       'title': instance.title,
       'body': instance.body,
       'type': instance.type,
+      'published_at': instance.publishedAt.toIso8601String(),
       'image_url': instance.imageUrl,
       'action_url': instance.actionUrl,
       'content': instance.content,
-      'published_at': instance.publishedAt.toIso8601String(),
       'expires_at': instance.expiresAt?.toIso8601String(),
     };

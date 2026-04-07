@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TatananEntity {
 
- String get id; String get userId; int get chapterId; String get name; String? get description; DateTime get createdAt; DateTime get updatedAt; int get verseCount; String get chapterTitle; String get category; int? get chapterNumber;
+ String get id; String get userId; int get chapterId; String get name; DateTime get createdAt; DateTime get updatedAt; String? get description; int get verseCount; String get chapterTitle; String get category; int? get chapterNumber;
 /// Create a copy of TatananEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $TatananEntityCopyWith<TatananEntity> get copyWith => _$TatananEntityCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TatananEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.chapterId, chapterId) || other.chapterId == chapterId)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.verseCount, verseCount) || other.verseCount == verseCount)&&(identical(other.chapterTitle, chapterTitle) || other.chapterTitle == chapterTitle)&&(identical(other.category, category) || other.category == category)&&(identical(other.chapterNumber, chapterNumber) || other.chapterNumber == chapterNumber));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TatananEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.chapterId, chapterId) || other.chapterId == chapterId)&&(identical(other.name, name) || other.name == name)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.description, description) || other.description == description)&&(identical(other.verseCount, verseCount) || other.verseCount == verseCount)&&(identical(other.chapterTitle, chapterTitle) || other.chapterTitle == chapterTitle)&&(identical(other.category, category) || other.category == category)&&(identical(other.chapterNumber, chapterNumber) || other.chapterNumber == chapterNumber));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,userId,chapterId,name,description,createdAt,updatedAt,verseCount,chapterTitle,category,chapterNumber);
+int get hashCode => Object.hash(runtimeType,id,userId,chapterId,name,createdAt,updatedAt,description,verseCount,chapterTitle,category,chapterNumber);
 
 @override
 String toString() {
-  return 'TatananEntity(id: $id, userId: $userId, chapterId: $chapterId, name: $name, description: $description, createdAt: $createdAt, updatedAt: $updatedAt, verseCount: $verseCount, chapterTitle: $chapterTitle, category: $category, chapterNumber: $chapterNumber)';
+  return 'TatananEntity(id: $id, userId: $userId, chapterId: $chapterId, name: $name, createdAt: $createdAt, updatedAt: $updatedAt, description: $description, verseCount: $verseCount, chapterTitle: $chapterTitle, category: $category, chapterNumber: $chapterNumber)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $TatananEntityCopyWith<$Res>  {
   factory $TatananEntityCopyWith(TatananEntity value, $Res Function(TatananEntity) _then) = _$TatananEntityCopyWithImpl;
 @useResult
 $Res call({
- String id, String userId, int chapterId, String name, String? description, DateTime createdAt, DateTime updatedAt, int verseCount, String chapterTitle, String category, int? chapterNumber
+ String id, String userId, int chapterId, String name, DateTime createdAt, DateTime updatedAt, String? description, int verseCount, String chapterTitle, String category, int? chapterNumber
 });
 
 
@@ -62,16 +62,16 @@ class _$TatananEntityCopyWithImpl<$Res>
 
 /// Create a copy of TatananEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userId = null,Object? chapterId = null,Object? name = null,Object? description = freezed,Object? createdAt = null,Object? updatedAt = null,Object? verseCount = null,Object? chapterTitle = null,Object? category = null,Object? chapterNumber = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userId = null,Object? chapterId = null,Object? name = null,Object? createdAt = null,Object? updatedAt = null,Object? description = freezed,Object? verseCount = null,Object? chapterTitle = null,Object? category = null,Object? chapterNumber = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,chapterId: null == chapterId ? _self.chapterId : chapterId // ignore: cast_nullable_to_non_nullable
 as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
-as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as DateTime,verseCount: null == verseCount ? _self.verseCount : verseCount // ignore: cast_nullable_to_non_nullable
+as DateTime,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String?,verseCount: null == verseCount ? _self.verseCount : verseCount // ignore: cast_nullable_to_non_nullable
 as int,chapterTitle: null == chapterTitle ? _self.chapterTitle : chapterTitle // ignore: cast_nullable_to_non_nullable
 as String,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
 as String,chapterNumber: freezed == chapterNumber ? _self.chapterNumber : chapterNumber // ignore: cast_nullable_to_non_nullable
@@ -160,10 +160,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String userId,  int chapterId,  String name,  String? description,  DateTime createdAt,  DateTime updatedAt,  int verseCount,  String chapterTitle,  String category,  int? chapterNumber)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String userId,  int chapterId,  String name,  DateTime createdAt,  DateTime updatedAt,  String? description,  int verseCount,  String chapterTitle,  String category,  int? chapterNumber)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TatananEntity() when $default != null:
-return $default(_that.id,_that.userId,_that.chapterId,_that.name,_that.description,_that.createdAt,_that.updatedAt,_that.verseCount,_that.chapterTitle,_that.category,_that.chapterNumber);case _:
+return $default(_that.id,_that.userId,_that.chapterId,_that.name,_that.createdAt,_that.updatedAt,_that.description,_that.verseCount,_that.chapterTitle,_that.category,_that.chapterNumber);case _:
   return orElse();
 
 }
@@ -181,10 +181,10 @@ return $default(_that.id,_that.userId,_that.chapterId,_that.name,_that.descripti
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String userId,  int chapterId,  String name,  String? description,  DateTime createdAt,  DateTime updatedAt,  int verseCount,  String chapterTitle,  String category,  int? chapterNumber)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String userId,  int chapterId,  String name,  DateTime createdAt,  DateTime updatedAt,  String? description,  int verseCount,  String chapterTitle,  String category,  int? chapterNumber)  $default,) {final _that = this;
 switch (_that) {
 case _TatananEntity():
-return $default(_that.id,_that.userId,_that.chapterId,_that.name,_that.description,_that.createdAt,_that.updatedAt,_that.verseCount,_that.chapterTitle,_that.category,_that.chapterNumber);case _:
+return $default(_that.id,_that.userId,_that.chapterId,_that.name,_that.createdAt,_that.updatedAt,_that.description,_that.verseCount,_that.chapterTitle,_that.category,_that.chapterNumber);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +201,10 @@ return $default(_that.id,_that.userId,_that.chapterId,_that.name,_that.descripti
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String userId,  int chapterId,  String name,  String? description,  DateTime createdAt,  DateTime updatedAt,  int verseCount,  String chapterTitle,  String category,  int? chapterNumber)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String userId,  int chapterId,  String name,  DateTime createdAt,  DateTime updatedAt,  String? description,  int verseCount,  String chapterTitle,  String category,  int? chapterNumber)?  $default,) {final _that = this;
 switch (_that) {
 case _TatananEntity() when $default != null:
-return $default(_that.id,_that.userId,_that.chapterId,_that.name,_that.description,_that.createdAt,_that.updatedAt,_that.verseCount,_that.chapterTitle,_that.category,_that.chapterNumber);case _:
+return $default(_that.id,_that.userId,_that.chapterId,_that.name,_that.createdAt,_that.updatedAt,_that.description,_that.verseCount,_that.chapterTitle,_that.category,_that.chapterNumber);case _:
   return null;
 
 }
@@ -216,16 +216,16 @@ return $default(_that.id,_that.userId,_that.chapterId,_that.name,_that.descripti
 
 
 class _TatananEntity implements TatananEntity {
-  const _TatananEntity({required this.id, required this.userId, required this.chapterId, required this.name, this.description, required this.createdAt, required this.updatedAt, this.verseCount = 0, this.chapterTitle = '', this.category = '', this.chapterNumber});
+  const _TatananEntity({required this.id, required this.userId, required this.chapterId, required this.name, required this.createdAt, required this.updatedAt, this.description, this.verseCount = 0, this.chapterTitle = '', this.category = '', this.chapterNumber});
   
 
 @override final  String id;
 @override final  String userId;
 @override final  int chapterId;
 @override final  String name;
-@override final  String? description;
 @override final  DateTime createdAt;
 @override final  DateTime updatedAt;
+@override final  String? description;
 @override@JsonKey() final  int verseCount;
 @override@JsonKey() final  String chapterTitle;
 @override@JsonKey() final  String category;
@@ -241,16 +241,16 @@ _$TatananEntityCopyWith<_TatananEntity> get copyWith => __$TatananEntityCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TatananEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.chapterId, chapterId) || other.chapterId == chapterId)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.verseCount, verseCount) || other.verseCount == verseCount)&&(identical(other.chapterTitle, chapterTitle) || other.chapterTitle == chapterTitle)&&(identical(other.category, category) || other.category == category)&&(identical(other.chapterNumber, chapterNumber) || other.chapterNumber == chapterNumber));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TatananEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.chapterId, chapterId) || other.chapterId == chapterId)&&(identical(other.name, name) || other.name == name)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.description, description) || other.description == description)&&(identical(other.verseCount, verseCount) || other.verseCount == verseCount)&&(identical(other.chapterTitle, chapterTitle) || other.chapterTitle == chapterTitle)&&(identical(other.category, category) || other.category == category)&&(identical(other.chapterNumber, chapterNumber) || other.chapterNumber == chapterNumber));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,userId,chapterId,name,description,createdAt,updatedAt,verseCount,chapterTitle,category,chapterNumber);
+int get hashCode => Object.hash(runtimeType,id,userId,chapterId,name,createdAt,updatedAt,description,verseCount,chapterTitle,category,chapterNumber);
 
 @override
 String toString() {
-  return 'TatananEntity(id: $id, userId: $userId, chapterId: $chapterId, name: $name, description: $description, createdAt: $createdAt, updatedAt: $updatedAt, verseCount: $verseCount, chapterTitle: $chapterTitle, category: $category, chapterNumber: $chapterNumber)';
+  return 'TatananEntity(id: $id, userId: $userId, chapterId: $chapterId, name: $name, createdAt: $createdAt, updatedAt: $updatedAt, description: $description, verseCount: $verseCount, chapterTitle: $chapterTitle, category: $category, chapterNumber: $chapterNumber)';
 }
 
 
@@ -261,7 +261,7 @@ abstract mixin class _$TatananEntityCopyWith<$Res> implements $TatananEntityCopy
   factory _$TatananEntityCopyWith(_TatananEntity value, $Res Function(_TatananEntity) _then) = __$TatananEntityCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String userId, int chapterId, String name, String? description, DateTime createdAt, DateTime updatedAt, int verseCount, String chapterTitle, String category, int? chapterNumber
+ String id, String userId, int chapterId, String name, DateTime createdAt, DateTime updatedAt, String? description, int verseCount, String chapterTitle, String category, int? chapterNumber
 });
 
 
@@ -278,16 +278,16 @@ class __$TatananEntityCopyWithImpl<$Res>
 
 /// Create a copy of TatananEntity
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? userId = null,Object? chapterId = null,Object? name = null,Object? description = freezed,Object? createdAt = null,Object? updatedAt = null,Object? verseCount = null,Object? chapterTitle = null,Object? category = null,Object? chapterNumber = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? userId = null,Object? chapterId = null,Object? name = null,Object? createdAt = null,Object? updatedAt = null,Object? description = freezed,Object? verseCount = null,Object? chapterTitle = null,Object? category = null,Object? chapterNumber = freezed,}) {
   return _then(_TatananEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,chapterId: null == chapterId ? _self.chapterId : chapterId // ignore: cast_nullable_to_non_nullable
 as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
-as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as DateTime,verseCount: null == verseCount ? _self.verseCount : verseCount // ignore: cast_nullable_to_non_nullable
+as DateTime,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String?,verseCount: null == verseCount ? _self.verseCount : verseCount // ignore: cast_nullable_to_non_nullable
 as int,chapterTitle: null == chapterTitle ? _self.chapterTitle : chapterTitle // ignore: cast_nullable_to_non_nullable
 as String,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
 as String,chapterNumber: freezed == chapterNumber ? _self.chapterNumber : chapterNumber // ignore: cast_nullable_to_non_nullable
