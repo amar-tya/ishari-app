@@ -12,6 +12,7 @@ import 'package:ishari/features/notifications/presentation/pages/notification_de
 import 'package:ishari/features/notifications/presentation/pages/notifications_page.dart';
 import 'package:ishari/features/splash/presentation/pages/splash_page.dart';
 import 'package:ishari/features/tatanan/presentation/pages/tatanan_detail_page.dart';
+import 'package:ishari/features/update/presentation/pages/force_update_page.dart';
 
 /// Application router powered by [GoRouter].
 ///
@@ -28,8 +29,9 @@ GoRouter createRouter(AuthBloc authBloc) {
       AppState.isGuestMode,
     ]),
     redirect: (context, state) {
-      // Splash manages its own navigation — never redirect away from it.
+      // Splash and force-update manage their own navigation — never redirect away.
       if (state.matchedLocation == SplashPage.routePath) return null;
+      if (state.matchedLocation == ForceUpdatePage.routePath) return null;
 
       final isAuthenticated = authBloc.state.maybeWhen(
         authenticated: (_) => true,
@@ -73,6 +75,17 @@ GoRouter createRouter(AuthBloc authBloc) {
         builder: (context, state) => TatananDetailPage(
           tatananId: state.pathParameters['tatananId']!,
         ),
+      ),
+      GoRoute(
+        path: ForceUpdatePage.routePath,
+        name: 'force-update',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, String>?;
+          return ForceUpdatePage(
+            storeUrl: extra?['storeUrl'] ?? '',
+            releaseNotes: extra?['releaseNotes'] ?? '',
+          );
+        },
       ),
       GoRoute(
         path: NotificationsPage.routePath,

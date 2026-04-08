@@ -1,22 +1,25 @@
 name: Sync Master to Develop
 
 on:
-  push:
-    branches: [ master ]
-    paths:
-      - 'pubspec.yaml'           # Hanya jalan ketika version bump terjadi
+  workflow_run:
+    workflows: "Build & Distribute Ishari Android"
+    types:
+      - completed
+    branches: [master]
 
 jobs:
   sync-to-develop:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     permissions:
-      contents: write           # Diperlukan agar bisa push ke develop
+      contents: write
+      actions: read
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0        # Penting: ambil seluruh history untuk merge
+          fetch-depth: 0 # Penting: ambil seluruh history untuk merge
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Merge master into develop
@@ -26,7 +29,7 @@ jobs:
 
           echo "→ Checkout develop branch"
           git checkout develop
-          git pull origin develop --ff-only || true
+          git pull origin develop
 
           echo "→ Merging master into develop"
           git merge origin/master --no-ff -m "chore: auto sync develop with master after version bump"

@@ -86,6 +86,12 @@ import 'features/tatanan/presentation/bloc/tatanan_detail/tatanan_detail_bloc.da
     as _i946;
 import 'features/tatanan/presentation/bloc/tatanan_list/tatanan_list_bloc.dart'
     as _i873;
+import 'features/update/data/datasources/update_remote_datasource.dart'
+    as _i354;
+import 'features/update/data/repositories/update_repository_impl.dart' as _i75;
+import 'features/update/domain/repositories/update_repository.dart' as _i549;
+import 'features/update/domain/usecases/check_for_update.dart' as _i289;
+import 'features/update/presentation/cubit/update_cubit.dart' as _i217;
 import 'injection_container.dart' as _i809;
 
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -110,6 +116,12 @@ Future<_i174.GetIt> initDependencies(
   gh.lazySingleton<_i555.NotificationsRemoteDatasource>(
     () => _i555.NotificationsRemoteDatasourceImpl(gh<_i454.SupabaseClient>()),
   );
+  gh.lazySingleton<_i354.UpdateRemoteDataSource>(
+    () => _i354.UpdateRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
+  );
+  gh.lazySingleton<_i549.UpdateRepository>(
+    () => _i75.UpdateRepositoryImpl(gh<_i354.UpdateRemoteDataSource>()),
+  );
   gh.lazySingleton<_i314.MuhudRemoteDataSource>(
     () => _i314.MuhudRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
   );
@@ -119,6 +131,9 @@ Future<_i174.GetIt> initDependencies(
   gh.lazySingleton<_i588.AuthRemoteDataSource>(
     () => _i588.AuthRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
   );
+  gh.lazySingleton<_i289.CheckForUpdate>(
+    () => _i289.CheckForUpdate(gh<_i549.UpdateRepository>()),
+  );
   gh.lazySingleton<_i914.KitabRemoteDataSource>(
     () => _i914.KitabRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
   );
@@ -127,6 +142,9 @@ Future<_i174.GetIt> initDependencies(
   );
   gh.lazySingleton<_i75.NetworkInfo>(
     () => _i75.NetworkInfoImpl(gh<_i161.InternetConnection>()),
+  );
+  gh.lazySingleton<_i217.UpdateCubit>(
+    () => _i217.UpdateCubit(gh<_i289.CheckForUpdate>()),
   );
   gh.lazySingleton<_i1043.AuthLocalDataSource>(
     () => _i1043.AuthLocalDataSourceImpl(gh<_i558.FlutterSecureStorage>()),
