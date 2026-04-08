@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +9,9 @@ import 'package:ishari/features/auth/presentation/pages/home_page.dart';
 import 'package:ishari/features/introduction/presentation/pages/introduction_page.dart';
 import 'package:ishari/features/splash/presentation/widgets/book_logo_painter.dart';
 import 'package:ishari/features/splash/presentation/widgets/loading_bar.dart';
+import 'package:ishari/features/update/presentation/cubit/update_cubit.dart';
+import 'package:ishari/features/update/presentation/pages/force_update_page.dart';
+import 'package:ishari/features/update/presentation/widgets/soft_update_dialog.dart';
 
 const _bg = Color(0xFFF0F5EE);
 const _dark = Color(0xFF111111);
@@ -28,18 +33,22 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage> {
   bool _minTimerElapsed = false;
+  bool _navigating = false;
 
   @override
   void initState() {
     super.initState();
+    // Kick off update check immediately alongside auth check.
+    unawaited(context.read<UpdateCubit>().check());
     Future.delayed(const Duration(milliseconds: 1500), () {
       if (!mounted) return;
       setState(() => _minTimerElapsed = true);
-      _tryNavigate();
+      unawaited(_tryNavigate());
     });
   }
 
-  void _tryNavigate() {
+  Future<void> _tryNavigate() async {
+    if (_navigating) return;
     if (!_minTimerElapsed) return;
     if (!mounted) return;
 
@@ -51,6 +60,30 @@ class _SplashPageState extends State<SplashPage> {
     );
     if (!authResolved) return;
 
+    final updateState = context.read<UpdateCubit>().state;
+    final updateResolved = updateState.maybeWhen(
+      initial: () => false,
+      checking: () => false,
+      orElse: () => true,
+    );
+    if (!updateResolved) return;
+
+    _navigating = true;
+
+    // Force update — user must update before using the app.
+    final isForceUpdate = updateState.maybeWhen(
+      forceUpdate: (storeUrl, releaseNotes) {
+        context.go(
+          ForceUpdatePage.routePath,
+          extra: {'storeUrl': storeUrl, 'releaseNotes': releaseNotes},
+        );
+        return true;
+      },
+      orElse: () => false,
+    );
+    if (isForceUpdate) return;
+
+    // Navigate to auth destination.
     final hasAccess =
         authBloc.state.maybeWhen(
           authenticated: (_) => true,
@@ -59,12 +92,35 @@ class _SplashPageState extends State<SplashPage> {
         AppState.isGuestMode.value;
 
     context.go(hasAccess ? HomePage.routePath : IntroductionPage.routePath);
+
+    // Soft update — show optional dialog after navigation lands.
+    await updateState.maybeWhen(
+      softUpdate: (latestVersion, storeUrl, releaseNotes) async {
+        await Future<void>.delayed(const Duration(milliseconds: 300));
+        if (mounted) {
+          await SoftUpdateDialog.show(
+            context,
+            latestVersion: latestVersion,
+            storeUrl: storeUrl,
+            releaseNotes: releaseNotes,
+          );
+        }
+      },
+      orElse: () async {},
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) => _tryNavigate(),
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<AuthBloc, AuthState>(
+          listener: (context, state) => unawaited(_tryNavigate()),
+        ),
+        BlocListener<UpdateCubit, UpdateState>(
+          listener: (context, state) => unawaited(_tryNavigate()),
+        ),
+      ],
       child: Scaffold(
         backgroundColor: _bg,
         body: Stack(

@@ -6,6 +6,7 @@ import 'package:ishari/core/env/app_env.dart';
 import 'package:ishari/core/router/app_router.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ishari/features/notifications/presentation/bloc/notifications_bloc.dart';
+import 'package:ishari/features/update/presentation/cubit/update_cubit.dart';
 import 'package:ishari/injection_container.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -76,6 +77,9 @@ class IshariApp extends StatelessWidget {
         ),
         BlocProvider<NotificationsBloc>.value(
           value: sl<NotificationsBloc>(),
+        ),
+        BlocProvider<UpdateCubit>.value(
+          value: sl<UpdateCubit>(),
         ),
       ],
       child: Builder(
