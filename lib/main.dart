@@ -8,15 +8,20 @@ import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ishari/features/notifications/presentation/bloc/notifications_bloc.dart';
 import 'package:ishari/features/update/presentation/cubit/update_cubit.dart';
 import 'package:ishari/injection_container.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final packageInfo = await PackageInfo.fromPlatform();
+
   await SentryFlutter.init(
     (options) {
       options
         ..dsn = AppEnv.sentryDsn
+        ..release = '${packageInfo.version}+${packageInfo.buildNumber}'
         ..environment =
             AppEnv.isDevelopment ? 'development' : 'production'
         // Only send events in production to avoid noise during development
@@ -27,7 +32,6 @@ Future<void> main() async {
 }
 
 Future<void> _appRunner() async {
-  WidgetsFlutterBinding.ensureInitialized();
 
   // 1. Validate all required env variables are present.
   AppEnv.validate();
