@@ -34,9 +34,21 @@
 -keep class androidx.credentials.** { *; }
 -dontwarn androidx.credentials.**
 
-# AdMob
+# AdMob / Google Mobile Ads
 -keep class com.google.android.gms.ads.** { *; }
 -dontwarn com.google.android.gms.ads.**
+# AdMob UMP (User Messaging Platform) — required by google_mobile_ads v7+
+-keep class com.google.android.ump.** { *; }
+-dontwarn com.google.android.ump.**
+# GMS measurement / tasks — often stripped but needed by AdMob & Firebase
+-keep class com.google.android.gms.measurement.** { *; }
+-keep class com.google.android.gms.tasks.** { *; }
+-dontwarn com.google.android.gms.measurement.**
+-dontwarn com.google.android.gms.tasks.**
+
+# Firebase
+-keep class com.google.firebase.** { *; }
+-dontwarn com.google.firebase.**
 
 # Sentry
 -keep class io.sentry.** { *; }
