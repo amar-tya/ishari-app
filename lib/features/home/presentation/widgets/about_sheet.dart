@@ -7,7 +7,9 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 const _websiteUrl = 'https://ishari.vercel.app';
-const _privacyUrl = 'https://ishari.vercel.app/privacy';
+const _privacyUrl = 'https://amar-tya.github.io/ishari-legal/PRIVACY_POLICY';
+const _termsUrl = 'https://amar-tya.github.io/ishari-legal/TERMS_AND_CONDITIONS';
+const _delAccountUrl = 'https://amar-tya.github.io/ishari-legal/DELETE_ACCOUNT';
 
 Future<void> showAboutSheet(BuildContext context) {
   return showModalBottomSheet<void>(
@@ -139,6 +141,22 @@ class _AboutSheetState extends State<_AboutSheet> {
             iconBg: const Color(0xFFE8F5E9),
             label: 'Kebijakan Privasi',
             onTap: () => _launch(_privacyUrl),
+          ),
+          const SizedBox(height: 10),
+          _LinkButton(
+            icon: Icons.shield_outlined,
+            iconColor: const Color(0xFF2E7D32),
+            iconBg: const Color(0xFFE8F5E9),
+            label: 'Kebijakan Syarat dan Ketentuan',
+            onTap: () => _launch(_termsUrl),
+          ),
+          const SizedBox(height: 10),
+          _LinkButton(
+            icon: Icons.delete_forever_outlined,
+            iconColor: const Color(0xFFD32F2F),
+            iconBg: const Color(0xFFFBE9E7),
+            label: 'Kebijakan Hapus Data pengguna',
+            onTap: () => _launch(_delAccountUrl),
           ),
         ],
       ),
