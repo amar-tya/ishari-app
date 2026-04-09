@@ -86,9 +86,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (isUserCancel) {
         throw const CanceledSignInException();
       }
-      appLogger.e('[GoogleSignIn] GoogleSignInException', error: e);
-      throw const ServerException(
-        message: 'Gagal login dengan Google. Pastikan koneksi internet dan coba lagi.',
+      appLogger.e('[GoogleSignIn] GoogleSignInException code=${e.code} desc=${e.description}', error: e);
+      // Error code 10 = DEVELOPER_ERROR (SHA-1 not registered or OAuth misconfiguration)
+      // Other codes = possible network or service error
+      throw ServerException(
+        message: 'Gagal login dengan Google (${e.description ?? e.code.name}). '
+            'Jika masalah berlanjut, hubungi pengembang.',
       );
     } catch (e, stackTrace) {
       appLogger.e('[GoogleSignIn] ERROR', error: e, stackTrace: stackTrace);
