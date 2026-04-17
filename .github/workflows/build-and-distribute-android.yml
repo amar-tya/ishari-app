@@ -52,6 +52,9 @@ jobs:
       - name: Detect Commit Message & Bump Version
         id: bump_logic
         run: |
+          # Pull latest master agar version bump selalu dari versi terbaru
+          git pull origin master
+
           # Ambil pesan commit terakhir
           COMMIT_MSG=$(git log -1 --pretty=%B)
           echo "Last commit message: $COMMIT_MSG"
