@@ -89,6 +89,7 @@ jobs:
           git add pubspec.yaml CHANGELOG.md
           # Commit hanya jika ada perubahan
           git commit -m "chore(release): bump version to ${{ env.NEW_VERSION }} [skip ci]" || echo "No changes to commit"
+          git pull --rebase origin master
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
