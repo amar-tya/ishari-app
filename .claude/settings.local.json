@@ -88,7 +88,19 @@
       "mcp__mcp-server-context7__resolve-library-id",
       "mcp__mcp-server-context7__query-docs",
       "Bash(keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android)",
-      "Bash(\"/c/Program Files/Java/jdk-21/bin/keytool.exe\" -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android)"
+      "Bash(\"/c/Program Files/Java/jdk-21/bin/keytool.exe\" -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android)",
+      "mcp__mcp-server-playwright__browser_navigate",
+      "mcp__mcp-server-playwright__browser_take_screenshot",
+      "mcp__mcp-server-playwright__browser_evaluate",
+      "mcp__mcp-server-playwright__browser_snapshot",
+      "Bash(pip install *)",
+      "Bash(graphify --version)",
+      "Bash(graphify --help)",
+      "Bash(graphify install *)",
+      "Bash(graphify claude *)",
+      "Bash(rm -f .graphify_detect.json .graphify_extract.json .graphify_ast.json .graphify_semantic.json .graphify_semantic_new.json .graphify_cached.json .graphify_uncached.txt .graphify_analysis.json .graphify_labels.json)",
+      "Bash(rm -f graphify-out/.graphify_chunk_01.json graphify-out/.graphify_chunk_02.json graphify-out/.graphify_chunk_03.json graphify-out/.graphify_chunk_04.json)",
+      "Bash(graphify update *)"
     ]
   }
 }

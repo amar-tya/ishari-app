@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ishari/core/analytics/analytics_service.dart';
 import 'package:ishari/core/app_state.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ishari/features/auth/presentation/pages/home_page.dart';
@@ -21,9 +22,10 @@ import 'package:ishari/features/update/presentation/pages/force_update_page.dart
 /// - Unauthenticated / non-guest users are sent to [IntroductionPage].
 /// - Authenticated or guest users trying to visit introduction are redirected
 ///   to [HomePage].
-GoRouter createRouter(AuthBloc authBloc) {
+GoRouter createRouter(AuthBloc authBloc, AnalyticsService analytics) {
   return GoRouter(
     initialLocation: SplashPage.routePath,
+    observers: [analytics.observer],
     refreshListenable: Listenable.merge([
       GoRouterAuthRefreshStream(authBloc.stream),
       AppState.isGuestMode,

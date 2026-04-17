@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:ishari/core/analytics/analytics_service.dart';
 import 'package:ishari/core/usecases/usecase.dart';
 import 'package:ishari/features/home/domain/entities/chapter_entity.dart';
 import 'package:ishari/features/home/domain/entities/hadi_entity.dart';
@@ -20,6 +23,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     this._getFeaturedChapter,
     this._getChaptersByCategory,
     this._getHadiList,
+    this._analytics,
   ) : super(const HomeState.initial()) {
     on<_Load>(_onLoad);
     on<_CategorySelected>(_onCategorySelected);
@@ -29,6 +33,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final GetFeaturedChapter _getFeaturedChapter;
   final GetChaptersByCategory _getChaptersByCategory;
   final GetHadiList _getHadiList;
+  final AnalyticsService _analytics;
 
   Future<void> _onLoad(_Load event, Emitter<HomeState> emit) async {
     emit(const HomeState.loading());
@@ -59,6 +64,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             loaded.copyWith(
               chapters: chapters,
               selectedCategory: event.category,
+            ),
+          );
+          unawaited(
+            _analytics.logCategorySelected(
+              category: event.category,
+              listName: 'home_categories',
             ),
           );
         }

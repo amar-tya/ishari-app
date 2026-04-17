@@ -112,6 +112,7 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
           .from('verses')
           .select('*, translations(*), verse_media(*, hadi(*))')
           .eq('chapter_id', chapterId)
+          .isFilter('verse_media.deleted_at', null)
           .order('verse_number', ascending: true);
 
       final result = (data as List<dynamic>).map((item) {

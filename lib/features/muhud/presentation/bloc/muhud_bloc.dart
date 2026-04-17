@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:ishari/core/analytics/analytics_service.dart';
 import 'package:ishari/core/utils/app_logger.dart';
 import 'package:ishari/features/muhud/domain/usecases/get_bookmarked_verse_ids.dart';
 import 'package:ishari/features/muhud/domain/usecases/get_chapter_by_id.dart';
@@ -25,6 +26,7 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
     required this.getBookmarkedVerseIds,
     required this.getChapterById,
     required this.prefs,
+    required this.analytics,
   }) : super(const MuhudState.initial()) {
     on<MuhudEvent>((event, emit) async {
       await event.when(
@@ -34,7 +36,7 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
         toggleBookmark: (verseId, note) async =>
             _onToggleBookmark(verseId, note, emit),
         playVerse: (verseId, hadiId, recitationType, mediaId) =>
-            _onPlayVerse(verseId, mediaId, emit),
+            _onPlayVerse(verseId, mediaId, recitationType.name, emit),
         stopAudio: () => _onStopAudio(emit),
         toggleArabic: () async => _onToggleArabic(emit),
         toggleTransliteration: () async => _onToggleTransliteration(emit),
@@ -56,6 +58,7 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
   final GetBookmarkedVerseIds getBookmarkedVerseIds;
   final GetChapterById getChapterById;
   final SharedPreferences prefs;
+  final AnalyticsService analytics;
 
   final _audioPlayer = AudioPlayer();
   StreamSubscription<PlayerState>? _playerStateSubscription;
@@ -107,6 +110,12 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
                       prefs.getDouble(_kTransliterationFontSize) ?? 11.0,
                   translationFontSize:
                       prefs.getDouble(_kTranslationFontSize) ?? 14.0,
+                ),
+              );
+              unawaited(
+                analytics.logChapterOpened(
+                  chapterId: chapter.id.toString(),
+                  chapterTitle: chapter.title,
                 ),
               );
             },
@@ -185,7 +194,6 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
     final result = await toggleBookmark(verseId, _userId, note: note);
     result.fold(
       (failure) {
-        // Revert optimistic update on failure and notify user
         appLogger.w('[MuhudBloc] Bookmark toggle failed: ${failure.message}');
         state.mapOrNull(
           loaded: (l) {
@@ -204,13 +212,26 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
           },
         );
       },
-      (_) {},
+      (_) {
+        if (!wasBookmarked) {
+          final chapterId =
+              state.mapOrNull(loaded: (l) => l.chapter.id.toString()) ?? '';
+          unawaited(
+            analytics.logVerseBookmarked(
+              chapterId: chapterId,
+              verseId: verseId,
+              hasNote: note != null && note.isNotEmpty,
+            ),
+          );
+        }
+      },
     );
   }
 
   Future<void> _onPlayVerse(
     int verseId,
     int mediaId,
+    String recitationType,
     Emitter<MuhudState> emit,
   ) async {
     final future = state.mapOrNull(
@@ -236,6 +257,13 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
 
           _audioPlayer.play().ignore();
           emit(l.copyWith(playingVerseId: verseId, isAudioLoading: false));
+          unawaited(
+            analytics.logVerseAudioPlayed(
+              chapterId: l.chapter.id.toString(),
+              verseId: verseId,
+              recitationType: recitationType,
+            ),
+          );
         } on Exception catch (e, stackTrace) {
           appLogger.e(
             '[MuhudBloc] Audio playback failed',
