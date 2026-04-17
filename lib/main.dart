@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:ishari/core/ads/interstitial_ad_manager.dart';
 import 'package:ishari/core/analytics/analytics_service.dart';
@@ -28,13 +29,17 @@ Future<void> main() async {
         ..environment =
             AppEnv.isDevelopment ? 'development' : 'production'
         // Only send events in production to avoid noise during development
-        ..tracesSampleRate = AppEnv.isProduction ? 0.2 : 0.0;
+        ..tracesSampleRate = AppEnv.isProduction ? 0.2 : 0.0
+        // Richer native crash reports (stack traces, thread info, registers)
+        ..enableTombstone = true;
     },
     appRunner: _appRunner,
   );
 }
 
 Future<void> _appRunner() async {
+  // Prevent runtime font downloads — fonts are bundled in assets/fonts/
+  GoogleFonts.config.allowRuntimeFetching = false;
 
   // 1. Validate all required env variables are present.
   AppEnv.validate();

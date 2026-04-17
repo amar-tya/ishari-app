@@ -98,6 +98,9 @@ dev_dependencies:
   # CI
   cider: ^0.2.10
 
+  # Sentry debug symbol upload
+  sentry_dart_plugin: ^2.3.0
+
 flutter_launcher_icons:
   android: true
   ios: false
@@ -106,6 +109,14 @@ flutter_launcher_icons:
   adaptive_icon_background: '#111111'
   adaptive_icon_foreground: 'assets/icons/ishari_launcher.png'
 
+sentry:
+  upload_debug_symbols: true
+  upload_source_maps: false
+  project: flutter
+  org: amar-q0
+  auth_token: $SENTRY_AUTH_TOKEN
+  wait_for_processing: false
+
 flutter:
   uses-material-design: true
   generate: true
@@ -113,3 +124,4 @@ flutter:
   assets:
     - assets/images/intro/
     - assets/icons/
+    - assets/fonts/

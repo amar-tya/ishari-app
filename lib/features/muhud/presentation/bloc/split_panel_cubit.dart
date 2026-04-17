@@ -43,9 +43,13 @@ class SplitPanelCubit extends Cubit<SplitPanelState> {
     emit(const SplitPanelLoading());
 
     final chaptersResult = await getAllChapters();
+    if (isClosed) return;
+
     List<ChapterEntity>? chapters;
     chaptersResult.fold(
-      (failure) => emit(SplitPanelError(message: failure.message)),
+      (failure) {
+        if (!isClosed) emit(SplitPanelError(message: failure.message));
+      },
       (list) => chapters = list,
     );
     if (chapters == null) return;
@@ -74,20 +78,32 @@ class SplitPanelCubit extends Cubit<SplitPanelState> {
     }
 
     if (paired == null) {
-      emit(const SplitPanelError(message: 'Chapter pasangan tidak ditemukan'));
+      if (!isClosed) {
+        emit(
+          const SplitPanelError(message: 'Chapter pasangan tidak ditemukan'),
+        );
+      }
       return;
     }
 
     final parsedId = int.tryParse(paired.id);
     if (parsedId == null) {
-      emit(const SplitPanelError(message: 'ID chapter tidak valid'));
+      if (!isClosed) {
+        emit(const SplitPanelError(message: 'ID chapter tidak valid'));
+      }
       return;
     }
 
     final versesResult = await getVersesByChapter(parsedId);
+    if (isClosed) return;
+
     versesResult.fold(
-      (failure) => emit(SplitPanelError(message: failure.message)),
-      (verses) => emit(SplitPanelLoaded(chapter: paired!, verses: verses)),
+      (failure) {
+        if (!isClosed) emit(SplitPanelError(message: failure.message));
+      },
+      (verses) {
+        if (!isClosed) emit(SplitPanelLoaded(chapter: paired!, verses: verses));
+      },
     );
   }
 }
