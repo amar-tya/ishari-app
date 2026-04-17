@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:ishari/core/analytics/analytics_service.dart';
 import 'package:ishari/core/errors/failures.dart';
 import 'package:ishari/core/usecases/usecase.dart';
 import 'package:ishari/features/auth/domain/entities/user_entity.dart';
@@ -18,6 +21,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     this._signInWithGoogle,
     this._signOut,
     this._getCurrentUser,
+    this._analytics,
   ) : super(const AuthState.initial()) {
     on<_CheckAuthStatus>(_onCheckAuthStatus);
     on<_SignInWithGoogle>(_onSignInWithGoogle);
@@ -27,6 +31,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final SignInWithGoogle _signInWithGoogle;
   final SignOut _signOut;
   final GetCurrentUser _getCurrentUser;
+  final AnalyticsService _analytics;
 
   Future<void> _onCheckAuthStatus(
     _CheckAuthStatus event,
@@ -52,7 +57,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (failure) => failure is CanceledFailure
           ? emit(const AuthState.unauthenticated())
           : emit(AuthState.error(failure.message)),
-      (user) => emit(AuthState.authenticated(user)),
+      (user) {
+        emit(AuthState.authenticated(user));
+        unawaited(_analytics.logLogin());
+      },
     );
   }
 

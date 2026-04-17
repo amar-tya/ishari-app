@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:ishari/core/analytics/analytics_service.dart';
 import 'package:ishari/features/home/domain/entities/chapter_entity.dart';
 import 'package:ishari/features/search/domain/usecases/search_chapters.dart';
 
@@ -15,13 +16,15 @@ const _kDefaultCategory = 'Semua';
 
 @injectable
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
-  SearchBloc(this._searchChapters) : super(const SearchState.idle()) {
+  SearchBloc(this._searchChapters, this._analytics)
+      : super(const SearchState.idle()) {
     on<_QueryChanged>(_onQueryChanged);
     on<_CategorySelected>(_onCategorySelected);
     on<_Cleared>(_onCleared);
   }
 
   final SearchChapters _searchChapters;
+  final AnalyticsService _analytics;
 
   String _query = '';
   String _category = _kDefaultCategory;
@@ -90,6 +93,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
             ),
           );
         }
+        unawaited(_analytics.logSearch(searchTerm: _query));
       },
     );
   }

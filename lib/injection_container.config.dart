@@ -17,6 +17,7 @@ import 'package:internet_connection_checker_plus/internet_connection_checker_plu
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
 import 'package:supabase_flutter/supabase_flutter.dart' as _i454;
 
+import 'core/analytics/analytics_service.dart' as _i931;
 import 'core/network/network_info.dart' as _i75;
 import 'features/auth/data/datasources/auth_local_datasource.dart' as _i1043;
 import 'features/auth/data/datasources/auth_remote_datasource.dart' as _i588;
@@ -106,6 +107,7 @@ Future<_i174.GetIt> initDependencies(
     () => registerModule.prefs,
     preResolve: true,
   );
+  gh.lazySingleton<_i931.AnalyticsService>(() => _i931.AnalyticsService());
   gh.lazySingleton<_i454.SupabaseClient>(() => registerModule.supabaseClient);
   gh.lazySingleton<_i161.InternetConnection>(
     () => registerModule.internetConnection,
@@ -232,6 +234,14 @@ Future<_i174.GetIt> initDependencies(
       gh<_i75.NetworkInfo>(),
     ),
   );
+  gh.factory<_i123.HomeBloc>(
+    () => _i123.HomeBloc(
+      gh<_i212.GetFeaturedChapter>(),
+      gh<_i853.GetChaptersByCategory>(),
+      gh<_i316.GetHadiList>(),
+      gh<_i931.AnalyticsService>(),
+    ),
+  );
   gh.factory<_i183.GetAllChapters>(
     () => _i183.GetAllChapters(gh<_i681.MuhudRepository>()),
   );
@@ -252,6 +262,16 @@ Future<_i174.GetIt> initDependencies(
   );
   gh.factory<_i851.UpdateBookmarkNote>(
     () => _i851.UpdateBookmarkNote(gh<_i681.MuhudRepository>()),
+  );
+  gh.factory<_i533.MuhudBloc>(
+    () => _i533.MuhudBloc(
+      getVersesByChapter: gh<_i1006.GetVersesByChapter>(),
+      toggleBookmark: gh<_i718.ToggleBookmark>(),
+      getBookmarkedVerseIds: gh<_i356.GetBookmarkedVerseIds>(),
+      getChapterById: gh<_i307.GetChapterById>(),
+      prefs: gh<_i460.SharedPreferences>(),
+      analytics: gh<_i931.AnalyticsService>(),
+    ),
   );
   gh.factory<_i468.KitabBloc>(() => _i468.KitabBloc(gh<_i395.GetAllBooks>()));
   gh.factory<_i961.SearchChapters>(
@@ -280,26 +300,13 @@ Future<_i174.GetIt> initDependencies(
     () => _i506.MarkAllNotificationsRead(gh<_i332.NotificationsRepository>()),
   );
   gh.factory<_i944.SearchBloc>(
-    () => _i944.SearchBloc(gh<_i961.SearchChapters>()),
+    () => _i944.SearchBloc(
+      gh<_i961.SearchChapters>(),
+      gh<_i931.AnalyticsService>(),
+    ),
   );
   gh.factory<_i242.ChapterListBloc>(
     () => _i242.ChapterListBloc(getAllChapters: gh<_i183.GetAllChapters>()),
-  );
-  gh.factory<_i533.MuhudBloc>(
-    () => _i533.MuhudBloc(
-      getVersesByChapter: gh<_i1006.GetVersesByChapter>(),
-      toggleBookmark: gh<_i718.ToggleBookmark>(),
-      getBookmarkedVerseIds: gh<_i356.GetBookmarkedVerseIds>(),
-      getChapterById: gh<_i307.GetChapterById>(),
-      prefs: gh<_i460.SharedPreferences>(),
-    ),
-  );
-  gh.factory<_i123.HomeBloc>(
-    () => _i123.HomeBloc(
-      gh<_i212.GetFeaturedChapter>(),
-      gh<_i853.GetChaptersByCategory>(),
-      gh<_i316.GetHadiList>(),
-    ),
   );
   gh.lazySingleton<_i191.GetCurrentUser>(
     () => _i191.GetCurrentUser(gh<_i1015.AuthRepository>()),
@@ -328,6 +335,7 @@ Future<_i174.GetIt> initDependencies(
       gh<_i648.SignInWithGoogle>(),
       gh<_i872.SignOut>(),
       gh<_i191.GetCurrentUser>(),
+      gh<_i931.AnalyticsService>(),
     ),
   );
   return getIt;
