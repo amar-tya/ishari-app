@@ -52,6 +52,13 @@ jobs:
       - name: Detect Commit Message & Bump Version
         id: bump_logic
         run: |
+          # Pull latest master agar version bump selalu dari versi terbaru
+          git pull origin master
+
+          # Simpan build number saat ini sebelum di-bump (agar tidak reset ke 0)
+          CURRENT_BUILD=$(grep '^version:' pubspec.yaml | sed 's/.*+//')
+          echo "Current build number: $CURRENT_BUILD"
+
           # Ambil pesan commit terakhir
           COMMIT_MSG=$(git log -1 --pretty=%B)
           echo "Last commit message: $COMMIT_MSG"
@@ -72,13 +79,17 @@ jobs:
           fi
 
           # Eksekusi bump versi (Major/Minor/Patch)
+          # cider bump patch akan mereset build number ke 0, sehingga kita set manual di bawah
           cider bump $BUMP_TYPE
 
-          # Selalu naikkan nomor build (+1) agar unik untuk Android (build number)
-          cider bump build
+          # Naikkan build number dari versi sebelumnya (bukan dari 0)
+          NEW_BUILD=$((CURRENT_BUILD + 1))
+          CURRENT_SEMVER=$(grep '^version:' pubspec.yaml | awk '{print $2}' | cut -d'+' -f1)
+          sed -i "s/^version: .*/version: $CURRENT_SEMVER+$NEW_BUILD/" pubspec.yaml
+          echo "New build number: $NEW_BUILD"
 
           # Simpan versi terbaru ke variabel env untuk langkah selanjutnya
-          NEW_VER=$(cider version)
+          NEW_VER=$(grep '^version:' pubspec.yaml | awk '{print $2}')
           echo "NEW_VERSION=$NEW_VER" >> $GITHUB_ENV
 
       - name: Commit & Push version bump
@@ -89,6 +100,7 @@ jobs:
           git add pubspec.yaml CHANGELOG.md
           # Commit hanya jika ada perubahan
           git commit -m "chore(release): bump version to ${{ env.NEW_VERSION }} [skip ci]" || echo "No changes to commit"
+          git pull --rebase origin master
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -109,9 +121,13 @@ jobs:
           EOF
 
       - name: Build APK & AAB
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: |
-          flutter build apk --release --split-per-abi
-          flutter build appbundle --release
+          flutter build apk --release --split-per-abi \
+            --obfuscate --split-debug-info=build/symbols
+          flutter build appbundle --release \
+            --obfuscate --split-debug-info=build/symbols
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v6
@@ -130,3 +146,13 @@ jobs:
             Commit: ${{ github.sha }}
             Version: ${{ env.NEW_VERSION }}
           file: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+
+      - name: Upload AAB to Google Play (Internal Testing)
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.ishari.app
+          releaseFiles: build/app/outputs/bundle/release/app-release.aab
+          track: alpha
+          status: completed
+          whatsNewDirectory: distribution/whatsnew
