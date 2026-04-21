@@ -240,8 +240,7 @@ class _VerseSelectItem extends StatelessWidget {
                       verse.verse.arabicText,
                       textAlign: TextAlign.right,
                       textDirection: TextDirection.rtl,
-                      style: const TextStyle(
-                        fontFamily: 'Scheherazade',
+                      style: GoogleFonts.scheherazadeNew(
                         fontSize: 18,
                         color: _kDark,
                         height: 1.8,

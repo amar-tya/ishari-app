@@ -45,7 +45,22 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       // Step 1: Open the Google account picker dialog
       // authenticate() throws GoogleSignInException on cancel/failure (no null return)
-      final googleUser = await GoogleSignIn.instance.authenticate();
+      GoogleSignInAccount googleUser;
+      try {
+        googleUser = await GoogleSignIn.instance.authenticate();
+      } on GoogleSignInException catch (e) {
+        // [16] Account reauth failed — stale Credential Manager entry.
+        // Clear it and retry so the user gets a fresh account picker.
+        final desc = e.description ?? '';
+        if (e.code == GoogleSignInExceptionCode.canceled &&
+            RegExp(r'^\[16\]').hasMatch(desc)) {
+          appLogger.d('[GoogleSignIn] Stale credential detected ([16]), clearing and retrying...');
+          await GoogleSignIn.instance.signOut();
+          googleUser = await GoogleSignIn.instance.authenticate();
+        } else {
+          rethrow;
+        }
+      }
 
       // Step 2: Ambil authentication (idToken) — synchronous in v7
       final googleAuth = googleUser.authentication;

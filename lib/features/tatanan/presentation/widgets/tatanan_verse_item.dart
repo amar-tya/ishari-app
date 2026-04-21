@@ -64,8 +64,7 @@ class TatananVerseItem extends StatelessWidget {
                       verse.arabicText,
                       textAlign: TextAlign.right,
                       textDirection: TextDirection.rtl,
-                      style: TextStyle(
-                        fontFamily: 'Scheherazade',
+                      style: GoogleFonts.scheherazadeNew(
                         fontSize: arabFontSize,
                         color: _kDark,
                         height: 1.8,

@@ -69,7 +69,10 @@ class _MainScaffoldState extends State<MainScaffold> {
             const HomeTab(),
             const SearchTab(),
             const KitabTab(),
-            BookmarkTab(isActive: _selectedIndex == 3),
+            BookmarkTab(
+              isActive: _selectedIndex == 3,
+              onNavigateToHome: () => _onTabSelected(0),
+            ),
             TatananTab(isActive: _selectedIndex == 4),
           ],
         ),

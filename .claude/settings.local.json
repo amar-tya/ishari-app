@@ -88,7 +88,10 @@
       "mcp__mcp-server-context7__resolve-library-id",
       "mcp__mcp-server-context7__query-docs",
       "Bash(keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android)",
-      "Bash(\"/c/Program Files/Java/jdk-21/bin/keytool.exe\" -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android)"
+      "Bash(\"/c/Program Files/Java/jdk-21/bin/keytool.exe\" -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android)",
+      "Skill(update-config)",
+      "Skill(update-config:*)",
+      "Bash(./gradlew signingReport)"
     ]
   }
 }

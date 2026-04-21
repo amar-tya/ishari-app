@@ -2,6 +2,40 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## ⛔ WAJIB — DILARANG KERAS SKIP
+
+**Setiap kali menerima instruksi baru, Claude HARUS melakukan dua langkah ini SEBELUM menulis kode atau mengubah file apapun. Jika skip, jawaban dianggap tidak valid dan pengguna berhak meminta ulang.**
+
+### Langkah 1 — Baca CLAUDE.md
+Gunakan Read tool pada file ini. Jangan skip meski sudah "ingat" isinya — file ini bisa berubah antar sesi.
+
+### Langkah 2 — Query Knowledge Graph
+Graph berisi 1700+ nodes dan relasi antar file yang sudah diekstrak. Jalankan query berikut via Bash tool dengan topik yang relevan ke instruksi:
+
+```bash
+python3 -c "
+import json, sys
+
+GRAPH = 'graphify-out/graph.json'
+QUERY = '<topik>'   # ganti dengan topik tugas
+
+with open(GRAPH) as f:
+    g = json.load(f)
+
+nodes = g.get('nodes', [])
+hits = [n for n in nodes if QUERY.lower() in str(n).lower()]
+print(f'=== Query: {QUERY} | Hits: {len(hits)} ===')
+for h in hits[:15]:
+    label = h.get('label') or h.get('id') or str(h)
+    desc  = h.get('description') or h.get('type') or ''
+    print(f'  - {label}: {str(desc)[:120]}')
+"
+```
+
+**God nodes paling penting:** `failures.dart`, `chapter_entity.dart`, `flutter_bloc`, `injectable`.
+
+Baru setelah dua langkah itu, kerjakan instruksi pengguna.
+
 ## Commands
 
 ### Environment Setup
