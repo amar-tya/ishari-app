@@ -6,5 +6,5 @@ if errorlevel 1 (
     exit /b 1
 )
 echo [env] Generating env.g.dart...
-dart run build_runner build --delete-conflicting-outputs
+fvm dart run build_runner build --delete-conflicting-outputs
 echo [env] Done! Run "flutter run" to start the app.
