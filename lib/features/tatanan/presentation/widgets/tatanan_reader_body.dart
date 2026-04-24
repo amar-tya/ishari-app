@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ishari/core/wizard/wizard_cubit.dart';
+import 'package:ishari/core/wizard/wizard_state.dart';
 import 'package:ishari/features/home/domain/entities/chapter_entity.dart';
 import 'package:ishari/features/muhud/presentation/bloc/split_panel_cubit.dart';
 import 'package:ishari/features/muhud/presentation/widgets/verse_card.dart';
@@ -15,6 +17,7 @@ import 'package:ishari/features/tatanan/presentation/widgets/add_verses_sheet.da
 import 'package:ishari/features/tatanan/presentation/widgets/tatanan_quick_tools_panel.dart';
 import 'package:ishari/features/tatanan/presentation/widgets/tatanan_verse_item.dart';
 import 'package:ishari/shared/widgets/banner_ad_widget.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 ChapterEntity _tatananToChapterEntity(TatananEntity t) => ChapterEntity(
       id: t.chapterId.toString(),
@@ -48,7 +51,87 @@ class _TatananReaderBodyState extends State<TatananReaderBody> {
   bool _showQuickTools = false;
   double _splitRatio = 0.5;
 
+  // Wizard
+  final GlobalKey _editBtnKey = GlobalKey();
+  final GlobalKey _splitBtnKey = GlobalKey();
+  bool _wizardShown = false;
+
   static const double _splitDividerHeight = 10;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _maybeStartWizard());
+  }
+
+  void _maybeStartWizard() {
+    if (!mounted) return;
+    final state = context.read<WizardCubit>().state;
+    if (state is WizardActive &&
+        state.step == WizardStep.tatananDetail &&
+        !_wizardShown) {
+      _wizardShown = true;
+      _showDetailCoach();
+    }
+  }
+
+  void _showDetailCoach() {
+    if (!mounted) return;
+    final wizard = context.read<WizardCubit>();
+    TutorialCoachMark(
+      targets: [
+        TargetFocus(
+          identify: 'edit_btn',
+          keyTarget: _editBtnKey,
+          shape: ShapeLightFocus.Circle,
+          enableOverlayTab: false,
+          enableTargetTab: true,
+          contents: [
+            TargetContent(
+              align: ContentAlign.bottom,
+              builder: (_, __) => _DetailTooltip(
+                step: '5/5',
+                title: 'Susun Urutan',
+                body:
+                    'Aktifkan mode edit, lalu tahan dan geser item untuk mengubah urutan ayat dalam tatanan.',
+                hint: 'Tap ikon edit untuk masuk ke mode susun',
+              ),
+            ),
+          ],
+        ),
+        TargetFocus(
+          identify: 'split_btn',
+          keyTarget: _splitBtnKey,
+          shape: ShapeLightFocus.RRect,
+          radius: 18,
+          enableOverlayTab: false,
+          enableTargetTab: true,
+          contents: [
+            TargetContent(
+              align: ContentAlign.bottom,
+              builder: (_, __) => _DetailTooltip(
+                step: '5/5',
+                title: 'Buka Diba\'',
+                body:
+                    'Tap "Buka Diba\'" untuk membuka split screen — baca tatananmu berdampingan dengan teks Diba\'.',
+                hint: 'Tap untuk membuka split screen',
+              ),
+            ),
+          ],
+        ),
+      ],
+      colorShadow: const Color(0xFF111111),
+      opacityShadow: 0.88,
+      onFinish: () {
+        if (!mounted) return;
+        wizard.advance(); // tatananDetail → null → _complete()
+      },
+      onSkip: () {
+        wizard.skip();
+        return true;
+      },
+    ).show(context: context);
+  }
 
   void _toggleSplitView(TatananEntity tatanan) {
     setState(() => _isSplitView = !_isSplitView);
@@ -148,19 +231,33 @@ class _TatananReaderBodyState extends State<TatananReaderBody> {
             Column(
               children: [
                 // App bar
-                _TatananAppBar(
-                  topPad: topPad,
-                  tatanan: tatanan,
-                  isEditMode: isEditMode,
-                  isSplitView: _isSplitView,
-                  showSplitButton: showSplitButton,
-                  verseCount: verses.length,
-                  onToggleEdit: () => context
-                      .read<TatananDetailBloc>()
-                      .add(const TatananDetailEvent.toggleEditMode()),
-                  onToggleSplit: () => _toggleSplitView(tatanan),
-                  onOpenQuickTools: () =>
-                      setState(() => _showQuickTools = true),
+                BlocListener<WizardCubit, WizardState>(
+                  listener: (ctx, state) {
+                    if (state is WizardActive &&
+                        state.step == WizardStep.tatananDetail &&
+                        !_wizardShown) {
+                      _wizardShown = true;
+                      WidgetsBinding.instance.addPostFrameCallback(
+                        (_) => _showDetailCoach(),
+                      );
+                    }
+                  },
+                  child: _TatananAppBar(
+                    topPad: topPad,
+                    tatanan: tatanan,
+                    isEditMode: isEditMode,
+                    isSplitView: _isSplitView,
+                    showSplitButton: showSplitButton,
+                    verseCount: verses.length,
+                    editBtnKey: _editBtnKey,
+                    splitBtnKey: _splitBtnKey,
+                    onToggleEdit: () => context
+                        .read<TatananDetailBloc>()
+                        .add(const TatananDetailEvent.toggleEditMode()),
+                    onToggleSplit: () => _toggleSplitView(tatanan),
+                    onOpenQuickTools: () =>
+                        setState(() => _showQuickTools = true),
+                  ),
                 ),
                 // Body
                 Expanded(
@@ -432,6 +529,8 @@ class _TatananAppBar extends StatelessWidget {
     required this.onToggleEdit,
     required this.onToggleSplit,
     required this.onOpenQuickTools,
+    this.editBtnKey,
+    this.splitBtnKey,
   });
 
   final double topPad;
@@ -443,6 +542,8 @@ class _TatananAppBar extends StatelessWidget {
   final VoidCallback onToggleEdit;
   final VoidCallback onToggleSplit;
   final VoidCallback onOpenQuickTools;
+  final GlobalKey? editBtnKey;
+  final GlobalKey? splitBtnKey;
 
   @override
   Widget build(BuildContext context) {
@@ -481,6 +582,7 @@ class _TatananAppBar extends StatelessWidget {
           ),
           if (showSplitButton)
             _IconBtn(
+              key: splitBtnKey,
               icon: isSplitView
                   ? Icons.fullscreen_rounded
                   : Icons.vertical_split_rounded,
@@ -489,6 +591,7 @@ class _TatananAppBar extends StatelessWidget {
               label: isSplitView ? 'Tutup Diba' : 'Buka Diba',
             ),
           _IconBtn(
+            key: editBtnKey,
             icon: isEditMode ? Icons.check_rounded : Icons.edit_outlined,
             isActive: isEditMode,
             onTap: onToggleEdit,
@@ -510,6 +613,7 @@ class _IconBtn extends StatelessWidget {
     required this.isActive,
     required this.onTap,
     this.label,
+    super.key,
   });
 
   final IconData icon;
@@ -588,6 +692,95 @@ class _SplitDivider extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Wizard tooltip
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _DetailTooltip extends StatelessWidget {
+  const _DetailTooltip({
+    required this.step,
+    required this.title,
+    required this.body,
+    required this.hint,
+  });
+
+  final String step;
+  final String title;
+  final String body;
+  final String hint;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.12),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: _kLime,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  step,
+                  style: const TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    color: _kDark,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  color: _kDark,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            body,
+            style: const TextStyle(
+              fontSize: 13,
+              color: Color(0xFF444444),
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            hint,
+            style: const TextStyle(
+              fontSize: 11,
+              color: _kMuted,
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+        ],
       ),
     );
   }
