@@ -123,13 +123,16 @@ class _ChapterReaderBodyState extends State<ChapterReaderBody> {
           identify: 'split_btn',
           keyTarget: _splitBtnKey,
           shape: ShapeLightFocus.Circle,
+          // enableTargetTab: true agar tap diteruskan ke tombol Split aslinya.
+          // onClickTarget TIDAK memanggil _toggleSplitView() untuk menghindari
+          // double-toggle (tombol asli sudah menanganinya sendiri).
           enableOverlayTab: false,
           enableTargetTab: true,
           contents: [
             TargetContent(
               align: ContentAlign.bottom,
               builder: (_, __) => _WizardTooltip(
-                step: '1/5',
+                step: '1/4',
                 title: 'Split Screen',
                 body:
                     'Buka split screen untuk membaca teks Arab dan terjemahan secara berdampingan.',
@@ -141,25 +144,50 @@ class _ChapterReaderBodyState extends State<ChapterReaderBody> {
       ],
       colorShadow: const Color(0xFF111111),
       opacityShadow: 0.88,
-      onClickTarget: (target) {
-        if (!mounted) return;
-        _toggleSplitView();
-      },
       onFinish: () {
         if (!mounted) return;
         wizard.advance(); // muhudSplit → muhudAudio
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted && !_stepBShown) {
-            _stepBShown = true;
-            _showStepBCoach();
-          }
-        });
+        // Poll setiap frame hingga _firstCardKey terpasang di render tree
+        // sebelum memunculkan coach mark Step B. Menggantikan
+        // Future.delayed(300ms) yang tidak deterministik — pada perangkat
+        // lambat SliverList bisa belum selesai layout dalam 300ms.
+        WidgetsBinding.instance.addPostFrameCallback(
+          (_) => _waitForFirstCard(60),
+        );
       },
       onSkip: () {
         wizard.skip();
         return true;
       },
     ).show(context: context);
+  }
+
+  /// Poll setiap frame hingga split view terbuka DAN [_firstCardKey] memiliki
+  /// RenderObject yang valid, lalu tampilkan Step B coach mark.
+  ///
+  /// Guard [_isSplitView] wajib: [_firstCardKey] juga di-assign ke
+  /// [_WhiteVerseSheet] di normal mode, sehingga key sudah ada sebelum split
+  /// view dibuka. Tanpa guard ini Step B muncul otomatis tanpa user membuka
+  /// split view terlebih dahulu.
+  void _waitForFirstCard(int retriesLeft) {
+    if (!mounted || _stepBShown) return;
+    if (!_isSplitView) {
+      // Tunggu user tap split button (dari Step A coach mark).
+      // Jika retries habis, berhenti — split view tidak pernah dibuka.
+      if (retriesLeft <= 0) return;
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _waitForFirstCard(retriesLeft - 1),
+      );
+      return;
+    }
+    if (_firstCardKey.currentContext != null || retriesLeft <= 0) {
+      _stepBShown = true;
+      _showStepBCoach();
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _waitForFirstCard(retriesLeft - 1),
+      );
+    }
   }
 
   void _showStepBCoach() {
@@ -178,7 +206,7 @@ class _ChapterReaderBodyState extends State<ChapterReaderBody> {
             TargetContent(
               align: ContentAlign.bottom,
               builder: (_, __) => _WizardTooltip(
-                step: '2/5',
+                step: '2/4',
                 title: 'Putar Audio',
                 body:
                     'Dengarkan shalawat sambil membaca. Tap tombol ▶ di bait ini untuk memulai.',
@@ -192,7 +220,19 @@ class _ChapterReaderBodyState extends State<ChapterReaderBody> {
       opacityShadow: 0.88,
       onFinish: () {
         if (!mounted) return;
-        wizard.advance(); // muhudAudio → backToHome
+        final w = context.read<WizardCubit>();
+
+        // Pop chapter reader kembali ke MainScaffold.
+        context.pop();
+
+        // Tunggu animasi pop GoRouter selesai sebelum advance wizard.
+        // ModalRoute.of(context).isActive tidak reliable dengan GoRouter
+        // (page-based routing) — route object tidak di-update setelah pop,
+        // sehingga polling loop tidak pernah keluar → w.advance() tidak
+        // pernah dipanggil → tab tour di MainScaffold tidak pernah dimulai.
+        // 400ms > durasi animasi MaterialPage default (~300ms).
+        // w di-capture sebelum widget unmount — aman dipanggil dari Future.
+        Future.delayed(const Duration(milliseconds: 400), w.advance); // muhudAudio → tabBeranda
       },
       onSkip: () {
         wizard.skip();
@@ -219,18 +259,7 @@ class _ChapterReaderBodyState extends State<ChapterReaderBody> {
               .addPostFrameCallback((_) => _showStepACoach());
         }
       },
-      child: BlocBuilder<WizardCubit, WizardState>(
-        buildWhen: (prev, curr) {
-          // Only rebuild for backToHome toggle
-          final prevIsBack = prev is WizardActive && prev.step == WizardStep.backToHome;
-          final currIsBack = curr is WizardActive && curr.step == WizardStep.backToHome;
-          return prevIsBack != currIsBack;
-        },
-        builder: (ctx, wizardState) {
-          final showBackToHome = wizardState is WizardActive &&
-              wizardState.step == WizardStep.backToHome;
-
-          return Scaffold(
+      child: Scaffold(
             backgroundColor: Colors.transparent,
             body: Stack(
               children: [
@@ -427,25 +456,9 @@ class _ChapterReaderBodyState extends State<ChapterReaderBody> {
                     ),
                   ),
 
-                // Layer 6: Wizard Step C — "Kembali ke Beranda"
-                if (showBackToHome)
-                  Positioned(
-                    bottom: MediaQuery.of(context).padding.bottom + 24,
-                    left: 24,
-                    right: 24,
-                    child: _WizardNextButton(
-                      label: 'Lanjut ke Beranda →',
-                      onTap: () {
-                        context.read<WizardCubit>().advance();
-                        context.pop();
-                      },
-                    ),
-                  ),
               ],
             ),
-          );
-        },
-      ),
+          ),
     );
   }
 }
@@ -534,44 +547,6 @@ class _WizardTooltip extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _WizardNextButton extends StatelessWidget {
-  const _WizardNextButton({required this.label, required this.onTap});
-
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        decoration: BoxDecoration(
-          color: const Color(0xFFCAFF00),
-          borderRadius: BorderRadius.circular(14),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.15),
-              blurRadius: 20,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Text(
-          label,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w800,
-            color: Color(0xFF111111),
-          ),
-        ),
       ),
     );
   }

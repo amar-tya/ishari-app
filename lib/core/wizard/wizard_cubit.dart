@@ -44,8 +44,7 @@ class WizardCubit extends Cubit<WizardState> {
 
   WizardStep? _next(WizardStep step) => switch (step) {
     WizardStep.muhudSplit => WizardStep.muhudAudio,
-    WizardStep.muhudAudio => WizardStep.backToHome,
-    WizardStep.backToHome => WizardStep.tabBeranda,
+    WizardStep.muhudAudio => WizardStep.tabBeranda,
     WizardStep.tabBeranda => WizardStep.tabCari,
     WizardStep.tabCari => WizardStep.tabKitab,
     WizardStep.tabKitab => WizardStep.tabBookmark,

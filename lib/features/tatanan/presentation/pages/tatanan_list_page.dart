@@ -64,7 +64,7 @@ class _TatananListPageState extends State<TatananListPage> {
             TargetContent(
               align: ContentAlign.bottom,
               builder: (_, __) => _TatananTooltip(
-                step: '4/5',
+                step: '4/4',
                 title: 'Buat Tatanan',
                 body:
                     'Tap tombol + untuk membuat tatanan shalawat pertamamu. Susun ayat sesuai keinginan.',

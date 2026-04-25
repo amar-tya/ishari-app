@@ -1,7 +1,6 @@
 enum WizardStep {
   muhudSplit,
   muhudAudio,
-  backToHome,
   tabBeranda,
   tabCari,
   tabKitab,

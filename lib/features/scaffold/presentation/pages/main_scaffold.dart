@@ -44,11 +44,12 @@ class _MainScaffoldState extends State<MainScaffold> {
   Future<void> _initWizard() async {
     if (!mounted) return;
     await context.read<WizardCubit>().init();
-    if (!mounted) return;
-    final state = context.read<WizardCubit>().state;
-    if (state is WizardActive && state.step == WizardStep.muhudSplit) {
-      context.push('/chapter/2');
-    }
+    // Navigasi ke /chapter/2 ditangani EKSKLUSIF oleh BlocListener di bawah.
+    // Jangan push di sini — menyebabkan double push karena BlocListener juga
+    // menerima WizardActive(muhudSplit) yang di-emit oleh init(), sehingga
+    // stack menjadi /home → /chapter/2 → /chapter/2. context.pop() di Step B
+    // hanya menghapus satu, chapter reader pertama tetap di stack, tab tour
+    // muncul dengan background chapter reader yang masih aktif.
   }
 
   void _onTabSelected(int index) {
@@ -85,28 +86,28 @@ class _MainScaffoldState extends State<MainScaffold> {
       _tabTarget(
         key: _tabKeys[0],
         identify: 'tab_beranda',
-        step: '3/5',
+        step: '3/4',
         title: 'Beranda',
         body: 'Jelajahi daftar shalawat, diba\', rowi, dan muradah pilihan.',
       ),
       _tabTarget(
         key: _tabKeys[1],
         identify: 'tab_cari',
-        step: '3/5',
+        step: '3/4',
         title: 'Cari',
         body: 'Cari shalawat, diba\', rowi, atau muradah dengan cepat.',
       ),
       _tabTarget(
         key: _tabKeys[2],
         identify: 'tab_kitab',
-        step: '3/5',
+        step: '3/4',
         title: 'Kitab',
         body: 'Buka dan baca kitab-kitab shalawat yang tersedia.',
       ),
       _tabTarget(
         key: _tabKeys[3],
         identify: 'tab_bookmark',
-        step: '3/5',
+        step: '3/4',
         title: 'Bookmark',
         body: isGuest
             ? 'Simpan ayat favorit dan akses kapan saja.\n\n🔒 Login untuk mengakses fitur ini.'
@@ -115,7 +116,7 @@ class _MainScaffoldState extends State<MainScaffold> {
       _tabTarget(
         key: _tabKeys[4],
         identify: 'tab_tatanan',
-        step: '3/5',
+        step: '3/4',
         title: 'Tatanan',
         body: isGuest
             ? 'Buat susunan shalawat sendiri sesuai kebutuhanmu.\n\n🔒 Login untuk mengakses fitur ini.'
@@ -193,8 +194,14 @@ class _MainScaffoldState extends State<MainScaffold> {
           if (state.step == WizardStep.muhudSplit) {
             context.push('/chapter/2');
           } else if (state.step == WizardStep.tabBeranda && !_tabWizardShown) {
+            // Dua addPostFrameCallback bersarang: frame pertama memastikan
+            // navigator telah menyelesaikan semua pending transitions,
+            // frame kedua memastikan layout tab bar sudah di-render ulang
+            // sebelum TutorialCoachMark mencari posisi key-nya.
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (mounted) _startTabTour();
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) _startTabTour();
+              });
             });
           } else if (state.step == WizardStep.tatananCreate) {
             setState(() => _selectedIndex = 4);

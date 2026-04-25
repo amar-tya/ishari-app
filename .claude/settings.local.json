@@ -103,7 +103,11 @@
       "Bash(graphify claude *)",
       "Bash(rm -f .graphify_detect.json .graphify_extract.json .graphify_ast.json .graphify_semantic.json .graphify_semantic_new.json .graphify_cached.json .graphify_uncached.txt .graphify_analysis.json .graphify_labels.json)",
       "Bash(rm -f graphify-out/.graphify_chunk_01.json graphify-out/.graphify_chunk_02.json graphify-out/.graphify_chunk_03.json graphify-out/.graphify_chunk_04.json)",
-      "Bash(graphify update *)"
+      "Bash(graphify update *)",
+      "Bash(claude plugin *)",
+      "mcp__0ad0a3ae-6487-476a-933c-fb7cd4b9edb8__list_teams",
+      "mcp__0ad0a3ae-6487-476a-933c-fb7cd4b9edb8__list_issue_labels",
+      "mcp__0ad0a3ae-6487-476a-933c-fb7cd4b9edb8__save_issue"
     ]
   }
 }

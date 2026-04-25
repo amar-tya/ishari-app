@@ -90,7 +90,7 @@ class _TatananReaderBodyState extends State<TatananReaderBody> {
             TargetContent(
               align: ContentAlign.bottom,
               builder: (_, __) => _DetailTooltip(
-                step: '5/5',
+                step: '4/4',
                 title: 'Susun Urutan',
                 body:
                     'Aktifkan mode edit, lalu tahan dan geser item untuk mengubah urutan ayat dalam tatanan.',
@@ -110,7 +110,7 @@ class _TatananReaderBodyState extends State<TatananReaderBody> {
             TargetContent(
               align: ContentAlign.bottom,
               builder: (_, __) => _DetailTooltip(
-                step: '5/5',
+                step: '4/4',
                 title: 'Buka Diba\'',
                 body:
                     'Tap "Buka Diba\'" untuk membuka split screen — baca tatananmu berdampingan dengan teks Diba\'.',
