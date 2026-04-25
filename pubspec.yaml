@@ -78,6 +78,9 @@ dependencies:
   # Crash reporting
   sentry_flutter: ^9.16.0
 
+  # First-launch feature wizard / guided tour
+  tutorial_coach_mark: ^1.2.11
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
