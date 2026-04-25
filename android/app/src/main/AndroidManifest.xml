@@ -29,14 +29,18 @@
             </intent-filter>
 
             <!-- Supabase OAuth deep-link redirect handler -->
-            <intent-filter android:autoVerify="true">
+            <!-- Menggunakan custom URL scheme (com.ishari.app://) agar tidak memerlukan -->
+            <!-- verifikasi domain Android App Links (assetlinks.json) di domain Supabase. -->
+            <!-- Jika menggunakan email magic link atau signInWithOAuth di masa depan,      -->
+            <!-- set redirect URL di Supabase Dashboard ke: com.ishari.app://auth/callback  -->
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
-                    android:scheme="https"
-                    android:host="dloeobybslgiiwsitvoa.supabase.co"
-                    android:pathPrefix="/auth/v1/callback" />
+                    android:scheme="com.ishari.app"
+                    android:host="auth"
+                    android:path="/callback" />
             </intent-filter>
         </activity>
         <!-- AdMob App ID — value injected from env/current.env via build.gradle.kts -->

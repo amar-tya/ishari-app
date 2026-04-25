@@ -26,9 +26,14 @@ const _kCategories = [
 
 /// Bookmark tab — wraps BookmarkBloc and builds the full page.
 class BookmarkTab extends StatelessWidget {
-  const BookmarkTab({required this.isActive, super.key});
+  const BookmarkTab({
+    required this.isActive,
+    this.onNavigateToHome,
+    super.key,
+  });
 
   final bool isActive;
+  final VoidCallback? onNavigateToHome;
 
   @override
   Widget build(BuildContext context) {
@@ -42,15 +47,22 @@ class BookmarkTab extends StatelessWidget {
         if (userId != null) bloc.add(BookmarkEvent.load(userId: userId));
         return bloc;
       },
-      child: _BookmarkTabBody(isActive: isActive),
+      child: _BookmarkTabBody(
+        isActive: isActive,
+        onNavigateToHome: onNavigateToHome,
+      ),
     );
   }
 }
 
 class _BookmarkTabBody extends StatefulWidget {
-  const _BookmarkTabBody({required this.isActive});
+  const _BookmarkTabBody({
+    required this.isActive,
+    this.onNavigateToHome,
+  });
 
   final bool isActive;
+  final VoidCallback? onNavigateToHome;
 
   @override
   State<_BookmarkTabBody> createState() => _BookmarkTabBodyState();
@@ -227,6 +239,8 @@ class _BookmarkTabBodyState extends State<_BookmarkTabBody> {
                                     isFiltered:
                                         selectedCategory != 'Semua' ||
                                         searchQuery.isNotEmpty,
+                                    onNavigateToHome:
+                                        widget.onNavigateToHome,
                                   ),
                                 )
                               else
@@ -449,9 +463,13 @@ class _AppBar extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _EmptyState extends StatelessWidget {
-  const _EmptyState({required this.isFiltered});
+  const _EmptyState({
+    required this.isFiltered,
+    this.onNavigateToHome,
+  });
 
   final bool isFiltered;
+  final VoidCallback? onNavigateToHome;
 
   @override
   Widget build(BuildContext context) {
@@ -499,11 +517,7 @@ class _EmptyState extends StatelessWidget {
             if (!isFiltered) ...[
               const SizedBox(height: 20),
               GestureDetector(
-                onTap: () {
-                  // Navigate to Beranda tab (index 0) via scaffold
-                  // Using a simple approach: pop back to index 0
-                  DefaultTabController.maybeOf(context)?.animateTo(0);
-                },
+                onTap: onNavigateToHome,
                 child: Container(
                   height: 42,
                   padding: const EdgeInsets.symmetric(horizontal: 24),

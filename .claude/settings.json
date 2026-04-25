@@ -1,5 +1,17 @@
 {
   "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"hookSpecificOutput\": {\"hookEventName\": \"UserPromptSubmit\", \"additionalContext\": \"WAJIB sebelum mengerjakan: (1) Baca CLAUDE.md dengan Read tool, (2) Query graphify graph dengan: python -c \\\"import json; from graphify.build import build_from_json; from pathlib import Path; G = build_from_json(json.loads(Path(\\\\\\\"graphify-out/graph.json\\\\\\\").read_text())); print(G.number_of_nodes(), \\\\\\\"nodes loaded\\\\\\\")\\\" — lalu gunakan /graphify query untuk cari konteks relevan.\"}}'",
+            "shell": "powershell",
+            "statusMessage": "Memuat konteks CLAUDE.md + graphify..."
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Glob|Grep",

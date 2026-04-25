@@ -1,3 +1,9 @@
+# Graphify knowledge graph output
+graphify-out/
+
+# Claude Code local settings (personal, tidak di-share ke tim)
+.claude/settings.local.json
+
 # Miscellaneous
 *.class
 *.log
