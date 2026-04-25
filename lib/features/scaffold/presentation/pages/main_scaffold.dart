@@ -2,13 +2,17 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ishari/core/app_state.dart';
+import 'package:ishari/core/wizard/wizard_cubit.dart';
+import 'package:ishari/core/wizard/wizard_state.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ishari/features/bookmark/presentation/pages/bookmark_tab.dart';
 import 'package:ishari/features/home/presentation/pages/home_page.dart';
 import 'package:ishari/features/kitab/presentation/pages/kitab_tab.dart';
 import 'package:ishari/features/search/presentation/pages/search_tab.dart';
 import 'package:ishari/features/tatanan/presentation/pages/tatanan_tab.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 /// Root scaffold providing the 5-tab floating pill navigation bar.
 ///
@@ -26,6 +30,27 @@ class MainScaffold extends StatefulWidget {
 
 class _MainScaffoldState extends State<MainScaffold> {
   int _selectedIndex = 0;
+
+  // Wizard
+  final List<GlobalKey> _tabKeys = List.generate(5, (_) => GlobalKey());
+  bool _tabWizardShown = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _initWizard());
+  }
+
+  Future<void> _initWizard() async {
+    if (!mounted) return;
+    await context.read<WizardCubit>().init();
+    // Navigasi ke /chapter/2 ditangani EKSKLUSIF oleh BlocListener di bawah.
+    // Jangan push di sini — menyebabkan double push karena BlocListener juga
+    // menerima WizardActive(muhudSplit) yang di-emit oleh init(), sehingga
+    // stack menjadi /home → /chapter/2 → /chapter/2. context.pop() di Step B
+    // hanya menghapus satu, chapter reader pertama tetap di stack, tab tour
+    // muncul dengan background chapter reader yang masih aktif.
+  }
 
   void _onTabSelected(int index) {
     if ((index == 3 || index == 4) && AppState.isGuestMode.value) {
@@ -48,38 +73,260 @@ class _MainScaffoldState extends State<MainScaffold> {
     );
   }
 
+  // ── Wizard tab tour ─────────────────────────────────────────────────────────
+
+  void _startTabTour() {
+    if (!mounted || _tabWizardShown) return;
+    _tabWizardShown = true;
+
+    final isGuest = AppState.isGuestMode.value;
+    final wizard = context.read<WizardCubit>();
+
+    final targets = [
+      _tabTarget(
+        key: _tabKeys[0],
+        identify: 'tab_beranda',
+        step: '3/4',
+        title: 'Beranda',
+        body: 'Jelajahi daftar shalawat, diba\', rowi, dan muradah pilihan.',
+      ),
+      _tabTarget(
+        key: _tabKeys[1],
+        identify: 'tab_cari',
+        step: '3/4',
+        title: 'Cari',
+        body: 'Cari shalawat, diba\', rowi, atau muradah dengan cepat.',
+      ),
+      _tabTarget(
+        key: _tabKeys[2],
+        identify: 'tab_kitab',
+        step: '3/4',
+        title: 'Kitab',
+        body: 'Buka dan baca kitab-kitab shalawat yang tersedia.',
+      ),
+      _tabTarget(
+        key: _tabKeys[3],
+        identify: 'tab_bookmark',
+        step: '3/4',
+        title: 'Bookmark',
+        body: isGuest
+            ? 'Simpan ayat favorit dan akses kapan saja.\n\n🔒 Login untuk mengakses fitur ini.'
+            : 'Simpan ayat favorit dan akses kapan saja.',
+      ),
+      _tabTarget(
+        key: _tabKeys[4],
+        identify: 'tab_tatanan',
+        step: '3/4',
+        title: 'Tatanan',
+        body: isGuest
+            ? 'Buat susunan shalawat sendiri sesuai kebutuhanmu.\n\n🔒 Login untuk mengakses fitur ini.'
+            : 'Buat susunan shalawat sendiri sesuai kebutuhanmu.',
+      ),
+    ];
+
+    TutorialCoachMark(
+      targets: targets,
+      colorShadow: const Color(0xFF111111),
+      opacityShadow: 0.88,
+      onClickTarget: (target) {
+        if (!mounted) return;
+        switch (target.identify) {
+          case 'tab_beranda':
+            setState(() => _selectedIndex = 0);
+          case 'tab_cari':
+            setState(() => _selectedIndex = 1);
+          case 'tab_kitab':
+            setState(() => _selectedIndex = 2);
+          case 'tab_bookmark':
+            if (!isGuest) setState(() => _selectedIndex = 3);
+          case 'tab_tatanan':
+            if (!isGuest) setState(() => _selectedIndex = 4);
+        }
+      },
+      onFinish: () {
+        if (!mounted) return;
+        if (isGuest) {
+          wizard.skipForGuest();
+        } else {
+          wizard.advance(); // tabTatanan → tatananCreate
+          setState(() => _selectedIndex = 4); // Switch to Tatanan tab
+        }
+      },
+      onSkip: () {
+        wizard.skip();
+        return true;
+      },
+    ).show(context: context);
+  }
+
+  TargetFocus _tabTarget({
+    required GlobalKey key,
+    required String identify,
+    required String step,
+    required String title,
+    required String body,
+  }) {
+    return TargetFocus(
+      identify: identify,
+      keyTarget: key,
+      shape: ShapeLightFocus.RRect,
+      radius: 30,
+      enableOverlayTab: false,
+      enableTargetTab: true,
+      contents: [
+        TargetContent(
+          align: ContentAlign.top,
+          builder: (_, __) => _TabTooltip(
+            step: step,
+            title: title,
+            body: body,
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {
-        state.whenOrNull(
-          authenticated: (_) {
-            if (AppState.isGuestMode.value) {
-              AppState.isGuestMode.value = false;
-            }
-          },
-        );
+    return BlocListener<WizardCubit, WizardState>(
+      listener: (ctx, state) {
+        if (state is WizardActive) {
+          if (state.step == WizardStep.muhudSplit) {
+            context.push('/chapter/2');
+          } else if (state.step == WizardStep.tabBeranda && !_tabWizardShown) {
+            // Dua addPostFrameCallback bersarang: frame pertama memastikan
+            // navigator telah menyelesaikan semua pending transitions,
+            // frame kedua memastikan layout tab bar sudah di-render ulang
+            // sebelum TutorialCoachMark mencari posisi key-nya.
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) _startTabTour();
+              });
+            });
+          } else if (state.step == WizardStep.tatananCreate) {
+            setState(() => _selectedIndex = 4);
+          }
+        }
       },
-      child: Scaffold(
-        backgroundColor: const Color(0xFFF0F5EE),
-        extendBody: true,
-        body: IndexedStack(
-          index: _selectedIndex,
-          children: [
-            const HomeTab(),
-            const SearchTab(),
-            const KitabTab(),
-            BookmarkTab(
-              isActive: _selectedIndex == 3,
-              onNavigateToHome: () => _onTabSelected(0),
+      child: BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) {
+          state.whenOrNull(
+            authenticated: (_) {
+              if (AppState.isGuestMode.value) {
+                AppState.isGuestMode.value = false;
+              }
+            },
+          );
+        },
+        child: Scaffold(
+          backgroundColor: const Color(0xFFF0F5EE),
+          extendBody: true,
+          body: IndexedStack(
+            index: _selectedIndex,
+            children: [
+              const HomeTab(),
+              const SearchTab(),
+              const KitabTab(),
+              BookmarkTab(
+                isActive: _selectedIndex == 3,
+                onNavigateToHome: () => _onTabSelected(0),
+              ),
+              TatananTab(isActive: _selectedIndex == 4),
+            ],
+          ),
+          bottomNavigationBar: _FloatingNavBar(
+            selectedIndex: _selectedIndex,
+            onTap: _onTabSelected,
+            tabKeys: _tabKeys,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Wizard tab tooltip
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _TabTooltip extends StatelessWidget {
+  const _TabTooltip({
+    required this.step,
+    required this.title,
+    required this.body,
+  });
+
+  final String step;
+  final String title;
+  final String body;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.12),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFCAFF00),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  step,
+                  style: const TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF111111),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xFF111111),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            body,
+            style: const TextStyle(
+              fontSize: 13,
+              color: Color(0xFF444444),
+              height: 1.5,
             ),
-            TatananTab(isActive: _selectedIndex == 4),
-          ],
-        ),
-        bottomNavigationBar: _FloatingNavBar(
-          selectedIndex: _selectedIndex,
-          onTap: _onTabSelected,
-        ),
+          ),
+          const SizedBox(height: 10),
+          const Text(
+            'Tap tab untuk lanjut →',
+            style: TextStyle(
+              fontSize: 11,
+              color: Color(0xFF777777),
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -97,10 +344,12 @@ class _FloatingNavBar extends StatelessWidget {
   const _FloatingNavBar({
     required this.selectedIndex,
     required this.onTap,
+    required this.tabKeys,
   });
 
   final int selectedIndex;
   final ValueChanged<int> onTap;
+  final List<GlobalKey> tabKeys;
 
   static const _items = [
     _NavItemData(icon: Icons.home_rounded, label: 'Beranda'),
@@ -140,6 +389,7 @@ class _FloatingNavBar extends StatelessWidget {
             children: [
               for (var i = 0; i < _items.length; i++)
                 _NavItem(
+                  key: tabKeys[i],
                   data: _items[i],
                   isActive: selectedIndex == i,
                   onTap: () => onTap(i),
@@ -163,6 +413,7 @@ class _NavItem extends StatelessWidget {
     required this.data,
     required this.isActive,
     required this.onTap,
+    super.key,
   });
 
   final _NavItemData data;
@@ -211,43 +462,6 @@ class _NavItem extends StatelessWidget {
     );
   }
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Placeholder tabs
-// ─────────────────────────────────────────────────────────────────────────────
-
-// class _PlaceholderTab extends StatelessWidget {
-//   const _PlaceholderTab({required this.icon, required this.label});
-
-//   final IconData icon;
-//   final String label;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Center(
-//       child: Column(
-//         mainAxisSize: MainAxisSize.min,
-//         children: [
-//           Icon(icon, size: 48, color: Colors.grey.shade300),
-//           const SizedBox(height: 12),
-//           Text(
-//             label,
-//             style: TextStyle(
-//               fontSize: 16,
-//               color: Colors.grey.shade400,
-//               fontWeight: FontWeight.w500,
-//             ),
-//           ),
-//           const SizedBox(height: 8),
-//           Text(
-//             'Coming soon',
-//             style: TextStyle(fontSize: 13, color: Colors.grey.shade400),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Bookmark lock bottom sheet (for guest users tapping Bookmark tab)
