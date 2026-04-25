@@ -11,28 +11,32 @@ import 'package:ishari/features/muhud/presentation/pages/chapter_reader_page.dar
 import 'package:ishari/features/notifications/domain/entities/notification_entity.dart';
 import 'package:ishari/features/notifications/presentation/pages/notification_detail_page.dart';
 import 'package:ishari/features/notifications/presentation/pages/notifications_page.dart';
-import 'package:ishari/features/splash/presentation/pages/splash_page.dart';
 import 'package:ishari/features/tatanan/presentation/pages/tatanan_detail_page.dart';
 import 'package:ishari/features/update/presentation/pages/force_update_page.dart';
 
 /// Application router powered by [GoRouter].
 ///
+/// [initialLocation] is determined by [AppLoader] after auth is resolved,
+/// so no splash route is needed — GoRouter starts directly at the right page.
+///
 /// Redirect logic:
-/// - [SplashPage] manages its own exit via [SplashPage._tryNavigate].
 /// - Unauthenticated / non-guest users are sent to [IntroductionPage].
 /// - Authenticated or guest users trying to visit introduction are redirected
 ///   to [HomePage].
-GoRouter createRouter(AuthBloc authBloc, AnalyticsService analytics) {
+GoRouter createRouter(
+  AuthBloc authBloc,
+  AnalyticsService analytics, {
+  String initialLocation = HomePage.routePath,
+}) {
   return GoRouter(
-    initialLocation: SplashPage.routePath,
+    initialLocation: initialLocation,
     observers: [analytics.observer],
     refreshListenable: Listenable.merge([
       GoRouterAuthRefreshStream(authBloc.stream),
       AppState.isGuestMode,
     ]),
     redirect: (context, state) {
-      // Splash and force-update manage their own navigation — never redirect away.
-      if (state.matchedLocation == SplashPage.routePath) return null;
+      // Force-update manages its own navigation — never redirect away.
       if (state.matchedLocation == ForceUpdatePage.routePath) return null;
 
       final isAuthenticated = authBloc.state.maybeWhen(
@@ -48,11 +52,6 @@ GoRouter createRouter(AuthBloc authBloc, AnalyticsService analytics) {
       return null;
     },
     routes: [
-      GoRoute(
-        path: SplashPage.routePath,
-        name: 'splash',
-        builder: (context, state) => const SplashPage(),
-      ),
       GoRoute(
         path: IntroductionPage.routePath,
         name: 'introduction',
