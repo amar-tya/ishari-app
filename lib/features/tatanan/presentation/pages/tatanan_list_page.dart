@@ -150,6 +150,7 @@ class _TatananListPageState extends State<TatananListPage> {
         child: Scaffold(
           backgroundColor: _kBg,
           body: SafeArea(
+            bottom: false,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
