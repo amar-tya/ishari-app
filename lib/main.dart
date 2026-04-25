@@ -1,12 +1,14 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:ishari/core/ads/interstitial_ad_manager.dart';
 import 'package:ishari/core/analytics/analytics_service.dart';
 import 'package:ishari/core/env/app_env.dart';
 import 'package:ishari/core/router/app_router.dart';
+import 'package:ishari/core/wizard/wizard_cubit.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ishari/features/notifications/presentation/bloc/notifications_bloc.dart';
 import 'package:ishari/features/update/presentation/cubit/update_cubit.dart';
@@ -57,6 +59,7 @@ Future<void> _appRunner() async {
 
   // 4. Register all dependencies via get_it + injectable
   await configureDependencies();
+  sl.registerSingleton<WizardCubit>(WizardCubit(sl<FlutterSecureStorage>()));
 
   // 5. Initialize AdMob
   await MobileAds.instance.initialize();
@@ -97,6 +100,9 @@ class IshariApp extends StatelessWidget {
         ),
         BlocProvider<UpdateCubit>.value(
           value: sl<UpdateCubit>(),
+        ),
+        BlocProvider<WizardCubit>.value(
+          value: sl<WizardCubit>(),
         ),
       ],
       child: Builder(

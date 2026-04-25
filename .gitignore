@@ -89,3 +89,6 @@ google-services.json
 
 # playwright
 .playwright-mcp/
+
+# Claude Code local settings
+.claude/settings.local.json
