@@ -2,39 +2,60 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## ⛔ WAJIB — DILARANG KERAS SKIP
+## graphify — Knowledge Graph
 
-**Setiap kali menerima instruksi baru, Claude HARUS melakukan dua langkah ini SEBELUM menulis kode atau mengubah file apapun. Jika skip, jawaban dianggap tidak valid dan pengguna berhak meminta ulang.**
+A pre-built knowledge graph lives in `graphify-out/`. Use it to navigate unfamiliar parts of the codebase — it shows which files connect to which without reading each one.
 
-### Langkah 1 — Baca CLAUDE.md
-Gunakan Read tool pada file ini. Jangan skip meski sudah "ingat" isinya — file ini bisa berubah antar sesi.
+### When to USE graphify
 
-### Langkah 2 — Query Knowledge Graph
-Graph berisi 1700+ nodes dan relasi antar file yang sudah diekstrak. Jalankan query berikut via Bash tool dengan topik yang relevan ke instruksi:
+- Exploring an unfamiliar feature area ("how does auth flow work?")
+- Finding which files are relevant to a concept you don't know yet
+- Starting work on a cross-cutting refactor spanning multiple features
 
 ```bash
-python3 -c "
-import json, sys
-
-GRAPH = 'graphify-out/graph.json'
-QUERY = '<topik>'   # ganti dengan topik tugas
-
-with open(GRAPH) as f:
-    g = json.load(f)
-
-nodes = g.get('nodes', [])
-hits = [n for n in nodes if QUERY.lower() in str(n).lower()]
-print(f'=== Query: {QUERY} | Hits: {len(hits)} ===')
-for h in hits[:15]:
-    label = h.get('label') or h.get('id') or str(h)
-    desc  = h.get('description') or h.get('type') or ''
-    print(f'  - {label}: {str(desc)[:120]}')
-"
+/graphify query "<question>"      # BFS — broad context, nearest neighbors first
+/graphify path "ConceptA" "ConceptB"  # shortest dependency path between two nodes
+/graphify explain "NodeName"      # all connections for a single node
 ```
 
-**God nodes paling penting:** `failures.dart`, `chapter_entity.dart`, `flutter_bloc`, `injectable`.
+### When to SKIP graphify
 
-Baru setelah dua langkah itu, kerjakan instruksi pengguna.
+- Task already specifies exact file paths to edit (e.g. scheduled tasks, bug reports with file names)
+- You already know the relevant files from prior context in the session
+- Single-file fix or trivial edit
+
+**Graphify points to files — you still need `Read` to write correct code.**
+
+### When to update the graph
+
+Only after **significant** changes — adding a new feature, end of sprint, major refactor. Do NOT run after every small edit.
+
+```bash
+/graphify . --update
+```
+
+If `graphify-out/` does not exist, build it first: `/graphify .`
+
+### Windows PowerShell — inline Python escape fix
+
+Inline Python with f-strings inside PowerShell `-c` args often fails with `SyntaxError: unterminated string literal`. When this happens, write to a temp script file instead:
+
+```powershell
+# Write script to file, run, then delete
+@'
+import json, sys
+from networkx.readwrite import json_graph
+from pathlib import Path
+# ... your Python code here (no escaping needed)
+'@ | Out-File -FilePath .tmp_script.py -Encoding utf8
+python .tmp_script.py
+Remove-Item .tmp_script.py
+```
+
+Rules:
+- Before answering architecture or codebase questions, read graphify-out/GRAPH_REPORT.md for god nodes and community structure
+- If graphify-out/wiki/index.md exists, navigate it instead of reading raw files
+- After modifying code files in this session, run `graphify update .` to keep the graph current (AST-only, no API cost)
 
 ## Commands
 
@@ -159,12 +180,3 @@ Never manually edit `*.freezed.dart`, `*.g.dart`, or `*.config.dart`. Re-run `bu
 ### Linting
 
 Uses `very_good_analysis`. Key rules: prefer single quotes, no public member docs required. Generated files are excluded from analysis.
-
-## graphify
-
-This project has a graphify knowledge graph at graphify-out/.
-
-Rules:
-- Before answering architecture or codebase questions, read graphify-out/GRAPH_REPORT.md for god nodes and community structure
-- If graphify-out/wiki/index.md exists, navigate it instead of reading raw files
-- After modifying code files in this session, run `graphify update .` to keep the graph current (AST-only, no API cost)
