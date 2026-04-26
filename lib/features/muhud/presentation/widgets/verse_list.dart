@@ -18,6 +18,7 @@ class VerseList extends StatelessWidget {
     required this.transliterationFontSize,
     required this.translationFontSize,
     this.playingVerseId,
+    this.firstCardKey,
     super.key,
   });
 
@@ -30,6 +31,7 @@ class VerseList extends StatelessWidget {
   final double transliterationFontSize;
   final double translationFontSize;
   final int? playingVerseId;
+  final GlobalKey? firstCardKey;
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +43,7 @@ class VerseList extends StatelessWidget {
         final isPlaying = playingVerseId == verse.verse.id;
 
         return VerseCard(
+          key: index == 0 ? firstCardKey : null,
           verse: verse,
           isBookmarked: isBookmarked,
           isPlaying: isPlaying,

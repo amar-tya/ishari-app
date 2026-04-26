@@ -8,7 +8,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 const _websiteUrl = 'https://ishari.vercel.app';
 const _privacyUrl = 'https://amar-tya.github.io/ishari-legal/PRIVACY_POLICY';
-const _termsUrl = 'https://amar-tya.github.io/ishari-legal/TERMS_AND_CONDITIONS';
+const _termsUrl =
+    'https://amar-tya.github.io/ishari-legal/TERMS_AND_CONDITIONS';
 const _delAccountUrl = 'https://amar-tya.github.io/ishari-legal/DELETE_ACCOUNT';
 
 Future<void> showAboutSheet(BuildContext context) {
@@ -95,13 +96,46 @@ class _AboutSheetState extends State<_AboutSheet> {
           const Divider(color: Color(0xFFF0F0F0), height: 1),
           const SizedBox(height: 20),
           // Description
-          Text(
-            'Aplikasi shalawat dan bacaan ISHARI — baca, dengarkan, dan tandai sholawat favorit kapan saja.',
+          // Text(
+          //   'Aplikasi shalawat dan bacaan ISHARI — '
+          //   'baca, dengarkan, dan tandai sholawat '
+          //   'favorit kapan saja. \n'
+          //   'Dari ISHARI NU CABANG SURABAYA \n'
+          //   'Mas Ali Wafa & M. Chanif beserta jajaran \n'
+          //   'untuk semua jamaah ISHARI NU',
+          //   textAlign: TextAlign.center,
+          //   style: GoogleFonts.poppins(
+          //     fontSize: 13,
+          //     color: const Color(0xFF79747E),
+          //     height: 1.6,
+          //   ),
+          // ),
+          RichText(
             textAlign: TextAlign.center,
-            style: GoogleFonts.poppins(
-              fontSize: 13,
-              color: const Color(0xFF79747E),
-              height: 1.6,
+            text: TextSpan(
+              style: GoogleFonts.poppins(
+                fontSize: 13,
+                color: const Color(0xFF79747E),
+                height: 1.6,
+              ),
+              children: const [
+                TextSpan(
+                  text:
+                      'Aplikasi shalawat dan bacaan ISHARI — '
+                      'baca, dengarkan, dan tandai sholawat '
+                      'favorit kapan saja.\n\n',
+                ),
+                TextSpan(
+                  text:
+                      'Dari ISHARI NU CABANG SURABAYA \n'
+                      'Mas Ali Wafa & M. Chanif Said beserta jajaran \n'
+                      'untuk semua jamaah ISHARI NU',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 20),

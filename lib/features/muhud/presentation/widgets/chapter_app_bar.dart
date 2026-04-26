@@ -10,6 +10,7 @@ class ChapterAppBar extends StatelessWidget {
     this.showSplitButton = false,
     this.isSplitView = false,
     this.onToggleSplitView,
+    this.splitBtnKey,
     super.key,
   });
 
@@ -20,6 +21,7 @@ class ChapterAppBar extends StatelessWidget {
   final bool showSplitButton;
   final bool isSplitView;
   final VoidCallback? onToggleSplitView;
+  final GlobalKey? splitBtnKey;
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +56,7 @@ class ChapterAppBar extends StatelessWidget {
           if (showSplitButton) ...[
             const SizedBox(width: 8),
             _SplitBtn(
+              key: splitBtnKey,
               active: isSplitView,
               onTap: onToggleSplitView ?? () {},
             ),
@@ -70,7 +73,7 @@ class ChapterAppBar extends StatelessWidget {
 }
 
 class _SplitBtn extends StatelessWidget {
-  const _SplitBtn({required this.active, required this.onTap});
+  const _SplitBtn({required this.active, required this.onTap, super.key});
 
   final bool active;
   final VoidCallback onTap;
