@@ -306,10 +306,14 @@ class _SplashBody extends StatelessWidget {
             ),
           ),
           const Positioned(
-            bottom: 56,
+            bottom: 0,
             left: 0,
             right: 0,
-            child: Center(child: LoadingBarWidget()),
+            child: SafeArea(
+              top: false,
+              minimum: EdgeInsets.only(bottom: 56),
+              child: Center(child: LoadingBarWidget()),
+            ),
           ),
         ],
       ),
