@@ -185,7 +185,7 @@ class _ColorsForVariant {
             offset: Offset(3, 3),
           ),
         ];
-        arabicFontSize = 36;
+        arabicFontSize = 48;
         latinText = const Color(0x73FFFFFF);
         sourceText = const Color(0x59FFFFFF);
         arrowBg = const Color(0xFFCAFF00);
@@ -203,7 +203,7 @@ class _ColorsForVariant {
             offset: Offset(3, 3),
           ),
         ];
-        arabicFontSize = 36;
+        arabicFontSize = 48;
         latinText = const Color(0x8C000000);
         sourceText = const Color(0x73000000);
         arrowBg = const Color(0xFF111111);
