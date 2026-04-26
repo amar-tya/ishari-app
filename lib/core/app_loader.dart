@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -71,6 +73,19 @@ class _AppLoaderState extends State<AppLoader> {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    await FirebaseCrashlytics.instance
+        .setCrashlyticsCollectionEnabled(!AppEnv.isDevelopment);
+    final sentryFlutterErrorHandler = FlutterError.onError;
+    FlutterError.onError = (errorDetails) {
+      FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+      sentryFlutterErrorHandler?.call(errorDetails);
+    };
+    final sentryPlatformErrorHandler = PlatformDispatcher.instance.onError;
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      sentryPlatformErrorHandler?.call(error, stack);
+      return true;
+    };
     await Supabase.initialize(
       url: AppEnv.supabaseUrl,
       anonKey: AppEnv.supabaseAnonKey,
