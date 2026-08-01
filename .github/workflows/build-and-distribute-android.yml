@@ -133,8 +133,13 @@ jobs:
         # --flutter-version pinned to match .fvmrc / the "Setup Flutter" step above —
         # Shorebird otherwise builds with its own bundled Flutter, which drifts from
         # the version the rest of this project targets.
+        # NOTE: --split-per-abi is intentionally NOT used — Shorebird rejects it
+        # outright ("does not support the split-per-abi option at this time",
+        # see shorebirdtech/shorebird#1141). This produces one universal APK
+        # instead of per-ABI APKs, so it's larger than the old Firebase testers
+        # build, but patches actually work.
         run: |
-          shorebird release android --artifact apk --split-per-abi \
+          shorebird release android --artifact apk \
             --flutter-version 3.41.6 -- \
             --obfuscate --split-debug-info=build/symbols
 
@@ -142,7 +147,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: ishari-apk
-          path: build/app/outputs/flutter-apk/app-*-release.apk
+          path: build/app/outputs/flutter-apk/app-release.apk
 
       - name: Distribute to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
@@ -154,7 +159,7 @@ jobs:
             Automated build from GitHub Actions
             Commit: ${{ github.sha }}
             Version: ${{ env.NEW_VERSION }}
-          file: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+          file: build/app/outputs/flutter-apk/app-release.apk
 
       - name: Upload AAB to Google Play (Production)
         uses: r0adkll/upload-google-play@v1
