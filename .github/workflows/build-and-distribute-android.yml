@@ -120,13 +120,18 @@ jobs:
           storeFile=upload-keystore.jks
           EOF
 
-      - name: Build APK & AAB
+      - name: Setup Shorebird
+        uses: shorebirdtech/setup-shorebird@v1
+
+      - name: Shorebird Release (APK & AAB)
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
+        # `--artifact apk` also produces the .aab in the same run (Shorebird docs).
+        # Flags after `--` pass straight through to the underlying `flutter build`,
+        # same as the previous plain-Flutter build step, so output paths are unchanged.
         run: |
-          flutter build apk --release --split-per-abi \
-            --obfuscate --split-debug-info=build/symbols
-          flutter build appbundle --release \
+          shorebird release android --artifact apk --split-per-abi -- \
             --obfuscate --split-debug-info=build/symbols
 
       - name: Upload APK Artifact
