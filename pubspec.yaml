@@ -129,3 +129,4 @@ flutter:
     - assets/images/intro/
     - assets/icons/
     - assets/fonts/
+    - shorebird.yaml
