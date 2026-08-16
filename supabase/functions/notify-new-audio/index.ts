@@ -43,6 +43,7 @@ interface ServiceAccount {
 interface ChapterInfo {
   chapterId: string;
   chapterTitle: string;
+  hadiName: string;
 }
 
 Deno.serve(async (req) => {
@@ -108,16 +109,16 @@ Deno.serve(async (req) => {
 });
 
 /// Re-queries `verse_media` (with a service-role join through `verses` to
-/// `chapters`) instead of trusting webhook record fields — the webhook only
-/// guarantees `id`, and this stays correct even if verse_media's raw column
-/// names change.
+/// `chapters`, plus `hadi` for the reciter name) instead of trusting webhook
+/// record fields — the webhook only guarantees `id`, and this stays correct
+/// even if verse_media's raw column names change.
 async function resolveChapter(
   verseMediaId: number | string,
 ): Promise<ChapterInfo | null> {
   const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
   const { data, error } = await supabaseAdmin
     .from("verse_media")
-    .select("verse_id, verses(chapter_id, chapters(title))")
+    .select("verse_id, hadi(name), verses(chapter_id, chapters(title))")
     .eq("id", verseMediaId)
     .single();
 
@@ -131,9 +132,12 @@ async function resolveChapter(
     | null;
   if (!verses?.chapter_id) return null;
 
+  const hadi = data.hadi as { name: string } | null;
+
   return {
     chapterId: String(verses.chapter_id),
     chapterTitle: verses.chapters?.title ?? "Ishari",
+    hadiName: hadi?.name ?? "Hadi",
   };
 }
 
@@ -251,7 +255,8 @@ async function sendFcmTopicMessage(
         topic: FCM_TOPIC,
         notification: {
           title: "Audio Baru",
-          body: `Audio baru tersedia di ${chapter.chapterTitle}`,
+          body:
+            `Audio baru dari '${chapter.hadiName}' di '${chapter.chapterTitle}'`,
         },
         data: {
           chapterId: chapter.chapterId,
