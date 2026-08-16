@@ -30,12 +30,17 @@ class ChapterReaderBody extends StatefulWidget {
     required this.transliterationFontSize,
     required this.translationFontSize,
     this.playingVerseId,
+    this.initialVerseId,
     this.isEmbeddedInTab = false,
     super.key,
   });
 
   final ChapterEntity chapter;
   final List<VerseWithDetailsEntity> verses;
+
+  /// Set when opened via a push notification deep link — the reader scrolls
+  /// to this verse once, on first build.
+  final int? initialVerseId;
   final Set<int> bookmarkedVerseIds;
   final bool showTranslation;
   final bool showArabic;
@@ -65,6 +70,10 @@ class _ChapterReaderBodyState extends State<ChapterReaderBody> {
   bool _stepAShown = false;
   bool _stepBShown = false;
 
+  // Deep-link scroll target (push notification → specific verse)
+  final GlobalKey _targetVerseKey = GlobalKey();
+  bool _targetVerseScrolled = false;
+
   static const double _appBarHeight = 52;
   static const double _chapterHeaderHeight = 170;
   static const double _splitDividerHeight = 10;
@@ -74,6 +83,36 @@ class _ChapterReaderBodyState extends State<ChapterReaderBody> {
     super.initState();
     _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) => _maybeStartWizard());
+    if (widget.initialVerseId != null) {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _waitForTargetVerse(60),
+      );
+    }
+  }
+
+  /// Poll for [_targetVerseKey]'s context, then scroll it into view. The
+  /// target card only mounts once [CustomScrollView.cacheExtent] (set large
+  /// in [_WhiteVerseSheet]) has laid out that far into the sliver list, so a
+  /// single post-frame callback isn't reliable — retry like
+  /// [_waitForFirstCard].
+  void _waitForTargetVerse(int retriesLeft) {
+    if (!mounted || _targetVerseScrolled || _isSplitView) return;
+    final ctx = _targetVerseKey.currentContext;
+    if (ctx != null) {
+      _targetVerseScrolled = true;
+      unawaited(
+        Scrollable.ensureVisible(
+          ctx,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeInOut,
+          alignment: 0.15,
+        ),
+      );
+    } else if (retriesLeft > 0) {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _waitForTargetVerse(retriesLeft - 1),
+      );
+    }
   }
 
   void _maybeStartWizard() {
@@ -417,6 +456,8 @@ class _ChapterReaderBodyState extends State<ChapterReaderBody> {
                       translationFontSize: widget.translationFontSize,
                       playingVerseId: widget.playingVerseId,
                       firstCardKey: _firstCardKey,
+                      targetVerseId: widget.initialVerseId,
+                      targetVerseKey: _targetVerseKey,
                     ),
                   ),
                 ],
@@ -644,6 +685,8 @@ class _WhiteVerseSheet extends StatelessWidget {
     required this.translationFontSize,
     this.playingVerseId,
     this.firstCardKey,
+    this.targetVerseId,
+    this.targetVerseKey,
   });
 
   final bool rounded;
@@ -659,6 +702,10 @@ class _WhiteVerseSheet extends StatelessWidget {
   final int? playingVerseId;
   final GlobalKey? firstCardKey;
 
+  /// Deep-link scroll target — see [ChapterReaderBody.initialVerseId].
+  final int? targetVerseId;
+  final GlobalKey? targetVerseKey;
+
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
@@ -670,6 +717,11 @@ class _WhiteVerseSheet extends StatelessWidget {
         child: CustomScrollView(
           controller: scrollController,
           physics: const ClampingScrollPhysics(),
+          // Chapters are short (verses ~single digits to low tens), so it's
+          // cheap to force the whole list to lay out up front — otherwise
+          // SliverList only builds near the viewport and targetVerseKey's
+          // context never attaches when the target verse starts off-screen.
+          cacheExtent: 20000,
           slivers: [
             VerseList(
               verses: verses,
@@ -682,6 +734,8 @@ class _WhiteVerseSheet extends StatelessWidget {
               translationFontSize: translationFontSize,
               playingVerseId: playingVerseId,
               firstCardKey: firstCardKey,
+              targetVerseId: targetVerseId,
+              targetVerseKey: targetVerseKey,
             ),
             const SliverToBoxAdapter(
               child: ColoredBox(
