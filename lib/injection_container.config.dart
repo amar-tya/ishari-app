@@ -63,6 +63,7 @@ import 'features/notifications/domain/usecases/mark_all_notifications_read.dart'
     as _i506;
 import 'features/notifications/presentation/bloc/notifications_bloc.dart'
     as _i772;
+import 'features/push_notification/data/services/fcm_service.dart' as _i480;
 import 'features/search/data/datasources/search_remote_datasource.dart'
     as _i647;
 import 'features/search/data/repositories/search_repository_impl.dart' as _i967;
@@ -108,6 +109,7 @@ Future<_i174.GetIt> initDependencies(
     preResolve: true,
   );
   gh.lazySingleton<_i931.AnalyticsService>(() => _i931.AnalyticsService());
+  gh.lazySingleton<_i480.FcmService>(() => _i480.FcmService());
   gh.lazySingleton<_i454.SupabaseClient>(() => registerModule.supabaseClient);
   gh.lazySingleton<_i161.InternetConnection>(
     () => registerModule.internetConnection,
