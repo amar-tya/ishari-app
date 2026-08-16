@@ -93,6 +93,18 @@ dart run build_runner build --delete-conflicting-outputs
 flutter analyze
 ```
 
+### Shorebird OTA Patch
+CI (`.github/workflows/build-and-distribute-android.yml`) builds production release via `shorebird release android`, bukan `flutter build` langsung. Butuh `shorebird.yaml` (app terdaftar di Shorebird console) dan `SHOREBIRD_TOKEN` (dari `shorebird login:ci`) di GitHub Secrets — keduanya dipegang manual oleh pemilik akun, bukan bagian dari CI.
+
+Setelah rilis production baru live, hotfix Dart/Flutter code (tanpa native code change, tanpa asset baru) bisa dikirim tanpa lewat Play Store review lagi:
+```bash
+shorebird patch android --release-version <version+build>
+# contoh: shorebird patch android --release-version 1.2.6+19
+```
+`<version+build>` harus persis sama dengan versi di `pubspec.yaml` pas rilis yang mau di-patch. Device pull patch otomatis pas app restart berikutnya — no store update needed.
+
+**Jangan pakai patch untuk:** perubahan native (Android/iOS code, plugin baru), perubahan asset, atau perubahan yang butuh permission baru — semua itu tetap wajib lewat rilis penuh (Play Store).
+
 ## Architecture
 
 This is an Islamic shalawat (salutations on the Prophet) reading and audio app. Users can browse shalawat chapters, read verses with translations, listen to audio by preachers (Hadi), and bookmark content. Supports Google Sign-In via Supabase OAuth and guest mode.

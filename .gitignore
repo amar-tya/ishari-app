@@ -1,8 +1,9 @@
 # Graphify knowledge graph output
 graphify-out/
 
-# Claude Code local settings (personal, tidak di-share ke tim)
+# Claude Code — local/generated files, tidak di-share ke tim
 .claude/settings.local.json
+.claude/worktrees/
 
 # Miscellaneous
 *.class
@@ -90,5 +91,3 @@ google-services.json
 # playwright
 .playwright-mcp/
 
-# Claude Code local settings
-.claude/settings.local.json
