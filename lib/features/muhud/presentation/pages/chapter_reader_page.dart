@@ -11,11 +11,19 @@ import 'package:ishari/features/muhud/presentation/widgets/chapter_reader_body.d
 import 'package:ishari/injection_container.dart';
 
 class ChapterReaderPage extends StatelessWidget {
-  const ChapterReaderPage({required this.chapterId, super.key});
+  const ChapterReaderPage({
+    required this.chapterId,
+    this.initialVerseId,
+    super.key,
+  });
 
   static const routePath = '/chapter/:chapterId';
 
   final int chapterId;
+
+  /// Set when opened via a push notification deep link — scrolls the reader
+  /// to this verse once loaded instead of leaving it at the top.
+  final int? initialVerseId;
 
   String _resolveUserId(BuildContext context) {
     return context.read<AuthBloc>().state.maybeWhen(
@@ -89,6 +97,7 @@ class ChapterReaderPage extends StatelessWidget {
                     ChapterReaderBody(
                   chapter: chapter,
                   verses: verses,
+                  initialVerseId: initialVerseId,
                   bookmarkedVerseIds: bookmarked,
                   showTranslation: showTranslation,
                   showArabic: showArabic,

@@ -19,6 +19,8 @@ class VerseList extends StatelessWidget {
     required this.translationFontSize,
     this.playingVerseId,
     this.firstCardKey,
+    this.targetVerseId,
+    this.targetVerseKey,
     super.key,
   });
 
@@ -33,6 +35,10 @@ class VerseList extends StatelessWidget {
   final int? playingVerseId;
   final GlobalKey? firstCardKey;
 
+  /// Deep-link scroll target — see [ChapterReaderBody.initialVerseId].
+  final int? targetVerseId;
+  final GlobalKey? targetVerseKey;
+
   @override
   Widget build(BuildContext context) {
     return SliverList.builder(
@@ -41,9 +47,13 @@ class VerseList extends StatelessWidget {
         final verse = verses[index];
         final isBookmarked = bookmarkedVerseIds.contains(verse.verse.id);
         final isPlaying = playingVerseId == verse.verse.id;
+        final isTarget =
+            targetVerseId != null && verse.verse.id == targetVerseId;
 
         return VerseCard(
-          key: index == 0 ? firstCardKey : null,
+          key: isTarget
+              ? targetVerseKey
+              : (index == 0 ? firstCardKey : null),
           verse: verse,
           isBookmarked: isBookmarked,
           isPlaying: isPlaying,

@@ -71,8 +71,14 @@ GoRouter createRouter(
         path: ChapterReaderPage.routePath,
         name: 'chapter-reader',
         builder: (context, state) {
-          final chapterId = int.parse(state.pathParameters['chapterId'] ?? '0');
-          return ChapterReaderPage(chapterId: chapterId);
+          final chapterId =
+              int.parse(state.pathParameters['chapterId'] ?? '0');
+          final verseId =
+              int.tryParse(state.uri.queryParameters['verseId'] ?? '');
+          return ChapterReaderPage(
+            chapterId: chapterId,
+            initialVerseId: verseId,
+          );
         },
       ),
       GoRoute(

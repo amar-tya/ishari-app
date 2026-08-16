@@ -44,6 +44,7 @@ interface ChapterInfo {
   chapterId: string;
   chapterTitle: string;
   hadiName: string;
+  verseId: string;
 }
 
 Deno.serve(async (req) => {
@@ -138,6 +139,7 @@ async function resolveChapter(
     chapterId: String(verses.chapter_id),
     chapterTitle: verses.chapters?.title ?? "Ishari",
     hadiName: hadi?.name ?? "Hadi",
+    verseId: String(data.verse_id),
   };
 }
 
@@ -260,6 +262,7 @@ async function sendFcmTopicMessage(
         },
         data: {
           chapterId: chapter.chapterId,
+          verseId: chapter.verseId,
           type: "new_audio",
         },
       },

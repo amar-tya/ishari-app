@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -54,10 +55,13 @@ class FcmService {
     await _localNotifications.initialize(
       settings: initSettings,
       onDidReceiveNotificationResponse: (response) {
-        final chapterId = response.payload;
-        if (chapterId != null && chapterId.isNotEmpty) {
-          _navigateToChapter(chapterId);
-        }
+        final payload = response.payload;
+        if (payload == null || payload.isEmpty) return;
+        final data = jsonDecode(payload) as Map<String, dynamic>;
+        _navigateToChapter(
+          data['chapterId'] as String?,
+          verseId: data['verseId'] as String?,
+        );
       },
     );
   }
@@ -73,23 +77,31 @@ class FcmService {
         notificationDetails: const NotificationDetails(
           android: AndroidNotificationDetails(_channelId, _channelName),
         ),
-        payload: message.data['chapterId'] as String?,
+        payload: jsonEncode({
+          'chapterId': message.data['chapterId'],
+          'verseId': message.data['verseId'],
+        }),
       ),
     );
   }
 
   void _onNotificationTap(RemoteMessage message) {
-    final chapterId = message.data['chapterId'] as String?;
-    if (chapterId != null && chapterId.isNotEmpty) {
-      _navigateToChapter(chapterId);
-    }
+    _navigateToChapter(
+      message.data['chapterId'] as String?,
+      verseId: message.data['verseId'] as String?,
+    );
   }
 
-  void _navigateToChapter(String chapterId) {
+  void _navigateToChapter(String? chapterId, {String? verseId}) {
+    if (chapterId == null || chapterId.isEmpty) return;
+
     void attempt() {
       final context = rootNavigatorKey.currentContext;
       if (context != null && context.mounted) {
-        GoRouter.of(context).go('/chapter/$chapterId');
+        final path = verseId != null && verseId.isNotEmpty
+            ? '/chapter/$chapterId?verseId=$verseId'
+            : '/chapter/$chapterId';
+        GoRouter.of(context).go(path);
       } else {
         WidgetsBinding.instance.addPostFrameCallback((_) => attempt());
       }
