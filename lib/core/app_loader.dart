@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,6 +16,7 @@ import 'package:ishari/core/wizard/wizard_cubit.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ishari/features/auth/presentation/pages/home_page.dart';
 import 'package:ishari/features/introduction/presentation/pages/introduction_page.dart';
+import 'package:ishari/features/push_notification/data/services/fcm_service.dart';
 import 'package:ishari/features/splash/presentation/widgets/book_logo_painter.dart';
 import 'package:ishari/features/splash/presentation/widgets/loading_bar.dart';
 import 'package:ishari/features/update/presentation/cubit/update_cubit.dart';
@@ -73,6 +75,7 @@ class _AppLoaderState extends State<AppLoader> {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
     await FirebaseCrashlytics.instance
         .setCrashlyticsCollectionEnabled(!AppEnv.isDevelopment);
     final sentryFlutterErrorHandler = FlutterError.onError;
@@ -108,6 +111,7 @@ class _AppLoaderState extends State<AppLoader> {
       }),
     );
     unawaited(WakelockPlus.enable());
+    unawaited(sl<FcmService>().init());
 
     // Auth check — use same instance passed to IshariApp later
     _authBloc = sl<AuthBloc>();

@@ -14,6 +14,10 @@ import 'package:ishari/features/notifications/presentation/pages/notifications_p
 import 'package:ishari/features/tatanan/presentation/pages/tatanan_detail_page.dart';
 import 'package:ishari/features/update/presentation/pages/force_update_page.dart';
 
+/// Global navigator key so code outside the widget tree (e.g. FCM tap
+/// handlers running before/without a [BuildContext]) can still navigate.
+final rootNavigatorKey = GlobalKey<NavigatorState>();
+
 /// Application router powered by [GoRouter].
 ///
 /// [initialLocation] is determined by [AppLoader] after auth is resolved,
@@ -29,6 +33,7 @@ GoRouter createRouter(
   String initialLocation = HomePage.routePath,
 }) {
   return GoRouter(
+    navigatorKey: rootNavigatorKey,
     initialLocation: initialLocation,
     observers: [analytics.observer],
     refreshListenable: Listenable.merge([
@@ -66,8 +71,14 @@ GoRouter createRouter(
         path: ChapterReaderPage.routePath,
         name: 'chapter-reader',
         builder: (context, state) {
-          final chapterId = int.parse(state.pathParameters['chapterId'] ?? '0');
-          return ChapterReaderPage(chapterId: chapterId);
+          final chapterId =
+              int.parse(state.pathParameters['chapterId'] ?? '0');
+          final verseId =
+              int.tryParse(state.uri.queryParameters['verseId'] ?? '');
+          return ChapterReaderPage(
+            chapterId: chapterId,
+            initialVerseId: verseId,
+          );
         },
       ),
       GoRoute(
