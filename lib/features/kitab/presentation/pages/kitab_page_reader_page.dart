@@ -65,6 +65,16 @@ class _KitabPageReaderPageState extends State<KitabPageReaderPage> {
     super.dispose();
   }
 
+  void _goToPage(int index) {
+    unawaited(
+      _pageController.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+      ),
+    );
+  }
+
   void _switchChapter(ChapterEntity chapter) {
     final id = int.tryParse(chapter.id);
     if (id == null || id == _currentChapterId) return;
@@ -212,6 +222,24 @@ class _KitabPageReaderPageState extends State<KitabPageReaderPage> {
                     };
                   },
                 ),
+              ),
+              BlocBuilder<KitabPageReaderCubit, KitabPageReaderState>(
+                builder: (context, state) {
+                  if (state is! KitabPageReaderLoaded ||
+                      state.pages.length < 2) {
+                    return const SizedBox.shrink();
+                  }
+                  return _BottomPageNav(
+                    current: _currentPage,
+                    total: state.pages.length,
+                    onPrev: _currentPage > 0
+                        ? () => _goToPage(_currentPage - 1)
+                        : null,
+                    onNext: _currentPage < state.pages.length - 1
+                        ? () => _goToPage(_currentPage + 1)
+                        : null,
+                  );
+                },
               ),
             ],
           ),
@@ -388,6 +416,93 @@ class _ChapterSwitchSheet extends StatelessWidget {
           ),
           SizedBox(height: MediaQuery.of(context).padding.bottom + 12),
         ],
+      ),
+    );
+  }
+}
+
+class _BottomPageNav extends StatelessWidget {
+  const _BottomPageNav({
+    required this.current,
+    required this.total,
+    required this.onPrev,
+    required this.onNext,
+  });
+
+  final int current;
+  final int total;
+  final VoidCallback? onPrev;
+  final VoidCallback? onNext;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        16,
+        4,
+        16,
+        MediaQuery.of(context).padding.bottom > 0 ? 4 : 12,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _NavIconBtn(
+            icon: Icons.chevron_left_rounded,
+            onTap: onPrev,
+          ),
+          const SizedBox(width: 16),
+          Container(
+            width: 72,
+            height: 34,
+            decoration: BoxDecoration(
+              color: _kDark,
+              borderRadius: BorderRadius.circular(17),
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              '${current + 1} / $total',
+              style: GoogleFonts.dmSans(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: _kLime,
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          _NavIconBtn(
+            icon: Icons.chevron_right_rounded,
+            onTap: onNext,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _NavIconBtn extends StatelessWidget {
+  const _NavIconBtn({required this.icon, required this.onTap});
+
+  final IconData icon;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final enabled = onTap != null;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: enabled ? _kDark : Colors.white,
+          shape: BoxShape.circle,
+          border: enabled ? null : Border.all(color: _kBorder, width: 1.5),
+        ),
+        child: Icon(
+          icon,
+          color: enabled ? _kLime : _kMuted,
+          size: 26,
+        ),
       ),
     );
   }
