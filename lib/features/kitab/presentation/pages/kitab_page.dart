@@ -468,7 +468,7 @@ class _ModePicker extends StatelessWidget {
               if (onBack != null)
                 IconButton(
                   onPressed: onBack,
-                  icon: const Icon(Icons.arrow_back_rounded),
+                  icon: const Icon(Icons.arrow_back_ios_new_rounded),
                 ),
               Expanded(
                 child: Text(

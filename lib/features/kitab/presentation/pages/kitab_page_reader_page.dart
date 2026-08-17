@@ -191,7 +191,7 @@ class _KitabPageReaderPageState extends State<KitabPageReaderPage> {
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           const Icon(
-                                            Icons.broken_image_outlined,
+                                            Icons.error_outline,
                                             size: 48,
                                             color: _kMuted,
                                           ),
@@ -292,10 +292,13 @@ class _ChapterDropdown extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 4),
-            const Icon(
-              Icons.keyboard_arrow_down_rounded,
-              size: 18,
-              color: _kDark,
+            const RotatedBox(
+              quarterTurns: 1,
+              child: Icon(
+                Icons.chevron_right_rounded,
+                size: 18,
+                color: _kDark,
+              ),
             ),
           ],
         ),
@@ -447,7 +450,8 @@ class _BottomPageNav extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _NavIconBtn(
-            icon: Icons.chevron_left_rounded,
+            icon: Icons.chevron_right_rounded,
+            flipped: true,
             onTap: onPrev,
           ),
           const SizedBox(width: 16),
@@ -480,14 +484,24 @@ class _BottomPageNav extends StatelessWidget {
 }
 
 class _NavIconBtn extends StatelessWidget {
-  const _NavIconBtn({required this.icon, required this.onTap});
+  const _NavIconBtn({
+    required this.icon,
+    required this.onTap,
+    this.flipped = false,
+  });
 
   final IconData icon;
   final VoidCallback? onTap;
+  final bool flipped;
 
   @override
   Widget build(BuildContext context) {
     final enabled = onTap != null;
+    final iconWidget = Icon(
+      icon,
+      color: enabled ? _kLime : _kMuted,
+      size: 26,
+    );
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -498,11 +512,9 @@ class _NavIconBtn extends StatelessWidget {
           shape: BoxShape.circle,
           border: enabled ? null : Border.all(color: _kBorder, width: 1.5),
         ),
-        child: Icon(
-          icon,
-          color: enabled ? _kLime : _kMuted,
-          size: 26,
-        ),
+        child: flipped
+            ? RotatedBox(quarterTurns: 2, child: iconWidget)
+            : iconWidget,
       ),
     );
   }
