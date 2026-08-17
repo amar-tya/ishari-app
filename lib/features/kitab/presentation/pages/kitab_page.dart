@@ -2,9 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ishari/features/home/domain/entities/chapter_entity.dart';
 import 'package:ishari/features/kitab/domain/entities/book_entity.dart';
+import 'package:ishari/features/kitab/domain/usecases/get_chapters_by_book.dart';
+import 'package:ishari/features/kitab/presentation/bloc/book_chapters_cubit.dart';
 import 'package:ishari/features/kitab/presentation/bloc/kitab_bloc.dart';
+import 'package:ishari/injection_container.dart';
 
 // ── Design tokens ──────────────────────────────────────────────────────────
 const _kBg = Color(0xFFF0F5EE);
@@ -185,7 +190,7 @@ class _BookCard extends StatelessWidget {
           ];
 
     return GestureDetector(
-      onTap: () => _showUnderDevelopmentSheet(context, book.title),
+      onTap: () => _showReadingModeSheet(context, book),
       child: Container(
         decoration: BoxDecoration(
           color: cardBg,
@@ -281,12 +286,237 @@ class _BookCard extends StatelessWidget {
     );
   }
 
-  void _showUnderDevelopmentSheet(BuildContext context, String title) {
+  void _showReadingModeSheet(BuildContext context, BookEntity book) {
     unawaited(
       showModalBottomSheet<void>(
         context: context,
         backgroundColor: Colors.transparent,
-        builder: (_) => _UnderDevelopmentSheet(title: title),
+        isScrollControlled: true,
+        builder: (_) => _ReadingModeSheet(book: book),
+      ),
+    );
+  }
+}
+
+// ── Reading-mode selection sheet ────────────────────────────────────────────
+/// Shown on book tap: loads the book's chapters, then lets the user pick a
+/// chapter (if there's more than one) and a reading mode (per-ayat / per-
+/// halaman). Falls back to [_UnderDevelopmentSheet] when the book has no
+/// chapters yet.
+class _ReadingModeSheet extends StatefulWidget {
+  const _ReadingModeSheet({required this.book});
+
+  final BookEntity book;
+
+  @override
+  State<_ReadingModeSheet> createState() => _ReadingModeSheetState();
+}
+
+class _ReadingModeSheetState extends State<_ReadingModeSheet> {
+  ChapterEntity? _selectedChapter;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) =>
+          BookChaptersCubit(getChaptersByBook: sl<GetChaptersByBook>())
+            ..load(int.parse(widget.book.id)),
+      child: Container(
+        margin: const EdgeInsets.all(12),
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.75,
+        ),
+        decoration: BoxDecoration(
+          color: _kSurface,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: BlocBuilder<BookChaptersCubit, BookChaptersState>(
+          builder: (context, state) {
+            return switch (state) {
+              BookChaptersInitial() ||
+              BookChaptersLoading() => const Padding(
+                padding: EdgeInsets.all(40),
+                child: Center(
+                  child: CircularProgressIndicator(color: _kLime),
+                ),
+              ),
+              BookChaptersError() => _UnderDevelopmentSheet(
+                title: widget.book.title,
+              ),
+              BookChaptersLoaded(:final chapters) when chapters.isEmpty =>
+                _UnderDevelopmentSheet(title: widget.book.title),
+              BookChaptersLoaded(:final chapters) => _selectedChapter == null
+                  ? _ChapterPicker(
+                      chapters: chapters,
+                      onSelected: (c) =>
+                          setState(() => _selectedChapter = c),
+                    )
+                  : _ModePicker(
+                      chapter: _selectedChapter!,
+                      bookId: widget.book.id,
+                      onBack: chapters.length > 1
+                          ? () => setState(() => _selectedChapter = null)
+                          : null,
+                    ),
+            };
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _ChapterPicker extends StatelessWidget {
+  const _ChapterPicker({required this.chapters, required this.onSelected});
+
+  final List<ChapterEntity> chapters;
+  final ValueChanged<ChapterEntity> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const SizedBox(height: 12),
+        Container(
+          width: 36,
+          height: 4,
+          decoration: BoxDecoration(
+            color: const Color(0xFFE0E0E0),
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Pilih Bab',
+              style: GoogleFonts.dmSans(
+                fontSize: 17,
+                fontWeight: FontWeight.w800,
+                color: _kDark,
+              ),
+            ),
+          ),
+        ),
+        Flexible(
+          child: ListView.separated(
+            shrinkWrap: true,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            itemCount: chapters.length,
+            separatorBuilder: (_, _) => const SizedBox(height: 2),
+            itemBuilder: (context, index) {
+              final chapter = chapters[index];
+              return ListTile(
+                onTap: () => onSelected(chapter),
+                title: Text(
+                  chapter.title,
+                  style: GoogleFonts.dmSans(
+                    fontWeight: FontWeight.w700,
+                    color: _kDark,
+                  ),
+                ),
+                subtitle: Text(
+                  '${chapter.category} — ${chapter.verseCount} ayat',
+                  style: GoogleFonts.dmSans(fontSize: 12, color: _kMuted),
+                ),
+                trailing: const Icon(Icons.chevron_right_rounded),
+              );
+            },
+          ),
+        ),
+        SizedBox(height: MediaQuery.of(context).padding.bottom + 12),
+      ],
+    );
+  }
+}
+
+class _ModePicker extends StatelessWidget {
+  const _ModePicker({
+    required this.chapter,
+    required this.bookId,
+    this.onBack,
+  });
+
+  final ChapterEntity chapter;
+  final String bookId;
+  final VoidCallback? onBack;
+
+  void _openPerAyat(BuildContext context) {
+    final router = GoRouter.of(context);
+    Navigator.of(context).pop();
+    router.push('/chapter/${chapter.id}');
+  }
+
+  void _openPerHalaman(BuildContext context) {
+    final router = GoRouter.of(context);
+    Navigator.of(context).pop();
+    router.push('/kitab-page/${chapter.id}?bookId=$bookId');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              if (onBack != null)
+                IconButton(
+                  onPressed: onBack,
+                  icon: const Icon(Icons.arrow_back_rounded),
+                ),
+              Expanded(
+                child: Text(
+                  chapter.title,
+                  textAlign: onBack != null
+                      ? TextAlign.start
+                      : TextAlign.center,
+                  style: GoogleFonts.dmSans(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w800,
+                    color: _kDark,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          FilledButton(
+            onPressed: () => _openPerHalaman(context),
+            style: FilledButton.styleFrom(
+              backgroundColor: _kDark,
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: Text(
+              'Per Halaman',
+              style: GoogleFonts.dmSans(fontWeight: FontWeight.w700),
+            ),
+          ),
+          const SizedBox(height: 10),
+          OutlinedButton(
+            onPressed: () => _openPerAyat(context),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: _kDark,
+              side: const BorderSide(color: _kBorder),
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: Text(
+              'Per Ayat',
+              style: GoogleFonts.dmSans(fontWeight: FontWeight.w700),
+            ),
+          ),
+        ],
       ),
     );
   }

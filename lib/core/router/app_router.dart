@@ -7,6 +7,7 @@ import 'package:ishari/core/app_state.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ishari/features/auth/presentation/pages/home_page.dart';
 import 'package:ishari/features/introduction/presentation/pages/introduction_page.dart';
+import 'package:ishari/features/kitab/presentation/pages/kitab_page_reader_page.dart';
 import 'package:ishari/features/muhud/presentation/pages/chapter_reader_page.dart';
 import 'package:ishari/features/notifications/domain/entities/notification_entity.dart';
 import 'package:ishari/features/notifications/presentation/pages/notification_detail_page.dart';
@@ -79,6 +80,18 @@ GoRouter createRouter(
             chapterId: chapterId,
             initialVerseId: verseId,
           );
+        },
+      ),
+      GoRoute(
+        path: KitabPageReaderPage.routePath,
+        name: 'kitab-page-reader',
+        builder: (context, state) {
+          final chapterId =
+              int.parse(state.pathParameters['chapterId'] ?? '0');
+          final bookId = int.tryParse(
+            state.uri.queryParameters['bookId'] ?? '',
+          );
+          return KitabPageReaderPage(chapterId: chapterId, bookId: bookId);
         },
       ),
       GoRoute(

@@ -39,6 +39,8 @@ import 'features/kitab/data/datasources/kitab_remote_datasource.dart' as _i914;
 import 'features/kitab/data/repositories/kitab_repository_impl.dart' as _i918;
 import 'features/kitab/domain/repositories/kitab_repository.dart' as _i430;
 import 'features/kitab/domain/usecases/get_all_books.dart' as _i395;
+import 'features/kitab/domain/usecases/get_chapters_by_book.dart' as _i88;
+import 'features/kitab/domain/usecases/get_pages_by_chapter.dart' as _i693;
 import 'features/kitab/presentation/bloc/kitab_bloc.dart' as _i468;
 import 'features/muhud/data/datasources/muhud_remote_datasource.dart' as _i314;
 import 'features/muhud/data/repositories/muhud_repository_impl.dart' as _i964;
@@ -195,6 +197,12 @@ Future<_i174.GetIt> initDependencies(
   );
   gh.factory<_i395.GetAllBooks>(
     () => _i395.GetAllBooks(gh<_i430.KitabRepository>()),
+  );
+  gh.factory<_i88.GetChaptersByBook>(
+    () => _i88.GetChaptersByBook(gh<_i430.KitabRepository>()),
+  );
+  gh.factory<_i693.GetPagesByChapter>(
+    () => _i693.GetPagesByChapter(gh<_i430.KitabRepository>()),
   );
   gh.factory<_i853.GetChaptersByCategory>(
     () => _i853.GetChaptersByCategory(gh<_i649.HomeRepository>()),
