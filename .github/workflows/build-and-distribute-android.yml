@@ -3,6 +3,18 @@ name: Build & Distribute Ishari Android
 on:
   push:
     branches: [ master ]
+    # Only fire a full Play Store release for changes Shorebird patches
+    # can't cover: native code, new/updated dependencies (may need native
+    # linking), bundled assets, or Shorebird's own config. Pure Dart/Flutter
+    # changes (lib/**) land on master without triggering this — ship those
+    # via `shorebird patch` instead. Force a release anytime with
+    # workflow_dispatch regardless of what changed.
+    paths:
+      - 'android/**'
+      - 'ios/**'
+      - 'pubspec.yaml'
+      - 'assets/**'
+      - 'shorebird.yaml'
   workflow_dispatch:
 
 jobs:
