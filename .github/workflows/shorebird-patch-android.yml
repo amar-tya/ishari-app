@@ -1,0 +1,81 @@
+name: Shorebird Patch Android
+
+# Manual only — a patch is a deliberate action, not something that should
+# fire on every push. Runs on the same ubuntu-latest runner (same OS/JDK/
+# Android build-tools) as build-and-distribute-android.yml on purpose:
+# building a patch on a different machine (e.g. a dev's local Windows
+# box) can make R8/DEX minification non-deterministic, which Shorebird
+# then misreports as a "native diff" even when no native code changed —
+# see https://docs.shorebird.dev/code-push/troubleshooting#your-app-contains-native-changes-warning-when-creating-a-patch-even-though-you-havent-changed-swiftobjective-ckotlinjava-code
+on:
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: 'Release version to patch, e.g. 1.2.8+21 (use "latest" for the most recently updated release)'
+        required: true
+        type: string
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.6'
+          channel: 'stable'
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Setup Environment
+        run: |
+          cat <<EOF > env/current.env
+          APP_ENV=production
+          SUPABASE_URL=${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+          GOOGLE_WEB_CLIENT_ID=${{ secrets.GOOGLE_WEB_CLIENT_ID }}
+          ADMOB_APP_ID=${{ secrets.ADMOB_APP_ID }}
+          ADMOB_BANNER_UNIT_ID=${{ secrets.ADMOB_BANNER_UNIT_ID }}
+          ADMOB_NATIVE_UNIT_ID=${{ secrets.ADMOB_NATIVE_UNIT_ID }}
+          ADMOB_INTERSTITIAL_UNIT_ID=${{ secrets.ADMOB_INTERSTITIAL_UNIT_ID }}
+          ADMOB_TEST_DEVICE_IDS=${{ secrets.ADMOB_TEST_DEVICE_IDS }}
+          SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+          EOF
+          dart run build_runner build --delete-conflicting-outputs
+
+      - name: Setup Google Services
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: echo "$GOOGLE_SERVICES_JSON" > android/app/google-services.json
+
+      - name: Setup Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode --ignore-garbage > android/app/upload-keystore.jks
+          cat <<EOF > android/key.properties
+          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword=${{ secrets.KEY_PASSWORD }}
+          keyAlias=${{ secrets.KEY_ALIAS }}
+          storeFile=upload-keystore.jks
+          EOF
+
+      - name: Setup Shorebird
+        uses: shorebirdtech/setup-shorebird@v1
+
+      - name: Shorebird Patch (Android)
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
+        # No --flutter-version here: unlike `release`, `patch` doesn't accept
+        # it — it builds against whatever Flutter revision the target release
+        # was built with. --obfuscate is intentionally omitted: Shorebird
+        # applies it automatically when the release was built with it and
+        # warns if passed again.
+        run: |
+          echo "y" | shorebird patch android \
+            --release-version "${{ inputs.release_version }}" \
+            -- --split-debug-info=build/symbols
