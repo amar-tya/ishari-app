@@ -93,3 +93,6 @@ google-services.json
 
 # credentials
 keys/
+
+# Claude Code spec-driven-development scratch docs (spec/plan/todo per issue)
+tasks/
