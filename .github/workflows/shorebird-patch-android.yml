@@ -23,6 +23,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
+      # Kept identical to build-and-distribute-android.yml's Java pin — this
+      # is what actually closes the non-determinism gap the comment above
+      # describes. AGP/Gradle/NDK were already pinned by version files; JDK
+      # was the one input still inherited from whatever ubuntu-latest ships.
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:

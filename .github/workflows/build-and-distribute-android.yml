@@ -30,6 +30,21 @@ jobs:
         with:
           fetch-depth: 0 # Mengambil seluruh history agar git log bisa dibaca
 
+      # Pinned explicitly so release and Shorebird-patch builds always use the
+      # same JDK — AGP (settings.gradle.kts), Gradle (gradle-wrapper.properties)
+      # and NDK/compileSdk (flutter.ndkVersion/compileSdkVersion, pinned via
+      # the Flutter version below) are already fixed, but the JDK was still
+      # falling back to whatever ubuntu-latest ships by default, which drifts
+      # across runner image updates and can make R8/D8 output for large SDKs
+      # (e.g. google_mobile_ads) non-reproducible between two builds of
+      # identical source — see shorebird-patch-android.yml for the failure
+      # mode this causes.
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
