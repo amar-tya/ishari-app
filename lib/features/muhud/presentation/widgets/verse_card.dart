@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ishari/features/muhud/domain/entities/verse_with_details_entity.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class VerseCard extends StatefulWidget {
   const VerseCard({
@@ -71,6 +73,71 @@ class _VerseCardState extends State<VerseCard>
     super.dispose();
   }
 
+  String _buildFullText(String? translationText) {
+    final parts = <String>[
+      widget.verse.verse.arabicText,
+      if (widget.verse.verse.transliteration.isNotEmpty)
+        widget.verse.verse.transliteration,
+      if (translationText != null && translationText.isNotEmpty)
+        translationText,
+    ];
+    return parts.join('\n\n');
+  }
+
+  void _showMoreMenu(BuildContext context, String? translationText) {
+    final fullText = _buildFullText(translationText);
+    showModalBottomSheet<void>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.copy_rounded),
+              title: const Text('Salin'),
+              onTap: () {
+                Navigator.of(sheetContext).pop();
+                _copyText(fullText).ignore();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.chat_rounded),
+              title: const Text('Bagikan'),
+              onTap: () {
+                Navigator.of(sheetContext).pop();
+                _shareToWhatsApp(fullText).ignore();
+              },
+            ),
+          ],
+        ),
+      ),
+    ).ignore();
+  }
+
+  Future<void> _copyText(String text) async {
+    await Clipboard.setData(ClipboardData(text: text));
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Teks disalin')),
+    );
+  }
+
+  Future<void> _shareToWhatsApp(String text) async {
+    final uri = Uri.parse('whatsapp://send?text=${Uri.encodeComponent(text)}');
+    final launched = await canLaunchUrl(uri);
+    if (launched) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('WhatsApp tidak ditemukan')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final translation = widget.verse.translations.isNotEmpty
@@ -133,7 +200,8 @@ class _VerseCardState extends State<VerseCard>
               _ActionButton(
                 icon: Icons.more_horiz_rounded,
                 isActive: false,
-                onTap: () {},
+                onTap: () =>
+                    _showMoreMenu(context, translation?.translationText),
               ),
               const SizedBox(width: 4),
               // Play/pause — only if verse has audio
