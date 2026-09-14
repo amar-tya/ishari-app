@@ -10,17 +10,19 @@ import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ishari/features/bookmark/presentation/pages/bookmark_tab.dart';
 import 'package:ishari/features/home/presentation/pages/home_page.dart';
 import 'package:ishari/features/kitab/presentation/pages/kitab_tab.dart';
+import 'package:ishari/features/lainnya/presentation/pages/lainnya_tab.dart';
 import 'package:ishari/features/search/presentation/pages/search_tab.dart';
 import 'package:ishari/features/tatanan/presentation/pages/tatanan_tab.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
-/// Root scaffold providing the 5-tab floating pill navigation bar.
+/// Root scaffold providing the 6-tab floating pill navigation bar.
 ///
 /// Tab 0 — Beranda (HomeTab)
 /// Tab 1 — Cari (SearchTab)
 /// Tab 2 — Kitab (KitabTab)
 /// Tab 3 — Bookmark (guest-gated)
 /// Tab 4 — Tatanan (guest-gated)
+/// Tab 5 — Lainnya (LainnyaTab)
 class MainScaffold extends StatefulWidget {
   const MainScaffold({super.key});
 
@@ -32,7 +34,7 @@ class _MainScaffoldState extends State<MainScaffold> {
   int _selectedIndex = 0;
 
   // Wizard
-  final List<GlobalKey> _tabKeys = List.generate(5, (_) => GlobalKey());
+  final List<GlobalKey> _tabKeys = List.generate(6, (_) => GlobalKey());
   bool _tabWizardShown = false;
 
   @override
@@ -232,6 +234,7 @@ class _MainScaffoldState extends State<MainScaffold> {
                 onNavigateToHome: () => _onTabSelected(0),
               ),
               TatananTab(isActive: _selectedIndex == 4),
+              const LainnyaTab(),
             ],
           ),
           bottomNavigationBar: _FloatingNavBar(
@@ -357,6 +360,7 @@ class _FloatingNavBar extends StatelessWidget {
     _NavItemData(icon: Icons.menu_book_rounded, label: 'Kitab'),
     _NavItemData(icon: Icons.bookmark_outline, label: 'Bookmark'),
     _NavItemData(icon: Icons.format_list_numbered_rounded, label: 'Tatanan'),
+    _NavItemData(icon: Icons.widgets_outlined, label: 'Lainnya'),
   ];
 
   @override
