@@ -28,6 +28,12 @@ import 'features/auth/domain/usecases/sign_in_with_google.dart' as _i648;
 import 'features/auth/domain/usecases/sign_out.dart' as _i872;
 import 'features/auth/presentation/bloc/auth_bloc.dart' as _i363;
 import 'features/bookmark/presentation/bloc/bookmark_bloc.dart' as _i560;
+import 'features/hadi/data/datasources/hadi_remote_datasource.dart' as _i237;
+import 'features/hadi/data/repositories/hadi_repository_impl.dart' as _i330;
+import 'features/hadi/domain/repositories/hadi_repository.dart' as _i426;
+import 'features/hadi/domain/usecases/get_all_hadi.dart' as _i107;
+import 'features/hadi/domain/usecases/get_all_hadi_audio.dart' as _i896;
+import 'features/hadi/presentation/bloc/hadi_directory_bloc.dart' as _i878;
 import 'features/home/data/datasources/home_remote_datasource.dart' as _i400;
 import 'features/home/data/repositories/home_repository_impl.dart' as _i689;
 import 'features/home/domain/repositories/home_repository.dart' as _i649;
@@ -146,6 +152,9 @@ Future<_i174.GetIt> initDependencies(
   gh.lazySingleton<_i437.TatananRemoteDataSource>(
     () => _i437.TatananRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
   );
+  gh.lazySingleton<_i237.HadiRemoteDataSource>(
+    () => _i237.HadiRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
+  );
   gh.lazySingleton<_i75.NetworkInfo>(
     () => _i75.NetworkInfoImpl(gh<_i161.InternetConnection>()),
   );
@@ -164,6 +173,12 @@ Future<_i174.GetIt> initDependencies(
   gh.lazySingleton<_i400.HomeRemoteDataSource>(
     () => _i400.HomeRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
   );
+  gh.lazySingleton<_i426.HadiRepository>(
+    () => _i330.HadiRepositoryImpl(
+      gh<_i237.HadiRemoteDataSource>(),
+      gh<_i75.NetworkInfo>(),
+    ),
+  );
   gh.lazySingleton<_i649.HomeRepository>(
     () => _i689.HomeRepositoryImpl(
       gh<_i400.HomeRemoteDataSource>(),
@@ -176,10 +191,22 @@ Future<_i174.GetIt> initDependencies(
       gh<_i75.NetworkInfo>(),
     ),
   );
+  gh.factory<_i107.GetAllHadi>(
+    () => _i107.GetAllHadi(gh<_i426.HadiRepository>()),
+  );
+  gh.factory<_i896.GetAllHadiAudio>(
+    () => _i896.GetAllHadiAudio(gh<_i426.HadiRepository>()),
+  );
   gh.lazySingleton<_i681.MuhudRepository>(
     () => _i964.MuhudRepositoryImpl(
       gh<_i314.MuhudRemoteDataSource>(),
       gh<_i75.NetworkInfo>(),
+    ),
+  );
+  gh.lazySingleton<_i878.HadiDirectoryBloc>(
+    () => _i878.HadiDirectoryBloc(
+      getAllHadi: gh<_i107.GetAllHadi>(),
+      getAllHadiAudio: gh<_i896.GetAllHadiAudio>(),
     ),
   );
   gh.lazySingleton<_i332.NotificationsRepository>(
