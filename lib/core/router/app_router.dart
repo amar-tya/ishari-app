@@ -6,6 +6,8 @@ import 'package:ishari/core/analytics/analytics_service.dart';
 import 'package:ishari/core/app_state.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ishari/features/auth/presentation/pages/home_page.dart';
+import 'package:ishari/features/hadi/presentation/pages/hadi_detail_page.dart';
+import 'package:ishari/features/hadi/presentation/pages/hadi_directory_page.dart';
 import 'package:ishari/features/introduction/presentation/pages/introduction_page.dart';
 import 'package:ishari/features/kitab/presentation/pages/kitab_page_reader_page.dart';
 import 'package:ishari/features/muhud/presentation/pages/chapter_reader_page.dart';
@@ -111,6 +113,18 @@ GoRouter createRouter(
             releaseNotes: extra?['releaseNotes'] ?? '',
           );
         },
+      ),
+      GoRoute(
+        path: HadiDirectoryPage.routePath,
+        name: 'hadi-directory',
+        builder: (context, state) => const HadiDirectoryPage(),
+      ),
+      GoRoute(
+        path: HadiDetailPage.routePath,
+        name: 'hadi-detail',
+        builder: (context, state) => HadiDetailPage(
+          hadiId: state.pathParameters['hadiId']!,
+        ),
       ),
       GoRoute(
         path: NotificationsPage.routePath,
