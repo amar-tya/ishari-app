@@ -61,7 +61,7 @@ class LainnyaTab extends StatelessWidget {
                 const Padding(
                   padding: EdgeInsets.fromLTRB(22, 0, 22, 0),
                   child: _LockedFeatureCard(
-                    icon: Icons.headphones_rounded,
+                    icon: Icons.play_arrow_rounded,
                     title: 'Audio',
                     subtitle: 'Dengarkan audio shalawat ISHARI',
                   ),

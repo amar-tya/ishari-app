@@ -221,8 +221,8 @@ class _Header extends StatelessWidget {
               ),
               alignment: Alignment.center,
               child: const Icon(
-                Icons.arrow_back_rounded,
-                size: 20,
+                Icons.arrow_back_ios_new_rounded,
+                size: 18,
                 color: Color(0xFF555555),
               ),
             ),

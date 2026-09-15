@@ -360,7 +360,12 @@ class _FloatingNavBar extends StatelessWidget {
     _NavItemData(icon: Icons.menu_book_rounded, label: 'Kitab'),
     _NavItemData(icon: Icons.bookmark_outline, label: 'Bookmark'),
     _NavItemData(icon: Icons.format_list_numbered_rounded, label: 'Tatanan'),
-    _NavItemData(icon: Icons.widgets_outlined, label: 'Lainnya'),
+    // Icons.add — not widgets_outlined: this app is distributed via
+    // Shorebird patches against a release whose tree-shaken MaterialIcons
+    // font predates this nav item, so only glyphs present in that release
+    // render. Same constraint applies to every icon below until a full
+    // release ships with --no-tree-shake-icons.
+    _NavItemData(icon: Icons.add, label: 'Lainnya'),
   ];
 
   @override

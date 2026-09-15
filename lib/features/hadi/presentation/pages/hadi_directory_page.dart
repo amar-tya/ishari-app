@@ -189,8 +189,8 @@ class _Header extends StatelessWidget {
               ),
               alignment: Alignment.center,
               child: const Icon(
-                Icons.arrow_back_rounded,
-                size: 20,
+                Icons.arrow_back_ios_new_rounded,
+                size: 18,
                 color: Color(0xFF555555),
               ),
             ),
@@ -235,21 +235,28 @@ class _ViewToggleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Text label, not an icon: grid_view/view_list glyphs are absent from
+    // the live release's tree-shaken MaterialIcons font, and Shorebird
+    // patches can't ship font assets.
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 34,
-        height: 34,
+        height: 30,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(100),
           border: Border.all(color: _kBorder, width: 1.5),
         ),
         alignment: Alignment.center,
-        child: Icon(
-          isGrid ? Icons.view_list_rounded : Icons.grid_view_rounded,
-          size: 18,
-          color: _kDark,
+        child: Text(
+          isGrid ? 'List' : 'Grid',
+          style: const TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 0.2,
+            color: _kDark,
+          ),
         ),
       ),
     );
