@@ -85,7 +85,21 @@ jobs:
         # was built with. --obfuscate is intentionally omitted: Shorebird
         # applies it automatically when the release was built with it and
         # warns if passed again.
+        # --no-tree-shake-icons matches the release build (see
+        # build-and-distribute-android.yml) so MaterialIcons-Regular.otf is
+        # byte-identical between release and patch builds.
+        # --allow-asset-diffs: needed while any live release predates the
+        # --no-tree-shake-icons change (e.g. 1.2.10+23) — patching those
+        # always diffs on the tree-shaken icon font. Asset diffs cannot ship
+        # in a patch either way; the flag only downgrades the abort to a
+        # warning. Risk to keep in mind: if patched Dart code uses an icon
+        # missing from the old release's tree-shaken font subset, that icon
+        # renders as an empty box on devices. Piping "y" was useless here —
+        # Shorebird detects non-TTY stdin in CI and turns the prompt into a
+        # hard failure (exit 70) without ever reading stdin.
         run: |
-          echo "y" | shorebird patch android \
+          shorebird patch android \
             --release-version "${{ inputs.release_version }}" \
-            -- --split-debug-info=build/symbols
+            --allow-asset-diffs \
+            -- --split-debug-info=build/symbols \
+            --no-tree-shake-icons

@@ -165,10 +165,17 @@ jobs:
         # see shorebirdtech/shorebird#1141). This produces one universal APK
         # instead of per-ABI APKs, so it's larger than the old Firebase testers
         # build, but patches actually work.
+        # --no-tree-shake-icons: ship the full MaterialIcons font (~1.6MB extra).
+        # With tree-shaking on, any patch whose Dart code references a different
+        # icon set produces a byte-different MaterialIcons-Regular.otf, which
+        # Shorebird flags as an asset change and refuses to patch (patches
+        # cannot carry assets). Full font = font never diffs, and icons newly
+        # used by a patch still render on devices.
         run: |
           shorebird release android --artifact apk \
             --flutter-version 3.41.6 -- \
-            --obfuscate --split-debug-info=build/symbols
+            --obfuscate --split-debug-info=build/symbols \
+            --no-tree-shake-icons
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v6
