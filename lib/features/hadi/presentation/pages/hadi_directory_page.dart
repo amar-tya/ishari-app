@@ -7,7 +7,9 @@ import 'package:ishari/features/hadi/presentation/bloc/hadi_directory_bloc.dart'
 import 'package:ishari/features/hadi/presentation/bloc/hadi_directory_event.dart';
 import 'package:ishari/features/hadi/presentation/bloc/hadi_directory_state.dart';
 import 'package:ishari/features/hadi/presentation/widgets/hadi_avatar.dart';
+import 'package:ishari/features/hadi/presentation/widgets/hadi_masonry_grid.dart';
 import 'package:ishari/injection_container.dart';
+import 'package:ishari/shared/widgets/native_ad_card.dart';
 import 'package:ishari/shared/widgets/search_bar_field.dart';
 
 const _kBg = Color(0xFFF0F5EE);
@@ -40,6 +42,9 @@ class _HadiDirectoryBody extends StatefulWidget {
 
 class _HadiDirectoryBodyState extends State<_HadiDirectoryBody> {
   final _searchController = TextEditingController();
+  // View mode is page-local UI state on purpose (spec: resets to list on
+  // every visit) — it must not live in the shared singleton bloc.
+  bool _isGrid = false;
 
   @override
   void dispose() {
@@ -103,8 +108,6 @@ class _HadiDirectoryBodyState extends State<_HadiDirectoryBody> {
                       padding: const EdgeInsets.fromLTRB(20, 14, 20, 10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
                         children: [
                           Text(
                             'Semua Hadi',
@@ -115,33 +118,46 @@ class _HadiDirectoryBodyState extends State<_HadiDirectoryBody> {
                               color: _kDark,
                             ),
                           ),
-                          Text(
-                            state.hadiCountLabel,
-                            style: const TextStyle(
-                              fontSize: 11,
-                              color: _kMute,
-                              fontWeight: FontWeight.w600,
-                            ),
+                          Row(
+                            children: [
+                              Text(
+                                state.hadiCountLabel,
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  color: _kMute,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              _ViewToggleButton(
+                                isGrid: _isGrid,
+                                onTap: () =>
+                                    setState(() => _isGrid = !_isGrid),
+                              ),
+                            ],
                           ),
                         ],
                       ),
                     ),
                   ),
-                  SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                    sliver: SliverList.separated(
-                      itemCount: state.filteredHadiList.length,
-                      separatorBuilder: (_, _) => const SizedBox(height: 12),
-                      itemBuilder: (context, i) {
-                        final hadi = state.filteredHadiList[i];
-                        return _HadiCard(
-                          hadi: hadi,
-                          index: i,
-                          audioCount: state.audioCountFor(hadi.id),
-                        );
-                      },
+                  if (_isGrid)
+                    SliverPadding(
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                      sliver: SliverToBoxAdapter(
+                        child: HadiMasonryGrid(
+                          hadiList: state.filteredHadiList,
+                          audioCountFor: state.audioCountFor,
+                        ),
+                      ),
+                    )
+                  else
+                    SliverPadding(
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                      sliver: _HadiSliverList(
+                        hadiList: state.filteredHadiList,
+                        audioCountFor: state.audioCountFor,
+                      ),
                     ),
-                  ),
                 ],
               ],
             );
@@ -207,6 +223,68 @@ class _Header extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _ViewToggleButton extends StatelessWidget {
+  const _ViewToggleButton({required this.isGrid, required this.onTap});
+
+  final bool isGrid;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 34,
+        height: 34,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(100),
+          border: Border.all(color: _kBorder, width: 1.5),
+        ),
+        alignment: Alignment.center,
+        child: Icon(
+          isGrid ? Icons.view_list_rounded : Icons.grid_view_rounded,
+          size: 18,
+          color: _kDark,
+        ),
+      ),
+    );
+  }
+}
+
+/// List mode with a native ad slot after the 4th hadi (skipped entirely when
+/// fewer than 5 hadi remain after filtering) — same interval rule as
+/// HadiMasonryGrid and the tatanan list.
+class _HadiSliverList extends StatelessWidget {
+  const _HadiSliverList({
+    required this.hadiList,
+    required this.audioCountFor,
+  });
+
+  final List<HadiSummaryEntity> hadiList;
+  final int Function(String hadiId) audioCountFor;
+
+  @override
+  Widget build(BuildContext context) {
+    final withAd = hadiList.length >= 5;
+    final itemCount = hadiList.length + (withAd ? 1 : 0);
+    return SliverList.separated(
+      itemCount: itemCount,
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
+      itemBuilder: (context, i) {
+        if (withAd && i == 4) return const NativeAdCard();
+        final dataIndex = withAd && i > 4 ? i - 1 : i;
+        final hadi = hadiList[dataIndex];
+        return _HadiCard(
+          hadi: hadi,
+          index: dataIndex,
+          audioCount: audioCountFor(hadi.id),
+        );
+      },
     );
   }
 }

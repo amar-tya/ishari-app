@@ -10,6 +10,7 @@ import 'package:ishari/features/hadi/presentation/widgets/hadi_avatar.dart';
 import 'package:ishari/features/hadi/presentation/widgets/hadi_mini_player.dart';
 import 'package:ishari/features/hadi/presentation/widgets/hadi_track_sheet.dart';
 import 'package:ishari/injection_container.dart';
+import 'package:ishari/shared/widgets/banner_ad_widget.dart';
 
 const _kBg = Color(0xFFF0F5EE);
 const _kDark = Color(0xFF111111);
@@ -74,6 +75,12 @@ class _HadiDetailBody extends StatelessWidget {
                 CustomScrollView(
                   slivers: [
                     SliverToBoxAdapter(child: _Header(name: hadi.name)),
+                    const SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 8),
+                        child: BannerAdWidget(),
+                      ),
+                    ),
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(20, 6, 20, 18),
