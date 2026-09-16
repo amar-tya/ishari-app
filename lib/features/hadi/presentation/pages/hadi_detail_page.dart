@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -36,10 +37,17 @@ class HadiDetailPage extends StatelessWidget {
   }
 }
 
-class _HadiDetailBody extends StatelessWidget {
+class _HadiDetailBody extends StatefulWidget {
   const _HadiDetailBody({required this.hadiId});
 
   final String hadiId;
+
+  @override
+  State<_HadiDetailBody> createState() => _HadiDetailBodyState();
+}
+
+class _HadiDetailBodyState extends State<_HadiDetailBody> {
+  bool _headerVisible = true;
 
   @override
   Widget build(BuildContext context) {
@@ -48,19 +56,38 @@ class _HadiDetailBody extends StatelessWidget {
       body: SafeArea(
         bottom: false,
         // Header is a fixed sibling above the scroll view, not a sliver, so
-        // the back button/title stay pinned (and visible) through loading,
-        // error, and loaded states alike.
+        // it can soft hide/show (AnimatedSize) based on scroll direction,
+        // independently of loading/error/loaded content beneath it.
         child: BlocBuilder<HadiDirectoryBloc, HadiDirectoryState>(
           builder: (context, state) {
-            final hadi = state.hadiById(hadiId);
+            final hadi = state.hadiById(widget.hadiId);
             return Column(
               children: [
-                _Header(name: hadi?.name ?? 'Hadi'),
+                AnimatedSize(
+                  duration: const Duration(milliseconds: 220),
+                  curve: Curves.easeInOut,
+                  child: _headerVisible
+                      ? _Header(name: hadi?.name ?? 'Hadi')
+                      : const SizedBox.shrink(),
+                ),
                 Expanded(
-                  child: _HadiDetailContent(
-                    hadiId: hadiId,
-                    state: state,
-                    hadi: hadi,
+                  child: NotificationListener<UserScrollNotification>(
+                    onNotification: (notification) {
+                      final direction = notification.direction;
+                      if (direction == ScrollDirection.forward &&
+                          !_headerVisible) {
+                        setState(() => _headerVisible = true);
+                      } else if (direction == ScrollDirection.reverse &&
+                          _headerVisible) {
+                        setState(() => _headerVisible = false);
+                      }
+                      return false;
+                    },
+                    child: _HadiDetailContent(
+                      hadiId: widget.hadiId,
+                      state: state,
+                      hadi: hadi,
+                    ),
                   ),
                 ),
               ],
