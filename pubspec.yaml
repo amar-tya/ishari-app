@@ -70,6 +70,9 @@ dependencies:
   # Read app version & build number
   package_info_plus: ^9.0.1
 
+  # Read current Shorebird OTA patch number
+  shorebird_code_push: ^2.0.4
+
   # AdMob ads
   google_mobile_ads: ^7.0.0
 

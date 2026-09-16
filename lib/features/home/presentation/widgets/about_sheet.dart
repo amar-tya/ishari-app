@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:shorebird_code_push/shorebird_code_push.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 const _websiteUrl = 'https://ishari.vercel.app';
@@ -30,6 +31,7 @@ class _AboutSheet extends StatefulWidget {
 
 class _AboutSheetState extends State<_AboutSheet> {
   String _version = '–';
+  int? _patchNumber;
 
   @override
   void initState() {
@@ -38,6 +40,14 @@ class _AboutSheetState extends State<_AboutSheet> {
       PackageInfo.fromPlatform().then((info) {
         if (mounted) setState(() => _version = info.version);
       }),
+    );
+    unawaited(
+      ShorebirdUpdater()
+          .readCurrentPatch()
+          .then((patch) {
+            if (mounted) setState(() => _patchNumber = patch?.number);
+          })
+          .catchError((_) {}),
     );
   }
 
@@ -85,7 +95,9 @@ class _AboutSheetState extends State<_AboutSheet> {
           ),
           const SizedBox(height: 4),
           Text(
-            'Versi $_version',
+            _patchNumber == null
+                ? 'Versi $_version'
+                : 'Versi $_version · Patch $_patchNumber',
             style: GoogleFonts.poppins(
               fontSize: 12,
               color: const Color(0xFF999999),
