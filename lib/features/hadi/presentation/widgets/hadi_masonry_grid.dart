@@ -128,7 +128,12 @@ class _HadiGridCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            HadiAvatar(name: hadi.name, index: index, size: 56),
+            HadiAvatar(
+              name: hadi.name,
+              index: index,
+              size: 56,
+              photoUrl: hadi.photoUrl,
+            ),
             const SizedBox(height: 12),
             Text(
               hadi.name,

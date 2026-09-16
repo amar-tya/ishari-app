@@ -15,12 +15,14 @@ class HadiAvatar extends StatelessWidget {
   const HadiAvatar({
     required this.name,
     required this.index,
+    this.photoUrl,
     this.size = 52,
     super.key,
   });
 
   final String name;
   final int index;
+  final String? photoUrl;
   final double size;
 
   String get _initials {
@@ -37,13 +39,46 @@ class HadiAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final variant = _kVariants[index % _kVariants.length];
+    final url = photoUrl;
+    if (url != null && url.isNotEmpty) {
+      return ClipOval(
+        child: Image.network(
+          url,
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) => _InitialsCircle(
+            initials: _initials,
+            variant: variant,
+            size: size,
+          ),
+        ),
+      );
+    }
+    return _InitialsCircle(initials: _initials, variant: variant, size: size);
+  }
+}
+
+class _InitialsCircle extends StatelessWidget {
+  const _InitialsCircle({
+    required this.initials,
+    required this.variant,
+    required this.size,
+  });
+
+  final String initials;
+  final ({Color bg, Color fg}) variant;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       width: size,
       height: size,
       decoration: BoxDecoration(shape: BoxShape.circle, color: variant.bg),
       alignment: Alignment.center,
       child: Text(
-        _initials,
+        initials,
         style: GoogleFonts.dmSans(
           fontWeight: FontWeight.w800,
           fontSize: size * 0.31,

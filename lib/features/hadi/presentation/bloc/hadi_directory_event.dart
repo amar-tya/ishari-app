@@ -4,10 +4,11 @@ part 'hadi_directory_event.freezed.dart';
 
 @freezed
 sealed class HadiDirectoryEvent with _$HadiDirectoryEvent {
-  const factory HadiDirectoryEvent.loadAll() = _LoadAll;
+  const factory HadiDirectoryEvent.loadAll({
+    @Default(false) bool forceRefresh,
+  }) = _LoadAll;
 
-  const factory HadiDirectoryEvent.searchChanged(String query) =
-      _SearchChanged;
+  const factory HadiDirectoryEvent.searchChanged(String query) = _SearchChanged;
 
   const factory HadiDirectoryEvent.playTrack(int audioId) = _PlayTrack;
 

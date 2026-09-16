@@ -24,6 +24,10 @@ abstract class HadiDirectoryState with _$HadiDirectoryState {
     int? playingAudioId,
     @Default(false) bool isAudioLoading,
     String? errorMessage,
+    // Bumped on every fetch completion so RefreshIndicator's stream.firstWhere
+    // can detect "done" even when the refreshed data is value-equal to the
+    // previous state (freezed equality would otherwise never emit a change).
+    @Default(0) int refreshTick,
   }) = _HadiDirectoryState;
 
   const HadiDirectoryState._();
@@ -31,9 +35,7 @@ abstract class HadiDirectoryState with _$HadiDirectoryState {
   List<HadiSummaryEntity> get filteredHadiList {
     if (searchQuery.trim().isEmpty) return hadiList;
     final query = searchQuery.trim().toLowerCase();
-    return hadiList
-        .where((h) => h.name.toLowerCase().contains(query))
-        .toList();
+    return hadiList.where((h) => h.name.toLowerCase().contains(query)).toList();
   }
 
   int get totalAudioCount => audioList.length;

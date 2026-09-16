@@ -18,7 +18,7 @@ class HadiDirectoryBloc extends Bloc<HadiDirectoryEvent, HadiDirectoryState> {
   }) : super(const HadiDirectoryState()) {
     on<HadiDirectoryEvent>((event, emit) async {
       await event.when(
-        loadAll: () => _onLoadAll(emit),
+        loadAll: (forceRefresh) => _onLoadAll(emit, forceRefresh: forceRefresh),
         searchChanged: (query) async =>
             emit(state.copyWith(searchQuery: query)),
         playTrack: (audioId) => _onPlayTrack(audioId, emit),
@@ -40,12 +40,20 @@ class HadiDirectoryBloc extends Bloc<HadiDirectoryEvent, HadiDirectoryState> {
     return super.close();
   }
 
-  Future<void> _onLoadAll(Emitter<HadiDirectoryState> emit) async {
-    if (state.status == HadiDirectoryStatus.loaded ||
-        state.status == HadiDirectoryStatus.loading) {
+  Future<void> _onLoadAll(
+    Emitter<HadiDirectoryState> emit, {
+    required bool forceRefresh,
+  }) async {
+    if (!forceRefresh &&
+        (state.status == HadiDirectoryStatus.loaded ||
+            state.status == HadiDirectoryStatus.loading)) {
       return;
     }
-    emit(state.copyWith(status: HadiDirectoryStatus.loading));
+    // Keep the current list on screen during a pull-to-refresh instead of
+    // swapping to the full-page loading spinner (which would hide it).
+    if (state.status != HadiDirectoryStatus.loaded) {
+      emit(state.copyWith(status: HadiDirectoryStatus.loading));
+    }
 
     final hadiResult = await getAllHadi(const NoParams());
     final audioResult = await getAllHadiAudio(const NoParams());
@@ -55,6 +63,7 @@ class HadiDirectoryBloc extends Bloc<HadiDirectoryEvent, HadiDirectoryState> {
         state.copyWith(
           status: HadiDirectoryStatus.error,
           errorMessage: failure.message,
+          refreshTick: state.refreshTick + 1,
         ),
       ),
       (hadiList) {
@@ -63,6 +72,7 @@ class HadiDirectoryBloc extends Bloc<HadiDirectoryEvent, HadiDirectoryState> {
             state.copyWith(
               status: HadiDirectoryStatus.error,
               errorMessage: failure.message,
+              refreshTick: state.refreshTick + 1,
             ),
           ),
           (audioList) => emit(
@@ -70,6 +80,8 @@ class HadiDirectoryBloc extends Bloc<HadiDirectoryEvent, HadiDirectoryState> {
               status: HadiDirectoryStatus.loaded,
               hadiList: hadiList,
               audioList: audioList,
+              errorMessage: null,
+              refreshTick: state.refreshTick + 1,
             ),
           ),
         );

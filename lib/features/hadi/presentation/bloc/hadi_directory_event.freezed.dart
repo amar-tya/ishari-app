@@ -125,10 +125,10 @@ return stopAudio(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  loadAll,TResult Function( String query)?  searchChanged,TResult Function( int audioId)?  playTrack,TResult Function()?  stopAudio,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( bool forceRefresh)?  loadAll,TResult Function( String query)?  searchChanged,TResult Function( int audioId)?  playTrack,TResult Function()?  stopAudio,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LoadAll() when loadAll != null:
-return loadAll();case _SearchChanged() when searchChanged != null:
+return loadAll(_that.forceRefresh);case _SearchChanged() when searchChanged != null:
 return searchChanged(_that.query);case _PlayTrack() when playTrack != null:
 return playTrack(_that.audioId);case _StopAudio() when stopAudio != null:
 return stopAudio();case _:
@@ -149,10 +149,10 @@ return stopAudio();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  loadAll,required TResult Function( String query)  searchChanged,required TResult Function( int audioId)  playTrack,required TResult Function()  stopAudio,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( bool forceRefresh)  loadAll,required TResult Function( String query)  searchChanged,required TResult Function( int audioId)  playTrack,required TResult Function()  stopAudio,}) {final _that = this;
 switch (_that) {
 case _LoadAll():
-return loadAll();case _SearchChanged():
+return loadAll(_that.forceRefresh);case _SearchChanged():
 return searchChanged(_that.query);case _PlayTrack():
 return playTrack(_that.audioId);case _StopAudio():
 return stopAudio();}
@@ -169,10 +169,10 @@ return stopAudio();}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  loadAll,TResult? Function( String query)?  searchChanged,TResult? Function( int audioId)?  playTrack,TResult? Function()?  stopAudio,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( bool forceRefresh)?  loadAll,TResult? Function( String query)?  searchChanged,TResult? Function( int audioId)?  playTrack,TResult? Function()?  stopAudio,}) {final _that = this;
 switch (_that) {
 case _LoadAll() when loadAll != null:
-return loadAll();case _SearchChanged() when searchChanged != null:
+return loadAll(_that.forceRefresh);case _SearchChanged() when searchChanged != null:
 return searchChanged(_that.query);case _PlayTrack() when playTrack != null:
 return playTrack(_that.audioId);case _StopAudio() when stopAudio != null:
 return stopAudio();case _:
@@ -187,33 +187,67 @@ return stopAudio();case _:
 
 
 class _LoadAll implements HadiDirectoryEvent {
-  const _LoadAll();
+  const _LoadAll({this.forceRefresh = false});
   
 
+@JsonKey() final  bool forceRefresh;
 
-
+/// Create a copy of HadiDirectoryEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$LoadAllCopyWith<_LoadAll> get copyWith => __$LoadAllCopyWithImpl<_LoadAll>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoadAll);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoadAll&&(identical(other.forceRefresh, forceRefresh) || other.forceRefresh == forceRefresh));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode => Object.hash(runtimeType,forceRefresh);
 
 @override
 String toString() {
-  return 'HadiDirectoryEvent.loadAll()';
+  return 'HadiDirectoryEvent.loadAll(forceRefresh: $forceRefresh)';
 }
 
 
 }
 
+/// @nodoc
+abstract mixin class _$LoadAllCopyWith<$Res> implements $HadiDirectoryEventCopyWith<$Res> {
+  factory _$LoadAllCopyWith(_LoadAll value, $Res Function(_LoadAll) _then) = __$LoadAllCopyWithImpl;
+@useResult
+$Res call({
+ bool forceRefresh
+});
 
 
+
+
+}
+/// @nodoc
+class __$LoadAllCopyWithImpl<$Res>
+    implements _$LoadAllCopyWith<$Res> {
+  __$LoadAllCopyWithImpl(this._self, this._then);
+
+  final _LoadAll _self;
+  final $Res Function(_LoadAll) _then;
+
+/// Create a copy of HadiDirectoryEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? forceRefresh = null,}) {
+  return _then(_LoadAll(
+forceRefresh: null == forceRefresh ? _self.forceRefresh : forceRefresh // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+
+}
 
 /// @nodoc
 

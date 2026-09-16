@@ -93,7 +93,12 @@ class _HadiDetailBody extends StatelessWidget {
                           padding: const EdgeInsets.all(16),
                           child: Row(
                             children: [
-                              HadiAvatar(name: hadi.name, index: 0, size: 60),
+                              HadiAvatar(
+                                name: hadi.name,
+                                index: 0,
+                                size: 60,
+                                photoUrl: hadi.photoUrl,
+                              ),
                               const SizedBox(width: 14),
                               Expanded(
                                 child: Text(

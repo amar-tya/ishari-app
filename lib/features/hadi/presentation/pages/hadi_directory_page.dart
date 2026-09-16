@@ -66,100 +66,114 @@ class _HadiDirectoryBodyState extends State<_HadiDirectoryBody> {
         bottom: false,
         child: BlocBuilder<HadiDirectoryBloc, HadiDirectoryState>(
           builder: (context, state) {
-            return CustomScrollView(
-              slivers: [
-                const SliverToBoxAdapter(child: _Header()),
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 4),
-                    child: SearchBarField(
-                      controller: _searchController,
-                      hint: 'Cari nama Hadi…',
-                      onChanged: (v) => context.read<HadiDirectoryBloc>().add(
-                        HadiDirectoryEvent.searchChanged(v),
-                      ),
-                      onClear: () {
-                        _searchController.clear();
-                        context.read<HadiDirectoryBloc>().add(
-                          const HadiDirectoryEvent.searchChanged(''),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                if (state.status == HadiDirectoryStatus.loading)
-                  const SliverFillRemaining(
-                    child: Center(
-                      child: CircularProgressIndicator(color: _kDark),
-                    ),
-                  )
-                else if (state.status == HadiDirectoryStatus.error)
-                  SliverFillRemaining(
-                    child: Center(
-                      child: Text(
-                        state.errorMessage ?? 'Gagal memuat data.',
-                        style: GoogleFonts.poppins(color: _kMute),
-                      ),
-                    ),
-                  )
-                else ...[
+            final bloc = context.read<HadiDirectoryBloc>();
+            return RefreshIndicator(
+              color: _kDark,
+              onRefresh: () async {
+                final startTick = bloc.state.refreshTick;
+                bloc.add(
+                  const HadiDirectoryEvent.loadAll(forceRefresh: true),
+                );
+                await bloc.stream.firstWhere(
+                  (s) => s.refreshTick != startTick,
+                );
+              },
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  const SliverToBoxAdapter(child: _Header()),
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 14, 20, 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Semua Hadi',
-                            style: GoogleFonts.dmSans(
-                              fontWeight: FontWeight.w800,
-                              fontSize: 16,
-                              letterSpacing: -0.3,
-                              color: _kDark,
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                state.hadiCountLabel,
-                                style: const TextStyle(
-                                  fontSize: 11,
-                                  color: _kMute,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              _ViewToggleButton(
-                                isGrid: _isGrid,
-                                onTap: () =>
-                                    setState(() => _isGrid = !_isGrid),
-                              ),
-                            ],
-                          ),
-                        ],
+                      padding: const EdgeInsets.fromLTRB(20, 12, 20, 4),
+                      child: SearchBarField(
+                        controller: _searchController,
+                        hint: 'Cari nama Hadi…',
+                        onChanged: (v) => context.read<HadiDirectoryBloc>().add(
+                          HadiDirectoryEvent.searchChanged(v),
+                        ),
+                        onClear: () {
+                          _searchController.clear();
+                          context.read<HadiDirectoryBloc>().add(
+                            const HadiDirectoryEvent.searchChanged(''),
+                          );
+                        },
                       ),
                     ),
                   ),
-                  if (_isGrid)
-                    SliverPadding(
-                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                      sliver: SliverToBoxAdapter(
-                        child: HadiMasonryGrid(
+                  if (state.status == HadiDirectoryStatus.loading)
+                    const SliverFillRemaining(
+                      child: Center(
+                        child: CircularProgressIndicator(color: _kDark),
+                      ),
+                    )
+                  else if (state.status == HadiDirectoryStatus.error)
+                    SliverFillRemaining(
+                      child: Center(
+                        child: Text(
+                          state.errorMessage ?? 'Gagal memuat data.',
+                          style: GoogleFonts.poppins(color: _kMute),
+                        ),
+                      ),
+                    )
+                  else ...[
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 14, 20, 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Semua Hadi',
+                              style: GoogleFonts.dmSans(
+                                fontWeight: FontWeight.w800,
+                                fontSize: 16,
+                                letterSpacing: -0.3,
+                                color: _kDark,
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  state.hadiCountLabel,
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    color: _kMute,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                _ViewToggleButton(
+                                  isGrid: _isGrid,
+                                  onTap: () =>
+                                      setState(() => _isGrid = !_isGrid),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    if (_isGrid)
+                      SliverPadding(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                        sliver: SliverToBoxAdapter(
+                          child: HadiMasonryGrid(
+                            hadiList: state.filteredHadiList,
+                            audioCountFor: state.audioCountFor,
+                          ),
+                        ),
+                      )
+                    else
+                      SliverPadding(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                        sliver: _HadiSliverList(
                           hadiList: state.filteredHadiList,
                           audioCountFor: state.audioCountFor,
                         ),
                       ),
-                    )
-                  else
-                    SliverPadding(
-                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                      sliver: _HadiSliverList(
-                        hadiList: state.filteredHadiList,
-                        audioCountFor: state.audioCountFor,
-                      ),
-                    ),
+                  ],
                 ],
-              ],
+              ),
             );
           },
         ),
@@ -210,7 +224,7 @@ class _Header extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Fitur Hadi',
+                  'Hadi',
                   style: GoogleFonts.dmSans(
                     fontWeight: FontWeight.w800,
                     fontSize: 19,
@@ -320,7 +334,7 @@ class _HadiCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
           children: [
-            HadiAvatar(name: hadi.name, index: index),
+            HadiAvatar(name: hadi.name, index: index, photoUrl: hadi.photoUrl),
             const SizedBox(width: 14),
             Expanded(
               child: Column(
