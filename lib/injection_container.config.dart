@@ -18,6 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart' as _i460;
 import 'package:supabase_flutter/supabase_flutter.dart' as _i454;
 
 import 'core/analytics/analytics_service.dart' as _i931;
+import 'core/feature_flags/feature_flags_service.dart' as _i1047;
 import 'core/network/network_info.dart' as _i75;
 import 'features/auth/data/datasources/auth_local_datasource.dart' as _i1043;
 import 'features/auth/data/datasources/auth_remote_datasource.dart' as _i588;
@@ -117,6 +118,9 @@ Future<_i174.GetIt> initDependencies(
     preResolve: true,
   );
   gh.lazySingleton<_i931.AnalyticsService>(() => _i931.AnalyticsService());
+  gh.lazySingleton<_i1047.FeatureFlagsService>(
+    () => _i1047.FeatureFlagsService(),
+  );
   gh.lazySingleton<_i480.FcmService>(() => _i480.FcmService());
   gh.lazySingleton<_i454.SupabaseClient>(() => registerModule.supabaseClient);
   gh.lazySingleton<_i161.InternetConnection>(

@@ -12,6 +12,7 @@ import 'package:ishari/app.dart';
 import 'package:ishari/core/ads/interstitial_ad_manager.dart';
 import 'package:ishari/core/app_state.dart';
 import 'package:ishari/core/env/app_env.dart';
+import 'package:ishari/core/feature_flags/feature_flags_service.dart';
 import 'package:ishari/core/wizard/wizard_cubit.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ishari/features/auth/presentation/pages/home_page.dart';
@@ -112,6 +113,7 @@ class _AppLoaderState extends State<AppLoader> {
     );
     unawaited(WakelockPlus.enable());
     unawaited(sl<FcmService>().init());
+    unawaited(sl<FeatureFlagsService>().initialize());
 
     // Auth check — use same instance passed to IshariApp later
     _authBloc = sl<AuthBloc>();
