@@ -2,7 +2,7 @@
 planStatus:
   planId: plan-tag-based-deploy-strategy
   title: Tag-Based Deploy Strategy (Snapshot/Release Tags + Feature Flags)
-  status: draft
+  status: in-progress
   planType: infra
   priority: medium
   owner: aamar
@@ -14,9 +14,62 @@ planStatus:
     - release
   created: "2026-09-17"
   updated: "2026-09-17T00:00:00.000Z"
-  progress: 0
+  progress: 25
 ---
 # Tag-Based Deploy Strategy
+
+## Status Terkini (2026-09-17)
+
+**Fase 1 — SELESAI.** Detail task-by-task ada di `tasks/tag-deploy-phase1/`
+(spec.md/plan.md/todo.md — folder ini `.gitignore`d, cuma lokal). Ringkasan
+yang udah live di repo:
+
+- `release-please-config.json` + `.release-please-manifest.json` +
+  `.github/workflows/release-please.yml` — jalan, PR-only, tervalidasi
+  (`release-type: simple`, gak nyentuh `pubspec.yaml`)
+- `.github/workflows/build-staging-android.yml` — jalan, tervalidasi
+  end-to-end: tag snapshot → build APK → Firebase App Distribution → install
+  sukses di device real yang udah ada build production (gak kena
+  downgrade-block, formula build number `1000 + github.run_number`)
+- `docs/tag-protection-ruleset.md` — runbook, **dan rulesetnya udah
+  diapply** (GitHub Ruleset `protect-release-tags`, lock pattern
+  `v*` kecuali `*-snapshot*`)
+- `build-and-distribute-android.yml`, `shorebird-patch-android.yml`,
+  `sync-develop.yml` — nol perubahan, flow production lama masih jalan
+  seperti biasa
+
+**Belum mulai:** Fase 2, 3, 4 (lihat bagian "Fase Migrasi" di bawah).
+Jangan mulai Fase 2 sebelum pola snapshot-tag di atas udah dipakai buat
+≥2-3 fitur asli (bukan tes doang) — lihat "Cara Kerja Sehari-hari" di
+bawah buat contoh alurnya.
+
+## Cara Kerja Sehari-hari (versi gampang)
+
+Buat referensi kapan pun lupa — ini alur pakainya, bukan teori:
+
+1. **Ngoding fitur kayak biasa.** Branch dari `master`, commit, PR, merge
+   ke `master`. Gak ada yang beda.
+2. **Mau test dulu sebelum yakin rilis?** Tag commit di `master` itu
+   dengan suffix `-snapshot`:
+   ```
+   git tag vX.Y.Z-snapshot.N
+   git push origin vX.Y.Z-snapshot.N
+   ```
+   (`X.Y.Z` = versi semver sekarang di `pubspec.yaml`, `N` = nomor urut
+   snapshot ke berapa buat versi itu, mulai dari 1.) Ini otomatis build
+   APK dan kirim ke tester lewat Firebase App Distribution
+   (`ishari-testers`). Install, coba, cek bug.
+3. **Siap dirilis?** Ada PR otomatis judul `chore(master): release
+   X.X.X` yang muncul sendiri di GitHub tiap ada commit baru ke `master`
+   (dibikin `release-please`). Review CHANGELOG-nya, kalau emang mau
+   rilis — **saat ini (Fase 1)**, PR itu di-merge doang gak otomatis
+   ngerilis ke Play Store. Rilis production masih tetap cara lama: push
+   ke `master` → `build-and-distribute-android.yml` jalan sendiri.
+   (Ini yang bakal berubah di Fase 2 — merge PR rilis + bikin tag
+   `vX.Y.Z` bakal jadi pemicu production, bukan push `master`.)
+
+Intinya: kebiasaan lama gak berubah. Cuma nambah 1 langkah opsional
+(tag `-snapshot`) buat yang mau test sebelum yakin.
 
 ## Objective
 
