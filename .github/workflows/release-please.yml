@@ -1,0 +1,28 @@
+name: Release Please
+
+# Fase 1 dari tag-based deploy strategy (plans/tag-based-deploy-strategy.md).
+# PR-only: buka/update PR rilis dengan CHANGELOG draft tiap push ke master.
+# TIDAK auto-tag, TIDAK menulis pubspec.yaml — itu masih job `cider bump`
+# manual di build-and-distribute-android.yml sampai Fase 2 resmi matiin dia.
+# release-type "simple" (lihat release-please-config.json) sengaja dipakai
+# supaya release-please gak coba nulis versi ke file apa pun.
+#
+# PRASYARAT REPO SETTING: "Allow GitHub Actions to create and approve pull
+# requests" harus ON (Settings → Actions → General) — tanpa ini action gagal
+# buka PR walau permission di bawah sudah benar.
+on:
+  push:
+    branches: [master]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json

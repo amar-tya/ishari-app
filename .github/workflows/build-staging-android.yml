@@ -1,0 +1,123 @@
+name: Build Staging Android (Snapshot)
+
+# Fase 1 dari tag-based deploy strategy (plans/tag-based-deploy-strategy.md).
+# Snapshot tag (vX.Y.Z-snapshot.N) → build APK, distribusi ke Firebase App
+# Distribution buat manual testing di device Android real. TIDAK lewat
+# Shorebird release channel (snapshot gak butuh patchable release — cukup
+# `flutter build apk` biasa) dan TIDAK upload ke Google Play sama sekali.
+#
+# Versi & pubspec.yaml TIDAK di-commit balik ke repo — `cider version`
+# cuma nulis ke pubspec.yaml di working copy runner (ephemeral), beda dari
+# build-and-distribute-android.yml yang commit balik hasil bump ke master.
+on:
+  push:
+    tags:
+      - 'v*.*.*-snapshot*'
+
+jobs:
+  build-staging:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.6'
+          channel: 'stable'
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Setup Environment
+        run: |
+          cat <<EOF > env/current.env
+          APP_ENV=production
+          SUPABASE_URL=${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+          GOOGLE_WEB_CLIENT_ID=${{ secrets.GOOGLE_WEB_CLIENT_ID }}
+          ADMOB_APP_ID=${{ secrets.ADMOB_APP_ID }}
+          ADMOB_BANNER_UNIT_ID=${{ secrets.ADMOB_BANNER_UNIT_ID }}
+          ADMOB_NATIVE_UNIT_ID=${{ secrets.ADMOB_NATIVE_UNIT_ID }}
+          ADMOB_INTERSTITIAL_UNIT_ID=${{ secrets.ADMOB_INTERSTITIAL_UNIT_ID }}
+          ADMOB_TEST_DEVICE_IDS=${{ secrets.ADMOB_TEST_DEVICE_IDS }}
+          SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+          EOF
+          dart run build_runner build --delete-conflicting-outputs
+
+      - name: Install cider (version tool)
+        run: dart pub global activate cider
+
+      - name: Add cider to PATH
+        run: echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
+
+      - name: Derive staging version from tag
+        id: version
+        run: |
+          TAG_NAME="${GITHUB_REF_NAME}"                      # e.g. v1.3.0-snapshot.1
+          SEMVER="$(echo "$TAG_NAME" | sed -E 's/^v([0-9]+\.[0-9]+\.[0-9]+)-snapshot.*/\1/')"
+
+          # Offset base (1000) jauh di atas build number production saat ini
+          # (23 per 2026-09-17) supaya versionCode snapshot SELALU lebih
+          # tinggi dari APK production yang mungkin sudah terpasang di
+          # device test. Android menolak install APK dengan versionCode
+          # lebih rendah dari yang sudah terpasang (applicationId sama),
+          # jadi build number di sini gak boleh reset per-snapshot — harus
+          # monoton naik lewat github.run_number.
+          BUILD_NUMBER=$((1000 + ${{ github.run_number }}))
+
+          cider version "$SEMVER+$BUILD_NUMBER"
+          echo "Staging version: $SEMVER+$BUILD_NUMBER"
+          echo "STAGING_VERSION=$SEMVER+$BUILD_NUMBER" >> "$GITHUB_ENV"
+
+      - name: Setup Google Services
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: echo "$GOOGLE_SERVICES_JSON" > android/app/google-services.json
+
+      - name: Setup Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode --ignore-garbage > android/app/upload-keystore.jks
+          cat <<EOF > android/key.properties
+          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword=${{ secrets.KEY_PASSWORD }}
+          keyAlias=${{ secrets.KEY_ALIAS }}
+          storeFile=upload-keystore.jks
+          EOF
+
+      # Build APK biasa (bukan `shorebird release`) — snapshot ditandatangani
+      # sama keystore production (dikonfirmasi user) biar realistis buat
+      # testing dan bisa update-in-place di atas app production yang udah
+      # terpasang di device test, tapi gak masuk Shorebird release channel
+      # karena snapshot bukan artifact yang perlu dipatch nanti.
+      - name: Build APK
+        run: |
+          flutter build apk \
+            --obfuscate --split-debug-info=build/symbols \
+            --no-tree-shake-icons
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: ishari-staging-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Distribute to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{ secrets.FIREBASE_ANDROID_APP_ID }}
+          token: ${{ secrets.FIREBASE_TOKEN }}
+          groups: ishari-testers
+          releaseNotes: |
+            Staging snapshot build from tag ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+            Version: ${{ env.STAGING_VERSION }}
+          file: build/app/outputs/flutter-apk/app-release.apk
