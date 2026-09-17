@@ -1,0 +1,168 @@
+name: Release Android (Tag)
+
+# Fase 2 dari tag-based deploy strategy (plans/tag-based-deploy-strategy.md).
+# Release tag (vX.Y.Z, TANPA suffix -snapshot) → production build (Shorebird
+# release + upload Play Store), menggantikan trigger push-ke-master sebagai
+# jalur utama. Dipisah dari build-and-distribute-android.yml (bukan nambah
+# trigger di file itu) karena `paths` filter GitHub Actions gak reliable
+# buat tag push — tag menunjuk ke commit yang sudah ada, jadi GitHub sering
+# gak nemu "file yang berubah" buat difilter, trigger bisa gak jalan sama
+# sekali. build-and-distribute-android.yml dibiarkan apa adanya sebagai
+# fallback (branch-push + paths) selama masa transisi 2-4 minggu.
+#
+# PENTING soal pattern tag: 'v*.*.*' doang JUGA match
+# 'v1.2.10-snapshot.1' (glob '*' menembus tanda minus) — exclude eksplisit
+# wajib ada, kalau tidak tag snapshot testing bakal ikut trigger rilis
+# production beneran.
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+      - '!v*.*.*-snapshot*'
+
+jobs:
+  release-android:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.6'
+          channel: 'stable'
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Setup Environment
+        run: |
+          cat <<EOF > env/current.env
+          APP_ENV=production
+          SUPABASE_URL=${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+          GOOGLE_WEB_CLIENT_ID=${{ secrets.GOOGLE_WEB_CLIENT_ID }}
+          ADMOB_APP_ID=${{ secrets.ADMOB_APP_ID }}
+          ADMOB_BANNER_UNIT_ID=${{ secrets.ADMOB_BANNER_UNIT_ID }}
+          ADMOB_NATIVE_UNIT_ID=${{ secrets.ADMOB_NATIVE_UNIT_ID }}
+          ADMOB_INTERSTITIAL_UNIT_ID=${{ secrets.ADMOB_INTERSTITIAL_UNIT_ID }}
+          ADMOB_TEST_DEVICE_IDS=${{ secrets.ADMOB_TEST_DEVICE_IDS }}
+          SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+          EOF
+          dart run build_runner build --delete-conflicting-outputs
+
+      - name: Install cider (version tool)
+        run: dart pub global activate cider
+
+      - name: Add cider to PATH
+        run: echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
+
+      # Checkout tag = detached HEAD. Pindah eksplisit ke `master` biar commit
+      # version-bump di step berikutnya nempel ke branch, bukan ilang di
+      # detached HEAD. Abort kalau commit tag ternyata BUKAN bagian dari
+      # `master` (tag dibuat dari branch lain / commit yang belum ke-merge) —
+      # itu salah pakai, bukan kondisi yang boleh lanjut otomatis.
+      - name: Move to master branch
+        run: |
+          git fetch origin master
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/master; then
+            echo "::error::Tag $GITHUB_REF_NAME menunjuk ke commit yang bukan bagian dari master. Tag rilis harus dibuat dari commit master."
+            exit 1
+          fi
+          git checkout master
+          git pull origin master
+
+      - name: Derive release version from tag
+        run: |
+          TAG_NAME="${GITHUB_REF_NAME}"          # e.g. v1.3.0
+          SEMVER="${TAG_NAME#v}"
+
+          # Build number TIDAK reset per rilis — lanjut dari angka terakhir
+          # di pubspec.yaml (sama logic dengan workflow lama), cuma sumber
+          # semver-nya sekarang dari nama tag, bukan cider bump + parsing
+          # commit message terakhir.
+          CURRENT_BUILD=$(grep '^version:' pubspec.yaml | sed 's/.*+//')
+          NEW_BUILD=$((CURRENT_BUILD + 1))
+
+          cider version "$SEMVER+$NEW_BUILD"
+          echo "NEW_VERSION=$SEMVER+$NEW_BUILD" >> "$GITHUB_ENV"
+
+      - name: Commit & Push version bump
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          git add pubspec.yaml
+          git commit -m "chore(release): bump version to ${{ env.NEW_VERSION }} [skip ci]" || echo "No changes to commit"
+          git pull --rebase origin master
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Google Services
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: echo "$GOOGLE_SERVICES_JSON" > android/app/google-services.json
+
+      - name: Setup Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode --ignore-garbage > android/app/upload-keystore.jks
+          cat <<EOF > android/key.properties
+          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword=${{ secrets.KEY_PASSWORD }}
+          keyAlias=${{ secrets.KEY_ALIAS }}
+          storeFile=upload-keystore.jks
+          EOF
+
+      - name: Setup Shorebird
+        uses: shorebirdtech/setup-shorebird@v1
+
+      - name: Shorebird Release (APK & AAB)
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
+        run: |
+          shorebird release android --artifact apk \
+            --flutter-version 3.41.6 -- \
+            --obfuscate --split-debug-info=build/symbols \
+            --no-tree-shake-icons
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: ishari-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Distribute to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{ secrets.FIREBASE_ANDROID_APP_ID }}
+          token: ${{ secrets.FIREBASE_TOKEN }}
+          groups: ishari-testers
+          releaseNotes: |
+            Release build from tag ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+            Version: ${{ env.NEW_VERSION }}
+          file: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Upload AAB to Google Play (Production)
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.ishari.app
+          releaseFiles: build/app/outputs/bundle/release/app-release.aab
+          track: production
+          status: completed
+          whatsNewDirectory: distribution/whatsnew

@@ -3,10 +3,10 @@
 Ref: `plans/tag-based-deploy-strategy.md` (Fase 1, komponen 4) dan
 `tasks/tag-deploy-phase1/spec.md`.
 
-**Status: belum diterapkan.** Dokumen ini runbook doang — dijalankan
-manual oleh siapa pun yang punya admin access ke repo
-`amar-tya/ishari-app`, kapan pun dia siap, bukan bagian dari workflow
-otomatis manapun.
+**Status: SUDAH DITERAPKAN** (2026-09-17, via Opsi A/GitHub UI). Ruleset
+`protect-release-tags` aktif — id `23592184`, target `tag`, include
+`refs/tags/v*` exclude `refs/tags/*-snapshot*`, rules: creation, update,
+deletion. Verifikasi: `gh api repos/amar-tya/ishari-app/rulesets`.
 
 ## Kenapa perlu
 
