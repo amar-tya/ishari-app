@@ -14,7 +14,7 @@ planStatus:
     - release
   created: "2026-09-17"
   updated: "2026-09-17T00:00:00.000Z"
-  progress: 25
+  progress: 50
 ---
 # Tag-Based Deploy Strategy
 
@@ -38,10 +38,32 @@ yang udah live di repo:
   `sync-develop.yml` — nol perubahan, flow production lama masih jalan
   seperti biasa
 
-**Belum mulai:** Fase 2, 3, 4 (lihat bagian "Fase Migrasi" di bawah).
-Jangan mulai Fase 2 sebelum pola snapshot-tag di atas udah dipakai buat
-≥2-3 fitur asli (bukan tes doang) — lihat "Cara Kerja Sehari-hari" di
-bawah buat contoh alurnya.
+**Fase 2 — SELESAI**, dimulai lebih cepat dari rencana awal (kriteria
+"≥2-3 fitur asli lewat snapshot-tag dulu" belum tercapai — keputusan
+sadar user buat langsung lanjut, bukan lupa checklist). Tervalidasi
+end-to-end beneran (bukan dry-run — Play Store production ke-upload
+sungguhan, versi live `1.3.0+25`):
+
+- `.github/workflows/release-android.yml` (BARU, file terpisah — bukan
+  edit `build-and-distribute-android.yml`) — trigger tag `v*.*.*` exclude
+  `*-snapshot*`, build + Shorebird release + upload Play Store production
+- `build-and-distribute-android.yml` tetap gak diubah — masih hidup
+  sebagai fallback branch-push+paths selama masa transisi
+- **Gotcha kepentok & terekam:** `release-please` **gak bisa** auto-tag
+  rilis (`vX.Y.Z`) karena ruleset `protect-release-tags` nolak tag
+  creation dari identitas bot Actions — cuma bypass buat repo
+  admin/deploy-key. Ini **desain yang benar, bukan bug**: sesuai niat
+  Fase 1, tag rilis harus sengaja dibuat manusia, gak boleh keselip
+  otomatis. Alur sekarang: merge PR rilis `release-please` (cuma bump
+  CHANGELOG) → manusia jalanin `git tag vX.Y.Z <sha merge commit> && git
+  push origin vX.Y.Z` manual → `release-android.yml` jalan dari situ.
+- Dua bug teknis kekoreksi pas nulis workflow (lihat komentar di file):
+  pattern glob `v*.*.*` doang ternyata JUGA match tag snapshot (perlu
+  exclude eksplisit), dan `paths` filter gak reliable dikombinasi sama
+  `tags` filter di trigger yang sama (makanya file dipisah, bukan nambah
+  trigger di file lama).
+
+**Belum mulai:** Fase 3, 4 (lihat bagian "Fase Migrasi" di bawah).
 
 ## Cara Kerja Sehari-hari (versi gampang)
 
@@ -62,14 +84,21 @@ Buat referensi kapan pun lupa — ini alur pakainya, bukan teori:
 3. **Siap dirilis?** Ada PR otomatis judul `chore(master): release
    X.X.X` yang muncul sendiri di GitHub tiap ada commit baru ke `master`
    (dibikin `release-please`). Review CHANGELOG-nya, kalau emang mau
-   rilis — **saat ini (Fase 1)**, PR itu di-merge doang gak otomatis
-   ngerilis ke Play Store. Rilis production masih tetap cara lama: push
-   ke `master` → `build-and-distribute-android.yml` jalan sendiri.
-   (Ini yang bakal berubah di Fase 2 — merge PR rilis + bikin tag
-   `vX.Y.Z` bakal jadi pemicu production, bukan push `master`.)
+   rilis, merge PR itu.
+4. **Bikin tag rilis manual** (langkah ini SENGAJA manual, ruleset nolak
+   kalau bot yang coba bikin):
+   ```
+   git tag vX.Y.Z <sha commit hasil merge PR rilis>
+   git push origin vX.Y.Z
+   ```
+   Ini yang beneran nge-trigger `release-android.yml` — build + upload
+   Play Store production. Gak ada tombol mundur setelah ini jalan, jadi
+   mastiin CHANGELOG di PR rilis udah sesuai sebelum nge-tag.
 
-Intinya: kebiasaan lama gak berubah. Cuma nambah 1 langkah opsional
-(tag `-snapshot`) buat yang mau test sebelum yakin.
+Ringkasnya: langkah 1-2 (ngoding + test snapshot) persis kayak sebelum
+Fase 2. Yang berubah cuma cara rilis production — dulu push `master`
+otomatis ngerilis, sekarang butuh 2 langkah sadar (merge PR rilis, terus
+tag manual) sebelum beneran naik ke user.
 
 ## Objective
 
