@@ -126,7 +126,7 @@ class _HadiFeatureCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Fitur Hadi',
+                    'Hadi',
                     style: GoogleFonts.dmSans(
                       fontWeight: FontWeight.w900,
                       fontSize: 24,
