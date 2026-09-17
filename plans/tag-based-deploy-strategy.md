@@ -2,7 +2,7 @@
 planStatus:
   planId: plan-tag-based-deploy-strategy
   title: Tag-Based Deploy Strategy (Snapshot/Release Tags + Feature Flags)
-  status: in-progress
+  status: complete
   planType: infra
   priority: medium
   owner: aamar
@@ -14,7 +14,7 @@ planStatus:
     - release
   created: "2026-09-17"
   updated: "2026-09-17T00:00:00.000Z"
-  progress: 50
+  progress: 100
 ---
 # Tag-Based Deploy Strategy
 
@@ -63,42 +63,99 @@ sungguhan, versi live `1.3.0+25`):
   `tags` filter di trigger yang sama (makanya file dipisah, bukan nambah
   trigger di file lama).
 
-**Belum mulai:** Fase 3, 4 (lihat bagian "Fase Migrasi" di bawah).
+**Fase 3 — SELESAI** (termasuk update susulan: fallback dicabut).
+Branch cleanup: 9 branch lama yang udah merged dihapus (local + remote).
+`feature/sprint-1-pembelajaran-terbang` (belum merge ke mana pun) sengaja
+dibiarin, gak disentuh — kerjaan aktif punya user. `sync-develop.yml`
+dihapus. `develop` branch **tetap ada** (masih dipake branch di atas),
+cuma gak di-auto-sync lagi.
 
-## Cara Kerja Sehari-hari (versi gampang)
+**Update susulan (2026-09-17, sore):** fallback path-filter di
+`build-and-distribute-android.yml` **udah dicabut** — atas permintaan
+eksplisit user buat total pindah ke flow tag, lebih cepat dari rencana
+awal ("nunggu beberapa rilis lagi"). Trigger `push` (branch+paths)
+dihapus total, tinggal `workflow_dispatch` doang — jadi file ini sekarang
+murni **emergency escape hatch manual** (`gh workflow run
+build-and-distribute-android.yml`), bukan jalur otomatis lagi. **Mulai
+sekarang, satu-satunya jalur production adalah tag `vX.Y.Z` lewat
+`release-android.yml`** — push ke `master` (termasuk yang nyentuh
+`pubspec.yaml`/`android/**`/dll) TIDAK lagi auto-rilis.
 
-Buat referensi kapan pun lupa — ini alur pakainya, bukan teori:
+**Fase 4 — SELESAI.** `FeatureFlagsService`
+(`lib/core/feature_flags/feature_flags_service.dart`, wrap Firebase
+Remote Config) — live di production (`1.4.0+26`, dirilis lewat fallback
+lama karena nambah dependency baru = nyentuh `pubspec.yaml` = match
+path-filter). Cara pakai didokumentasikan di `CLAUDE.md` ("Feature
+Flags" section) biar sesi Claude Code berikutnya otomatis paham
+konvensinya pas ngoding.
 
-1. **Ngoding fitur kayak biasa.** Branch dari `master`, commit, PR, merge
-   ke `master`. Gak ada yang beda.
-2. **Mau test dulu sebelum yakin rilis?** Tag commit di `master` itu
-   dengan suffix `-snapshot`:
+**Semua 4 fase selesai.** Plan ini closed — bukan berarti gak ada lagi
+kerjaan CI/CD ke depan (mis. nanti nyabut fallback beneran), tapi
+kerangka besarnya udah lengkap dan tervalidasi nyata (bukan simulasi).
+
+## Alur Bikin Fitur Baru (referensi harian)
+
+Ini yang dipakai tiap kali mau nambah fitur, dari nol sampai live di
+Play Store:
+
+1. **Ngoding.** Branch dari `master`:
    ```
+   git checkout master && git pull
+   git checkout -b feature/nama-fitur
+   ```
+   Ikutin Clean Architecture (`domain/data/presentation`) di
+   `lib/features/<nama>/`. Fitur besar/beresiko yang mau tetap naik
+   meski belum 100% yakin → bungkus pake `FeatureFlagsService`
+   (`sl<FeatureFlagsService>().isEnabled('feature_xxx_enabled')`, lihat
+   `CLAUDE.md`).
+
+2. **PR ke `master`.**
+   ```
+   git push origin feature/nama-fitur
+   gh pr create --base master
+   ```
+   Review, merge.
+
+3. **(Opsional) Test dulu sebelum yakin rilis** — skip kalau fix
+   kecil/udah yakin bener:
+   ```
+   git checkout master && git pull
    git tag vX.Y.Z-snapshot.N
    git push origin vX.Y.Z-snapshot.N
    ```
-   (`X.Y.Z` = versi semver sekarang di `pubspec.yaml`, `N` = nomor urut
-   snapshot ke berapa buat versi itu, mulai dari 1.) Ini otomatis build
-   APK dan kirim ke tester lewat Firebase App Distribution
-   (`ishari-testers`). Install, coba, cek bug.
-3. **Siap dirilis?** Ada PR otomatis judul `chore(master): release
-   X.X.X` yang muncul sendiri di GitHub tiap ada commit baru ke `master`
-   (dibikin `release-please`). Review CHANGELOG-nya, kalau emang mau
-   rilis, merge PR itu.
-4. **Bikin tag rilis manual** (langkah ini SENGAJA manual, ruleset nolak
-   kalau bot yang coba bikin):
-   ```
-   git tag vX.Y.Z <sha commit hasil merge PR rilis>
-   git push origin vX.Y.Z
-   ```
-   Ini yang beneran nge-trigger `release-android.yml` — build + upload
-   Play Store production. Gak ada tombol mundur setelah ini jalan, jadi
-   mastiin CHANGELOG di PR rilis udah sesuai sebelum nge-tag.
+   Auto build APK → Firebase App Distribution (`ishari-testers`) →
+   install, coba di device real. Nemu bug → ulang dari langkah 1-2, tag
+   snapshot baru (`-snapshot.N+1`).
 
-Ringkasnya: langkah 1-2 (ngoding + test snapshot) persis kayak sebelum
-Fase 2. Yang berubah cuma cara rilis production — dulu push `master`
-otomatis ngerilis, sekarang butuh 2 langkah sadar (merge PR rilis, terus
-tag manual) sebelum beneran naik ke user.
+4. **Merge PR rilis.** Tiap commit baru ke `master`, `release-please`
+   otomatis buka/update PR `chore(master): release X.X.X` (isinya
+   CHANGELOG). Review, merge kalau emang mau rilis.
+
+5. **Tag rilis manual — ini yang beneran nge-trigger Play Store**
+   (sengaja manual, ruleset nolak kalau bot yang coba):
+   ```
+   git fetch origin master
+   git tag vX.X.X <sha commit hasil merge PR rilis>
+   git push origin vX.X.X
+   ```
+   `release-android.yml` jalan: build + upload Play Store production.
+   Gak ada tombol mundur — mastiin CHANGELOG di PR rilis udah sesuai
+   sebelum nge-tag.
+
+6. **Ada masalah abis rilis?**
+   - Bug Dart-only, gak ada dependency baru/native code/asset baru →
+     `shorebird patch android --release-version X.X.X+build`
+   - Fitur dibungkus feature flag → matiin langsung dari Firebase
+     Console (Remote Config), gak perlu rilis apa-apa, langsung efek
+   - Selain itu → hotfix dari langkah 1, rilis lagi
+
+**Catatan (sudah gak berlaku sejak fallback dicabut):** dulu, dependency
+baru di `pubspec.yaml` (kayak `firebase_remote_config` buat Fase 4) ikut
+match path-filter fallback lama dan trigger rilis via jalur itu (bukan
+tag). Sejak fallback dicabut, itu gak kejadian lagi — perubahan apa pun
+di `pubspec.yaml`/`android/**`/dll cuma masuk `master` biasa lewat PR,
+gak ada rilis otomatis. Rilis production sekarang murni lewat langkah
+5 di atas (tag manual), gak peduli file apa yang berubah.
 
 ## Objective
 

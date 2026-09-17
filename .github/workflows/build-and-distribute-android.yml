@@ -1,20 +1,12 @@
 name: Build & Distribute Ishari Android
 
 on:
-  push:
-    branches: [ master ]
-    # Only fire a full Play Store release for changes Shorebird patches
-    # can't cover: native code, new/updated dependencies (may need native
-    # linking), bundled assets, or Shorebird's own config. Pure Dart/Flutter
-    # changes (lib/**) land on master without triggering this — ship those
-    # via `shorebird patch` instead. Force a release anytime with
-    # workflow_dispatch regardless of what changed.
-    paths:
-      - 'android/**'
-      - 'ios/**'
-      - 'pubspec.yaml'
-      - 'assets/**'
-      - 'shorebird.yaml'
+  # Manual-only. Production releases go through release-android.yml
+  # (tag-based deploy strategy, plans/tag-based-deploy-strategy.md) —
+  # merge the release-please PR, then push a `vX.Y.Z` tag. This workflow
+  # is kept as an emergency escape hatch (e.g. release-android.yml itself
+  # is broken) — same build steps, triggered by hand via
+  # `gh workflow run build-and-distribute-android.yml` or the Actions UI.
   workflow_dispatch:
 
 jobs:
