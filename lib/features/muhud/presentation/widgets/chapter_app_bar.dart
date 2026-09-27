@@ -100,9 +100,7 @@ class _SplitBtn extends StatelessWidget {
             Icon(
               Icons.horizontal_split_rounded,
               size: 14,
-              color: active
-                  ? const Color(0xFFCAFF00)
-                  : const Color(0xFF111111),
+              color: active ? const Color(0xFFCAFF00) : const Color(0xFF111111),
             ),
             const SizedBox(width: 6),
             Text(

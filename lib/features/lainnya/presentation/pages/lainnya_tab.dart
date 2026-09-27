@@ -58,12 +58,13 @@ class LainnyaTab extends StatelessWidget {
                     ),
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(22, 0, 22, 0),
-                  child: _LockedFeatureCard(
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(22, 0, 22, 0),
+                  child: _UnlockedFeatureCard(
                     icon: Icons.play_arrow_rounded,
                     title: 'Audio',
                     subtitle: 'Dengarkan audio shalawat ISHARI',
+                    onTap: () => context.push('/audio'),
                   ),
                 ),
               ],
@@ -204,21 +205,23 @@ class _HadiFeatureCard extends StatelessWidget {
   }
 }
 
-class _LockedFeatureCard extends StatelessWidget {
-  const _LockedFeatureCard({
+class _UnlockedFeatureCard extends StatelessWidget {
+  const _UnlockedFeatureCard({
     required this.icon,
     required this.title,
     required this.subtitle,
+    required this.onTap,
   });
 
   final IconData icon;
   final String title;
   final String subtitle;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Opacity(
-      opacity: 0.6,
+    return GestureDetector(
+      onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -236,7 +239,7 @@ class _LockedFeatureCard extends StatelessWidget {
                 color: _kBg,
               ),
               alignment: Alignment.center,
-              child: Icon(icon, size: 20, color: _kMute),
+              child: Icon(icon, size: 20, color: _kDark),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -263,21 +266,10 @@ class _LockedFeatureCard extends StatelessWidget {
                 ],
               ),
             ),
-            Container(
-              decoration: BoxDecoration(
-                color: _kBg,
-                borderRadius: BorderRadius.circular(100),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              child: const Text(
-                'Segera Hadir',
-                style: TextStyle(
-                  fontSize: 9.5,
-                  fontWeight: FontWeight.w800,
-                  color: _kMute,
-                  letterSpacing: 0.2,
-                ),
-              ),
+            const Icon(
+              Icons.chevron_right_rounded,
+              size: 20,
+              color: Color(0xFFAAAAAA),
             ),
           ],
         ),

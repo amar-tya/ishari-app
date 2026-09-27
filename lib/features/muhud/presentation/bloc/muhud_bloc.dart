@@ -1,16 +1,19 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:ishari/core/analytics/analytics_service.dart';
+import 'package:ishari/core/audio/audio_session_coordinator.dart';
 import 'package:ishari/core/utils/app_logger.dart';
+import 'package:ishari/features/audio/domain/entities/audio_playback_request.dart';
+import 'package:ishari/features/audio/domain/services/audio_playback_service.dart';
 import 'package:ishari/features/muhud/domain/usecases/get_bookmarked_verse_ids.dart';
 import 'package:ishari/features/muhud/domain/usecases/get_chapter_by_id.dart';
 import 'package:ishari/features/muhud/domain/usecases/get_verses_by_chapter.dart';
 import 'package:ishari/features/muhud/domain/usecases/toggle_bookmark.dart';
 import 'package:ishari/features/muhud/presentation/bloc/muhud_event.dart';
 import 'package:ishari/features/muhud/presentation/bloc/muhud_state.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // SharedPreferences keys for reader font size settings
@@ -27,6 +30,8 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
     required this.getChapterById,
     required this.prefs,
     required this.analytics,
+    required this.playbackService,
+    required this.sessionCoordinator,
   }) : super(const MuhudState.initial()) {
     on<MuhudEvent>((event, emit) async {
       await event.when(
@@ -38,6 +43,7 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
         playVerse: (verseId, hadiId, recitationType, mediaId) =>
             _onPlayVerse(verseId, mediaId, recitationType.name, emit),
         stopAudio: () => _onStopAudio(emit),
+        ownershipLost: () async => _onOwnershipLost(emit),
         toggleArabic: () async => _onToggleArabic(emit),
         toggleTransliteration: () async => _onToggleTransliteration(emit),
         setArabFontSize: (size) async => _onSetArabFontSize(size, emit),
@@ -51,6 +57,14 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
         ),
       );
     });
+
+    _completedSubscription = playbackService.completedStream.listen((_) {
+      if (_isOwner) add(const MuhudEvent.stopAudio());
+    });
+    _ownerListener = () {
+      if (!_isOwner) add(const MuhudEvent.ownershipLost());
+    };
+    sessionCoordinator.owner.addListener(_ownerListener);
   }
 
   final GetVersesByChapter getVersesByChapter;
@@ -59,15 +73,20 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
   final GetChapterById getChapterById;
   final SharedPreferences prefs;
   final AnalyticsService analytics;
+  final AudioPlaybackService playbackService;
+  final AudioSessionCoordinator sessionCoordinator;
 
-  final _audioPlayer = AudioPlayer();
-  StreamSubscription<PlayerState>? _playerStateSubscription;
+  late final StreamSubscription<void> _completedSubscription;
+  late final VoidCallback _ownerListener;
   String _userId = '';
+
+  bool get _isOwner =>
+      sessionCoordinator.owner.value == AudioSessionOwner.muhudVerse;
 
   @override
   Future<void> close() async {
-    await _playerStateSubscription?.cancel();
-    await _audioPlayer.dispose();
+    sessionCoordinator.owner.removeListener(_ownerListener);
+    await _completedSubscription.cancel();
     return super.close();
   }
 
@@ -240,22 +259,17 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
         final media = verse.mediaList.where((m) => m.id == mediaId).firstOrNull;
         if (media == null) return;
 
+        sessionCoordinator.claim(AudioSessionOwner.muhudVerse);
         emit(l.copyWith(playingVerseId: verseId, isAudioLoading: true));
         try {
-          await _audioPlayer.stop();
-          await _audioPlayer.setUrl(media.mediaUrl);
-
-          // Cancel previous listener dan setup baru
-          await _playerStateSubscription?.cancel();
-          _playerStateSubscription = _audioPlayer.playerStateStream.listen(
-            (playerState) {
-              if (playerState.processingState == ProcessingState.completed) {
-                add(const MuhudEvent.stopAudio());
-              }
-            },
+          await playbackService.load(
+            AudioPlaybackRequest(
+              id: 'muhud-verse-$verseId-$mediaId',
+              url: media.mediaUrl,
+              title: l.chapter.title,
+              subtitle: 'Ayat $verseId',
+            ),
           );
-
-          _audioPlayer.play().ignore();
           emit(l.copyWith(playingVerseId: verseId, isAudioLoading: false));
           unawaited(
             analytics.logVerseAudioPlayed(
@@ -270,6 +284,7 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
             error: e,
             stackTrace: stackTrace,
           );
+          sessionCoordinator.release(AudioSessionOwner.muhudVerse);
           emit(
             l.copyWith(
               playingVerseId: null,
@@ -286,11 +301,23 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
   Future<void> _onStopAudio(Emitter<MuhudState> emit) async {
     final future = state.mapOrNull(
       loaded: (l) async {
-        await _audioPlayer.stop();
+        await playbackService.stop();
+        sessionCoordinator.release(AudioSessionOwner.muhudVerse);
         emit(l.copyWith(playingVerseId: null, isAudioLoading: false));
       },
     );
     if (future != null) await future;
+  }
+
+  /// The shared player was claimed by an audio-catalog track — just clear
+  /// local state, the player itself is already mid-replacement.
+  void _onOwnershipLost(Emitter<MuhudState> emit) {
+    state.mapOrNull(
+      loaded: (l) {
+        if (l.playingVerseId == null) return;
+        emit(l.copyWith(playingVerseId: null, isAudioLoading: false));
+      },
+    );
   }
 
   Future<void> _onSetArabFontSize(double size, Emitter<MuhudState> emit) async {

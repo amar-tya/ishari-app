@@ -2,11 +2,14 @@ package com.ishari.app
 
 import android.os.Bundle
 import androidx.core.view.WindowCompat
-import io.flutter.embedding.android.FlutterActivity
+import com.ryanheise.audioservice.AudioServiceActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugins.googlemobileads.GoogleMobileAdsPlugin
 
-class MainActivity : FlutterActivity() {
+// Extends AudioServiceActivity (not plain FlutterActivity) so this activity
+// shares the same FlutterEngine as the audio_service background service —
+// required by just_audio_background for lockscreen/notification controls.
+class MainActivity : AudioServiceActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

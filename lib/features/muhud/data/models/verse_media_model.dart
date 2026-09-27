@@ -47,7 +47,7 @@ abstract class VerseMediaModel with _$VerseMediaModel {
     } catch (e) {
       appLogger.e(
         '[VerseMediaModel] ERROR — '
-            'id=$id verseId=$verseId duration=$duration type=$type',
+        'id=$id verseId=$verseId duration=$duration type=$type',
         error: e,
       );
       rethrow;

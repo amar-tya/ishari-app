@@ -93,8 +93,7 @@ class ChapterReaderPage extends StatelessWidget {
                   transliterationFontSize,
                   translationFontSize,
                   snackbarMessage,
-                ) =>
-                    ChapterReaderBody(
+                ) => ChapterReaderBody(
                   chapter: chapter,
                   verses: verses,
                   initialVerseId: initialVerseId,

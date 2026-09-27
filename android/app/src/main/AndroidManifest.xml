@@ -1,8 +1,13 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
     <!-- INTERNET permission required for Supabase + Google Sign-In -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <!-- Runtime-requested on Android 13+ via FirebaseMessaging.requestPermission() -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- audio_service (background audio + lockscreen/notification controls) -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
 
     <application
         android:label="Sholawat Hadrah Ishari"
@@ -45,6 +50,27 @@
                     android:path="/callback" />
             </intent-filter>
         </activity>
+        <!-- audio_service: background media session service + media button
+             receiver (lockscreen/headset play-pause-seek), required for
+             just_audio_background. -->
+        <service
+            android:name="com.ryanheise.audioservice.AudioService"
+            android:foregroundServiceType="mediaPlayback"
+            android:exported="true"
+            tools:ignore="Instantiatable">
+            <intent-filter>
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
+        <receiver
+            android:name="com.ryanheise.audioservice.MediaButtonReceiver"
+            android:exported="true"
+            tools:ignore="Instantiatable">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
+
         <!-- AdMob App ID — value injected from env/current.env via build.gradle.kts -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
