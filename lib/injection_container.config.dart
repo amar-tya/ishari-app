@@ -18,7 +18,16 @@ import 'package:shared_preferences/shared_preferences.dart' as _i460;
 import 'package:supabase_flutter/supabase_flutter.dart' as _i454;
 
 import 'core/analytics/analytics_service.dart' as _i931;
+import 'core/audio/audio_session_coordinator.dart' as _i265;
+import 'core/feature_flags/feature_flags_service.dart' as _i1047;
 import 'core/network/network_info.dart' as _i75;
+import 'features/audio/data/datasources/audio_remote_datasource.dart' as _i1035;
+import 'features/audio/data/repositories/audio_repository_impl.dart' as _i550;
+import 'features/audio/data/services/just_audio_playback_service.dart' as _i135;
+import 'features/audio/domain/repositories/audio_repository.dart' as _i1029;
+import 'features/audio/domain/services/audio_playback_service.dart' as _i504;
+import 'features/audio/domain/usecases/get_all_audio_tracks.dart' as _i647;
+import 'features/audio/presentation/bloc/audio_list_bloc.dart' as _i606;
 import 'features/auth/data/datasources/auth_local_datasource.dart' as _i1043;
 import 'features/auth/data/datasources/auth_remote_datasource.dart' as _i588;
 import 'features/auth/data/repositories/auth_repository_impl.dart' as _i111;
@@ -117,6 +126,12 @@ Future<_i174.GetIt> initDependencies(
     preResolve: true,
   );
   gh.lazySingleton<_i931.AnalyticsService>(() => _i931.AnalyticsService());
+  gh.lazySingleton<_i265.AudioSessionCoordinator>(
+    () => _i265.AudioSessionCoordinator(),
+  );
+  gh.lazySingleton<_i1047.FeatureFlagsService>(
+    () => _i1047.FeatureFlagsService(),
+  );
   gh.lazySingleton<_i480.FcmService>(() => _i480.FcmService());
   gh.lazySingleton<_i454.SupabaseClient>(() => registerModule.supabaseClient);
   gh.lazySingleton<_i161.InternetConnection>(
@@ -127,6 +142,9 @@ Future<_i174.GetIt> initDependencies(
   );
   gh.lazySingleton<_i555.NotificationsRemoteDatasource>(
     () => _i555.NotificationsRemoteDatasourceImpl(gh<_i454.SupabaseClient>()),
+  );
+  gh.lazySingleton<_i504.AudioPlaybackService>(
+    () => _i135.JustAudioPlaybackService(),
   );
   gh.lazySingleton<_i354.UpdateRemoteDataSource>(
     () => _i354.UpdateRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
@@ -139,6 +157,9 @@ Future<_i174.GetIt> initDependencies(
   );
   gh.lazySingleton<_i647.SearchRemoteDataSource>(
     () => _i647.SearchRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
+  );
+  gh.lazySingleton<_i1035.AudioRemoteDataSource>(
+    () => _i1035.AudioRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
   );
   gh.lazySingleton<_i588.AuthRemoteDataSource>(
     () => _i588.AuthRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
@@ -203,6 +224,12 @@ Future<_i174.GetIt> initDependencies(
       gh<_i75.NetworkInfo>(),
     ),
   );
+  gh.lazySingleton<_i1029.AudioRepository>(
+    () => _i550.AudioRepositoryImpl(
+      gh<_i1035.AudioRemoteDataSource>(),
+      gh<_i75.NetworkInfo>(),
+    ),
+  );
   gh.lazySingleton<_i878.HadiDirectoryBloc>(
     () => _i878.HadiDirectoryBloc(
       getAllHadi: gh<_i107.GetAllHadi>(),
@@ -215,6 +242,9 @@ Future<_i174.GetIt> initDependencies(
       gh<_i75.NetworkInfo>(),
       gh<_i460.SharedPreferences>(),
     ),
+  );
+  gh.factory<_i647.GetAllAudioTracks>(
+    () => _i647.GetAllAudioTracks(gh<_i1029.AudioRepository>()),
   );
   gh.lazySingleton<_i246.SearchRepository>(
     () => _i967.SearchRepositoryImpl(
@@ -300,16 +330,6 @@ Future<_i174.GetIt> initDependencies(
   gh.factory<_i851.UpdateBookmarkNote>(
     () => _i851.UpdateBookmarkNote(gh<_i681.MuhudRepository>()),
   );
-  gh.factory<_i533.MuhudBloc>(
-    () => _i533.MuhudBloc(
-      getVersesByChapter: gh<_i1006.GetVersesByChapter>(),
-      toggleBookmark: gh<_i718.ToggleBookmark>(),
-      getBookmarkedVerseIds: gh<_i356.GetBookmarkedVerseIds>(),
-      getChapterById: gh<_i307.GetChapterById>(),
-      prefs: gh<_i460.SharedPreferences>(),
-      analytics: gh<_i931.AnalyticsService>(),
-    ),
-  );
   gh.factory<_i468.KitabBloc>(() => _i468.KitabBloc(gh<_i395.GetAllBooks>()));
   gh.factory<_i961.SearchChapters>(
     () => _i961.SearchChapters(gh<_i246.SearchRepository>()),
@@ -328,6 +348,13 @@ Future<_i174.GetIt> initDependencies(
       gh<_i718.GetBookmarkedVerses>(),
       gh<_i718.ToggleBookmark>(),
       gh<_i851.UpdateBookmarkNote>(),
+    ),
+  );
+  gh.lazySingleton<_i606.AudioListBloc>(
+    () => _i606.AudioListBloc(
+      getAllAudioTracks: gh<_i647.GetAllAudioTracks>(),
+      playbackService: gh<_i504.AudioPlaybackService>(),
+      sessionCoordinator: gh<_i265.AudioSessionCoordinator>(),
     ),
   );
   gh.factory<_i397.GetNotifications>(
@@ -359,6 +386,18 @@ Future<_i174.GetIt> initDependencies(
       gh<_i203.GetTatananList>(),
       gh<_i464.CreateTatanan>(),
       gh<_i845.DeleteTatanan>(),
+    ),
+  );
+  gh.factory<_i533.MuhudBloc>(
+    () => _i533.MuhudBloc(
+      getVersesByChapter: gh<_i1006.GetVersesByChapter>(),
+      toggleBookmark: gh<_i718.ToggleBookmark>(),
+      getBookmarkedVerseIds: gh<_i356.GetBookmarkedVerseIds>(),
+      getChapterById: gh<_i307.GetChapterById>(),
+      prefs: gh<_i460.SharedPreferences>(),
+      analytics: gh<_i931.AnalyticsService>(),
+      playbackService: gh<_i504.AudioPlaybackService>(),
+      sessionCoordinator: gh<_i265.AudioSessionCoordinator>(),
     ),
   );
   gh.lazySingleton<_i772.NotificationsBloc>(

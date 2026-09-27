@@ -55,7 +55,7 @@ extension MuhudEventPatterns on MuhudEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _LoadChapter value)?  loadChapter,TResult Function( _ToggleTranslation value)?  toggleTranslation,TResult Function( _ToggleBookmark value)?  toggleBookmark,TResult Function( _PlayVerse value)?  playVerse,TResult Function( _StopAudio value)?  stopAudio,TResult Function( _ToggleArabic value)?  toggleArabic,TResult Function( _ToggleTransliteration value)?  toggleTransliteration,TResult Function( _SetArabFontSize value)?  setArabFontSize,TResult Function( _SetTransliterationFontSize value)?  setTransliterationFontSize,TResult Function( _SetTranslationFontSize value)?  setTranslationFontSize,TResult Function( _ResetFontSizes value)?  resetFontSizes,TResult Function( _ClearSnackbar value)?  clearSnackbar,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _LoadChapter value)?  loadChapter,TResult Function( _ToggleTranslation value)?  toggleTranslation,TResult Function( _ToggleBookmark value)?  toggleBookmark,TResult Function( _PlayVerse value)?  playVerse,TResult Function( _StopAudio value)?  stopAudio,TResult Function( _OwnershipLost value)?  ownershipLost,TResult Function( _ToggleArabic value)?  toggleArabic,TResult Function( _ToggleTransliteration value)?  toggleTransliteration,TResult Function( _SetArabFontSize value)?  setArabFontSize,TResult Function( _SetTransliterationFontSize value)?  setTransliterationFontSize,TResult Function( _SetTranslationFontSize value)?  setTranslationFontSize,TResult Function( _ResetFontSizes value)?  resetFontSizes,TResult Function( _ClearSnackbar value)?  clearSnackbar,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _LoadChapter() when loadChapter != null:
@@ -63,7 +63,8 @@ return loadChapter(_that);case _ToggleTranslation() when toggleTranslation != nu
 return toggleTranslation(_that);case _ToggleBookmark() when toggleBookmark != null:
 return toggleBookmark(_that);case _PlayVerse() when playVerse != null:
 return playVerse(_that);case _StopAudio() when stopAudio != null:
-return stopAudio(_that);case _ToggleArabic() when toggleArabic != null:
+return stopAudio(_that);case _OwnershipLost() when ownershipLost != null:
+return ownershipLost(_that);case _ToggleArabic() when toggleArabic != null:
 return toggleArabic(_that);case _ToggleTransliteration() when toggleTransliteration != null:
 return toggleTransliteration(_that);case _SetArabFontSize() when setArabFontSize != null:
 return setArabFontSize(_that);case _SetTransliterationFontSize() when setTransliterationFontSize != null:
@@ -88,7 +89,7 @@ return clearSnackbar(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _LoadChapter value)  loadChapter,required TResult Function( _ToggleTranslation value)  toggleTranslation,required TResult Function( _ToggleBookmark value)  toggleBookmark,required TResult Function( _PlayVerse value)  playVerse,required TResult Function( _StopAudio value)  stopAudio,required TResult Function( _ToggleArabic value)  toggleArabic,required TResult Function( _ToggleTransliteration value)  toggleTransliteration,required TResult Function( _SetArabFontSize value)  setArabFontSize,required TResult Function( _SetTransliterationFontSize value)  setTransliterationFontSize,required TResult Function( _SetTranslationFontSize value)  setTranslationFontSize,required TResult Function( _ResetFontSizes value)  resetFontSizes,required TResult Function( _ClearSnackbar value)  clearSnackbar,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _LoadChapter value)  loadChapter,required TResult Function( _ToggleTranslation value)  toggleTranslation,required TResult Function( _ToggleBookmark value)  toggleBookmark,required TResult Function( _PlayVerse value)  playVerse,required TResult Function( _StopAudio value)  stopAudio,required TResult Function( _OwnershipLost value)  ownershipLost,required TResult Function( _ToggleArabic value)  toggleArabic,required TResult Function( _ToggleTransliteration value)  toggleTransliteration,required TResult Function( _SetArabFontSize value)  setArabFontSize,required TResult Function( _SetTransliterationFontSize value)  setTransliterationFontSize,required TResult Function( _SetTranslationFontSize value)  setTranslationFontSize,required TResult Function( _ResetFontSizes value)  resetFontSizes,required TResult Function( _ClearSnackbar value)  clearSnackbar,}){
 final _that = this;
 switch (_that) {
 case _LoadChapter():
@@ -96,7 +97,8 @@ return loadChapter(_that);case _ToggleTranslation():
 return toggleTranslation(_that);case _ToggleBookmark():
 return toggleBookmark(_that);case _PlayVerse():
 return playVerse(_that);case _StopAudio():
-return stopAudio(_that);case _ToggleArabic():
+return stopAudio(_that);case _OwnershipLost():
+return ownershipLost(_that);case _ToggleArabic():
 return toggleArabic(_that);case _ToggleTransliteration():
 return toggleTransliteration(_that);case _SetArabFontSize():
 return setArabFontSize(_that);case _SetTransliterationFontSize():
@@ -117,7 +119,7 @@ return clearSnackbar(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _LoadChapter value)?  loadChapter,TResult? Function( _ToggleTranslation value)?  toggleTranslation,TResult? Function( _ToggleBookmark value)?  toggleBookmark,TResult? Function( _PlayVerse value)?  playVerse,TResult? Function( _StopAudio value)?  stopAudio,TResult? Function( _ToggleArabic value)?  toggleArabic,TResult? Function( _ToggleTransliteration value)?  toggleTransliteration,TResult? Function( _SetArabFontSize value)?  setArabFontSize,TResult? Function( _SetTransliterationFontSize value)?  setTransliterationFontSize,TResult? Function( _SetTranslationFontSize value)?  setTranslationFontSize,TResult? Function( _ResetFontSizes value)?  resetFontSizes,TResult? Function( _ClearSnackbar value)?  clearSnackbar,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _LoadChapter value)?  loadChapter,TResult? Function( _ToggleTranslation value)?  toggleTranslation,TResult? Function( _ToggleBookmark value)?  toggleBookmark,TResult? Function( _PlayVerse value)?  playVerse,TResult? Function( _StopAudio value)?  stopAudio,TResult? Function( _OwnershipLost value)?  ownershipLost,TResult? Function( _ToggleArabic value)?  toggleArabic,TResult? Function( _ToggleTransliteration value)?  toggleTransliteration,TResult? Function( _SetArabFontSize value)?  setArabFontSize,TResult? Function( _SetTransliterationFontSize value)?  setTransliterationFontSize,TResult? Function( _SetTranslationFontSize value)?  setTranslationFontSize,TResult? Function( _ResetFontSizes value)?  resetFontSizes,TResult? Function( _ClearSnackbar value)?  clearSnackbar,}){
 final _that = this;
 switch (_that) {
 case _LoadChapter() when loadChapter != null:
@@ -125,7 +127,8 @@ return loadChapter(_that);case _ToggleTranslation() when toggleTranslation != nu
 return toggleTranslation(_that);case _ToggleBookmark() when toggleBookmark != null:
 return toggleBookmark(_that);case _PlayVerse() when playVerse != null:
 return playVerse(_that);case _StopAudio() when stopAudio != null:
-return stopAudio(_that);case _ToggleArabic() when toggleArabic != null:
+return stopAudio(_that);case _OwnershipLost() when ownershipLost != null:
+return ownershipLost(_that);case _ToggleArabic() when toggleArabic != null:
 return toggleArabic(_that);case _ToggleTransliteration() when toggleTransliteration != null:
 return toggleTransliteration(_that);case _SetArabFontSize() when setArabFontSize != null:
 return setArabFontSize(_that);case _SetTransliterationFontSize() when setTransliterationFontSize != null:
@@ -149,14 +152,15 @@ return clearSnackbar(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int chapterId,  String userId)?  loadChapter,TResult Function()?  toggleTranslation,TResult Function( int verseId,  String? note)?  toggleBookmark,TResult Function( int verseId,  String hadiId,  VerseMediaType recitationType,  int mediaId)?  playVerse,TResult Function()?  stopAudio,TResult Function()?  toggleArabic,TResult Function()?  toggleTransliteration,TResult Function( double size)?  setArabFontSize,TResult Function( double size)?  setTransliterationFontSize,TResult Function( double size)?  setTranslationFontSize,TResult Function()?  resetFontSizes,TResult Function()?  clearSnackbar,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int chapterId,  String userId)?  loadChapter,TResult Function()?  toggleTranslation,TResult Function( int verseId,  String? note)?  toggleBookmark,TResult Function( int verseId,  String hadiId,  VerseMediaType recitationType,  int mediaId)?  playVerse,TResult Function()?  stopAudio,TResult Function()?  ownershipLost,TResult Function()?  toggleArabic,TResult Function()?  toggleTransliteration,TResult Function( double size)?  setArabFontSize,TResult Function( double size)?  setTransliterationFontSize,TResult Function( double size)?  setTranslationFontSize,TResult Function()?  resetFontSizes,TResult Function()?  clearSnackbar,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LoadChapter() when loadChapter != null:
 return loadChapter(_that.chapterId,_that.userId);case _ToggleTranslation() when toggleTranslation != null:
 return toggleTranslation();case _ToggleBookmark() when toggleBookmark != null:
 return toggleBookmark(_that.verseId,_that.note);case _PlayVerse() when playVerse != null:
 return playVerse(_that.verseId,_that.hadiId,_that.recitationType,_that.mediaId);case _StopAudio() when stopAudio != null:
-return stopAudio();case _ToggleArabic() when toggleArabic != null:
+return stopAudio();case _OwnershipLost() when ownershipLost != null:
+return ownershipLost();case _ToggleArabic() when toggleArabic != null:
 return toggleArabic();case _ToggleTransliteration() when toggleTransliteration != null:
 return toggleTransliteration();case _SetArabFontSize() when setArabFontSize != null:
 return setArabFontSize(_that.size);case _SetTransliterationFontSize() when setTransliterationFontSize != null:
@@ -181,14 +185,15 @@ return clearSnackbar();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int chapterId,  String userId)  loadChapter,required TResult Function()  toggleTranslation,required TResult Function( int verseId,  String? note)  toggleBookmark,required TResult Function( int verseId,  String hadiId,  VerseMediaType recitationType,  int mediaId)  playVerse,required TResult Function()  stopAudio,required TResult Function()  toggleArabic,required TResult Function()  toggleTransliteration,required TResult Function( double size)  setArabFontSize,required TResult Function( double size)  setTransliterationFontSize,required TResult Function( double size)  setTranslationFontSize,required TResult Function()  resetFontSizes,required TResult Function()  clearSnackbar,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int chapterId,  String userId)  loadChapter,required TResult Function()  toggleTranslation,required TResult Function( int verseId,  String? note)  toggleBookmark,required TResult Function( int verseId,  String hadiId,  VerseMediaType recitationType,  int mediaId)  playVerse,required TResult Function()  stopAudio,required TResult Function()  ownershipLost,required TResult Function()  toggleArabic,required TResult Function()  toggleTransliteration,required TResult Function( double size)  setArabFontSize,required TResult Function( double size)  setTransliterationFontSize,required TResult Function( double size)  setTranslationFontSize,required TResult Function()  resetFontSizes,required TResult Function()  clearSnackbar,}) {final _that = this;
 switch (_that) {
 case _LoadChapter():
 return loadChapter(_that.chapterId,_that.userId);case _ToggleTranslation():
 return toggleTranslation();case _ToggleBookmark():
 return toggleBookmark(_that.verseId,_that.note);case _PlayVerse():
 return playVerse(_that.verseId,_that.hadiId,_that.recitationType,_that.mediaId);case _StopAudio():
-return stopAudio();case _ToggleArabic():
+return stopAudio();case _OwnershipLost():
+return ownershipLost();case _ToggleArabic():
 return toggleArabic();case _ToggleTransliteration():
 return toggleTransliteration();case _SetArabFontSize():
 return setArabFontSize(_that.size);case _SetTransliterationFontSize():
@@ -209,14 +214,15 @@ return clearSnackbar();}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int chapterId,  String userId)?  loadChapter,TResult? Function()?  toggleTranslation,TResult? Function( int verseId,  String? note)?  toggleBookmark,TResult? Function( int verseId,  String hadiId,  VerseMediaType recitationType,  int mediaId)?  playVerse,TResult? Function()?  stopAudio,TResult? Function()?  toggleArabic,TResult? Function()?  toggleTransliteration,TResult? Function( double size)?  setArabFontSize,TResult? Function( double size)?  setTransliterationFontSize,TResult? Function( double size)?  setTranslationFontSize,TResult? Function()?  resetFontSizes,TResult? Function()?  clearSnackbar,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int chapterId,  String userId)?  loadChapter,TResult? Function()?  toggleTranslation,TResult? Function( int verseId,  String? note)?  toggleBookmark,TResult? Function( int verseId,  String hadiId,  VerseMediaType recitationType,  int mediaId)?  playVerse,TResult? Function()?  stopAudio,TResult? Function()?  ownershipLost,TResult? Function()?  toggleArabic,TResult? Function()?  toggleTransliteration,TResult? Function( double size)?  setArabFontSize,TResult? Function( double size)?  setTransliterationFontSize,TResult? Function( double size)?  setTranslationFontSize,TResult? Function()?  resetFontSizes,TResult? Function()?  clearSnackbar,}) {final _that = this;
 switch (_that) {
 case _LoadChapter() when loadChapter != null:
 return loadChapter(_that.chapterId,_that.userId);case _ToggleTranslation() when toggleTranslation != null:
 return toggleTranslation();case _ToggleBookmark() when toggleBookmark != null:
 return toggleBookmark(_that.verseId,_that.note);case _PlayVerse() when playVerse != null:
 return playVerse(_that.verseId,_that.hadiId,_that.recitationType,_that.mediaId);case _StopAudio() when stopAudio != null:
-return stopAudio();case _ToggleArabic() when toggleArabic != null:
+return stopAudio();case _OwnershipLost() when ownershipLost != null:
+return ownershipLost();case _ToggleArabic() when toggleArabic != null:
 return toggleArabic();case _ToggleTransliteration() when toggleTransliteration != null:
 return toggleTransliteration();case _SetArabFontSize() when setArabFontSize != null:
 return setArabFontSize(_that.size);case _SetTransliterationFontSize() when setTransliterationFontSize != null:
@@ -495,6 +501,38 @@ int get hashCode => runtimeType.hashCode;
 @override
 String toString() {
   return 'MuhudEvent.stopAudio()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class _OwnershipLost implements MuhudEvent {
+  const _OwnershipLost();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _OwnershipLost);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'MuhudEvent.ownershipLost()';
 }
 
 

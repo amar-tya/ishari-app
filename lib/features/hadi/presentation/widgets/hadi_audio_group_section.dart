@@ -14,9 +14,8 @@ String _formatDuration(int? seconds) {
   return '$m:${s.toString().padLeft(2, '0')}';
 }
 
-/// One "Gaya Bacaan" section — group label + its track rows. Track row
-/// styling (border/icon-swap on the playing row) follows the Claude Design
-/// mock; the grouping itself is a functional requirement layered on top.
+/// One "Gaya Bacaan" section — group label + its track rows. Track rows
+/// use the same bottom-border list style as `AudioListPage`.
 class HadiAudioGroupSection extends StatelessWidget {
   const HadiAudioGroupSection({
     required this.type,
@@ -49,16 +48,14 @@ class HadiAudioGroupSection extends StatelessWidget {
               letterSpacing: 0.6,
             ),
           ),
-          const SizedBox(height: 10),
-          for (var i = 0; i < tracks.length; i++) ...[
-            if (i > 0) const SizedBox(height: 10),
+          const SizedBox(height: 4),
+          for (final track in tracks)
             _TrackRow(
-              track: tracks[i],
-              isPlaying: playingId == tracks[i].id,
-              isLoading: isLoading && playingId == tracks[i].id,
-              onTap: () => onTrackTap(tracks[i]),
+              track: track,
+              isPlaying: playingId == track.id,
+              isLoading: isLoading && playingId == track.id,
+              onTap: () => onTrackTap(track),
             ),
-          ],
         ],
       ),
     );
@@ -88,16 +85,12 @@ class _TrackRow extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isPlaying ? _kLime : _kBorder,
-            width: isPlaying ? 2 : 1.5,
-          ),
+        decoration: const BoxDecoration(
+          border: Border(bottom: BorderSide(color: _kBorder, width: 1.5)),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        padding: const EdgeInsets.symmetric(vertical: 10),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               width: 38,

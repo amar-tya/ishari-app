@@ -50,6 +50,13 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 
+	<!-- just_audio_background / audio_service: keep playing + show Control
+	     Center / lockscreen media controls while the app is backgrounded. -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+	</array>
+
 	<!--
 	  Google Sign-In: Add REVERSED_CLIENT_ID from GoogleService-Info.plist here.
 	  TODO: Replace REVERSED_CLIENT_ID_FROM_GOOGLE_SERVICE_INFO with actual value.

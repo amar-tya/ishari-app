@@ -26,6 +26,10 @@ sealed class MuhudEvent with _$MuhudEvent {
 
   const factory MuhudEvent.stopAudio() = _StopAudio;
 
+  /// The shared audio player was claimed by an audio-catalog track — clear
+  /// local playback state without touching the player itself.
+  const factory MuhudEvent.ownershipLost() = _OwnershipLost;
+
   const factory MuhudEvent.toggleArabic() = _ToggleArabic;
 
   const factory MuhudEvent.toggleTransliteration() = _ToggleTransliteration;

@@ -4,6 +4,8 @@ import 'package:ishari/core/analytics/analytics_service.dart';
 import 'package:ishari/core/env/app_env.dart';
 import 'package:ishari/core/router/app_router.dart';
 import 'package:ishari/core/wizard/wizard_cubit.dart';
+import 'package:ishari/features/audio/presentation/bloc/audio_list_bloc.dart';
+import 'package:ishari/features/audio/presentation/widgets/global_audio_mini_player.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ishari/features/notifications/presentation/bloc/notifications_bloc.dart';
 import 'package:ishari/features/update/presentation/cubit/update_cubit.dart';
@@ -33,6 +35,9 @@ class IshariApp extends StatelessWidget {
         BlocProvider<WizardCubit>.value(
           value: sl<WizardCubit>(),
         ),
+        BlocProvider<AudioListBloc>.value(
+          value: sl<AudioListBloc>(),
+        ),
       ],
       child: Builder(
         builder: (context) {
@@ -51,6 +56,12 @@ class IshariApp extends StatelessWidget {
               useMaterial3: true,
             ),
             routerConfig: router,
+            builder: (context, child) => Stack(
+              children: [
+                ?child,
+                const GlobalAudioMiniPlayerOverlay(),
+              ],
+            ),
           );
         },
       ),

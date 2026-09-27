@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ishari/core/app_state.dart';
+import 'package:ishari/core/router/app_router.dart';
 import 'package:ishari/core/wizard/wizard_cubit.dart';
 import 'package:ishari/core/wizard/wizard_state.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
@@ -30,7 +31,7 @@ class MainScaffold extends StatefulWidget {
   State<MainScaffold> createState() => _MainScaffoldState();
 }
 
-class _MainScaffoldState extends State<MainScaffold> {
+class _MainScaffoldState extends State<MainScaffold> with RouteAware {
   int _selectedIndex = 0;
 
   // Wizard
@@ -40,7 +41,52 @@ class _MainScaffoldState extends State<MainScaffold> {
   @override
   void initState() {
     super.initState();
+    // Deferred (see didPushNext/didPopNext below) — mutating this during
+    // initState can hit the same "setState during build" assertion if a
+    // ValueListenableBuilder elsewhere already finished building this frame.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      AppState.isMainScaffoldVisible.value = true;
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) => _initWizard());
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    appRouteObserver.subscribe(this, ModalRoute.of(context)! as PageRoute);
+  }
+
+  // Covered by another page pushed on top of `/home` (e.g. the audio list,
+  // chapter reader, hadi detail) — this scaffold stays mounted underneath
+  // (offstage), so its own dispose() never fires. Without this, the global
+  // mini player would think the pill nav bar is still on screen and reserve
+  // clearance for it on every other page too.
+  //
+  // Both fire mid-Navigator-build (RouteObserver notifies from inside
+  // NavigatorState._flushHistoryUpdates), so flipping the ValueNotifier here
+  // directly would trigger ValueListenableBuilder's setState() during that
+  // same build pass — deferred to the next frame instead.
+  @override
+  void didPushNext() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      AppState.isMainScaffoldVisible.value = false;
+    });
+  }
+
+  @override
+  void didPopNext() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      AppState.isMainScaffoldVisible.value = true;
+    });
+  }
+
+  @override
+  void dispose() {
+    appRouteObserver.unsubscribe(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      AppState.isMainScaffoldVisible.value = false;
+    });
+    super.dispose();
   }
 
   Future<void> _initWizard() async {

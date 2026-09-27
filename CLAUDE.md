@@ -168,6 +168,24 @@ Supabase is the sole backend:
 - **Tables:** `chapters`, `verses`, `translations`, `hadi`, `hadi_media`, `books`
 - **Auth:** Google Sign-In OAuth — uses `google_sign_in` with `serverClientId` to obtain `idToken`, then exchanges with Supabase
 
+### Feature Flags
+
+`FeatureFlagsService` (`lib/core/feature_flags/feature_flags_service.dart`, `@lazySingleton`) wraps Firebase Remote Config as a remote kill-switch — turn a shipped feature off for all users without a Shorebird patch or Play Store release.
+
+Usage:
+```dart
+if (sl<FeatureFlagsService>().isEnabled('feature_xxx_enabled')) {
+  // fitur baru di sini
+}
+```
+
+Rules:
+- Key naming: prefix `feature_`, suffix `_enabled` (e.g. `feature_bookmark_note_enabled`).
+- `isEnabled` defaults to `false` if the key doesn't exist yet in Firebase Console — **set the key + default value in Firebase Console (Remote Config) before shipping code that checks it**, or the feature silently stays off for everyone.
+- Init is non-blocking (`unawaited` in `lib/core/app_loader.dart`) — don't `await` `initialize()` in feature code, and don't assume the latest remote value is available on cold start (first launch after install serves the code default until the first successful fetch).
+- Wrap fitur besar/beresiko yang mau tetap naik rilis meski belum 100% yakin, bukan buat toggle kecil/A-B testing — scope-nya cuma on/off kill-switch, bukan targeting per-user atau percentage rollout.
+- New dependency to touch this (i.e. adding a new Remote Config-backed capability that needs a package bump) still needs a full release — Remote Config *values* update instantly without a release, but the *code* reading a new key does not exist on devices until they update.
+
 ### Key Packages
 
 | Package | Purpose |
@@ -184,6 +202,7 @@ Supabase is the sole backend:
 | `internet_connection_checker_plus` | Network connectivity |
 | `flutter_secure_storage` | Secure local storage |
 | `envied` | Environment variable generation |
+| `firebase_remote_config` | Feature flags / remote kill-switch |
 
 ### Code Generation Files
 

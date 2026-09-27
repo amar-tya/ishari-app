@@ -36,7 +36,7 @@ abstract class VerseModel with _$VerseModel {
     } catch (e) {
       appLogger.e(
         '[VerseModel] ERROR — '
-            'id=$id chapterId=$chapterId verseNumber=$verseNumber',
+        'id=$id chapterId=$chapterId verseNumber=$verseNumber',
         error: e,
       );
       rethrow;

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ishari/core/analytics/analytics_service.dart';
 import 'package:ishari/core/app_state.dart';
+import 'package:ishari/features/audio/presentation/pages/audio_list_page.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ishari/features/auth/presentation/pages/home_page.dart';
 import 'package:ishari/features/hadi/presentation/pages/hadi_detail_page.dart';
@@ -20,6 +21,13 @@ import 'package:ishari/features/update/presentation/pages/force_update_page.dart
 /// Global navigator key so code outside the widget tree (e.g. FCM tap
 /// handlers running before/without a [BuildContext]) can still navigate.
 final rootNavigatorKey = GlobalKey<NavigatorState>();
+
+/// Lets a route know when it's covered/uncovered by another route pushed on
+/// top of it — `MainScaffold` uses this (via `RouteAware`) to know whether
+/// its floating pill nav bar is actually the topmost thing on screen right
+/// now, since it stays mounted (just offstage) while e.g. the audio page is
+/// pushed above it, not disposed.
+final appRouteObserver = RouteObserver<PageRoute<void>>();
 
 /// Application router powered by [GoRouter].
 ///
@@ -38,7 +46,7 @@ GoRouter createRouter(
   return GoRouter(
     navigatorKey: rootNavigatorKey,
     initialLocation: initialLocation,
-    observers: [analytics.observer],
+    observers: [analytics.observer, appRouteObserver],
     refreshListenable: Listenable.merge([
       GoRouterAuthRefreshStream(authBloc.stream),
       AppState.isGuestMode,
@@ -74,10 +82,10 @@ GoRouter createRouter(
         path: ChapterReaderPage.routePath,
         name: 'chapter-reader',
         builder: (context, state) {
-          final chapterId =
-              int.parse(state.pathParameters['chapterId'] ?? '0');
-          final verseId =
-              int.tryParse(state.uri.queryParameters['verseId'] ?? '');
+          final chapterId = int.parse(state.pathParameters['chapterId'] ?? '0');
+          final verseId = int.tryParse(
+            state.uri.queryParameters['verseId'] ?? '',
+          );
           return ChapterReaderPage(
             chapterId: chapterId,
             initialVerseId: verseId,
@@ -88,8 +96,7 @@ GoRouter createRouter(
         path: KitabPageReaderPage.routePath,
         name: 'kitab-page-reader',
         builder: (context, state) {
-          final chapterId =
-              int.parse(state.pathParameters['chapterId'] ?? '0');
+          final chapterId = int.parse(state.pathParameters['chapterId'] ?? '0');
           final bookId = int.tryParse(
             state.uri.queryParameters['bookId'] ?? '',
           );
@@ -118,6 +125,11 @@ GoRouter createRouter(
         path: HadiDirectoryPage.routePath,
         name: 'hadi-directory',
         builder: (context, state) => const HadiDirectoryPage(),
+      ),
+      GoRoute(
+        path: AudioListPage.routePath,
+        name: 'audio',
+        builder: (context, state) => const AudioListPage(),
       ),
       GoRoute(
         path: HadiDetailPage.routePath,
