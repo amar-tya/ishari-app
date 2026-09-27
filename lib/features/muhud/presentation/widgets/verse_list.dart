@@ -51,9 +51,7 @@ class VerseList extends StatelessWidget {
             targetVerseId != null && verse.verse.id == targetVerseId;
 
         return VerseCard(
-          key: isTarget
-              ? targetVerseKey
-              : (index == 0 ? firstCardKey : null),
+          key: isTarget ? targetVerseKey : (index == 0 ? firstCardKey : null),
           verse: verse,
           isBookmarked: isBookmarked,
           isPlaying: isPlaying,

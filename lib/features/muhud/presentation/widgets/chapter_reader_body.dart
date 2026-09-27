@@ -118,7 +118,9 @@ class _ChapterReaderBodyState extends State<ChapterReaderBody> {
   void _maybeStartWizard() {
     if (!mounted) return;
     final state = context.read<WizardCubit>().state;
-    if (state is WizardActive && state.step == WizardStep.muhudSplit && !_stepAShown) {
+    if (state is WizardActive &&
+        state.step == WizardStep.muhudSplit &&
+        !_stepAShown) {
       _stepAShown = true;
       _showStepACoach();
     }
@@ -271,7 +273,10 @@ class _ChapterReaderBodyState extends State<ChapterReaderBody> {
         // pernah dipanggil → tab tour di MainScaffold tidak pernah dimulai.
         // 400ms > durasi animasi MaterialPage default (~300ms).
         // w di-capture sebelum widget unmount — aman dipanggil dari Future.
-        Future.delayed(const Duration(milliseconds: 400), w.advance); // muhudAudio → tabBeranda
+        Future.delayed(
+          const Duration(milliseconds: 400),
+          w.advance,
+        ); // muhudAudio → tabBeranda
       },
       onSkip: () {
         wizard.skip();
@@ -294,49 +299,107 @@ class _ChapterReaderBodyState extends State<ChapterReaderBody> {
             state.step == WizardStep.muhudSplit &&
             !_stepAShown) {
           _stepAShown = true;
-          WidgetsBinding.instance
-              .addPostFrameCallback((_) => _showStepACoach());
+          WidgetsBinding.instance.addPostFrameCallback(
+            (_) => _showStepACoach(),
+          );
         }
       },
       child: Scaffold(
-            backgroundColor: Colors.transparent,
-            body: Stack(
-              children: [
-                // Layer 1: Background
-                const Positioned.fill(
-                  child: ColoredBox(color: Color(0xFFF0F5EE)),
-                ),
+        backgroundColor: Colors.transparent,
+        body: Stack(
+          children: [
+            // Layer 1: Background
+            const Positioned.fill(
+              child: ColoredBox(color: Color(0xFFF0F5EE)),
+            ),
 
-                if (_isSplitView) ...[
-                  // ── SPLIT MODE ──
-                  Positioned(
-                    top: totalAppBarTop,
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: LayoutBuilder(
-                      builder: (ctx, constraints) {
-                        final totalH = constraints.maxHeight;
-                        final topH =
-                            (totalH * _splitRatio - _splitDividerHeight / 2)
-                                .clamp(80.0, totalH - 80.0 - _splitDividerHeight);
-                        final bottomH = totalH - topH - _splitDividerHeight;
+            if (_isSplitView) ...[
+              // ── SPLIT MODE ──
+              Positioned(
+                top: totalAppBarTop,
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: LayoutBuilder(
+                  builder: (ctx, constraints) {
+                    final totalH = constraints.maxHeight;
+                    final topH =
+                        (totalH * _splitRatio - _splitDividerHeight / 2).clamp(
+                          80.0,
+                          totalH - 80.0 - _splitDividerHeight,
+                        );
+                    final bottomH = totalH - topH - _splitDividerHeight;
 
-                        return Column(
-                          children: [
-                            SizedBox(
-                              height: topH,
-                              child: _SplitPane(
-                                label: widget.chapter.category,
-                                count: widget.chapter.verseCount,
-                                child: CustomScrollView(
-                                  controller: _scrollController,
-                                  physics: const ClampingScrollPhysics(),
-                                  slivers: [
-                                    VerseList(
-                                      verses: widget.verses,
-                                      bookmarkedVerseIds:
-                                          widget.bookmarkedVerseIds,
+                    return Column(
+                      children: [
+                        SizedBox(
+                          height: topH,
+                          child: _SplitPane(
+                            label: widget.chapter.category,
+                            count: widget.chapter.verseCount,
+                            child: CustomScrollView(
+                              controller: _scrollController,
+                              physics: const ClampingScrollPhysics(),
+                              slivers: [
+                                VerseList(
+                                  verses: widget.verses,
+                                  bookmarkedVerseIds: widget.bookmarkedVerseIds,
+                                  showTranslation: widget.showTranslation,
+                                  showArabic: widget.showArabic,
+                                  showTransliteration:
+                                      widget.showTransliteration,
+                                  arabFontSize: widget.arabFontSize,
+                                  transliterationFontSize:
+                                      widget.transliterationFontSize,
+                                  translationFontSize:
+                                      widget.translationFontSize,
+                                  playingVerseId: widget.playingVerseId,
+                                  firstCardKey: _firstCardKey,
+                                ),
+                                const SliverToBoxAdapter(
+                                  child: SizedBox(height: 24),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onPanUpdate: (details) {
+                            setState(() {
+                              _splitRatio =
+                                  (_splitRatio + details.delta.dy / totalH)
+                                      .clamp(0.15, 0.85);
+                            });
+                          },
+                          child: const _SplitDivider(),
+                        ),
+                        SizedBox(
+                          height: bottomH,
+                          child: BlocBuilder<SplitPanelCubit, SplitPanelState>(
+                            builder: (_, state) => switch (state) {
+                              SplitPanelInitial() => const SizedBox.shrink(),
+                              SplitPanelLoading() => const Center(
+                                child: CircularProgressIndicator(
+                                  color: Color(0xFFCAFF00),
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                              SplitPanelLoaded(
+                                chapter: final c,
+                                verses: final v,
+                              ) =>
+                                _SplitPane(
+                                  label: c.category,
+                                  count: c.verseCount,
+                                  isBottom: true,
+                                  child: ListView.builder(
+                                    physics: const ClampingScrollPhysics(),
+                                    itemCount: v.length,
+                                    itemBuilder: (_, i) => VerseCard(
+                                      verse: v[i],
+                                      isBookmarked: false,
+                                      isPlaying: false,
                                       showTranslation: widget.showTranslation,
                                       showArabic: widget.showArabic,
                                       showTransliteration:
@@ -346,160 +409,101 @@ class _ChapterReaderBodyState extends State<ChapterReaderBody> {
                                           widget.transliterationFontSize,
                                       translationFontSize:
                                           widget.translationFontSize,
-                                      playingVerseId: widget.playingVerseId,
-                                      firstCardKey: _firstCardKey,
+                                      onBookmarkToggle: () {},
+                                      onPlayTap: () {},
                                     ),
-                                    const SliverToBoxAdapter(
-                                      child: SizedBox(height: 24),
+                                  ),
+                                ),
+                              SplitPanelError(message: final m) => Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Text(
+                                    m,
+                                    style: const TextStyle(
+                                      color: Color(0xFF777777),
+                                      fontSize: 13,
                                     ),
-                                  ],
+                                    textAlign: TextAlign.center,
+                                  ),
                                 ),
                               ),
-                            ),
-                            GestureDetector(
-                              behavior: HitTestBehavior.opaque,
-                              onPanUpdate: (details) {
-                                setState(() {
-                                  _splitRatio = (_splitRatio +
-                                          details.delta.dy / totalH)
-                                      .clamp(0.15, 0.85);
-                                });
-                              },
-                              child: const _SplitDivider(),
-                            ),
-                            SizedBox(
-                              height: bottomH,
-                              child: BlocBuilder<SplitPanelCubit,
-                                  SplitPanelState>(
-                                builder: (_, state) => switch (state) {
-                                  SplitPanelInitial() =>
-                                    const SizedBox.shrink(),
-                                  SplitPanelLoading() => const Center(
-                                    child: CircularProgressIndicator(
-                                      color: Color(0xFFCAFF00),
-                                      strokeWidth: 2,
-                                    ),
-                                  ),
-                                  SplitPanelLoaded(
-                                    chapter: final c,
-                                    verses: final v,
-                                  ) =>
-                                    _SplitPane(
-                                      label: c.category,
-                                      count: c.verseCount,
-                                      isBottom: true,
-                                      child: ListView.builder(
-                                        physics: const ClampingScrollPhysics(),
-                                        itemCount: v.length,
-                                        itemBuilder: (_, i) => VerseCard(
-                                          verse: v[i],
-                                          isBookmarked: false,
-                                          isPlaying: false,
-                                          showTranslation: widget.showTranslation,
-                                          showArabic: widget.showArabic,
-                                          showTransliteration:
-                                              widget.showTransliteration,
-                                          arabFontSize: widget.arabFontSize,
-                                          transliterationFontSize:
-                                              widget.transliterationFontSize,
-                                          translationFontSize:
-                                              widget.translationFontSize,
-                                          onBookmarkToggle: () {},
-                                          onPlayTap: () {},
-                                        ),
-                                      ),
-                                    ),
-                                  SplitPanelError(message: final m) => Center(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(16),
-                                      child: Text(
-                                        m,
-                                        style: const TextStyle(
-                                          color: Color(0xFF777777),
-                                          fontSize: 13,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                  ),
-                                },
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-                ] else ...[
-                  // ── NORMAL MODE ──
-                  Positioned(
-                    top: totalAppBarTop,
-                    left: 0,
-                    right: 0,
-                    child: _ChapterHeader(chapter: widget.chapter),
-                  ),
-                  Positioned(
-                    top: totalAppBarTop + _chapterHeaderHeight - _headerOffset,
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: _WhiteVerseSheet(
-                      rounded: _showTitle,
-                      scrollController: _scrollController,
-                      verses: widget.verses,
-                      bookmarkedVerseIds: widget.bookmarkedVerseIds,
-                      showTranslation: widget.showTranslation,
-                      showArabic: widget.showArabic,
-                      showTransliteration: widget.showTransliteration,
-                      arabFontSize: widget.arabFontSize,
-                      transliterationFontSize: widget.transliterationFontSize,
-                      translationFontSize: widget.translationFontSize,
-                      playingVerseId: widget.playingVerseId,
-                      firstCardKey: _firstCardKey,
-                      targetVerseId: widget.initialVerseId,
-                      targetVerseKey: _targetVerseKey,
-                    ),
-                  ),
-                ],
-
-                // Layer 4: App bar — always on top
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: SafeArea(
-                    bottom: false,
-                    child: ChapterAppBar(
-                      isEmbeddedInTab: widget.isEmbeddedInTab,
-                      onOpenQuickTools: () =>
-                          setState(() => _showQuickTools = true),
-                      title: widget.chapter.title,
-                      showTitle: _isSplitView || _showTitle,
-                      showSplitButton: showSplitButton,
-                      isSplitView: _isSplitView,
-                      onToggleSplitView: _toggleSplitView,
-                      splitBtnKey: _splitBtnKey,
-                    ),
-                  ),
+                            },
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
+              ),
+            ] else ...[
+              // ── NORMAL MODE ──
+              Positioned(
+                top: totalAppBarTop,
+                left: 0,
+                right: 0,
+                child: _ChapterHeader(chapter: widget.chapter),
+              ),
+              Positioned(
+                top: totalAppBarTop + _chapterHeaderHeight - _headerOffset,
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: _WhiteVerseSheet(
+                  rounded: _showTitle,
+                  scrollController: _scrollController,
+                  verses: widget.verses,
+                  bookmarkedVerseIds: widget.bookmarkedVerseIds,
+                  showTranslation: widget.showTranslation,
+                  showArabic: widget.showArabic,
+                  showTransliteration: widget.showTransliteration,
+                  arabFontSize: widget.arabFontSize,
+                  transliterationFontSize: widget.transliterationFontSize,
+                  translationFontSize: widget.translationFontSize,
+                  playingVerseId: widget.playingVerseId,
+                  firstCardKey: _firstCardKey,
+                  targetVerseId: widget.initialVerseId,
+                  targetVerseKey: _targetVerseKey,
+                ),
+              ),
+            ],
 
-                // Layer 5: Quick tools overlay
-                if (_showQuickTools)
-                  Positioned.fill(
-                    child: QuickToolsPanel(
-                      onClose: () => setState(() => _showQuickTools = false),
-                      showArabic: widget.showArabic,
-                      showTransliteration: widget.showTransliteration,
-                      showTranslation: widget.showTranslation,
-                      arabFontSize: widget.arabFontSize,
-                      transliterationFontSize: widget.transliterationFontSize,
-                      translationFontSize: widget.translationFontSize,
-                    ),
-                  ),
-
-              ],
+            // Layer 4: App bar — always on top
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: SafeArea(
+                bottom: false,
+                child: ChapterAppBar(
+                  isEmbeddedInTab: widget.isEmbeddedInTab,
+                  onOpenQuickTools: () =>
+                      setState(() => _showQuickTools = true),
+                  title: widget.chapter.title,
+                  showTitle: _isSplitView || _showTitle,
+                  showSplitButton: showSplitButton,
+                  isSplitView: _isSplitView,
+                  onToggleSplitView: _toggleSplitView,
+                  splitBtnKey: _splitBtnKey,
+                ),
+              ),
             ),
-          ),
+
+            // Layer 5: Quick tools overlay
+            if (_showQuickTools)
+              Positioned.fill(
+                child: QuickToolsPanel(
+                  onClose: () => setState(() => _showQuickTools = false),
+                  showArabic: widget.showArabic,
+                  showTransliteration: widget.showTransliteration,
+                  showTranslation: widget.showTranslation,
+                  arabFontSize: widget.arabFontSize,
+                  transliterationFontSize: widget.transliterationFontSize,
+                  translationFontSize: widget.translationFontSize,
+                ),
+              ),
+          ],
+        ),
+      ),
     );
   }
 }

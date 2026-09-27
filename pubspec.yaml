@@ -52,6 +52,8 @@ dependencies:
 
   # Audio playback
   just_audio: ^0.10.0
+  # Background playback + lockscreen/notification media controls for just_audio
+  just_audio_background: ^0.0.1-beta.17
 
   # Google Fonts (scheherazadeNew for Arabic text)
   google_fonts: ^8.0.2
