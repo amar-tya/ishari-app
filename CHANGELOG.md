@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## [1.5.0](https://github.com/amar-tya/ishari-app/compare/v1.4.0...v1.5.0) (2026-09-27)
+
+
+### Features
+
+* **audio:** global mini player with progress, seek, and background playback ([#17](https://github.com/amar-tya/ishari-app/issues/17)) ([0e85b0c](https://github.com/amar-tya/ishari-app/commit/0e85b0c60725f339a00a629ba2b787862c63ab3c))
+
 ## [1.4.0](https://github.com/amar-tya/ishari-app/compare/v1.3.0...v1.4.0) (2026-09-17)
 
 
