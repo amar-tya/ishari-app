@@ -1,6 +1,7 @@
 // notify-new-audio
 //
-// Triggered by a Supabase Database Webhook on INSERT into `verse_media`.
+// Triggered by a Supabase Database Webhook on INSERT into `verse_media`
+// (per-verse audio) or `chapter_media` (full-chapter recording).
 // Sends a single FCM topic message (`new_audio`) — the client subscribes to
 // this topic on first launch, so this stays a flat-cost broadcast no matter
 // how many devices are subscribed (see AMA-60 PRD: topic vs. per-token send).
@@ -44,7 +45,7 @@ interface ChapterInfo {
   chapterId: string;
   chapterTitle: string;
   hadiName: string;
-  verseId: string;
+  verseId: string | null;
 }
 
 Deno.serve(async (req) => {
@@ -64,7 +65,9 @@ Deno.serve(async (req) => {
       return new Response("Bad Request: invalid JSON", { status: 400 });
     }
 
-    if (payload.table !== "verse_media" || payload.type !== "INSERT") {
+    const isVerseMedia = payload.table === "verse_media";
+    const isChapterMedia = payload.table === "chapter_media";
+    if ((!isVerseMedia && !isChapterMedia) || payload.type !== "INSERT") {
       return Response.json({ skipped: true });
     }
 
@@ -77,10 +80,12 @@ Deno.serve(async (req) => {
       return new Response("Bad Request: missing record.id", { status: 400 });
     }
 
-    const chapter = await resolveChapter(recordId);
+    const chapter = isVerseMedia
+      ? await resolveChapterFromVerseMedia(recordId)
+      : await resolveChapterFromChapterMedia(recordId);
     if (!chapter) {
       console.error(
-        "notify-new-audio: could not resolve chapter for verse_media.id",
+        `notify-new-audio: could not resolve chapter for ${payload.table}.id`,
         recordId,
       );
       return new Response(
@@ -113,7 +118,7 @@ Deno.serve(async (req) => {
 /// `chapters`, plus `hadi` for the reciter name) instead of trusting webhook
 /// record fields — the webhook only guarantees `id`, and this stays correct
 /// even if verse_media's raw column names change.
-async function resolveChapter(
+async function resolveChapterFromVerseMedia(
   verseMediaId: number | string,
 ): Promise<ChapterInfo | null> {
   const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
@@ -124,7 +129,10 @@ async function resolveChapter(
     .single();
 
   if (error || !data) {
-    console.error("notify-new-audio: resolveChapter query error", error);
+    console.error(
+      "notify-new-audio: resolveChapterFromVerseMedia query error",
+      error,
+    );
     return null;
   }
 
@@ -140,6 +148,41 @@ async function resolveChapter(
     chapterTitle: verses.chapters?.title ?? "Ishari",
     hadiName: hadi?.name ?? "Hadi",
     verseId: String(data.verse_id),
+  };
+}
+
+/// Re-queries `chapter_media` (service-role join to `chapters` + `hadi`)
+/// instead of trusting webhook record fields, same rationale as
+/// resolveChapterFromVerseMedia. chapter_media is a full-chapter recording,
+/// not tied to a single verse, so `verseId` stays null.
+async function resolveChapterFromChapterMedia(
+  chapterMediaId: number | string,
+): Promise<ChapterInfo | null> {
+  const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+  const { data, error } = await supabaseAdmin
+    .from("chapter_media")
+    .select("chapter_id, hadi(name), chapters(title)")
+    .eq("id", chapterMediaId)
+    .single();
+
+  if (error || !data) {
+    console.error(
+      "notify-new-audio: resolveChapterFromChapterMedia query error",
+      error,
+    );
+    return null;
+  }
+
+  if (!data.chapter_id) return null;
+
+  const hadi = data.hadi as { name: string } | null;
+  const chapters = data.chapters as { title: string } | null;
+
+  return {
+    chapterId: String(data.chapter_id),
+    chapterTitle: chapters?.title ?? "Ishari",
+    hadiName: hadi?.name ?? "Hadi",
+    verseId: null,
   };
 }
 
@@ -262,8 +305,8 @@ async function sendFcmTopicMessage(
         },
         data: {
           chapterId: chapter.chapterId,
-          verseId: chapter.verseId,
           type: "new_audio",
+          ...(chapter.verseId !== null ? { verseId: chapter.verseId } : {}),
         },
       },
     }),
@@ -278,5 +321,11 @@ async function sendFcmTopicMessage(
        --header 'Authorization: Bearer <NOTIFY_WEBHOOK_SECRET>' \
        --header 'Content-Type: application/json' \
        --data '{"type":"INSERT","table":"verse_media","record":{"id":1},"schema":"public","old_record":null}'
+
+     # or, for a chapter_media insert:
+     curl -i --location --request POST 'http://127.0.0.1:54321/functions/v1/notify-new-audio' \
+       --header 'Authorization: Bearer <NOTIFY_WEBHOOK_SECRET>' \
+       --header 'Content-Type: application/json' \
+       --data '{"type":"INSERT","table":"chapter_media","record":{"id":1},"schema":"public","old_record":null}'
 
 */
