@@ -2,6 +2,14 @@
 -- INSERT into verse_media. Equivalent to what Dashboard > Database > Webhooks
 -- generates automatically.
 --
+-- STALE (as of 2026-09-28): production no longer runs this trigger body. It
+-- was refactored (outside this repo's tracked migrations) into a
+-- `notify.notify_new_audio()` SECURITY DEFINER function wrapping
+-- `net.http_post`, called via `WHEN (media_type = 'audio')` — see
+-- 20260928163954_create_notify_new_chapter_media_webhook.sql for the current
+-- shape (documented there while wiring the chapter_media analog). Kept as
+-- historical record; do not copy this trigger shape for new tables.
+--
 -- NOT applied via `supabase db push` — this project's remote migration
 -- history predates local CLI-managed migrations (21 versions applied via
 -- Dashboard, never captured as local files), so push rejects with a history
