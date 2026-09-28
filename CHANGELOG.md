@@ -1,7 +1,5 @@
 # Changelog
 
-## Unreleased
-
 ## [1.5.0](https://github.com/amar-tya/ishari-app/compare/v1.4.0...v1.5.0) (2026-09-27)
 
 
