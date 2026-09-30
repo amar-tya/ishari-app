@@ -154,7 +154,7 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
           ),
         );
       }
-    } on Exception catch (e, stackTrace) {
+    } catch (e, stackTrace) {
       appLogger.e(
         '[MuhudBloc] Exception in _onLoadChapter',
         error: e,

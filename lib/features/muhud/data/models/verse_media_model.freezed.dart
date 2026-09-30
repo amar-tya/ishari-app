@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$VerseMediaModel {
 
-@JsonKey(fromJson: _idToString) String get id;@JsonKey(name: 'verse_id', fromJson: _verseIdToString) String get verseId; HadiMediaModel get hadi;@JsonKey(name: 'media_url') String get mediaUrl;@JsonKey(fromJson: _idToString) String get duration;@JsonKey(fromJson: _typeToString) String get type;
+@JsonKey(fromJson: _idToString) String get id;@JsonKey(name: 'verse_id', fromJson: _verseIdToString) String get verseId; HadiMediaModel? get hadi;@JsonKey(name: 'media_url') String get mediaUrl;@JsonKey(fromJson: _idToString) String get duration;@JsonKey(fromJson: _typeToString) String get type;
 /// Create a copy of VerseMediaModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,11 +48,11 @@ abstract mixin class $VerseMediaModelCopyWith<$Res>  {
   factory $VerseMediaModelCopyWith(VerseMediaModel value, $Res Function(VerseMediaModel) _then) = _$VerseMediaModelCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(fromJson: _idToString) String id,@JsonKey(name: 'verse_id', fromJson: _verseIdToString) String verseId, HadiMediaModel hadi,@JsonKey(name: 'media_url') String mediaUrl,@JsonKey(fromJson: _idToString) String duration,@JsonKey(fromJson: _typeToString) String type
+@JsonKey(fromJson: _idToString) String id,@JsonKey(name: 'verse_id', fromJson: _verseIdToString) String verseId, HadiMediaModel? hadi,@JsonKey(name: 'media_url') String mediaUrl,@JsonKey(fromJson: _idToString) String duration,@JsonKey(fromJson: _typeToString) String type
 });
 
 
-$HadiMediaModelCopyWith<$Res> get hadi;
+$HadiMediaModelCopyWith<$Res>? get hadi;
 
 }
 /// @nodoc
@@ -65,12 +65,12 @@ class _$VerseMediaModelCopyWithImpl<$Res>
 
 /// Create a copy of VerseMediaModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? verseId = null,Object? hadi = null,Object? mediaUrl = null,Object? duration = null,Object? type = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? verseId = null,Object? hadi = freezed,Object? mediaUrl = null,Object? duration = null,Object? type = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,verseId: null == verseId ? _self.verseId : verseId // ignore: cast_nullable_to_non_nullable
-as String,hadi: null == hadi ? _self.hadi : hadi // ignore: cast_nullable_to_non_nullable
-as HadiMediaModel,mediaUrl: null == mediaUrl ? _self.mediaUrl : mediaUrl // ignore: cast_nullable_to_non_nullable
+as String,hadi: freezed == hadi ? _self.hadi : hadi // ignore: cast_nullable_to_non_nullable
+as HadiMediaModel?,mediaUrl: null == mediaUrl ? _self.mediaUrl : mediaUrl // ignore: cast_nullable_to_non_nullable
 as String,duration: null == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as String,
@@ -80,9 +80,12 @@ as String,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$HadiMediaModelCopyWith<$Res> get hadi {
-  
-  return $HadiMediaModelCopyWith<$Res>(_self.hadi, (value) {
+$HadiMediaModelCopyWith<$Res>? get hadi {
+    if (_self.hadi == null) {
+    return null;
+  }
+
+  return $HadiMediaModelCopyWith<$Res>(_self.hadi!, (value) {
     return _then(_self.copyWith(hadi: value));
   });
 }
@@ -167,7 +170,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(fromJson: _idToString)  String id, @JsonKey(name: 'verse_id', fromJson: _verseIdToString)  String verseId,  HadiMediaModel hadi, @JsonKey(name: 'media_url')  String mediaUrl, @JsonKey(fromJson: _idToString)  String duration, @JsonKey(fromJson: _typeToString)  String type)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(fromJson: _idToString)  String id, @JsonKey(name: 'verse_id', fromJson: _verseIdToString)  String verseId,  HadiMediaModel? hadi, @JsonKey(name: 'media_url')  String mediaUrl, @JsonKey(fromJson: _idToString)  String duration, @JsonKey(fromJson: _typeToString)  String type)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _VerseMediaModel() when $default != null:
 return $default(_that.id,_that.verseId,_that.hadi,_that.mediaUrl,_that.duration,_that.type);case _:
@@ -188,7 +191,7 @@ return $default(_that.id,_that.verseId,_that.hadi,_that.mediaUrl,_that.duration,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(fromJson: _idToString)  String id, @JsonKey(name: 'verse_id', fromJson: _verseIdToString)  String verseId,  HadiMediaModel hadi, @JsonKey(name: 'media_url')  String mediaUrl, @JsonKey(fromJson: _idToString)  String duration, @JsonKey(fromJson: _typeToString)  String type)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(fromJson: _idToString)  String id, @JsonKey(name: 'verse_id', fromJson: _verseIdToString)  String verseId,  HadiMediaModel? hadi, @JsonKey(name: 'media_url')  String mediaUrl, @JsonKey(fromJson: _idToString)  String duration, @JsonKey(fromJson: _typeToString)  String type)  $default,) {final _that = this;
 switch (_that) {
 case _VerseMediaModel():
 return $default(_that.id,_that.verseId,_that.hadi,_that.mediaUrl,_that.duration,_that.type);case _:
@@ -208,7 +211,7 @@ return $default(_that.id,_that.verseId,_that.hadi,_that.mediaUrl,_that.duration,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(fromJson: _idToString)  String id, @JsonKey(name: 'verse_id', fromJson: _verseIdToString)  String verseId,  HadiMediaModel hadi, @JsonKey(name: 'media_url')  String mediaUrl, @JsonKey(fromJson: _idToString)  String duration, @JsonKey(fromJson: _typeToString)  String type)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(fromJson: _idToString)  String id, @JsonKey(name: 'verse_id', fromJson: _verseIdToString)  String verseId,  HadiMediaModel? hadi, @JsonKey(name: 'media_url')  String mediaUrl, @JsonKey(fromJson: _idToString)  String duration, @JsonKey(fromJson: _typeToString)  String type)?  $default,) {final _that = this;
 switch (_that) {
 case _VerseMediaModel() when $default != null:
 return $default(_that.id,_that.verseId,_that.hadi,_that.mediaUrl,_that.duration,_that.type);case _:
@@ -223,12 +226,12 @@ return $default(_that.id,_that.verseId,_that.hadi,_that.mediaUrl,_that.duration,
 @JsonSerializable()
 
 class _VerseMediaModel extends VerseMediaModel {
-  const _VerseMediaModel({@JsonKey(fromJson: _idToString) required this.id, @JsonKey(name: 'verse_id', fromJson: _verseIdToString) required this.verseId, required this.hadi, @JsonKey(name: 'media_url') required this.mediaUrl, @JsonKey(fromJson: _idToString) required this.duration, @JsonKey(fromJson: _typeToString) required this.type}): super._();
+  const _VerseMediaModel({@JsonKey(fromJson: _idToString) required this.id, @JsonKey(name: 'verse_id', fromJson: _verseIdToString) required this.verseId, this.hadi, @JsonKey(name: 'media_url') required this.mediaUrl, @JsonKey(fromJson: _idToString) required this.duration, @JsonKey(fromJson: _typeToString) required this.type}): super._();
   factory _VerseMediaModel.fromJson(Map<String, dynamic> json) => _$VerseMediaModelFromJson(json);
 
 @override@JsonKey(fromJson: _idToString) final  String id;
 @override@JsonKey(name: 'verse_id', fromJson: _verseIdToString) final  String verseId;
-@override final  HadiMediaModel hadi;
+@override final  HadiMediaModel? hadi;
 @override@JsonKey(name: 'media_url') final  String mediaUrl;
 @override@JsonKey(fromJson: _idToString) final  String duration;
 @override@JsonKey(fromJson: _typeToString) final  String type;
@@ -266,11 +269,11 @@ abstract mixin class _$VerseMediaModelCopyWith<$Res> implements $VerseMediaModel
   factory _$VerseMediaModelCopyWith(_VerseMediaModel value, $Res Function(_VerseMediaModel) _then) = __$VerseMediaModelCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(fromJson: _idToString) String id,@JsonKey(name: 'verse_id', fromJson: _verseIdToString) String verseId, HadiMediaModel hadi,@JsonKey(name: 'media_url') String mediaUrl,@JsonKey(fromJson: _idToString) String duration,@JsonKey(fromJson: _typeToString) String type
+@JsonKey(fromJson: _idToString) String id,@JsonKey(name: 'verse_id', fromJson: _verseIdToString) String verseId, HadiMediaModel? hadi,@JsonKey(name: 'media_url') String mediaUrl,@JsonKey(fromJson: _idToString) String duration,@JsonKey(fromJson: _typeToString) String type
 });
 
 
-@override $HadiMediaModelCopyWith<$Res> get hadi;
+@override $HadiMediaModelCopyWith<$Res>? get hadi;
 
 }
 /// @nodoc
@@ -283,12 +286,12 @@ class __$VerseMediaModelCopyWithImpl<$Res>
 
 /// Create a copy of VerseMediaModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? verseId = null,Object? hadi = null,Object? mediaUrl = null,Object? duration = null,Object? type = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? verseId = null,Object? hadi = freezed,Object? mediaUrl = null,Object? duration = null,Object? type = null,}) {
   return _then(_VerseMediaModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,verseId: null == verseId ? _self.verseId : verseId // ignore: cast_nullable_to_non_nullable
-as String,hadi: null == hadi ? _self.hadi : hadi // ignore: cast_nullable_to_non_nullable
-as HadiMediaModel,mediaUrl: null == mediaUrl ? _self.mediaUrl : mediaUrl // ignore: cast_nullable_to_non_nullable
+as String,hadi: freezed == hadi ? _self.hadi : hadi // ignore: cast_nullable_to_non_nullable
+as HadiMediaModel?,mediaUrl: null == mediaUrl ? _self.mediaUrl : mediaUrl // ignore: cast_nullable_to_non_nullable
 as String,duration: null == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as String,
@@ -299,9 +302,12 @@ as String,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$HadiMediaModelCopyWith<$Res> get hadi {
-  
-  return $HadiMediaModelCopyWith<$Res>(_self.hadi, (value) {
+$HadiMediaModelCopyWith<$Res>? get hadi {
+    if (_self.hadi == null) {
+    return null;
+  }
+
+  return $HadiMediaModelCopyWith<$Res>(_self.hadi!, (value) {
     return _then(_self.copyWith(hadi: value));
   });
 }

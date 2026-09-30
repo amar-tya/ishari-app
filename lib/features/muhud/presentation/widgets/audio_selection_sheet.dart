@@ -39,6 +39,7 @@ class _AudioSelectionSheetState extends State<AudioSelectionSheet> {
     final seen = <String>{};
     return widget.verse.mediaList
         .map((m) => m.hadi)
+        .whereType<HadiMediaEntity>()
         .where((h) => seen.add(h.id))
         .toList();
   }
@@ -46,7 +47,7 @@ class _AudioSelectionSheetState extends State<AudioSelectionSheet> {
   List<VerseMediaEntity> get _availableMedia {
     if (_selectedHadiId == null) return [];
     return widget.verse.mediaList
-        .where((m) => m.hadi.id == _selectedHadiId)
+        .where((m) => m.hadi?.id == _selectedHadiId)
         .toList();
   }
 
