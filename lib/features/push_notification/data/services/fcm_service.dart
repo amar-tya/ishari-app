@@ -8,6 +8,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
 import 'package:ishari/core/router/app_router.dart';
+import 'package:ishari/features/audio/presentation/pages/audio_list_page.dart';
 import 'package:ishari/firebase_options.dart';
 
 const _newAudioTopic = 'new_audio';
@@ -58,7 +59,7 @@ class FcmService {
         final payload = response.payload;
         if (payload == null || payload.isEmpty) return;
         final data = jsonDecode(payload) as Map<String, dynamic>;
-        _navigateToChapter(
+        _navigateToTarget(
           data['chapterId'] as String?,
           verseId: data['verseId'] as String?,
         );
@@ -86,21 +87,27 @@ class FcmService {
   }
 
   void _onNotificationTap(RemoteMessage message) {
-    _navigateToChapter(
+    _navigateToTarget(
       message.data['chapterId'] as String?,
       verseId: message.data['verseId'] as String?,
     );
   }
 
-  void _navigateToChapter(String? chapterId, {String? verseId}) {
-    if (chapterId == null || chapterId.isEmpty) return;
+  /// verse_media notif carries `verseId` (per-verse audio → open the verse
+  /// in ChapterReaderPage). chapter_media notif never carries `verseId`
+  /// (full-chapter recording, not tied to a verse) → open AudioListPage
+  /// instead, since ChapterReaderPage would be the wrong context for it.
+  void _navigateToTarget(String? chapterId, {String? verseId}) {
+    final hasVerse = verseId != null && verseId.isNotEmpty;
+    final hasChapter = chapterId != null && chapterId.isNotEmpty;
+    if (!hasVerse && !hasChapter) return;
 
     void attempt() {
       final context = rootNavigatorKey.currentContext;
       if (context != null && context.mounted) {
-        final path = verseId != null && verseId.isNotEmpty
+        final path = hasVerse
             ? '/chapter/$chapterId?verseId=$verseId'
-            : '/chapter/$chapterId';
+            : AudioListPage.routePath;
         GoRouter.of(context).go(path);
       } else {
         WidgetsBinding.instance.addPostFrameCallback((_) => attempt());
