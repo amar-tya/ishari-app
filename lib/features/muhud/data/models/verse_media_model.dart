@@ -17,7 +17,7 @@ abstract class VerseMediaModel with _$VerseMediaModel {
     @JsonKey(fromJson: _idToString) required String id,
     @JsonKey(name: 'verse_id', fromJson: _verseIdToString)
     required String verseId,
-    required HadiMediaModel hadi,
+    HadiMediaModel? hadi,
     @JsonKey(name: 'media_url') required String mediaUrl,
     @JsonKey(fromJson: _idToString) required String duration,
     @JsonKey(fromJson: _typeToString) required String type,
@@ -39,7 +39,7 @@ abstract class VerseMediaModel with _$VerseMediaModel {
       return VerseMediaEntity(
         id: int.parse(id),
         verseId: int.parse(verseId),
-        hadi: hadi.toEntity(),
+        hadi: hadi?.toEntity(),
         mediaUrl: mediaUrl,
         duration: parsedDuration,
         type: VerseMediaTypeExt.tryFromString(type) ?? VerseMediaType.joz,

@@ -9,7 +9,7 @@ abstract class VerseMediaEntity with _$VerseMediaEntity {
   const factory VerseMediaEntity({
     required int id,
     required int verseId,
-    required HadiMediaEntity hadi,
+    HadiMediaEntity? hadi,
     required String mediaUrl,
     required int duration,
     required VerseMediaType type,

@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$VerseMediaEntity {
 
- int get id; int get verseId; HadiMediaEntity get hadi; String get mediaUrl; int get duration; VerseMediaType get type;
+ int get id; int get verseId; HadiMediaEntity? get hadi; String get mediaUrl; int get duration; VerseMediaType get type;
 /// Create a copy of VerseMediaEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -45,11 +45,11 @@ abstract mixin class $VerseMediaEntityCopyWith<$Res>  {
   factory $VerseMediaEntityCopyWith(VerseMediaEntity value, $Res Function(VerseMediaEntity) _then) = _$VerseMediaEntityCopyWithImpl;
 @useResult
 $Res call({
- int id, int verseId, HadiMediaEntity hadi, String mediaUrl, int duration, VerseMediaType type
+ int id, int verseId, HadiMediaEntity? hadi, String mediaUrl, int duration, VerseMediaType type
 });
 
 
-$HadiMediaEntityCopyWith<$Res> get hadi;
+$HadiMediaEntityCopyWith<$Res>? get hadi;
 
 }
 /// @nodoc
@@ -62,12 +62,12 @@ class _$VerseMediaEntityCopyWithImpl<$Res>
 
 /// Create a copy of VerseMediaEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? verseId = null,Object? hadi = null,Object? mediaUrl = null,Object? duration = null,Object? type = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? verseId = null,Object? hadi = freezed,Object? mediaUrl = null,Object? duration = null,Object? type = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,verseId: null == verseId ? _self.verseId : verseId // ignore: cast_nullable_to_non_nullable
-as int,hadi: null == hadi ? _self.hadi : hadi // ignore: cast_nullable_to_non_nullable
-as HadiMediaEntity,mediaUrl: null == mediaUrl ? _self.mediaUrl : mediaUrl // ignore: cast_nullable_to_non_nullable
+as int,hadi: freezed == hadi ? _self.hadi : hadi // ignore: cast_nullable_to_non_nullable
+as HadiMediaEntity?,mediaUrl: null == mediaUrl ? _self.mediaUrl : mediaUrl // ignore: cast_nullable_to_non_nullable
 as String,duration: null == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
 as int,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as VerseMediaType,
@@ -77,9 +77,12 @@ as VerseMediaType,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$HadiMediaEntityCopyWith<$Res> get hadi {
-  
-  return $HadiMediaEntityCopyWith<$Res>(_self.hadi, (value) {
+$HadiMediaEntityCopyWith<$Res>? get hadi {
+    if (_self.hadi == null) {
+    return null;
+  }
+
+  return $HadiMediaEntityCopyWith<$Res>(_self.hadi!, (value) {
     return _then(_self.copyWith(hadi: value));
   });
 }
@@ -164,7 +167,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  int verseId,  HadiMediaEntity hadi,  String mediaUrl,  int duration,  VerseMediaType type)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  int verseId,  HadiMediaEntity? hadi,  String mediaUrl,  int duration,  VerseMediaType type)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _VerseMediaEntity() when $default != null:
 return $default(_that.id,_that.verseId,_that.hadi,_that.mediaUrl,_that.duration,_that.type);case _:
@@ -185,7 +188,7 @@ return $default(_that.id,_that.verseId,_that.hadi,_that.mediaUrl,_that.duration,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  int verseId,  HadiMediaEntity hadi,  String mediaUrl,  int duration,  VerseMediaType type)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  int verseId,  HadiMediaEntity? hadi,  String mediaUrl,  int duration,  VerseMediaType type)  $default,) {final _that = this;
 switch (_that) {
 case _VerseMediaEntity():
 return $default(_that.id,_that.verseId,_that.hadi,_that.mediaUrl,_that.duration,_that.type);case _:
@@ -205,7 +208,7 @@ return $default(_that.id,_that.verseId,_that.hadi,_that.mediaUrl,_that.duration,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  int verseId,  HadiMediaEntity hadi,  String mediaUrl,  int duration,  VerseMediaType type)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  int verseId,  HadiMediaEntity? hadi,  String mediaUrl,  int duration,  VerseMediaType type)?  $default,) {final _that = this;
 switch (_that) {
 case _VerseMediaEntity() when $default != null:
 return $default(_that.id,_that.verseId,_that.hadi,_that.mediaUrl,_that.duration,_that.type);case _:
@@ -220,12 +223,12 @@ return $default(_that.id,_that.verseId,_that.hadi,_that.mediaUrl,_that.duration,
 
 
 class _VerseMediaEntity implements VerseMediaEntity {
-  const _VerseMediaEntity({required this.id, required this.verseId, required this.hadi, required this.mediaUrl, required this.duration, required this.type});
+  const _VerseMediaEntity({required this.id, required this.verseId, this.hadi, required this.mediaUrl, required this.duration, required this.type});
   
 
 @override final  int id;
 @override final  int verseId;
-@override final  HadiMediaEntity hadi;
+@override final  HadiMediaEntity? hadi;
 @override final  String mediaUrl;
 @override final  int duration;
 @override final  VerseMediaType type;
@@ -260,11 +263,11 @@ abstract mixin class _$VerseMediaEntityCopyWith<$Res> implements $VerseMediaEnti
   factory _$VerseMediaEntityCopyWith(_VerseMediaEntity value, $Res Function(_VerseMediaEntity) _then) = __$VerseMediaEntityCopyWithImpl;
 @override @useResult
 $Res call({
- int id, int verseId, HadiMediaEntity hadi, String mediaUrl, int duration, VerseMediaType type
+ int id, int verseId, HadiMediaEntity? hadi, String mediaUrl, int duration, VerseMediaType type
 });
 
 
-@override $HadiMediaEntityCopyWith<$Res> get hadi;
+@override $HadiMediaEntityCopyWith<$Res>? get hadi;
 
 }
 /// @nodoc
@@ -277,12 +280,12 @@ class __$VerseMediaEntityCopyWithImpl<$Res>
 
 /// Create a copy of VerseMediaEntity
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? verseId = null,Object? hadi = null,Object? mediaUrl = null,Object? duration = null,Object? type = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? verseId = null,Object? hadi = freezed,Object? mediaUrl = null,Object? duration = null,Object? type = null,}) {
   return _then(_VerseMediaEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,verseId: null == verseId ? _self.verseId : verseId // ignore: cast_nullable_to_non_nullable
-as int,hadi: null == hadi ? _self.hadi : hadi // ignore: cast_nullable_to_non_nullable
-as HadiMediaEntity,mediaUrl: null == mediaUrl ? _self.mediaUrl : mediaUrl // ignore: cast_nullable_to_non_nullable
+as int,hadi: freezed == hadi ? _self.hadi : hadi // ignore: cast_nullable_to_non_nullable
+as HadiMediaEntity?,mediaUrl: null == mediaUrl ? _self.mediaUrl : mediaUrl // ignore: cast_nullable_to_non_nullable
 as String,duration: null == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
 as int,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as VerseMediaType,
@@ -293,9 +296,12 @@ as VerseMediaType,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$HadiMediaEntityCopyWith<$Res> get hadi {
-  
-  return $HadiMediaEntityCopyWith<$Res>(_self.hadi, (value) {
+$HadiMediaEntityCopyWith<$Res>? get hadi {
+    if (_self.hadi == null) {
+    return null;
+  }
+
+  return $HadiMediaEntityCopyWith<$Res>(_self.hadi!, (value) {
     return _then(_self.copyWith(hadi: value));
   });
 }

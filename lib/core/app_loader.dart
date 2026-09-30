@@ -6,6 +6,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart' hide AppState;
 import 'package:ishari/app.dart';
@@ -13,6 +14,7 @@ import 'package:ishari/core/ads/interstitial_ad_manager.dart';
 import 'package:ishari/core/app_state.dart';
 import 'package:ishari/core/env/app_env.dart';
 import 'package:ishari/core/feature_flags/feature_flags_service.dart';
+import 'package:ishari/core/router/app_router.dart';
 import 'package:ishari/core/wizard/wizard_cubit.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ishari/features/auth/presentation/pages/home_page.dart';
@@ -70,6 +72,43 @@ class _AppLoaderState extends State<AppLoader> {
   }
 
   Future<void> _initialize() async {
+    // FlutterError.onError (below) already reports to Crashlytics/Sentry
+    // before this builder runs — it only supplies the replacement widget, so
+    // users get a recoverable screen instead of Flutter's blank/grey
+    // release-mode default on any uncaught build exception.
+    ErrorWidget.builder = (details) {
+      return Scaffold(
+        backgroundColor: _bg,
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.error_outline,
+                  size: 48,
+                  color: Color(0xFF79747E),
+                ),
+                const SizedBox(height: 16),
+                const Text('Terjadi kesalahan. Coba lagi.'),
+                const SizedBox(height: 12),
+                TextButton(
+                  onPressed: () {
+                    final ctx = rootNavigatorKey.currentContext;
+                    if (ctx != null && ctx.mounted) {
+                      GoRouter.of(ctx).go(HomePage.routePath);
+                    }
+                  },
+                  child: const Text('Kembali ke Beranda'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    };
+
     GoogleFonts.config.allowRuntimeFetching = false;
     AppEnv.validate();
 
