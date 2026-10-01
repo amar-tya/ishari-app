@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:ishari/core/router/navigation_extensions.dart';
 
 class ChapterAppBar extends StatelessWidget {
   const ChapterAppBar({
@@ -34,7 +34,7 @@ class ChapterAppBar extends StatelessWidget {
           if (!isEmbeddedInTab)
             _IconBtn(
               icon: Icons.arrow_back_ios_new,
-              onTap: () => context.pop(),
+              onTap: () => context.popOrHome(),
             ),
           Expanded(
             child: AnimatedOpacity(
