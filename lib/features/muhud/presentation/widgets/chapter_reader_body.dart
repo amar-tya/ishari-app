@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ishari/core/router/navigation_extensions.dart';
 import 'package:ishari/core/wizard/wizard_cubit.dart';
 import 'package:ishari/core/wizard/wizard_state.dart';
 import 'package:ishari/features/home/domain/entities/chapter_entity.dart';
@@ -264,7 +264,7 @@ class _ChapterReaderBodyState extends State<ChapterReaderBody> {
         final w = context.read<WizardCubit>();
 
         // Pop chapter reader kembali ke MainScaffold.
-        context.pop();
+        context.popOrHome();
 
         // Tunggu animasi pop GoRouter selesai sebelum advance wizard.
         // ModalRoute.of(context).isActive tidak reliable dengan GoRouter

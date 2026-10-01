@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ishari/core/router/navigation_extensions.dart';
 import 'package:ishari/features/hadi/domain/entities/hadi_summary_entity.dart';
 import 'package:ishari/features/hadi/presentation/bloc/hadi_directory_bloc.dart';
 import 'package:ishari/features/hadi/presentation/bloc/hadi_directory_event.dart';
@@ -239,7 +240,7 @@ class _Header extends StatelessWidget {
       child: Row(
         children: [
           GestureDetector(
-            onTap: () => context.pop(),
+            onTap: () => context.popOrHome(),
             child: Container(
               width: 40,
               height: 40,

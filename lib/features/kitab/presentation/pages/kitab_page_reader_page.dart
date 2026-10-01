@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ishari/core/router/navigation_extensions.dart';
 import 'package:ishari/features/home/domain/entities/chapter_entity.dart';
 import 'package:ishari/features/kitab/domain/usecases/get_chapters_by_book.dart';
 import 'package:ishari/features/kitab/domain/usecases/get_pages_by_chapter.dart';
@@ -106,7 +106,7 @@ class _KitabPageReaderPageState extends State<KitabPageReaderPage> {
                   children: [
                     _IconBtn(
                       icon: Icons.arrow_back_ios_new_rounded,
-                      onTap: () => context.pop(),
+                      onTap: () => context.popOrHome(),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
