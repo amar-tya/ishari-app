@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.5.1](https://github.com/amar-tya/ishari-app/compare/v1.5.0...v1.5.1) (2026-10-06)
+
+
+### Bug Fixes
+
+* **ads:** distinguish native ad from chapter cards for AdMob policy ([b28106b](https://github.com/amar-tya/ishari-app/commit/b28106ba8f2e97432c5b1a9a10d1cf467ab6d6c1))
+* **ads:** distinguish native ad from chapter cards for AdMob policy ([ed5a1de](https://github.com/amar-tya/ishari-app/commit/ed5a1de06302eb90bcbbcf093f92479f90beb90f))
+* FCM notification blank page + chapter_media routing ([b1ecbc6](https://github.com/amar-tya/ishari-app/commit/b1ecbc6bc21ac01113f1d3ed728f3ec05bef4e66))
+* **muhud:** prevent blank page on uncaught notification-tap crash ([2609f44](https://github.com/amar-tya/ishari-app/commit/2609f44de8513bc2e204790c136f9239711c4810))
+* **notify:** route chapter_media notification tap to audio list ([e815ced](https://github.com/amar-tya/ishari-app/commit/e815ced005580cc691f53ce9a57767e9b5b5ddb1))
+* **notify:** send push notification on chapter_media upload ([47cfb94](https://github.com/amar-tya/ishari-app/commit/47cfb94c29821c0c914b3daf662cfec4c730c48c))
+* **notify:** send push notification on chapter_media upload ([87ced59](https://github.com/amar-tya/ishari-app/commit/87ced59a9a99c549f1987c0fcc81f07986dec5e4))
+* **router:** guard back buttons against empty navigation stack ([2b2a15a](https://github.com/amar-tya/ishari-app/commit/2b2a15a3d5b6f242dd086c8516e1e2fde8b3d0c8))
+* **router:** guard back buttons against empty navigation stack (AMA-101) ([64e4729](https://github.com/amar-tya/ishari-app/commit/64e47295729737d0aac03039f36919dab69af899))
+
 ## [1.5.0](https://github.com/amar-tya/ishari-app/compare/v1.4.0...v1.5.0) (2026-09-27)
 
 
