@@ -1,0 +1,65 @@
+name: Tag Release (Manual)
+
+# Actions -> "Tag Release (Manual)" -> Run workflow, isi version (mis. 1.5.2).
+# Push tag vX.Y.Z ke commit merge PR rilis -> memicu release-android.yml,
+# lalu bikin GitHub Release + label PR rilis jadi autorelease: tagged.
+# Butuh secret RELEASE_TAG_TOKEN: fine-grained PAT owner, repo ini,
+# Contents + Pull requests + Issues = Read and write.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Versi tanpa "v", mis. 1.5.2'
+        required: true
+        type: string
+
+concurrency:
+  group: tag-release
+  cancel-in-progress: false
+
+jobs:
+  tag-release:
+    if: github.actor == github.repository_owner
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v6
+        with:
+          ref: master
+          fetch-depth: 0
+          token: ${{ secrets.RELEASE_TAG_TOKEN }}
+
+      - name: Validate version & find release commit
+        id: release
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          VERSION="${INPUT_VERSION#v}"
+          MANIFEST_VERSION=$(jq -r '."."' .release-please-manifest.json)
+          if [ "$VERSION" != "$MANIFEST_VERSION" ]; then
+            echo "::error::Input '$VERSION' beda dengan manifest '$MANIFEST_VERSION'."
+            exit 1
+          fi
+          TAG="v$VERSION"
+          if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+            echo "::error::Tag $TAG sudah ada."
+            exit 1
+          fi
+          SHA=$(git log -1 --first-parent --format=%H -- .release-please-manifest.json)
+          echo "Tag $TAG -> $SHA"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+
+      - name: Push release tag
+        run: |
+          git tag "${{ steps.release.outputs.tag }}" "${{ steps.release.outputs.sha }}"
+          git push origin "${{ steps.release.outputs.tag }}"
+
+      - name: Create GitHub Release
+        uses: googleapis/release-please-action@v4
+        with:
+          token: ${{ secrets.RELEASE_TAG_TOKEN }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+          skip-github-pull-request: true
