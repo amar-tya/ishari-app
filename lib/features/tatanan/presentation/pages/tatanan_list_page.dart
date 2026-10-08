@@ -32,6 +32,11 @@ class _TatananListPageState extends State<TatananListPage> {
   final GlobalKey _addBtnKey = GlobalKey();
   bool _wizardShown = false;
 
+  // Read once per page so every itemBuilder call agrees on the slot layout.
+  late final bool _nativeAdsEnabled = NativeAdCard.isEnabled;
+
+  bool _withAd(int count) => count >= 5 && _nativeAdsEnabled;
+
   @override
   void initState() {
     super.initState();
@@ -208,18 +213,18 @@ class _TatananListPageState extends State<TatananListPage> {
                                   16,
                                   120,
                                 ),
-                                itemCount: tatanans.length >= 5
+                                itemCount: _withAd(tatanans.length)
                                     ? tatanans.length + 1
                                     : tatanans.length,
                                 itemBuilder: (context, i) {
-                                  if (tatanans.length >= 5 && i == 4) {
+                                  if (_withAd(tatanans.length) && i == 4) {
                                     return const Padding(
                                       padding: EdgeInsets.only(bottom: 10),
                                       child: NativeAdCard(),
                                     );
                                   }
                                   final dataIndex =
-                                      tatanans.length >= 5 && i > 4
+                                      _withAd(tatanans.length) && i > 4
                                           ? i - 1
                                           : i;
                                   final t = tatanans[dataIndex];

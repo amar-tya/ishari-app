@@ -243,7 +243,11 @@ class _BookmarkTabBodyState extends State<_BookmarkTabBody> {
                                         widget.onNavigateToHome,
                                   ),
                                 )
-                              else
+                              else ...[
+                                // Banner pinned above the list — not inside
+                                // it — so it can't pass for a bookmark card
+                                // (AdMob "ads disguised as content" policy).
+                                const BannerAdWidget(),
                                 Expanded(
                                   child: ListView.builder(
                                     padding: const EdgeInsets.fromLTRB(
@@ -252,24 +256,9 @@ class _BookmarkTabBodyState extends State<_BookmarkTabBody> {
                                       16,
                                       24,
                                     ),
-                                    // +1 for the banner ad slot
-                                    itemCount: filtered.length + 1,
+                                    itemCount: filtered.length,
                                     itemBuilder: (context, i) {
-                                      // Insert banner after 2nd item
-                                      // (or at end if fewer than 2 items)
-                                      final adPosition =
-                                          filtered.length < 2
-                                              ? filtered.length
-                                              : 2;
-                                      if (i == adPosition) {
-                                        return const Padding(
-                                          padding: EdgeInsets.only(bottom: 10),
-                                          child: BannerAdWidget(),
-                                        );
-                                      }
-                                      final realIndex =
-                                          i < adPosition ? i : i - 1;
-                                      final b = filtered[realIndex];
+                                      final b = filtered[i];
                                       final userId = _getUserId();
                                       return Padding(
                                         padding: const EdgeInsets.only(
@@ -305,6 +294,7 @@ class _BookmarkTabBodyState extends State<_BookmarkTabBody> {
                                     },
                                   ),
                                 ),
+                              ],
                             ],
                           ),
                         );

@@ -382,7 +382,7 @@ class _TrackList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final withAd = tracks.length >= 5;
+    final withAd = tracks.length >= 5 && NativeAdCard.isEnabled;
     final rowCount = tracks.length + (withAd ? 1 : 0);
     return ListView.builder(
       padding: EdgeInsets.fromLTRB(20, 0, 20, showBottomSpacer ? 100 : 20),
