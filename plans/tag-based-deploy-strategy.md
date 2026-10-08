@@ -131,14 +131,21 @@ Play Store:
    otomatis buka/update PR `chore(master): release X.X.X` (isinya
    CHANGELOG). Review, merge kalau emang mau rilis.
 
-5. **Tag rilis manual — ini yang beneran nge-trigger Play Store**
-   (sengaja manual, ruleset nolak kalau bot yang coba):
+5. **Tag rilis — ini yang beneran nge-trigger Play Store.** Actions →
+   **Tag Release (Manual)** → Run workflow, isi `version` = `X.X.X`
+   (`tag-release.yml`). Workflow push tag `vX.X.X` ke commit merge PR
+   rilis pakai PAT owner (`RELEASE_TAG_TOKEN`, bypass ruleset), lalu bikin
+   GitHub Release + label PR rilis `autorelease: tagged`.
+   `release-android.yml` jalan: build + upload Play Store production.
+
+   Fallback kalau workflow-nya bermasalah — tag manual dari laptop, lalu
+   ganti label PR rilis dari `autorelease: pending` ke `autorelease: tagged`
+   manual (tanpa itu release-please gak buka PR rilis berikutnya):
    ```
    git fetch origin master
    git tag vX.X.X <sha commit hasil merge PR rilis>
    git push origin vX.X.X
    ```
-   `release-android.yml` jalan: build + upload Play Store production.
    Gak ada tombol mundur — mastiin CHANGELOG di PR rilis udah sesuai
    sebelum nge-tag.
 
