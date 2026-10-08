@@ -3,13 +3,22 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:ishari/core/ads/ad_config.dart';
+import 'package:ishari/core/feature_flags/feature_flags_service.dart';
+import 'package:ishari/injection_container.dart';
 
-/// A native ad card sized to fit within the chapter masonry grid.
+/// A full-width native ad card, placed between content sections — never as
+/// a tile inside a content grid (AdMob "ads disguised as content" policy).
 ///
 /// Renders [SizedBox.shrink] until the ad is loaded.
 /// The Android layout is defined in res/layout/native_ad.xml.
 class NativeAdCard extends StatefulWidget {
   const NativeAdCard({super.key});
+
+  /// Remote kill-switch for every native ad slot. Callers check this before
+  /// reserving a slot so a disabled ad leaves no gap in the list.
+  static bool get isEnabled =>
+      sl.isRegistered<FeatureFlagsService>() &&
+      sl<FeatureFlagsService>().isEnabled('feature_native_ads_enabled');
 
   @override
   State<NativeAdCard> createState() => _NativeAdCardState();

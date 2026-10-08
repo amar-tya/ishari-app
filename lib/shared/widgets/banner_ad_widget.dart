@@ -5,7 +5,11 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:ishari/core/ads/ad_config.dart';
 import 'package:ishari/core/utils/app_logger.dart';
 
-/// Displays a 320×50 AdMob banner ad styled to match the app's design.
+/// Displays a 320×50 AdMob banner ad under an "Iklan" label.
+///
+/// Deliberately has no card shell (white background, border, radius): the
+/// old wrapper matched BookmarkCard and AdMob flagged it as "ads disguised as
+/// content". Keep the banner plain and clearly labelled.
 ///
 /// Renders [SizedBox.shrink] until the ad is loaded — no layout space wasted.
 class BannerAdWidget extends StatefulWidget {
@@ -54,22 +58,27 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
   Widget build(BuildContext context) {
     if (!_isLoaded || _ad == null) return const SizedBox.shrink();
 
-    final adHeight = _ad!.size.height.toDouble();
-    return SizedBox(
-      height: adHeight + 12, // ad height + vertical margins
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFFE2E8DF)),
-        ),
-        alignment: Alignment.center,
-        child: SizedBox(
-          width: _ad!.size.width.toDouble(),
-          height: adHeight,
-          child: AdWidget(ad: _ad!),
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text(
+            'Iklan',
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF6B7280),
+              letterSpacing: 0.5,
+            ),
+          ),
+          const SizedBox(height: 4),
+          SizedBox(
+            width: _ad!.size.width.toDouble(),
+            height: _ad!.size.height.toDouble(),
+            child: AdWidget(ad: _ad!),
+          ),
+        ],
       ),
     );
   }

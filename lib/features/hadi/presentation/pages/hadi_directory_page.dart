@@ -339,7 +339,7 @@ class _HadiSliverList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final withAd = hadiList.length >= 5;
+    final withAd = hadiList.length >= 5 && NativeAdCard.isEnabled;
     final itemCount = hadiList.length + (withAd ? 1 : 0);
     return SliverList.separated(
       itemCount: itemCount,

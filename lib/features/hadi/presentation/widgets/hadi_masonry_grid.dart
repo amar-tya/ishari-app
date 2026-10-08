@@ -9,10 +9,11 @@ const _kMute = Color(0xFF777777);
 const _kBorder = Color(0xFFE2E8DF);
 
 /// True 2-column masonry grid of hadi cards, following the same pattern as
-/// ChapterMasonryGrid (home): a flat list of items — hadi interspersed with
-/// an ad slot after every 4 hadi (skipped entirely when fewer than 5 hadi) —
-/// distributed across left and right columns (even flat-index → left, odd →
-/// right). Native ads appear as single-column items.
+/// ChapterMasonryGrid (home): hadi are split into sections of
+/// [_hadiPerAd], each laid out as its own masonry (even index → left
+/// column, odd → right). When ads are enabled, a full-width native ad sits
+/// between sections — never as a tile inside the grid (AdMob "ads disguised
+/// as content" policy).
 class HadiMasonryGrid extends StatelessWidget {
   const HadiMasonryGrid({
     required this.hadiList,
@@ -23,80 +24,79 @@ class HadiMasonryGrid extends StatelessWidget {
   final List<HadiSummaryEntity> hadiList;
   final int Function(String hadiId) audioCountFor;
 
+  static const int _hadiPerAd = 4;
+
   @override
   Widget build(BuildContext context) {
-    final items = <_GridItem>[];
-    for (var i = 0; i < hadiList.length; i++) {
-      items.add(_HadiItem(hadiList[i], i));
-      if ((i + 1) % 4 == 0 && hadiList.length >= 5) {
-        items.add(const _AdItem());
+    final withAds = hadiList.length > _hadiPerAd && NativeAdCard.isEnabled;
+    final sectionSize = withAds ? _hadiPerAd : hadiList.length;
+
+    final children = <Widget>[];
+    for (var start = 0; start < hadiList.length; start += sectionSize) {
+      final end = (start + sectionSize).clamp(0, hadiList.length);
+      children.add(
+        _MasonrySection(
+          hadiList: hadiList,
+          start: start,
+          end: end,
+          audioCountFor: audioCountFor,
+        ),
+      );
+      if (withAds && end < hadiList.length) {
+        children.add(
+          const Padding(
+            padding: EdgeInsets.only(top: 6, bottom: 16),
+            child: NativeAdCard(),
+          ),
+        );
       }
     }
 
-    final left = <_GridItem>[];
-    final right = <_GridItem>[];
-    for (var i = 0; i < items.length; i++) {
-      if (i.isEven) {
-        left.add(items[i]);
-      } else {
-        right.add(items[i]);
-      }
-    }
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: _MasonryColumn(items: left, audioCountFor: audioCountFor),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: _MasonryColumn(items: right, audioCountFor: audioCountFor),
-        ),
-      ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: children,
     );
   }
 }
 
-sealed class _GridItem {
-  const _GridItem();
-}
-
-class _HadiItem extends _GridItem {
-  const _HadiItem(this.hadi, this.index);
-  final HadiSummaryEntity hadi;
-  final int index;
-}
-
-class _AdItem extends _GridItem {
-  const _AdItem();
-}
-
-class _MasonryColumn extends StatelessWidget {
-  const _MasonryColumn({
-    required this.items,
+class _MasonrySection extends StatelessWidget {
+  const _MasonrySection({
+    required this.hadiList,
+    required this.start,
+    required this.end,
     required this.audioCountFor,
   });
 
-  final List<_GridItem> items;
+  final List<HadiSummaryEntity> hadiList;
+  final int start;
+  final int end;
   final int Function(String hadiId) audioCountFor;
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _column(int parity) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        for (final item in items) ...[
-          switch (item) {
-            _HadiItem(:final hadi, :final index) => _HadiGridCard(
-              hadi: hadi,
-              index: index,
-              audioCount: audioCountFor(hadi.id),
+        for (var i = start; i < end; i++)
+          if ((i - start) % 2 == parity) ...[
+            _HadiGridCard(
+              hadi: hadiList[i],
+              index: i,
+              audioCount: audioCountFor(hadiList[i].id),
             ),
-            _AdItem() => const NativeAdCard(),
-          },
-          const SizedBox(height: 10),
-        ],
+            const SizedBox(height: 10),
+          ],
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(child: _column(0)),
+        const SizedBox(width: 10),
+        Expanded(child: _column(1)),
       ],
     );
   }
