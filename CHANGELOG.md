@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.5.2](https://github.com/amar-tya/ishari-app/compare/v1.5.1...v1.5.2) (2026-10-08)
+
+
+### Bug Fixes
+
+* **ads:** move ads out of content layouts and gate native ads by flag ([716cd49](https://github.com/amar-tya/ishari-app/commit/716cd49fe5e45c28cfa67d23cb21c37115c687fe))
+* **ads:** move ads out of content layouts and gate native ads by flag ([cb86687](https://github.com/amar-tya/ishari-app/commit/cb8668715d8e0a5dbc5b0c9785f3b4acdbbdce9a))
+
 ## [1.5.1](https://github.com/amar-tya/ishari-app/compare/v1.5.0...v1.5.1) (2026-10-06)
 
 
