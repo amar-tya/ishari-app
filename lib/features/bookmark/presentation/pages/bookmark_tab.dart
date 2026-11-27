@@ -239,8 +239,7 @@ class _BookmarkTabBodyState extends State<_BookmarkTabBody> {
                                     isFiltered:
                                         selectedCategory != 'Semua' ||
                                         searchQuery.isNotEmpty,
-                                    onNavigateToHome:
-                                        widget.onNavigateToHome,
+                                    onNavigateToHome: widget.onNavigateToHome,
                                   ),
                                 )
                               else ...[
@@ -274,21 +273,18 @@ class _BookmarkTabBodyState extends State<_BookmarkTabBody> {
                                               : () => context
                                                     .read<BookmarkBloc>()
                                                     .add(
-                                                      BookmarkEvent
-                                                          .removeBookmark(
+                                                      BookmarkEvent.removeBookmark(
                                                         verseId: b.verseId,
                                                         userId: userId,
                                                       ),
                                                     ),
                                           onEditNote: (note) =>
-                                              context
-                                                  .read<BookmarkBloc>()
-                                                  .add(
-                                                    BookmarkEvent.updateNote(
-                                                      verseId: b.verseId,
-                                                      note: note,
-                                                    ),
-                                                  ),
+                                              context.read<BookmarkBloc>().add(
+                                                BookmarkEvent.updateNote(
+                                                  verseId: b.verseId,
+                                                  note: note,
+                                                ),
+                                              ),
                                         ),
                                       );
                                     },
@@ -496,7 +492,8 @@ class _EmptyState extends StatelessWidget {
             Text(
               isFiltered
                   ? 'Coba ubah filter atau kata kunci pencarian.'
-                  : 'Mulai simpan shalawat favoritmu\ndengan mengetuk ikon bookmark.',
+                  : 'Mulai simpan shalawat favoritmu\n'
+                      'dengan mengetuk ikon bookmark.',
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
                 fontSize: 13,

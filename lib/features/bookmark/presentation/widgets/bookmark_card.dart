@@ -390,7 +390,8 @@ class _RemoveSheet extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            '$chapterTitle · Bait $verseNumber\nakan dihapus dari bookmark kamu.',
+            '$chapterTitle · Bait $verseNumber\n'
+            'akan dihapus dari bookmark kamu.',
             textAlign: TextAlign.center,
             style: GoogleFonts.poppins(
               fontSize: 13,
