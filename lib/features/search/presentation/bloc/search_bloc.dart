@@ -29,9 +29,11 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   String _query = '';
   String _category = _kDefaultCategory;
   Timer? _debounce;
+  bool _isClosing = false;
 
   @override
   Future<void> close() {
+    _isClosing = true;
     _debounce?.cancel();
     return super.close();
   }
@@ -46,6 +48,9 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     }
 
     emit(const SearchState.loading());
+    // A queued event is still handled after close() has cancelled the timer.
+    // isClosed is not true yet at that point, so it cannot be the guard.
+    if (_isClosing) return;
     _debounce = Timer(
       const Duration(milliseconds: _kDebounceMs),
       () => add(SearchEvent.categorySelected(_category)),

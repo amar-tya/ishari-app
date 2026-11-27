@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ishari/core/app_loader.dart';
 import 'package:ishari/core/env/app_env.dart';
+import 'package:ishari/core/observability/sentry_bloc_observer.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -17,6 +18,7 @@ Future<void> main() async {
     androidNotificationChannelName: 'Pemutaran Audio',
   );
   final packageInfo = await PackageInfo.fromPlatform();
+  SentryBlocObserver.install();
 
   await SentryFlutter.init(
     (options) {
