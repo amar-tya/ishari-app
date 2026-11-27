@@ -80,6 +80,9 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
   late final VoidCallback _ownerListener;
   String _userId = '';
 
+  /// Verses with a bookmark toggle that has not finished yet.
+  final _togglingVerseIds = <int>{};
+
   bool get _isOwner =>
       sessionCoordinator.owner.value == AudioSessionOwner.muhudVerse;
 
@@ -188,6 +191,21 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
     String? note,
     Emitter<MuhudState> emit,
   ) async {
+    // Events run concurrently, so a second toggle for the same verse would
+    // race the first one on the server. Ignore it before touching the UI.
+    if (!_togglingVerseIds.add(verseId)) return;
+    try {
+      await _applyBookmarkToggle(verseId, note, emit);
+    } finally {
+      _togglingVerseIds.remove(verseId);
+    }
+  }
+
+  Future<void> _applyBookmarkToggle(
+    int verseId,
+    String? note,
+    Emitter<MuhudState> emit,
+  ) async {
     // Optimistic update
     final wasBookmarked =
         state.mapOrNull(
@@ -231,8 +249,21 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
           },
         );
       },
-      (_) {
-        if (!wasBookmarked) {
+      (isBookmarked) {
+        // The server decides the final state: the optimistic guess is wrong
+        // if the loaded bookmark ids were stale.
+        state.mapOrNull(
+          loaded: (l) {
+            final confirmed = Set<int>.from(l.bookmarkedVerseIds);
+            if (isBookmarked) {
+              confirmed.add(verseId);
+            } else {
+              confirmed.remove(verseId);
+            }
+            emit(l.copyWith(bookmarkedVerseIds: confirmed));
+          },
+        );
+        if (isBookmarked && !wasBookmarked) {
           final chapterId =
               state.mapOrNull(loaded: (l) => l.chapter.id.toString()) ?? '';
           unawaited(

@@ -19,6 +19,9 @@ abstract interface class MuhudRemoteDataSource {
   Future<void> updateBookmarkNote(int verseId, String? note);
 }
 
+/// Postgres error code for a unique constraint violation.
+const _kUniqueViolation = '23505';
+
 @LazySingleton(as: MuhudRemoteDataSource)
 class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
   const MuhudRemoteDataSourceImpl(this._supabaseClient);
@@ -186,21 +189,28 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
           .from('bookmarks')
           .select()
           .eq('verse_id', verseId)
-          .eq('user_id', publicUserId);
+          .eq('user_id', publicUserId)
+          .isFilter('deleted_at', null);
 
       if ((existing as List<dynamic>).isNotEmpty) {
         await _supabaseClient
             .from('bookmarks')
             .delete()
             .eq('verse_id', verseId)
-            .eq('user_id', publicUserId);
+            .eq('user_id', publicUserId)
+            .isFilter('deleted_at', null);
         return false;
       } else {
-        await _supabaseClient.from('bookmarks').insert({
-          'verse_id': verseId,
-          'user_id': publicUserId,
-          if (note != null && note.isNotEmpty) 'note': note,
-        });
+        try {
+          await _supabaseClient.from('bookmarks').insert({
+            'verse_id': verseId,
+            'user_id': publicUserId,
+            if (note != null && note.isNotEmpty) 'note': note,
+          });
+        } on PostgrestException catch (e) {
+          // Another request saved this bookmark first.
+          if (e.code != _kUniqueViolation) rethrow;
+        }
         return true;
       }
     } catch (e) {
@@ -212,12 +222,15 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
   Future<List<int>> getBookmarkedVerseIds(String userId) async {
     try {
       // RLS filters rows to the current auth user automatically.
-      final data = await _supabaseClient.from('bookmarks').select('verse_id');
+      final data = await _supabaseClient
+          .from('bookmarks')
+          .select('verse_id')
+          .isFilter('deleted_at', null);
 
-      return (data as List<dynamic>).map((item) {
-        final verseId = (item as Map<String, dynamic>)['verse_id'];
-        return verseId is int ? verseId : int.parse(verseId.toString());
-      }).toList();
+      return _parseRows(
+        data as List<dynamic>,
+        (row) => _toInt(row['verse_id']),
+      );
     } catch (e) {
       throw ServerException(message: e.toString());
     }
@@ -234,30 +247,53 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
           .select(
             'note, created_at, verses(id, verse_number, arabic_text, transliteration, chapters(id, title, category))',
           )
+          .isFilter('deleted_at', null)
           .order('created_at', ascending: false);
 
-      return (data as List<dynamic>).map((item) {
-        final d = item as Map<String, dynamic>;
-        final verse = d['verses'] as Map<String, dynamic>;
-        final chapter = verse['chapters'] as Map<String, dynamic>;
-
-        int toInt(dynamic v) => v is int ? v : int.parse(v.toString());
-
-        return BookmarkedVerseEntity(
-          verseId: toInt(verse['id']),
-          verseNumber: toInt(verse['verse_number']),
-          arabicText: verse['arabic_text'] as String,
-          transliteration: verse['transliteration'] as String,
-          chapterId: toInt(chapter['id']),
-          chapterTitle: chapter['title'] as String,
-          chapterCategory: chapter['category'] as String,
-          bookmarkedAt: DateTime.parse(d['created_at'] as String),
-          note: d['note'] as String?,
-        );
-      }).toList();
+      return _parseRows(data as List<dynamic>, _parseBookmarkedVerse);
     } catch (e) {
       throw ServerException(message: e.toString());
     }
+  }
+
+  static BookmarkedVerseEntity _parseBookmarkedVerse(Map<String, dynamic> row) {
+    final verse = row['verses'] as Map<String, dynamic>;
+    final chapter = verse['chapters'] as Map<String, dynamic>;
+
+    return BookmarkedVerseEntity(
+      verseId: _toInt(verse['id']),
+      verseNumber: _toInt(verse['verse_number']),
+      arabicText: verse['arabic_text'] as String,
+      transliteration: verse['transliteration'] as String,
+      chapterId: _toInt(chapter['id']),
+      chapterTitle: chapter['title'] as String,
+      chapterCategory: chapter['category'] as String,
+      bookmarkedAt: DateTime.parse(row['created_at'] as String),
+      note: row['note'] as String?,
+    );
+  }
+
+  static int _toInt(dynamic v) => v is int ? v : int.parse(v.toString());
+
+  /// Parses each row on its own, so a malformed row is skipped instead of
+  /// failing the whole list.
+  static List<T> _parseRows<T>(
+    List<dynamic> rows,
+    T Function(Map<String, dynamic> row) parse,
+  ) {
+    final result = <T>[];
+    for (final row in rows) {
+      try {
+        result.add(parse(row as Map<String, dynamic>));
+      } on Object catch (e) {
+        // Log the type only: the error text can contain the user's data.
+        appLogger.w(
+          '[RemoteDataSource] Skipped malformed bookmark row '
+          '(${e.runtimeType})',
+        );
+      }
+    }
+    return result;
   }
 
   @override
@@ -268,7 +304,8 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
           .from('bookmarks')
           .update({'note': note})
           .eq('verse_id', verseId)
-          .eq('user_id', publicUserId);
+          .eq('user_id', publicUserId)
+          .isFilter('deleted_at', null);
     } catch (e) {
       throw ServerException(message: e.toString());
     }
