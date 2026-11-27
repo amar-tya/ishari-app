@@ -2,8 +2,6 @@
 // the machine. Deliberately plain `test()`: the widget test binding would
 // replace HttpClient with a stub.
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
@@ -11,6 +9,8 @@ import 'package:ishari/core/errors/exceptions.dart';
 import 'package:ishari/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:ishari/features/auth/data/models/user_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../loopback_auth.dart';
 
 class _FakeGoogleSignInPlatform extends GoogleSignInPlatform {
   final calls = <String>[];
@@ -54,59 +54,8 @@ class _BrokenAuthStorage extends GotrueAsyncStorage {
   Future<void> setItem({required String key, required String value}) async {}
 }
 
-class _AuthServer {
-  _AuthServer._(this._server) {
-    _server.listen((request) async {
-      requests.add(request.uri.path);
-      await request.drain<void>();
-      request.response
-        ..statusCode = status
-        ..headers.contentType = ContentType.json
-        ..write(body);
-      await request.response.close();
-    });
-  }
-
-  static Future<_AuthServer> start() async => _AuthServer._(
-    await HttpServer.bind(InternetAddress.loopbackIPv4, 0),
-  );
-
-  final HttpServer _server;
-  final requests = <String>[];
-  int status = 204;
-  String body = '';
-
-  String get url => 'http://127.0.0.1:${_server.port}';
-
-  /// Nothing listens on the port afterwards: connections fail with a socket
-  /// error, as they do without a network.
-  Future<void> goOffline() => _server.close(force: true);
-}
-
-String _session({required Duration expiresIn}) {
-  String part(Map<String, Object> value) =>
-      base64Url.encode(utf8.encode(json.encode(value))).replaceAll('=', '');
-  final expiresAt =
-      DateTime.now().add(expiresIn).millisecondsSinceEpoch ~/ 1000;
-  final token =
-      '${part({'alg': 'HS256'})}.${part({'exp': expiresAt})}.signature';
-  return json.encode({
-    'access_token': token,
-    'token_type': 'bearer',
-    'refresh_token': 'refresh-token',
-    'user': {
-      'id': 'user-1',
-      'email': 'user@example.com',
-      'aud': 'authenticated',
-      'created_at': '2026-01-01T00:00:00Z',
-      'app_metadata': <String, Object>{},
-      'user_metadata': {'full_name': 'Test User'},
-    },
-  });
-}
-
 void main() {
-  late _AuthServer server;
+  late LoopbackAuthServer server;
   late _FakeGoogleSignInPlatform google;
   late SupabaseClient client;
   late AuthRemoteDataSourceImpl datasource;
@@ -136,11 +85,11 @@ void main() {
   }
 
   Future<void> signIn() => client.auth.setInitialSession(
-    _session(expiresIn: const Duration(hours: 1)),
+    sessionJson(expiresIn: const Duration(hours: 1)),
   );
 
   setUp(() async {
-    server = await _AuthServer.start();
+    server = await LoopbackAuthServer.start();
     google = _FakeGoogleSignInPlatform();
     GoogleSignInPlatform.instance = google;
     events = [];
@@ -230,7 +179,7 @@ void main() {
         // On, as in the app: without it the SDK signs an expired session out.
         await setUpClient(autoRefresh: true);
         await server.goOffline();
-        final expired = _session(expiresIn: const Duration(hours: -1));
+        final expired = sessionJson(expiresIn: const Duration(hours: -1));
 
         // The same two steps Supabase.initialize runs at startup.
         await client.auth.setInitialSession(expired);

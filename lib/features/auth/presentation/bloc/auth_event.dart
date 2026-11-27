@@ -10,4 +10,7 @@ class AuthEvent with _$AuthEvent {
 
   /// User tapped "Sign out".
   const factory AuthEvent.signOut() = _SignOut;
+
+  /// The SDK session changed. Added by the bloc itself, from its stream.
+  const factory AuthEvent.authUserChanged(UserEntity? user) = _AuthUserChanged;
 }
