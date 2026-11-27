@@ -1,0 +1,95 @@
+name: PR Checks
+
+# Quality gate: `flutter analyze` + `flutter test` on every pull request
+# (and on master after a merge). Last item of #36; see also #41.
+#
+# Third-party actions are pinned by FULL COMMIT SHA (public repo), with the
+# version in a trailing comment. To bump one, look up the commit of the new
+# tag in the official repository and replace SHA + comment together.
+#
+# Safe for a PUBLIC repo and for fork PRs:
+#   - trigger is `pull_request` (NOT `pull_request_target`): fork code runs
+#     with a read-only token and no access to repository secrets
+#   - `permissions: contents: read` only, persist-credentials off
+#   - NO secrets anywhere. env/current.env is written with DUMMY values;
+#     tests never talk to Supabase / AdMob / Sentry, they only need
+#     lib/core/env/env.g.dart to exist so the code compiles.
+#   - no google-services.json / key.properties (only needed by Gradle builds)
+#
+# This workflow does not publish or sign anything. To make it block merges,
+# mark the "analyze-and-test" check as required in branch protection (repo
+# setting, not a file).
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-checks-${{ github.event.pull_request.number || github.ref }}
+  # New push to a PR cancels the older run; master runs are never cancelled.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  analyze-and-test:
+    name: analyze-and-test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      # `flutter analyze` flags. Errors and warnings always fail the job.
+      # `--no-fatal-infos` is TEMPORARY: master still has ~85 info-level lints,
+      # and `flutter analyze` exits 1 on infos by default.
+      # TODO(#41): once the lint cleanup (#41) has merged, change this ONE
+      # line to `--fatal-infos` so infos fail the job too.
+      ANALYZE_FLAGS: --no-fatal-infos
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+
+      # Keep in sync with .fvmrc and the release workflows
+      # (test/build_config/pr_checks_workflow_test.dart enforces it).
+      - name: Setup Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          flutter-version: '3.41.6'
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get --enforce-lockfile
+
+      # Dummy values only: they exist so envied can generate
+      # lib/core/env/env.g.dart (gitignored). Never put real values here.
+      - name: Generate env.g.dart (dummy env)
+        id: codegen
+        run: |
+          cat <<'EOF' > env/current.env
+          APP_ENV=development
+          SUPABASE_URL=https://ci-placeholder.supabase.co
+          SUPABASE_ANON_KEY=ci-placeholder-anon-key
+          GOOGLE_WEB_CLIENT_ID=ci-placeholder.apps.googleusercontent.com
+          ADMOB_APP_ID=ca-app-pub-0000000000000000~0000000000
+          ADMOB_BANNER_UNIT_ID=ca-app-pub-0000000000000000/0000000000
+          ADMOB_NATIVE_UNIT_ID=ca-app-pub-0000000000000000/0000000000
+          ADMOB_INTERSTITIAL_UNIT_ID=ca-app-pub-0000000000000000/0000000000
+          EOF
+          dart run build_runner build --delete-conflicting-outputs
+          if [ ! -s lib/core/env/env.g.dart ]; then
+            echo "::error title=env codegen::lib/core/env/env.g.dart was not generated. A new required field in lib/core/env/env.dart needs a dummy value in .github/workflows/pr-checks.yml."
+            exit 1
+          fi
+
+      - name: Analyze
+        # Unquoted on purpose: ANALYZE_FLAGS may be empty or hold one flag.
+        run: flutter analyze $ANALYZE_FLAGS
+
+      # Run even if analyze failed, so one run shows both problems.
+      - name: Test
+        if: ${{ !cancelled() && steps.codegen.outcome == 'success' }}
+        run: flutter test

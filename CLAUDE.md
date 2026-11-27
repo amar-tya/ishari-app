@@ -100,6 +100,19 @@ dart run build_runner build --delete-conflicting-outputs
 flutter analyze
 ```
 
+### PR Checks (CI)
+`.github/workflows/pr-checks.yml` jalan di setiap `pull_request` dan `push` ke `master`: `flutter pub get --enforce-lockfile`, generate `env.g.dart`, `flutter analyze`, `flutter test`. Cuma `permissions: contents: read`, tanpa secret, aman buat PR dari fork (repo public). Action dipin pakai full commit SHA. Check ini **belum** required — itu setting branch protection di GitHub, bukan file.
+
+- **Dummy env:** `env/current.env` ditulis di workflow dengan nilai palsu (`ci-placeholder`, id AdMob nol) lalu `build_runner` bikin `lib/core/env/env.g.dart`. Test cuma butuh file itu ada supaya kode compile; tidak ada yang nyambung ke Supabase/AdMob/Sentry. Jangan pernah isi nilai asli atau baca dari secret di workflow ini. Tambah field wajib baru di `lib/core/env/env.dart` → tambah baris dummy-nya di workflow (`test/build_config/pr_checks_workflow_test.dart` akan gagal dan bilang field mana).
+- **Analyze:** error dan warning bikin job merah. Info belum, karena `ANALYZE_FLAGS: --no-fatal-infos` (sementara, sisa ~85 info). Setelah lint cleanup #41 merge, ubah satu baris itu jadi `--fatal-infos`.
+- **Versi Flutter** di workflow harus sama dengan `.fvmrc` (dijaga test yang sama).
+- **Jalankan hal yang sama lokal:**
+  ```bash
+  scripts/use_dev.bat                       # env.g.dart (nilai dev asli, lokal saja)
+  fvm flutter analyze --no-fatal-infos
+  fvm flutter test
+  ```
+
 ### Shorebird OTA Patch
 CI (`.github/workflows/build-and-distribute-android.yml`) builds production release via `shorebird release android`, bukan `flutter build` langsung. Butuh `shorebird.yaml` (app terdaftar di Shorebird console) dan `SHOREBIRD_TOKEN` (dari `shorebird login:ci`) di GitHub Secrets — keduanya dipegang manual oleh pemilik akun, bukan bagian dari CI.
 
