@@ -8,6 +8,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
 import 'package:ishari/core/router/app_router.dart';
+import 'package:ishari/core/router/route_guards.dart';
 import 'package:ishari/features/audio/presentation/pages/audio_list_page.dart';
 import 'package:ishari/firebase_options.dart';
 
@@ -15,6 +16,28 @@ const _newAudioTopic = 'new_audio';
 const _channelId = 'new_audio_channel';
 const _channelName = 'Audio Baru';
 const _channelDescription = 'Notifikasi saat ada audio Hadi baru';
+
+/// Route to open for a tapped "audio baru" notification, or `null` when the
+/// payload carries neither id.
+///
+/// verse_media notif carries `verseId` (per-verse audio → open the verse
+/// in ChapterReaderPage). chapter_media notif never carries `verseId`
+/// (full-chapter recording, not tied to a verse) → open AudioListPage
+/// instead, since ChapterReaderPage would be the wrong context for it.
+///
+/// The reader also needs a usable `chapterId`; a verse payload without one
+/// falls back to AudioListPage
+/// (see docs/fix-fcm-chapter-media-audio-route/spec.md).
+@visibleForTesting
+String? fcmTargetPath(String? chapterId, {String? verseId}) {
+  final hasVerse = verseId != null && verseId.isNotEmpty;
+  final hasChapter = chapterId != null && chapterId.isNotEmpty;
+  if (!hasVerse && !hasChapter) return null;
+
+  final chapter = parseRouteId(chapterId);
+  if (!hasVerse || chapter == null) return AudioListPage.routePath;
+  return '/chapter/$chapter?verseId=${Uri.encodeQueryComponent(verseId)}';
+}
 
 /// Wraps [FirebaseMessaging] + [FlutterLocalNotificationsPlugin] to deliver
 /// "audio baru" push notifications (topic-based FCM — see AMA-60 PRD for
@@ -93,21 +116,13 @@ class FcmService {
     );
   }
 
-  /// verse_media notif carries `verseId` (per-verse audio → open the verse
-  /// in ChapterReaderPage). chapter_media notif never carries `verseId`
-  /// (full-chapter recording, not tied to a verse) → open AudioListPage
-  /// instead, since ChapterReaderPage would be the wrong context for it.
   void _navigateToTarget(String? chapterId, {String? verseId}) {
-    final hasVerse = verseId != null && verseId.isNotEmpty;
-    final hasChapter = chapterId != null && chapterId.isNotEmpty;
-    if (!hasVerse && !hasChapter) return;
+    final path = fcmTargetPath(chapterId, verseId: verseId);
+    if (path == null) return;
 
     void attempt() {
       final context = rootNavigatorKey.currentContext;
       if (context != null && context.mounted) {
-        final path = hasVerse
-            ? '/chapter/$chapterId?verseId=$verseId'
-            : AudioListPage.routePath;
         GoRouter.of(context).go(path);
       } else {
         WidgetsBinding.instance.addPostFrameCallback((_) => attempt());
