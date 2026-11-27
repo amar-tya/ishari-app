@@ -11,13 +11,25 @@ abstract interface class AuthRemoteDataSource {
   /// Authenticate via Google OAuth and return the signed-in [UserModel].
   Future<UserModel> signInWithGoogle();
 
-  /// Sign out from Supabase and revoke the Google Sign-In token.
+  /// Remove the Supabase session from this device, then sign out of Google.
+  ///
+  /// Succeeds even if the server or Google cannot be reached: the refresh
+  /// token is then not revoked server-side, only removed from the device.
+  /// Throws [ServerException] if the local sign-out itself fails.
   Future<void> signOut();
 
   /// Return the current Supabase user, or null if not authenticated.
   Future<UserModel?> getCurrentUser();
 
-  /// Stream that emits [UserModel] on login and null on logout.
+  /// Stream that emits [UserModel] on login and null on logout. Refresh
+  /// failures arrive as stream errors.
+  ///
+  /// Known SDK limitations (gotrue 2.19.0) that the app cannot work around:
+  /// - Only network errors and 5xx keep the session when a refresh fails. Any
+  ///   other response, such as a 429 or a proxy or captive portal error page
+  ///   with a non-2xx status, signs the user out.
+  /// - A refresh already in flight during sign-out can save its session again,
+  ///   so the next cold start may be signed in.
   Stream<UserModel?> get authStateChanges;
 }
 
@@ -117,12 +129,32 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<void> signOut() async {
     try {
-      await Future.wait<void>([
-        _supabaseClient.auth.signOut(),
-        GoogleSignIn.instance.signOut(),
-      ]);
+      await _supabaseClient.auth.signOut();
+    } on AuthException catch (e, stackTrace) {
+      // The SDK removes the local session and emits signedOut before it calls
+      // the server, so only the server-side logout failed.
+      appLogger.w(
+        '[Auth] Server logout failed',
+        error: e,
+        stackTrace: stackTrace,
+      );
     } catch (e) {
       throw ServerException(message: e.toString());
+    } finally {
+      await _signOutOfGoogle();
+    }
+  }
+
+  Future<void> _signOutOfGoogle() async {
+    try {
+      await _initializationFuture;
+      await GoogleSignIn.instance.signOut();
+    } on Object catch (e, stackTrace) {
+      appLogger.w(
+        '[GoogleSignIn] Sign-out failed',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 

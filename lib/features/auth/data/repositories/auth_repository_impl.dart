@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:ishari/core/errors/exceptions.dart';
 import 'package:ishari/core/errors/failures.dart';
 import 'package:ishari/core/network/network_info.dart';
+import 'package:ishari/core/utils/app_logger.dart';
 import 'package:ishari/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:ishari/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:ishari/features/auth/domain/entities/user_entity.dart';
@@ -10,9 +11,9 @@ import 'package:ishari/features/auth/domain/repositories/auth_repository.dart';
 
 /// Concrete implementation of [AuthRepository].
 ///
-/// Strategy:
-/// - Online  → call remote, cache result locally
-/// - Offline → fall back to cached user (read-only)
+/// The Supabase SDK session is the only source of truth for who is signed in:
+/// the SDK persists it and restores it offline. Local storage is only touched
+/// to delete the user copy that older app versions cached.
 @LazySingleton(as: AuthRepository)
 class AuthRepositoryImpl implements AuthRepository {
   const AuthRepositoryImpl(
@@ -32,7 +33,6 @@ class AuthRepositoryImpl implements AuthRepository {
     }
     try {
       final model = await _remote.signInWithGoogle();
-      await _local.cacheUser(model);
       return right(model.toEntity());
     } on CanceledSignInException {
       return left(const CanceledFailure());
@@ -45,31 +45,20 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, Unit>> signOut() async {
     try {
       await _remote.signOut();
-      await _local.clearCachedUser();
       return right(unit);
     } on ServerException catch (e) {
       return left(ServerFailure(message: e.message));
-    } on CacheException catch (e) {
-      return left(CacheFailure(message: e.message));
+    } finally {
+      await _clearLegacyCache();
     }
   }
 
   @override
   Future<Either<Failure, UserEntity?>> getCurrentUser() async {
     try {
-      if (await _networkInfo.isConnected) {
-        final model = await _remote.getCurrentUser();
-        if (model != null) await _local.cacheUser(model);
-        return right(model?.toEntity());
-      } else {
-        // Offline: attempt to read from cache
-        try {
-          final cached = await _local.getCachedUser();
-          return right(cached.toEntity());
-        } on CacheException {
-          return right(null);
-        }
-      }
+      final model = await _remote.getCurrentUser();
+      if (model == null) await _clearLegacyCache();
+      return right(model?.toEntity());
     } on ServerException catch (e) {
       return left(ServerFailure(message: e.message));
     }
@@ -78,5 +67,14 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Stream<UserEntity?> get authStateChanges {
     return _remote.authStateChanges.map((model) => model?.toEntity());
+  }
+
+  /// Best effort: nothing reads the cache, so a failure must not fail auth.
+  Future<void> _clearLegacyCache() async {
+    try {
+      await _local.clearCachedUser();
+    } on CacheException catch (e) {
+      appLogger.w('[Auth] Could not clear the legacy user cache', error: e);
+    }
   }
 }
