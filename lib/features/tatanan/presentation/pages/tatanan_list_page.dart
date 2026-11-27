@@ -63,11 +63,8 @@ class _TatananListPageState extends State<TatananListPage> {
           identify: 'add_btn',
           keyTarget: _addBtnKey,
           shape: ShapeLightFocus.Circle,
-          enableOverlayTab: false,
-          enableTargetTab: true,
           contents: [
             TargetContent(
-              align: ContentAlign.bottom,
               builder: (_, __) => _TatananTooltip(
                 step: '4/4',
                 title: 'Buat Tatanan',

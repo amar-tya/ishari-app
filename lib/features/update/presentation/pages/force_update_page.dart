@@ -26,7 +26,6 @@ class ForceUpdatePage extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 48),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Spacer(),
                 const Icon(Icons.system_update_rounded, size: 72, color: Color(0xFF51C878)),

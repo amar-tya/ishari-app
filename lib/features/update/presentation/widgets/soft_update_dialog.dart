@@ -24,7 +24,6 @@ class SoftUpdateDialog extends StatelessWidget {
   }) {
     return showDialog<void>(
       context: context,
-      barrierDismissible: true,
       builder: (_) => SoftUpdateDialog(
         latestVersion: latestVersion,
         storeUrl: storeUrl,

@@ -225,8 +225,6 @@ class _MainScaffoldState extends State<MainScaffold> with RouteAware {
       keyTarget: key,
       shape: ShapeLightFocus.RRect,
       radius: 30,
-      enableOverlayTab: false,
-      enableTargetTab: true,
       contents: [
         TargetContent(
           align: ContentAlign.top,
