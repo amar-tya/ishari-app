@@ -15,6 +15,10 @@ class UpdateCubit extends Cubit<UpdateState> {
 
   final CheckForUpdate _checkForUpdate;
 
+  /// The splash waits for this check, so a slow or captive network must not
+  /// hold it. A timeout counts as up to date.
+  static const _checkTimeout = Duration(seconds: 5);
+
   Future<void> check() async {
     emit(const UpdateState.checking());
     try {
@@ -22,7 +26,7 @@ class UpdateCubit extends Cubit<UpdateState> {
       final packageInfo = await PackageInfo.fromPlatform();
       final currentVersion = packageInfo.version;
 
-      final result = await _checkForUpdate(platform);
+      final result = await _checkForUpdate(platform).timeout(_checkTimeout);
       result.fold(
         // Fail silently — never block the user for an update check error.
         (failure) => emit(UpdateState.error(failure.message)),

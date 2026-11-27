@@ -22,11 +22,15 @@ import 'package:ishari/features/introduction/presentation/pages/introduction_pag
 import 'package:ishari/features/push_notification/data/services/fcm_service.dart';
 import 'package:ishari/features/splash/presentation/widgets/book_logo_painter.dart';
 import 'package:ishari/features/splash/presentation/widgets/loading_bar.dart';
+import 'package:ishari/features/splash/presentation/widgets/startup_error_view.dart';
+import 'package:ishari/features/splash/startup/startup_controller.dart';
+import 'package:ishari/features/splash/startup/startup_steps.dart';
 import 'package:ishari/features/update/presentation/cubit/update_cubit.dart';
 import 'package:ishari/features/update/presentation/pages/force_update_page.dart';
 import 'package:ishari/features/update/presentation/widgets/soft_update_dialog.dart';
 import 'package:ishari/firebase_options.dart';
 import 'package:ishari/injection_container.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 // Hide conflicting names exported by third-party packages.
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
 import 'package:wakelock_plus/wakelock_plus.dart';
@@ -37,8 +41,12 @@ const _muted = Color(0xFF777777);
 
 /// Shown immediately on launch. Handles all heavy initialization while
 /// displaying the branded splash UI, then swaps to [IshariApp] once ready.
+/// If startup fails or takes too long it shows [StartupErrorView] instead.
 class AppLoader extends StatefulWidget {
-  const AppLoader({super.key});
+  const AppLoader({super.key, @visibleForTesting this.controller});
+
+  /// Replaces the real startup sequence in tests.
+  final StartupController? controller;
 
   @override
   State<AppLoader> createState() => _AppLoaderState();
@@ -48,15 +56,9 @@ class _AppLoaderState extends State<AppLoader> {
   final _navigatorKey = GlobalKey<NavigatorState>();
 
   bool _minTimerElapsed = false;
-  bool _initDone = false;
-  bool _authResolved = false;
-  bool _updateResolved = false;
   bool _navigating = false;
 
-  late AuthBloc _authBloc;
-  late UpdateCubit _updateCubit;
-  StreamSubscription<AuthState>? _authSub;
-  StreamSubscription<UpdateState>? _updateSub;
+  late final StartupController _startup;
 
   Widget? _app;
 
@@ -68,10 +70,28 @@ class _AppLoaderState extends State<AppLoader> {
       _minTimerElapsed = true;
       _tryNavigate();
     });
-    unawaited(_initialize());
+    _startup = widget.controller ?? _createStartupController();
+    _startup.addListener(_tryNavigate);
+    unawaited(_startup.start());
   }
 
-  Future<void> _initialize() async {
+  StartupController _createStartupController() => StartupController(
+    initialize: _initialize,
+    createAuthBloc: sl.get<AuthBloc>,
+    resolveUpdateCubit: sl.get<UpdateCubit>,
+    // Non-critical and never awaited — don't block splash. FCM init waits on
+    // the notification permission dialog.
+    backgroundTasks: {
+      'ads': _initAds,
+      'wakelock': WakelockPlus.enable,
+      'fcm': () => sl<FcmService>().init(),
+      'feature_flags': () => sl<FeatureFlagsService>().initialize(),
+    },
+    reportError: _reportStartupError,
+  );
+
+  /// The critical part of startup. Safe to run again after a failure.
+  Future<void> _initialize(StartupSteps steps) async {
     // FlutterError.onError (below) already reports to Crashlytics/Sentry
     // before this builder runs — it only supplies the replacement widget, so
     // users get a recoverable screen instead of Flutter's blank/grey
@@ -112,9 +132,34 @@ class _AppLoaderState extends State<AppLoader> {
     GoogleFonts.config.allowRuntimeFetching = false;
     AppEnv.validate();
 
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
+    await steps.runOnce(
+      'firebase',
+      () => Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      ),
     );
+    // Once only: a second pass would wrap the handlers again and report every
+    // error twice.
+    await steps.runOnce('crash_handlers', _installCrashHandlers);
+    await steps.runOnce(
+      'supabase',
+      () => Supabase.initialize(
+        url: AppEnv.supabaseUrl,
+        anonKey: AppEnv.supabaseAnonKey,
+      ),
+    );
+    await steps.runOnce(
+      'dependencies',
+      () => registerWithRollback(sl, () async {
+        await configureDependencies();
+        sl.registerSingleton<WizardCubit>(
+          WizardCubit(sl<FlutterSecureStorage>()),
+        );
+      }),
+    );
+  }
+
+  Future<void> _installCrashHandlers() async {
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
     await FirebaseCrashlytics.instance
         .setCrashlyticsCollectionEnabled(!AppEnv.isDevelopment);
@@ -129,92 +174,63 @@ class _AppLoaderState extends State<AppLoader> {
       sentryPlatformErrorHandler?.call(error, stack);
       return true;
     };
-    await Supabase.initialize(
-      url: AppEnv.supabaseUrl,
-      anonKey: AppEnv.supabaseAnonKey,
-    );
-    await configureDependencies();
-    sl.registerSingleton<WizardCubit>(WizardCubit(sl<FlutterSecureStorage>()));
+  }
 
-    // Non-critical — don't block splash
+  Future<void> _initAds() async {
+    await MobileAds.instance.initialize();
+    if (AppEnv.isDevelopment) {
+      final testIds = AppEnv.admobTestDeviceIds;
+      if (testIds.isNotEmpty) {
+        await MobileAds.instance.updateRequestConfiguration(
+          RequestConfiguration(testDeviceIds: testIds),
+        );
+      }
+    }
+    InterstitialAdManager.instance.preload();
+  }
+
+  /// Sentry is set up in `main()`, so it is always available. Crashlytics only
+  /// is once Firebase initialized.
+  void _reportStartupError(Object error, StackTrace stack) {
+    debugPrint('Startup error: $error');
+    debugPrintStack(stackTrace: stack);
     unawaited(
-      MobileAds.instance.initialize().then((_) async {
-        if (AppEnv.isDevelopment) {
-          final testIds = AppEnv.admobTestDeviceIds;
-          if (testIds.isNotEmpty) {
-            await MobileAds.instance.updateRequestConfiguration(
-              RequestConfiguration(testDeviceIds: testIds),
-            );
-          }
-        }
-        InterstitialAdManager.instance.preload();
+      _ignoringFailure(
+        () => Sentry.captureException(error, stackTrace: stack),
+      ),
+    );
+    unawaited(
+      _ignoringFailure(() async {
+        if (Firebase.apps.isEmpty) return;
+        await FirebaseCrashlytics.instance.recordError(
+          error,
+          stack,
+          reason: 'startup',
+        );
       }),
     );
-    unawaited(WakelockPlus.enable());
-    unawaited(sl<FcmService>().init());
-    unawaited(sl<FeatureFlagsService>().initialize());
+  }
 
-    // Auth check — use same instance passed to IshariApp later
-    _authBloc = sl<AuthBloc>();
-    _authSub = _authBloc.stream.listen((state) {
-      if (!mounted) return;
-      final resolved = state.maybeWhen(
-        initial: () => false,
-        loading: () => false,
-        orElse: () => true,
-      );
-      if (resolved) {
-        _authResolved = true;
-        _tryNavigate();
-      }
-    });
-    _authBloc.add(const AuthEvent.checkAuthStatus());
-
-    // Update check
-    _updateCubit = sl<UpdateCubit>();
-    _updateSub = _updateCubit.stream.listen((state) {
-      if (!mounted) return;
-      final resolved = state.maybeWhen(
-        initial: () => false,
-        checking: () => false,
-        orElse: () => true,
-      );
-      if (resolved) {
-        _updateResolved = true;
-        _tryNavigate();
-      }
-    });
-    unawaited(_updateCubit.check());
-
-    // Catch already-resolved states (fast response / cached)
-    _authResolved = _authBloc.state.maybeWhen(
-      initial: () => false,
-      loading: () => false,
-      orElse: () => true,
-    );
-    _updateResolved = _updateCubit.state.maybeWhen(
-      initial: () => false,
-      checking: () => false,
-      orElse: () => true,
-    );
-
-    _initDone = true;
-    _tryNavigate();
+  Future<void> _ignoringFailure(Future<void> Function() report) async {
+    try {
+      await report();
+    } on Object catch (_) {
+      // There is nowhere left to report a failing reporter to.
+    }
   }
 
   void _tryNavigate() {
     if (_navigating) return;
     if (!_minTimerElapsed) return;
-    if (!_initDone) return;
-    if (!_authResolved) return;
-    if (!_updateResolved) return;
+    if (_startup.status != StartupStatus.ready) return;
     if (!mounted) return;
     _navigating = true;
     unawaited(_doNavigate());
   }
 
   Future<void> _doNavigate() async {
-    final updateState = _updateCubit.state;
+    final authBloc = _startup.authBloc!;
+    final updateState = _startup.updateCubit!.state;
 
     // Force update — dead-end screen, shown outside IshariApp router
     final isForceUpdate = updateState.maybeWhen(
@@ -260,7 +276,7 @@ class _AppLoaderState extends State<AppLoader> {
     if (!mounted) return;
 
     final hasAccess =
-        _authBloc.state.maybeWhen(
+        authBloc.state.maybeWhen(
           authenticated: (_) => true,
           orElse: () => false,
         ) ||
@@ -268,7 +284,7 @@ class _AppLoaderState extends State<AppLoader> {
 
     setState(() {
       _app = IshariApp(
-        authBloc: _authBloc,
+        authBloc: authBloc,
         initialLocation:
             hasAccess ? HomePage.routePath : IntroductionPage.routePath,
       );
@@ -277,8 +293,9 @@ class _AppLoaderState extends State<AppLoader> {
 
   @override
   void dispose() {
-    unawaited(_authSub?.cancel());
-    unawaited(_updateSub?.cancel());
+    _startup
+      ..removeListener(_tryNavigate)
+      ..dispose();
     super.dispose();
   }
 
@@ -294,7 +311,12 @@ class _AppLoaderState extends State<AppLoader> {
         ),
         useMaterial3: true,
       ),
-      home: const _SplashBody(),
+      home: ListenableBuilder(
+        listenable: _startup,
+        builder: (context, _) => _startup.status == StartupStatus.failed
+            ? StartupErrorView(onRetry: () => unawaited(_startup.start()))
+            : const _SplashBody(),
+      ),
     );
   }
 }
