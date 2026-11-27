@@ -22,6 +22,7 @@ class HadiAudioGroupSection extends StatelessWidget {
     required this.tracks,
     required this.playingId,
     required this.isLoading,
+    required this.isPlaying,
     required this.onTrackTap,
     super.key,
   });
@@ -30,6 +31,7 @@ class HadiAudioGroupSection extends StatelessWidget {
   final List<HadiAudioEntity> tracks;
   final int? playingId;
   final bool isLoading;
+  final bool isPlaying;
   final ValueChanged<HadiAudioEntity> onTrackTap;
 
   @override
@@ -52,7 +54,8 @@ class HadiAudioGroupSection extends StatelessWidget {
           for (final track in tracks)
             _TrackRow(
               track: track,
-              isPlaying: playingId == track.id,
+              isCurrent: playingId == track.id,
+              isPlaying: isPlaying && playingId == track.id,
               isLoading: isLoading && playingId == track.id,
               onTap: () => onTrackTap(track),
             ),
@@ -65,12 +68,14 @@ class HadiAudioGroupSection extends StatelessWidget {
 class _TrackRow extends StatelessWidget {
   const _TrackRow({
     required this.track,
+    required this.isCurrent,
     required this.isPlaying,
     required this.isLoading,
     required this.onTap,
   });
 
   final HadiAudioEntity track;
+  final bool isCurrent;
   final bool isPlaying;
   final bool isLoading;
   final VoidCallback onTap;
@@ -97,7 +102,7 @@ class _TrackRow extends StatelessWidget {
               height: 38,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: isPlaying ? _kLime : _kDark,
+                color: isCurrent ? _kLime : _kDark,
               ),
               alignment: Alignment.center,
               child: isLoading
@@ -106,7 +111,7 @@ class _TrackRow extends StatelessWidget {
                       height: 16,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: isPlaying ? _kDark : _kLime,
+                        color: isCurrent ? _kDark : _kLime,
                       ),
                     )
                   : Icon(
@@ -114,7 +119,7 @@ class _TrackRow extends StatelessWidget {
                           ? Icons.pause_rounded
                           : Icons.play_arrow_rounded,
                       size: 19,
-                      color: isPlaying ? _kDark : _kLime,
+                      color: isCurrent ? _kDark : _kLime,
                     ),
             ),
             const SizedBox(width: 12),

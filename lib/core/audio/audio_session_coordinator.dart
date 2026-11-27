@@ -4,10 +4,11 @@ import 'package:injectable/injectable.dart';
 /// Which feature currently "owns" the single app-wide audio session.
 ///
 /// Only one owner may play sound at a time — `AudioListBloc` (audio catalog
-/// tracks) and `MuhudBloc` (per-verse chapter reader audio) each hold their
-/// own player, so nothing stops them from overlapping unless they
-/// coordinate through this.
-enum AudioSessionOwner { none, audioCatalog, muhudVerse }
+/// tracks), `MuhudBloc` (per-verse chapter reader audio) and
+/// `HadiDirectoryBloc` (hadi recordings) all drive the same shared
+/// `AudioPlaybackService`, so each has to know when another one has replaced
+/// what it was playing.
+enum AudioSessionOwner { none, audioCatalog, muhudVerse, hadi }
 
 /// App-wide "now playing" coordinator so at most one audio source plays at
 /// once. A bloc calls [claim] right before starting playback; whichever bloc

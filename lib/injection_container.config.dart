@@ -230,12 +230,6 @@ Future<_i174.GetIt> initDependencies(
       gh<_i75.NetworkInfo>(),
     ),
   );
-  gh.lazySingleton<_i878.HadiDirectoryBloc>(
-    () => _i878.HadiDirectoryBloc(
-      getAllHadi: gh<_i107.GetAllHadi>(),
-      getAllHadiAudio: gh<_i896.GetAllHadiAudio>(),
-    ),
-  );
   gh.lazySingleton<_i332.NotificationsRepository>(
     () => _i804.NotificationsRepositoryImpl(
       gh<_i555.NotificationsRemoteDatasource>(),
@@ -329,6 +323,14 @@ Future<_i174.GetIt> initDependencies(
   );
   gh.factory<_i851.UpdateBookmarkNote>(
     () => _i851.UpdateBookmarkNote(gh<_i681.MuhudRepository>()),
+  );
+  gh.lazySingleton<_i878.HadiDirectoryBloc>(
+    () => _i878.HadiDirectoryBloc(
+      getAllHadi: gh<_i107.GetAllHadi>(),
+      getAllHadiAudio: gh<_i896.GetAllHadiAudio>(),
+      playbackService: gh<_i504.AudioPlaybackService>(),
+      sessionCoordinator: gh<_i265.AudioSessionCoordinator>(),
+    ),
   );
   gh.factory<_i468.KitabBloc>(() => _i468.KitabBloc(gh<_i395.GetAllBooks>()));
   gh.factory<_i961.SearchChapters>(

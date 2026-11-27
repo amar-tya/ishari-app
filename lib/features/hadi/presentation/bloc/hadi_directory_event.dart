@@ -13,4 +13,12 @@ sealed class HadiDirectoryEvent with _$HadiDirectoryEvent {
   const factory HadiDirectoryEvent.playTrack(int audioId) = _PlayTrack;
 
   const factory HadiDirectoryEvent.stopAudio() = _StopAudio;
+
+  /// Another feature claimed the shared player.
+  const factory HadiDirectoryEvent.ownershipLost() = _OwnershipLost;
+
+  /// The shared player started or stopped producing sound, including through
+  /// the lockscreen/notification controls.
+  const factory HadiDirectoryEvent.playingChanged({required bool isPlaying}) =
+      _PlayingChanged;
 }

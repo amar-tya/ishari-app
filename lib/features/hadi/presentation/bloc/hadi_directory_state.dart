@@ -21,8 +21,13 @@ abstract class HadiDirectoryState with _$HadiDirectoryState {
     @Default(<HadiSummaryEntity>[]) List<HadiSummaryEntity> hadiList,
     @Default(<HadiAudioEntity>[]) List<HadiAudioEntity> audioList,
     @Default('') String searchQuery,
+    // Id of the loaded/current track — stays set while paused, only clears
+    // on stop/completion/losing ownership of the shared player.
     int? playingAudioId,
     @Default(false) bool isAudioLoading,
+    // Actually producing sound right now — distinct from
+    // `playingAudioId != null` (loaded), since a loaded track can be paused.
+    @Default(false) bool isPlaying,
     String? errorMessage,
     // Bumped on every fetch completion so RefreshIndicator's stream.firstWhere
     // can detect "done" even when the refreshed data is value-equal to the
