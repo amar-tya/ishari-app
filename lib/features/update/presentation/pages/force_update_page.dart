@@ -6,9 +6,9 @@ import 'package:url_launcher/url_launcher.dart';
 /// The user cannot navigate away — back button and swipe are disabled.
 class ForceUpdatePage extends StatelessWidget {
   const ForceUpdatePage({
-    super.key,
     required this.storeUrl,
     required this.releaseNotes,
+    super.key,
   });
 
   static const routePath = '/force-update';
