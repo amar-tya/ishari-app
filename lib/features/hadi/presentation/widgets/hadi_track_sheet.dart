@@ -37,8 +37,9 @@ class HadiTrackSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<HadiDirectoryBloc, HadiDirectoryState>(
       builder: (context, state) {
-        final isPlaying = state.playingAudioId == track.id;
-        final isLoading = isPlaying && state.isAudioLoading;
+        final isCurrent = state.playingAudioId == track.id;
+        final isPlaying = isCurrent && state.isPlaying;
+        final isLoading = isCurrent && state.isAudioLoading;
 
         return Container(
           decoration: const BoxDecoration(
@@ -156,11 +157,13 @@ class HadiTrackSheet extends StatelessWidget {
                           ? 'Memuat audio…'
                           : isPlaying
                           ? 'Sedang diputar'
+                          : isCurrent
+                          ? 'Dijeda'
                           : 'Tap untuk memutar',
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
-                        color: isPlaying ? _kDark : _kMute,
+                        color: isCurrent ? _kDark : _kMute,
                       ),
                     ),
                   ],

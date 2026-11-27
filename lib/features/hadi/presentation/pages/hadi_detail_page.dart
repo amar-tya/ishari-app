@@ -229,6 +229,7 @@ class _HadiDetailContent extends StatelessWidget {
                       tracks: entry.value,
                       playingId: state.playingAudioId,
                       isLoading: state.isAudioLoading,
+                      isPlaying: state.isPlaying,
                       onTrackTap: (track) =>
                           HadiTrackSheet.show(context, track),
                     ),
@@ -249,7 +250,7 @@ class _HadiDetailContent extends StatelessWidget {
             child: HadiMiniPlayer(
               title: playingTrack.chapterTitle,
               subtitle: hadi.name,
-              isPlaying: !state.isAudioLoading,
+              isPlaying: state.isPlaying,
               onToggle: () => context.read<HadiDirectoryBloc>().add(
                 HadiDirectoryEvent.playTrack(playingTrack.id),
               ),

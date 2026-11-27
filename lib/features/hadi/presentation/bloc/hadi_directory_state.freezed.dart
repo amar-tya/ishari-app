@@ -14,7 +14,11 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$HadiDirectoryState {
 
- HadiDirectoryStatus get status; List<HadiSummaryEntity> get hadiList; List<HadiAudioEntity> get audioList; String get searchQuery; int? get playingAudioId; bool get isAudioLoading; String? get errorMessage;// Bumped on every fetch completion so RefreshIndicator's stream.firstWhere
+ HadiDirectoryStatus get status; List<HadiSummaryEntity> get hadiList; List<HadiAudioEntity> get audioList; String get searchQuery;// Id of the loaded/current track — stays set while paused, only clears
+// on stop/completion/losing ownership of the shared player.
+ int? get playingAudioId; bool get isAudioLoading;// Actually producing sound right now — distinct from
+// `playingAudioId != null` (loaded), since a loaded track can be paused.
+ bool get isPlaying; String? get errorMessage;// Bumped on every fetch completion so RefreshIndicator's stream.firstWhere
 // can detect "done" even when the refreshed data is value-equal to the
 // previous state (freezed equality would otherwise never emit a change).
  int get refreshTick;
@@ -28,16 +32,16 @@ $HadiDirectoryStateCopyWith<HadiDirectoryState> get copyWith => _$HadiDirectoryS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is HadiDirectoryState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.hadiList, hadiList)&&const DeepCollectionEquality().equals(other.audioList, audioList)&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery)&&(identical(other.playingAudioId, playingAudioId) || other.playingAudioId == playingAudioId)&&(identical(other.isAudioLoading, isAudioLoading) || other.isAudioLoading == isAudioLoading)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.refreshTick, refreshTick) || other.refreshTick == refreshTick));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is HadiDirectoryState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.hadiList, hadiList)&&const DeepCollectionEquality().equals(other.audioList, audioList)&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery)&&(identical(other.playingAudioId, playingAudioId) || other.playingAudioId == playingAudioId)&&(identical(other.isAudioLoading, isAudioLoading) || other.isAudioLoading == isAudioLoading)&&(identical(other.isPlaying, isPlaying) || other.isPlaying == isPlaying)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.refreshTick, refreshTick) || other.refreshTick == refreshTick));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(hadiList),const DeepCollectionEquality().hash(audioList),searchQuery,playingAudioId,isAudioLoading,errorMessage,refreshTick);
+int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(hadiList),const DeepCollectionEquality().hash(audioList),searchQuery,playingAudioId,isAudioLoading,isPlaying,errorMessage,refreshTick);
 
 @override
 String toString() {
-  return 'HadiDirectoryState(status: $status, hadiList: $hadiList, audioList: $audioList, searchQuery: $searchQuery, playingAudioId: $playingAudioId, isAudioLoading: $isAudioLoading, errorMessage: $errorMessage, refreshTick: $refreshTick)';
+  return 'HadiDirectoryState(status: $status, hadiList: $hadiList, audioList: $audioList, searchQuery: $searchQuery, playingAudioId: $playingAudioId, isAudioLoading: $isAudioLoading, isPlaying: $isPlaying, errorMessage: $errorMessage, refreshTick: $refreshTick)';
 }
 
 
@@ -48,7 +52,7 @@ abstract mixin class $HadiDirectoryStateCopyWith<$Res>  {
   factory $HadiDirectoryStateCopyWith(HadiDirectoryState value, $Res Function(HadiDirectoryState) _then) = _$HadiDirectoryStateCopyWithImpl;
 @useResult
 $Res call({
- HadiDirectoryStatus status, List<HadiSummaryEntity> hadiList, List<HadiAudioEntity> audioList, String searchQuery, int? playingAudioId, bool isAudioLoading, String? errorMessage, int refreshTick
+ HadiDirectoryStatus status, List<HadiSummaryEntity> hadiList, List<HadiAudioEntity> audioList, String searchQuery, int? playingAudioId, bool isAudioLoading, bool isPlaying, String? errorMessage, int refreshTick
 });
 
 
@@ -65,7 +69,7 @@ class _$HadiDirectoryStateCopyWithImpl<$Res>
 
 /// Create a copy of HadiDirectoryState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? hadiList = null,Object? audioList = null,Object? searchQuery = null,Object? playingAudioId = freezed,Object? isAudioLoading = null,Object? errorMessage = freezed,Object? refreshTick = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? hadiList = null,Object? audioList = null,Object? searchQuery = null,Object? playingAudioId = freezed,Object? isAudioLoading = null,Object? isPlaying = null,Object? errorMessage = freezed,Object? refreshTick = null,}) {
   return _then(_self.copyWith(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as HadiDirectoryStatus,hadiList: null == hadiList ? _self.hadiList : hadiList // ignore: cast_nullable_to_non_nullable
@@ -73,6 +77,7 @@ as List<HadiSummaryEntity>,audioList: null == audioList ? _self.audioList : audi
 as List<HadiAudioEntity>,searchQuery: null == searchQuery ? _self.searchQuery : searchQuery // ignore: cast_nullable_to_non_nullable
 as String,playingAudioId: freezed == playingAudioId ? _self.playingAudioId : playingAudioId // ignore: cast_nullable_to_non_nullable
 as int?,isAudioLoading: null == isAudioLoading ? _self.isAudioLoading : isAudioLoading // ignore: cast_nullable_to_non_nullable
+as bool,isPlaying: null == isPlaying ? _self.isPlaying : isPlaying // ignore: cast_nullable_to_non_nullable
 as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
 as String?,refreshTick: null == refreshTick ? _self.refreshTick : refreshTick // ignore: cast_nullable_to_non_nullable
 as int,
@@ -160,10 +165,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( HadiDirectoryStatus status,  List<HadiSummaryEntity> hadiList,  List<HadiAudioEntity> audioList,  String searchQuery,  int? playingAudioId,  bool isAudioLoading,  String? errorMessage,  int refreshTick)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( HadiDirectoryStatus status,  List<HadiSummaryEntity> hadiList,  List<HadiAudioEntity> audioList,  String searchQuery,  int? playingAudioId,  bool isAudioLoading,  bool isPlaying,  String? errorMessage,  int refreshTick)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _HadiDirectoryState() when $default != null:
-return $default(_that.status,_that.hadiList,_that.audioList,_that.searchQuery,_that.playingAudioId,_that.isAudioLoading,_that.errorMessage,_that.refreshTick);case _:
+return $default(_that.status,_that.hadiList,_that.audioList,_that.searchQuery,_that.playingAudioId,_that.isAudioLoading,_that.isPlaying,_that.errorMessage,_that.refreshTick);case _:
   return orElse();
 
 }
@@ -181,10 +186,10 @@ return $default(_that.status,_that.hadiList,_that.audioList,_that.searchQuery,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( HadiDirectoryStatus status,  List<HadiSummaryEntity> hadiList,  List<HadiAudioEntity> audioList,  String searchQuery,  int? playingAudioId,  bool isAudioLoading,  String? errorMessage,  int refreshTick)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( HadiDirectoryStatus status,  List<HadiSummaryEntity> hadiList,  List<HadiAudioEntity> audioList,  String searchQuery,  int? playingAudioId,  bool isAudioLoading,  bool isPlaying,  String? errorMessage,  int refreshTick)  $default,) {final _that = this;
 switch (_that) {
 case _HadiDirectoryState():
-return $default(_that.status,_that.hadiList,_that.audioList,_that.searchQuery,_that.playingAudioId,_that.isAudioLoading,_that.errorMessage,_that.refreshTick);case _:
+return $default(_that.status,_that.hadiList,_that.audioList,_that.searchQuery,_that.playingAudioId,_that.isAudioLoading,_that.isPlaying,_that.errorMessage,_that.refreshTick);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +206,10 @@ return $default(_that.status,_that.hadiList,_that.audioList,_that.searchQuery,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( HadiDirectoryStatus status,  List<HadiSummaryEntity> hadiList,  List<HadiAudioEntity> audioList,  String searchQuery,  int? playingAudioId,  bool isAudioLoading,  String? errorMessage,  int refreshTick)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( HadiDirectoryStatus status,  List<HadiSummaryEntity> hadiList,  List<HadiAudioEntity> audioList,  String searchQuery,  int? playingAudioId,  bool isAudioLoading,  bool isPlaying,  String? errorMessage,  int refreshTick)?  $default,) {final _that = this;
 switch (_that) {
 case _HadiDirectoryState() when $default != null:
-return $default(_that.status,_that.hadiList,_that.audioList,_that.searchQuery,_that.playingAudioId,_that.isAudioLoading,_that.errorMessage,_that.refreshTick);case _:
+return $default(_that.status,_that.hadiList,_that.audioList,_that.searchQuery,_that.playingAudioId,_that.isAudioLoading,_that.isPlaying,_that.errorMessage,_that.refreshTick);case _:
   return null;
 
 }
@@ -216,7 +221,7 @@ return $default(_that.status,_that.hadiList,_that.audioList,_that.searchQuery,_t
 
 
 class _HadiDirectoryState extends HadiDirectoryState {
-  const _HadiDirectoryState({this.status = HadiDirectoryStatus.initial, final  List<HadiSummaryEntity> hadiList = const <HadiSummaryEntity>[], final  List<HadiAudioEntity> audioList = const <HadiAudioEntity>[], this.searchQuery = '', this.playingAudioId, this.isAudioLoading = false, this.errorMessage, this.refreshTick = 0}): _hadiList = hadiList,_audioList = audioList,super._();
+  const _HadiDirectoryState({this.status = HadiDirectoryStatus.initial, final  List<HadiSummaryEntity> hadiList = const <HadiSummaryEntity>[], final  List<HadiAudioEntity> audioList = const <HadiAudioEntity>[], this.searchQuery = '', this.playingAudioId, this.isAudioLoading = false, this.isPlaying = false, this.errorMessage, this.refreshTick = 0}): _hadiList = hadiList,_audioList = audioList,super._();
   
 
 @override@JsonKey() final  HadiDirectoryStatus status;
@@ -235,8 +240,13 @@ class _HadiDirectoryState extends HadiDirectoryState {
 }
 
 @override@JsonKey() final  String searchQuery;
+// Id of the loaded/current track — stays set while paused, only clears
+// on stop/completion/losing ownership of the shared player.
 @override final  int? playingAudioId;
 @override@JsonKey() final  bool isAudioLoading;
+// Actually producing sound right now — distinct from
+// `playingAudioId != null` (loaded), since a loaded track can be paused.
+@override@JsonKey() final  bool isPlaying;
 @override final  String? errorMessage;
 // Bumped on every fetch completion so RefreshIndicator's stream.firstWhere
 // can detect "done" even when the refreshed data is value-equal to the
@@ -253,16 +263,16 @@ _$HadiDirectoryStateCopyWith<_HadiDirectoryState> get copyWith => __$HadiDirecto
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HadiDirectoryState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other._hadiList, _hadiList)&&const DeepCollectionEquality().equals(other._audioList, _audioList)&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery)&&(identical(other.playingAudioId, playingAudioId) || other.playingAudioId == playingAudioId)&&(identical(other.isAudioLoading, isAudioLoading) || other.isAudioLoading == isAudioLoading)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.refreshTick, refreshTick) || other.refreshTick == refreshTick));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HadiDirectoryState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other._hadiList, _hadiList)&&const DeepCollectionEquality().equals(other._audioList, _audioList)&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery)&&(identical(other.playingAudioId, playingAudioId) || other.playingAudioId == playingAudioId)&&(identical(other.isAudioLoading, isAudioLoading) || other.isAudioLoading == isAudioLoading)&&(identical(other.isPlaying, isPlaying) || other.isPlaying == isPlaying)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.refreshTick, refreshTick) || other.refreshTick == refreshTick));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_hadiList),const DeepCollectionEquality().hash(_audioList),searchQuery,playingAudioId,isAudioLoading,errorMessage,refreshTick);
+int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_hadiList),const DeepCollectionEquality().hash(_audioList),searchQuery,playingAudioId,isAudioLoading,isPlaying,errorMessage,refreshTick);
 
 @override
 String toString() {
-  return 'HadiDirectoryState(status: $status, hadiList: $hadiList, audioList: $audioList, searchQuery: $searchQuery, playingAudioId: $playingAudioId, isAudioLoading: $isAudioLoading, errorMessage: $errorMessage, refreshTick: $refreshTick)';
+  return 'HadiDirectoryState(status: $status, hadiList: $hadiList, audioList: $audioList, searchQuery: $searchQuery, playingAudioId: $playingAudioId, isAudioLoading: $isAudioLoading, isPlaying: $isPlaying, errorMessage: $errorMessage, refreshTick: $refreshTick)';
 }
 
 
@@ -273,7 +283,7 @@ abstract mixin class _$HadiDirectoryStateCopyWith<$Res> implements $HadiDirector
   factory _$HadiDirectoryStateCopyWith(_HadiDirectoryState value, $Res Function(_HadiDirectoryState) _then) = __$HadiDirectoryStateCopyWithImpl;
 @override @useResult
 $Res call({
- HadiDirectoryStatus status, List<HadiSummaryEntity> hadiList, List<HadiAudioEntity> audioList, String searchQuery, int? playingAudioId, bool isAudioLoading, String? errorMessage, int refreshTick
+ HadiDirectoryStatus status, List<HadiSummaryEntity> hadiList, List<HadiAudioEntity> audioList, String searchQuery, int? playingAudioId, bool isAudioLoading, bool isPlaying, String? errorMessage, int refreshTick
 });
 
 
@@ -290,7 +300,7 @@ class __$HadiDirectoryStateCopyWithImpl<$Res>
 
 /// Create a copy of HadiDirectoryState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? hadiList = null,Object? audioList = null,Object? searchQuery = null,Object? playingAudioId = freezed,Object? isAudioLoading = null,Object? errorMessage = freezed,Object? refreshTick = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? hadiList = null,Object? audioList = null,Object? searchQuery = null,Object? playingAudioId = freezed,Object? isAudioLoading = null,Object? isPlaying = null,Object? errorMessage = freezed,Object? refreshTick = null,}) {
   return _then(_HadiDirectoryState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as HadiDirectoryStatus,hadiList: null == hadiList ? _self._hadiList : hadiList // ignore: cast_nullable_to_non_nullable
@@ -298,6 +308,7 @@ as List<HadiSummaryEntity>,audioList: null == audioList ? _self._audioList : aud
 as List<HadiAudioEntity>,searchQuery: null == searchQuery ? _self.searchQuery : searchQuery // ignore: cast_nullable_to_non_nullable
 as String,playingAudioId: freezed == playingAudioId ? _self.playingAudioId : playingAudioId // ignore: cast_nullable_to_non_nullable
 as int?,isAudioLoading: null == isAudioLoading ? _self.isAudioLoading : isAudioLoading // ignore: cast_nullable_to_non_nullable
+as bool,isPlaying: null == isPlaying ? _self.isPlaying : isPlaying // ignore: cast_nullable_to_non_nullable
 as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
 as String?,refreshTick: null == refreshTick ? _self.refreshTick : refreshTick // ignore: cast_nullable_to_non_nullable
 as int,

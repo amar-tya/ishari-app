@@ -55,14 +55,16 @@ extension HadiDirectoryEventPatterns on HadiDirectoryEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _LoadAll value)?  loadAll,TResult Function( _SearchChanged value)?  searchChanged,TResult Function( _PlayTrack value)?  playTrack,TResult Function( _StopAudio value)?  stopAudio,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _LoadAll value)?  loadAll,TResult Function( _SearchChanged value)?  searchChanged,TResult Function( _PlayTrack value)?  playTrack,TResult Function( _StopAudio value)?  stopAudio,TResult Function( _OwnershipLost value)?  ownershipLost,TResult Function( _PlayingChanged value)?  playingChanged,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _LoadAll() when loadAll != null:
 return loadAll(_that);case _SearchChanged() when searchChanged != null:
 return searchChanged(_that);case _PlayTrack() when playTrack != null:
 return playTrack(_that);case _StopAudio() when stopAudio != null:
-return stopAudio(_that);case _:
+return stopAudio(_that);case _OwnershipLost() when ownershipLost != null:
+return ownershipLost(_that);case _PlayingChanged() when playingChanged != null:
+return playingChanged(_that);case _:
   return orElse();
 
 }
@@ -80,14 +82,16 @@ return stopAudio(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _LoadAll value)  loadAll,required TResult Function( _SearchChanged value)  searchChanged,required TResult Function( _PlayTrack value)  playTrack,required TResult Function( _StopAudio value)  stopAudio,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _LoadAll value)  loadAll,required TResult Function( _SearchChanged value)  searchChanged,required TResult Function( _PlayTrack value)  playTrack,required TResult Function( _StopAudio value)  stopAudio,required TResult Function( _OwnershipLost value)  ownershipLost,required TResult Function( _PlayingChanged value)  playingChanged,}){
 final _that = this;
 switch (_that) {
 case _LoadAll():
 return loadAll(_that);case _SearchChanged():
 return searchChanged(_that);case _PlayTrack():
 return playTrack(_that);case _StopAudio():
-return stopAudio(_that);}
+return stopAudio(_that);case _OwnershipLost():
+return ownershipLost(_that);case _PlayingChanged():
+return playingChanged(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -101,14 +105,16 @@ return stopAudio(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _LoadAll value)?  loadAll,TResult? Function( _SearchChanged value)?  searchChanged,TResult? Function( _PlayTrack value)?  playTrack,TResult? Function( _StopAudio value)?  stopAudio,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _LoadAll value)?  loadAll,TResult? Function( _SearchChanged value)?  searchChanged,TResult? Function( _PlayTrack value)?  playTrack,TResult? Function( _StopAudio value)?  stopAudio,TResult? Function( _OwnershipLost value)?  ownershipLost,TResult? Function( _PlayingChanged value)?  playingChanged,}){
 final _that = this;
 switch (_that) {
 case _LoadAll() when loadAll != null:
 return loadAll(_that);case _SearchChanged() when searchChanged != null:
 return searchChanged(_that);case _PlayTrack() when playTrack != null:
 return playTrack(_that);case _StopAudio() when stopAudio != null:
-return stopAudio(_that);case _:
+return stopAudio(_that);case _OwnershipLost() when ownershipLost != null:
+return ownershipLost(_that);case _PlayingChanged() when playingChanged != null:
+return playingChanged(_that);case _:
   return null;
 
 }
@@ -125,13 +131,15 @@ return stopAudio(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( bool forceRefresh)?  loadAll,TResult Function( String query)?  searchChanged,TResult Function( int audioId)?  playTrack,TResult Function()?  stopAudio,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( bool forceRefresh)?  loadAll,TResult Function( String query)?  searchChanged,TResult Function( int audioId)?  playTrack,TResult Function()?  stopAudio,TResult Function()?  ownershipLost,TResult Function( bool isPlaying)?  playingChanged,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LoadAll() when loadAll != null:
 return loadAll(_that.forceRefresh);case _SearchChanged() when searchChanged != null:
 return searchChanged(_that.query);case _PlayTrack() when playTrack != null:
 return playTrack(_that.audioId);case _StopAudio() when stopAudio != null:
-return stopAudio();case _:
+return stopAudio();case _OwnershipLost() when ownershipLost != null:
+return ownershipLost();case _PlayingChanged() when playingChanged != null:
+return playingChanged(_that.isPlaying);case _:
   return orElse();
 
 }
@@ -149,13 +157,15 @@ return stopAudio();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( bool forceRefresh)  loadAll,required TResult Function( String query)  searchChanged,required TResult Function( int audioId)  playTrack,required TResult Function()  stopAudio,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( bool forceRefresh)  loadAll,required TResult Function( String query)  searchChanged,required TResult Function( int audioId)  playTrack,required TResult Function()  stopAudio,required TResult Function()  ownershipLost,required TResult Function( bool isPlaying)  playingChanged,}) {final _that = this;
 switch (_that) {
 case _LoadAll():
 return loadAll(_that.forceRefresh);case _SearchChanged():
 return searchChanged(_that.query);case _PlayTrack():
 return playTrack(_that.audioId);case _StopAudio():
-return stopAudio();}
+return stopAudio();case _OwnershipLost():
+return ownershipLost();case _PlayingChanged():
+return playingChanged(_that.isPlaying);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -169,13 +179,15 @@ return stopAudio();}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( bool forceRefresh)?  loadAll,TResult? Function( String query)?  searchChanged,TResult? Function( int audioId)?  playTrack,TResult? Function()?  stopAudio,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( bool forceRefresh)?  loadAll,TResult? Function( String query)?  searchChanged,TResult? Function( int audioId)?  playTrack,TResult? Function()?  stopAudio,TResult? Function()?  ownershipLost,TResult? Function( bool isPlaying)?  playingChanged,}) {final _that = this;
 switch (_that) {
 case _LoadAll() when loadAll != null:
 return loadAll(_that.forceRefresh);case _SearchChanged() when searchChanged != null:
 return searchChanged(_that.query);case _PlayTrack() when playTrack != null:
 return playTrack(_that.audioId);case _StopAudio() when stopAudio != null:
-return stopAudio();case _:
+return stopAudio();case _OwnershipLost() when ownershipLost != null:
+return ownershipLost();case _PlayingChanged() when playingChanged != null:
+return playingChanged(_that.isPlaying);case _:
   return null;
 
 }
@@ -412,5 +424,103 @@ String toString() {
 
 
 
+
+/// @nodoc
+
+
+class _OwnershipLost implements HadiDirectoryEvent {
+  const _OwnershipLost();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _OwnershipLost);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'HadiDirectoryEvent.ownershipLost()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class _PlayingChanged implements HadiDirectoryEvent {
+  const _PlayingChanged({required this.isPlaying});
+  
+
+ final  bool isPlaying;
+
+/// Create a copy of HadiDirectoryEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$PlayingChangedCopyWith<_PlayingChanged> get copyWith => __$PlayingChangedCopyWithImpl<_PlayingChanged>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PlayingChanged&&(identical(other.isPlaying, isPlaying) || other.isPlaying == isPlaying));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,isPlaying);
+
+@override
+String toString() {
+  return 'HadiDirectoryEvent.playingChanged(isPlaying: $isPlaying)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$PlayingChangedCopyWith<$Res> implements $HadiDirectoryEventCopyWith<$Res> {
+  factory _$PlayingChangedCopyWith(_PlayingChanged value, $Res Function(_PlayingChanged) _then) = __$PlayingChangedCopyWithImpl;
+@useResult
+$Res call({
+ bool isPlaying
+});
+
+
+
+
+}
+/// @nodoc
+class __$PlayingChangedCopyWithImpl<$Res>
+    implements _$PlayingChangedCopyWith<$Res> {
+  __$PlayingChangedCopyWithImpl(this._self, this._then);
+
+  final _PlayingChanged _self;
+  final $Res Function(_PlayingChanged) _then;
+
+/// Create a copy of HadiDirectoryEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? isPlaying = null,}) {
+  return _then(_PlayingChanged(
+isPlaying: null == isPlaying ? _self.isPlaying : isPlaying // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+
+}
 
 // dart format on
