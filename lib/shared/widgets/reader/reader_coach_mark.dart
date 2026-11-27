@@ -58,11 +58,8 @@ TargetFocus readerCoachTarget({
     keyTarget: keyTarget,
     shape: shape,
     radius: radius,
-    enableOverlayTab: false,
-    enableTargetTab: true,
     contents: [
       TargetContent(
-        align: ContentAlign.bottom,
         builder: (_, _) =>
             _CoachTooltip(step: step, title: title, body: body, hint: hint),
       ),
