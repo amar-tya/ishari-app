@@ -65,7 +65,7 @@ class _TatananListPageState extends State<TatananListPage> {
           shape: ShapeLightFocus.Circle,
           contents: [
             TargetContent(
-              builder: (_, __) => _TatananTooltip(
+              builder: (_, _) => _TatananTooltip(
                 step: '4/4',
                 title: 'Buat Tatanan',
                 body:

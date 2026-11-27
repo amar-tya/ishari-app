@@ -228,7 +228,7 @@ class _MainScaffoldState extends State<MainScaffold> with RouteAware {
       contents: [
         TargetContent(
           align: ContentAlign.top,
-          builder: (_, __) => _TabTooltip(
+          builder: (_, _) => _TabTooltip(
             step: step,
             title: title,
             body: body,
