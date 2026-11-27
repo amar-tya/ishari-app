@@ -93,7 +93,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         final desc = e.description ?? '';
         if (e.code == GoogleSignInExceptionCode.canceled &&
             RegExp(r'^\[16\]').hasMatch(desc)) {
-          appLogger.d('[GoogleSignIn] Stale credential detected ([16]), clearing and retrying...');
+          appLogger.d(
+            '[GoogleSignIn] Stale credential detected ([16]), '
+            'clearing and retrying...',
+          );
           await GoogleSignIn.instance.signOut();
           googleUser = await GoogleSignIn.instance.authenticate();
         } else {
@@ -105,7 +108,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final googleAuth = googleUser.authentication;
 
       final idToken = googleAuth.idToken;
-      // accessToken moved to authorizationClient in v7 — not needed for Supabase idToken exchange
+      // accessToken moved to authorizationClient in v7 — not needed for
+      // Supabase idToken exchange
 
       if (idToken == null) {
         // Usually a wrong serverClientId (Web Client ID) in Google Cloud
@@ -136,15 +140,22 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       rethrow;
     } on GoogleSignInException catch (e) {
       final desc = e.description ?? '';
-      // Deskripsi dengan kode error dalam bracket (e.g. "[16]") = bukan user cancel biasa
-      final isUserCancel = e.code == GoogleSignInExceptionCode.canceled
-          && !RegExp(r'^\[\d+\]').hasMatch(desc);
+      // Deskripsi dengan kode error dalam bracket (e.g. "[16]") = bukan user
+      // cancel biasa
+      final isUserCancel =
+          e.code == GoogleSignInExceptionCode.canceled &&
+          !RegExp(r'^\[\d+\]').hasMatch(desc);
 
       if (isUserCancel) {
         throw const CanceledSignInException();
       }
-      appLogger.e('[GoogleSignIn] GoogleSignInException code=${e.code} desc=${e.description}', error: e);
-      // Error code 10 = DEVELOPER_ERROR (SHA-1 not registered or OAuth misconfiguration)
+      appLogger.e(
+        '[GoogleSignIn] GoogleSignInException code=${e.code} '
+        'desc=${e.description}',
+        error: e,
+      );
+      // Error code 10 = DEVELOPER_ERROR (SHA-1 not registered or OAuth
+      // misconfiguration)
       // Other codes = possible network or service error
       throw const ServerException(message: FailureMessages.googleSignInFailed);
     } catch (e, stackTrace) {
