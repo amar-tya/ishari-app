@@ -24,9 +24,15 @@ class _FakeRemote extends Fake implements AuthRemoteDataSource {
   Exception? signInError;
   Exception? signOutError;
   Exception? currentUserError;
+  int signInCalls = 0;
+  final sessionChanges = StreamController<UserModel?>();
+
+  @override
+  Stream<UserModel?> get authStateChanges => sessionChanges.stream;
 
   @override
   Future<UserModel> signInWithGoogle() async {
+    signInCalls++;
     if (signInError case final error?) throw error;
     return _user;
   }
@@ -148,6 +154,7 @@ void main() {
       final result = await repository.signInWithGoogle();
 
       expect(result.getLeft().toNullable(), isA<NetworkFailure>());
+      expect(remote.signInCalls, 0);
     });
 
     test('a lost connection reads as a network failure', () async {
@@ -173,6 +180,25 @@ void main() {
         const ServerFailure(message: 'boom'),
       );
     });
+  });
+
+  group('authStateChanges', () {
+    test(
+      'turns session changes into users, and a lost session into null',
+      () async {
+        final seen = <UserEntity?>[];
+        final subscription = repository.authStateChanges.listen(seen.add);
+        addTearDown(subscription.cancel);
+        addTearDown(remote.sessionChanges.close);
+
+        remote.sessionChanges
+          ..add(_user)
+          ..add(null);
+        await pumpEventQueue();
+
+        expect(seen, [_user.toEntity(), null]);
+      },
+    );
   });
 
   group('getCurrentUser', () {
