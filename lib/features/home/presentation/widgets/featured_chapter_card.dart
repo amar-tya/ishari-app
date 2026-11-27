@@ -97,7 +97,8 @@ class FeaturedChapterCard extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            '${chapter.category}  ·  ${chapter.verseCount} bait',
+                            '${chapter.category}  ·  '
+                            '${chapter.verseCount} bait',
                             style: const TextStyle(
                               fontSize: 12,
                               color: Color(0xBFFFFFFF),

@@ -49,10 +49,12 @@ class _HomeHeaderState extends State<HomeHeader> with WidgetsBindingObserver {
 
   void _loadNotifications() {
     final userId = context.read<AuthBloc>().state.maybeWhen(
-          authenticated: (user) => user.id,
-          orElse: () => null,
-        );
-    context.read<NotificationsBloc>().add(NotificationsEvent.load(userId: userId));
+      authenticated: (user) => user.id,
+      orElse: () => null,
+    );
+    context.read<NotificationsBloc>().add(
+      NotificationsEvent.load(userId: userId),
+    );
   }
 
   @override
@@ -203,7 +205,6 @@ class _BellButton extends StatelessWidget {
     );
   }
 }
-
 
 enum _MenuAction { aboutUs, contactUs, login, logout }
 
