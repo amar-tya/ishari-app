@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ishari/core/analytics/analytics_service.dart';
 import 'package:ishari/core/app_state.dart';
+import 'package:ishari/core/router/route_guards.dart';
 import 'package:ishari/features/audio/presentation/pages/audio_list_page.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ishari/features/auth/presentation/pages/home_page.dart';
@@ -81,8 +82,9 @@ GoRouter createRouter(
       GoRoute(
         path: ChapterReaderPage.routePath,
         name: 'chapter-reader',
+        redirect: _redirectInvalidChapterId,
         builder: (context, state) {
-          final chapterId = int.parse(state.pathParameters['chapterId'] ?? '0');
+          final chapterId = parseRouteId(state.pathParameters['chapterId'])!;
           final verseId = int.tryParse(
             state.uri.queryParameters['verseId'] ?? '',
           );
@@ -95,8 +97,9 @@ GoRouter createRouter(
       GoRoute(
         path: KitabPageReaderPage.routePath,
         name: 'kitab-page-reader',
+        redirect: _redirectInvalidChapterId,
         builder: (context, state) {
-          final chapterId = int.parse(state.pathParameters['chapterId'] ?? '0');
+          final chapterId = parseRouteId(state.pathParameters['chapterId'])!;
           final bookId = int.tryParse(
             state.uri.queryParameters['bookId'] ?? '',
           );
@@ -113,11 +116,17 @@ GoRouter createRouter(
       GoRoute(
         path: ForceUpdatePage.routePath,
         name: 'force-update',
+        // The page cannot be dismissed, so without a store link (direct link,
+        // lost `extra`) it would trap the user behind a dead button.
+        redirect: (context, state) =>
+            parseForceUpdateExtra(state.extra).storeUrl.isEmpty
+            ? HomePage.routePath
+            : null,
         builder: (context, state) {
-          final extra = state.extra as Map<String, String>?;
+          final extra = parseForceUpdateExtra(state.extra);
           return ForceUpdatePage(
-            storeUrl: extra?['storeUrl'] ?? '',
-            releaseNotes: extra?['releaseNotes'] ?? '',
+            storeUrl: extra.storeUrl,
+            releaseNotes: extra.releaseNotes,
           );
         },
       ),
@@ -147,8 +156,18 @@ GoRouter createRouter(
             path: ':id',
             name: 'notification-detail',
             builder: (context, state) {
-              final notification = state.extra! as NotificationEntity;
-              return NotificationDetailPage(notification: notification);
+              final id = state.pathParameters['id']!;
+              // `extra` is only a shortcut: it is absent on a direct link and
+              // is not restored after process death.
+              final extra = state.extra;
+              return NotificationDetailPage(
+                // go_router reuses the page when only `:id` changes.
+                key: ValueKey(id),
+                notificationId: id,
+                notification: extra is NotificationEntity && extra.id == id
+                    ? extra
+                    : null,
+              );
             },
           ),
         ],
@@ -161,6 +180,13 @@ GoRouter createRouter(
     ),
   );
 }
+
+/// Sends readers with an unusable `:chapterId` to [HomePage]; the router's
+/// error page has no way back.
+String? _redirectInvalidChapterId(BuildContext context, GoRouterState state) =>
+    parseRouteId(state.pathParameters['chapterId']) == null
+    ? HomePage.routePath
+    : null;
 
 /// Bridges [AuthBloc] stream to [GoRouter]'s [Listenable] refresh mechanism.
 class GoRouterAuthRefreshStream extends ChangeNotifier {
