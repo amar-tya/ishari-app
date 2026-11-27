@@ -28,7 +28,11 @@ class ForceUpdatePage extends StatelessWidget {
             child: Column(
               children: [
                 const Spacer(),
-                const Icon(Icons.system_update_rounded, size: 72, color: Color(0xFF51C878)),
+                const Icon(
+                  Icons.system_update_rounded,
+                  size: 72,
+                  color: Color(0xFF51C878),
+                ),
                 const SizedBox(height: 32),
                 const Text(
                   'Pembaruan Diperlukan',
@@ -41,8 +45,13 @@ class ForceUpdatePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 const Text(
-                  'Versi aplikasi ini sudah tidak didukung.\nSilakan update untuk melanjutkan.',
-                  style: TextStyle(fontSize: 14, color: Color(0xFF777777), height: 1.5),
+                  'Versi aplikasi ini sudah tidak didukung.\n'
+                  'Silakan update untuk melanjutkan.',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF777777),
+                    height: 1.5,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 if (releaseNotes.isNotEmpty) ...[
@@ -59,10 +68,16 @@ class ForceUpdatePage extends StatelessWidget {
                       children: [
                         const Text(
                           'Yang baru:',
-                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                          ),
                         ),
                         const SizedBox(height: 8),
-                        Text(releaseNotes, style: const TextStyle(fontSize: 13, height: 1.6)),
+                        Text(
+                          releaseNotes,
+                          style: const TextStyle(fontSize: 13, height: 1.6),
+                        ),
                       ],
                     ),
                   ),
@@ -79,7 +94,9 @@ class ForceUpdatePage extends StatelessWidget {
                     label: const Text('Update Sekarang'),
                     style: FilledButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                   ),
                 ),

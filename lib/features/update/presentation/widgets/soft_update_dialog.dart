@@ -39,10 +39,17 @@ class SoftUpdateDialog extends StatelessWidget {
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Ada Versi Terbaru!', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const Text(
+            'Ada Versi Terbaru!',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
           Text(
             'v$latestVersion tersedia',
-            style: TextStyle(fontSize: 13, color: Colors.grey[600], fontWeight: FontWeight.normal),
+            style: TextStyle(
+              fontSize: 13,
+              color: Colors.grey[600],
+              fontWeight: FontWeight.normal,
+            ),
           ),
         ],
       ),
@@ -57,7 +64,10 @@ class SoftUpdateDialog extends StatelessWidget {
         FilledButton(
           onPressed: () {
             Navigator.of(context).pop();
-            launchUrl(Uri.parse(storeUrl), mode: LaunchMode.externalApplication);
+            launchUrl(
+              Uri.parse(storeUrl),
+              mode: LaunchMode.externalApplication,
+            );
           },
           child: const Text('Update Sekarang'),
         ),
