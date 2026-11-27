@@ -11,11 +11,13 @@ abstract interface class AuthRemoteDataSource {
   /// Authenticate via Google OAuth and return the signed-in [UserModel].
   Future<UserModel> signInWithGoogle();
 
-  /// Remove the Supabase session from this device, then sign out of Google.
+  /// Remove the Supabase session from this device and sign out of Google, both
+  /// at once.
   ///
   /// Succeeds even if the server or Google cannot be reached: the refresh
   /// token is then not revoked server-side, only removed from the device.
-  /// Throws [ServerException] if the local sign-out itself fails.
+  /// The Google part is given up after a few seconds; the Supabase part has no
+  /// time limit. Throws [ServerException] if the local sign-out itself fails.
   Future<void> signOut();
 
   /// Return the current Supabase user, or null if not authenticated.
@@ -39,13 +41,36 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   final SupabaseClient _supabaseClient;
 
+  /// Limit for waiting on Google where the user is not involved. On Android
+  /// these are on-device calls: `initialize` with a server client id makes no
+  /// native call, and sign-out only clears the Credential Manager state. Three
+  /// seconds is meant to leave a slow device ample room, while a stuck call
+  /// holds the user in loading only briefly.
+  static const _googleTimeout = Duration(seconds: 3);
+
+  Future<void>? _initialization;
+
+  /// The latest Google sign-out, which may outlive [_googleTimeout].
+  Future<void>? _googleSignOut;
+
   // google_sign_in v7: Use GoogleSignIn.instance and initialize separately.
   // serverClientId is required on Android so that an idToken is included
   // in the authentication response.
-  late final Future<void> _initializationFuture =
-      GoogleSignIn.instance.initialize(
-    serverClientId: AppEnv.googleWebClientId,
-  );
+  Future<void> _initializeGoogle() async {
+    // initialize() should be called once, so callers share one attempt.
+    final attempt = _initialization ??= GoogleSignIn.instance.initialize(
+      serverClientId: AppEnv.googleWebClientId,
+    );
+    try {
+      await attempt.timeout(_googleTimeout);
+    } on Object {
+      // Drop a failed or stuck attempt, or every later sign-in would depend on
+      // it until the app restarts. A second initialize() is harmless on
+      // Android, where it only stores the client id.
+      if (identical(_initialization, attempt)) _initialization = null;
+      rethrow;
+    }
+  }
 
   @override
   Future<UserModel> signInWithGoogle() async {
@@ -53,7 +78,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       appLogger.d('[GoogleSignIn] Starting signIn...');
 
       // Ensure GoogleSignIn is initialized
-      await _initializationFuture;
+      await _initializeGoogle();
+      await _waitForGoogleSignOut();
 
       // Step 1: Open the Google account picker dialog
       // authenticate() throws GoogleSignInException on cancel/failure (no null return)
@@ -128,6 +154,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<void> signOut() async {
+    // Together, so that a stalled server logout cannot delay the Google
+    // sign-out, or skip it if the app is closed meanwhile. Future.wait lets
+    // both finish before it reports an error.
+    await Future.wait<void>([_signOutOfSupabase(), _signOutOfGoogle()]);
+  }
+
+  Future<void> _signOutOfSupabase() async {
     try {
       await _supabaseClient.auth.signOut();
     } on AuthException catch (e, stackTrace) {
@@ -140,21 +173,42 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
     } catch (e) {
       throw ServerException(message: e.toString());
-    } finally {
-      await _signOutOfGoogle();
     }
   }
 
+  /// Never throws: a failed or stuck Google sign-out is only logged.
   Future<void> _signOutOfGoogle() async {
     try {
-      await _initializationFuture;
-      await GoogleSignIn.instance.signOut();
+      await _initializeThenSignOutOfGoogle().timeout(_googleTimeout);
     } on Object catch (e, stackTrace) {
       appLogger.w(
         '[GoogleSignIn] Sign-out failed',
         error: e,
         stackTrace: stackTrace,
       );
+    }
+  }
+
+  Future<void> _initializeThenSignOutOfGoogle() async {
+    // Has its own limit and throws there, so an initialize that finishes late
+    // never goes on to sign out in the middle of a newer sign-in.
+    await _initializeGoogle();
+    final signOut = GoogleSignIn.instance.signOut();
+    _googleSignOut = signOut;
+    await signOut;
+  }
+
+  /// A sign-out past its limit cannot be cancelled and may still be clearing
+  /// credentials, so it gets one more chance to finish before the account
+  /// picker opens.
+  Future<void> _waitForGoogleSignOut() async {
+    final signOut = _googleSignOut;
+    _googleSignOut = null;
+    try {
+      await signOut?.timeout(_googleTimeout);
+    } on Object catch (e) {
+      // Signing in does not depend on it.
+      appLogger.w('[GoogleSignIn] Earlier sign-out not finished', error: e);
     }
   }
 

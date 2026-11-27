@@ -103,7 +103,7 @@ void main() {
   });
 
   group('signOut', () {
-    test('signs out of Supabase, then of an initialized Google', () async {
+    test('signs out of Supabase and of an initialized Google', () async {
       await setUpClient();
       await signIn();
 
