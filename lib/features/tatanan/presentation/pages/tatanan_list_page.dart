@@ -174,7 +174,7 @@ class _TatananListPageState extends State<TatananListPage> {
                       ),
                       GestureDetector(
                         key: _addBtnKey,
-                        onTap: () => _openCreateSheet(),
+                        onTap: _openCreateSheet,
                         child: Container(
                           width: 36,
                           height: 36,
@@ -201,7 +201,7 @@ class _TatananListPageState extends State<TatananListPage> {
                         ),
                         loaded: (tatanans) => tatanans.isEmpty
                             ? _EmptyState(
-                                onCreateTap: () => _openCreateSheet(),
+                                onCreateTap: _openCreateSheet,
                               )
                             : ListView.builder(
                                 padding: const EdgeInsets.fromLTRB(
