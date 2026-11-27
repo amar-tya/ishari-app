@@ -29,6 +29,9 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
   final ToggleBookmark _toggleBookmark;
   final UpdateBookmarkNote _updateBookmarkNote;
 
+  /// Verses with a removal that has not finished yet.
+  final _removingVerseIds = <int>{};
+
   Future<void> _onLoad(_Load event, Emitter<BookmarkState> emit) async {
     emit(const BookmarkState.loading());
     final result = await _getBookmarkedVerses(event.userId);
@@ -91,7 +94,17 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
     _RemoveBookmark event,
     Emitter<BookmarkState> emit,
   ) async {
-    await _toggleBookmark(event.verseId, event.userId);
+    // A second toggle would re-add the bookmark that the first one removed.
+    if (!_removingVerseIds.add(event.verseId)) return;
+    final bool removed;
+    try {
+      final result = await _toggleBookmark(event.verseId, event.userId);
+      removed = result.fold((_) => false, (isBookmarked) => !isBookmarked);
+    } finally {
+      _removingVerseIds.remove(event.verseId);
+    }
+    // Keep the card unless the server confirms that the bookmark is gone.
+    if (!removed) return;
     state.mapOrNull(
       loaded: (l) {
         final updated = l.allBookmarks
