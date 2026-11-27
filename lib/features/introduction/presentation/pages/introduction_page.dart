@@ -66,7 +66,8 @@ List<_SlideData> _buildSlides() => [
       _TitlePart(' & Kapanpun'),
     ],
     description:
-        "Ratusan bait dari kitab Diwan, Syaraful Anam,\nDiba', dan lainnya — dalam genggamanmu.",
+        'Ratusan bait dari kitab Diwan, Syaraful Anam,\n'
+        "Diba', dan lainnya — dalam genggamanmu.",
     illustrationBg: _clrBg,
     buildIllustration: (_) => const ShalawatCardsIllustration(),
   ),
@@ -77,7 +78,8 @@ List<_SlideData> _buildSlides() => [
       _TitlePart('dengan Khidmat', badge: _BadgeStyle.dark),
     ],
     description:
-        'Nikmati bacaan shalawat dengan audio\nberkualitas dari Pimpinan Shalawat terpilih.',
+        'Nikmati bacaan shalawat dengan audio\n'
+        'berkualitas dari Pimpinan Shalawat terpilih.',
     illustrationBg: _clrBg,
     buildIllustration: (_) => const AudioPlayerIllustration(),
   ),
@@ -113,7 +115,8 @@ List<_SlideData> _buildSlides() => [
       _TitlePart(' Sekarang'),
     ],
     description:
-        'Simpan progres, tandai bait favorit, dan\nakses riwayat bacaanmu di semua perangkat.',
+        'Simpan progres, tandai bait favorit, dan\n'
+        'akses riwayat bacaanmu di semua perangkat.',
     illustrationBg: _clrBg,
     buildIllustration: (_) => const SignInPreviewIllustration(),
   ),
