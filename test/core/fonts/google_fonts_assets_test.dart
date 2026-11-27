@@ -3,6 +3,9 @@
 // Runtime font fetching is disabled, so every family/weight/style that lib/
 // asks google_fonts for must be bundled in assets/fonts/. A missing file is
 // not a soft fallback: the package rethrows from an un-awaited future.
+//
+// The source tree is the authority. A successful load alone proves nothing,
+// because the test asset bundle can still hold a deleted or renamed font.
 import 'dart:async';
 import 'dart:io';
 
@@ -16,11 +19,17 @@ import 'package:google_fonts/src/google_fonts_base.dart'
 // ignore: implementation_imports
 import 'package:google_fonts/src/google_fonts_variant.dart';
 
+import 'font_source_tree.dart';
 import 'google_fonts_call_scanner.dart';
 
-/// Loads one variant through the real package. Returns null on success,
-/// otherwise a line naming the family, weight, style and expected asset file.
-Future<String?> _loadVariant(FontRequest request) async {
+/// Loads one variant through the real package and checks that its file is in
+/// the source tree and declared. Returns null on success, otherwise a line
+/// naming the family, weight, style and expected asset file.
+Future<String?> _checkVariant(
+  FontRequest request, {
+  required Set<String> files,
+  required Set<String> declared,
+}) async {
   Object? error;
   String? resolvedFamily;
   final done = Completer<void>();
@@ -46,8 +55,6 @@ Future<String?> _loadVariant(FontRequest request) async {
   await done.future;
   pendingFontFutures.clear();
 
-  if (error == null) return null;
-
   final label =
       '${request.family} weight ${request.weight.value} '
       '${request.style.name}';
@@ -59,8 +66,20 @@ Future<String?> _loadVariant(FontRequest request) async {
   final variant = GoogleFontsVariant.fromString(
     resolvedFamily!.substring(separator + 1),
   );
-  return '$label: needs assets/fonts/'
-      '$prefix-${variant.toApiFilenamePart()}.ttf. Loader said: $error';
+  final name = '$prefix-${variant.toApiFilenamePart()}';
+
+  final sourceProblem = fontSourceProblem(
+    name,
+    files: files,
+    declared: declared,
+  );
+  if (sourceProblem != null) return '$label: $sourceProblem';
+  if (error == null) return null;
+
+  return '$label: $name is in $fontDirectory and declared, but did not load. '
+      'The test asset bundle may be stale (for example after restoring a '
+      'file with its old timestamp): delete build/unit_test_assets and run '
+      'the test again. Loader said: $error';
 }
 
 List<File> _dartSources() => Directory('lib')
@@ -161,6 +180,79 @@ final a = GoogleFonts.poppins(
     });
   });
 
+  group('declaredAssets', () {
+    test('reads only the flutter assets list', () {
+      const pubspec = '''
+dependencies:
+  flutter:
+    sdk: flutter
+flutter_launcher_icons:
+  assets:
+    - not/this/
+flutter:
+  uses-material-design: true
+  assets:
+    # - commented/out/
+    - assets/icons/
+    - "assets/fonts/" # trailing comment
+    - path: assets/other/a.ttf
+  fonts:
+    - family: X
+      fonts:
+        - asset: assets/not/an/asset.ttf
+''';
+
+      expect(declaredAssets(pubspec), {
+        'assets/icons/',
+        'assets/fonts/',
+        'assets/other/a.ttf',
+      });
+    });
+
+    test('handles CRLF and list items level with the key', () {
+      expect(
+        declaredAssets('flutter:\r\n  assets:\r\n  - assets/fonts/\r\n'),
+        {'assets/fonts/'},
+      );
+    });
+  });
+
+  group('fontSourceProblem', () {
+    String? check(Set<String> files, Set<String> declared) => fontSourceProblem(
+      'Poppins-Medium',
+      files: files,
+      declared: declared,
+    );
+
+    test('accepts a file covered by the directory or by its own entry', () {
+      expect(check({'Poppins-Medium.ttf'}, {'assets/fonts/'}), isNull);
+      expect(
+        check({'Poppins-Medium.otf'}, {'assets/fonts/Poppins-Medium.otf'}),
+        isNull,
+      );
+    });
+
+    test('reports a missing file, even if only the case differs', () {
+      for (final files in [
+        <String>{},
+        {'poppins-medium.ttf'},
+      ]) {
+        expect(
+          check(files, {'assets/fonts/'}),
+          contains('assets/fonts/Poppins-Medium.ttf is not in the source tree'),
+        );
+      }
+    });
+
+    test('reports a file the pubspec does not declare', () {
+      // A directory entry does not include subdirectories.
+      expect(
+        check({'Poppins-Medium.ttf'}, {'assets/'}),
+        contains('not covered by the flutter assets list in pubspec.yaml'),
+      );
+    });
+  });
+
   group('bundled google_fonts assets', () {
     test('cover every variant requested in lib/', () async {
       GoogleFonts.config.allowRuntimeFetching = false;
@@ -202,8 +294,20 @@ final a = GoogleFonts.poppins(
         reason: 'the scanner found no GoogleFonts calls in lib/',
       );
 
+      final files = {
+        for (final file in Directory(
+          fontDirectory,
+        ).listSync().whereType<File>())
+          file.uri.pathSegments.last,
+      };
+      final declared = declaredAssets(File('pubspec.yaml').readAsStringSync());
+
       for (final MapEntry(key: request, value: sites) in callSites.entries) {
-        final failure = await _loadVariant(request);
+        final failure = await _checkVariant(
+          request,
+          files: files,
+          declared: declared,
+        );
         if (failure != null) {
           problems.add('$failure\n    requested at ${sites.join(', ')}');
         }
