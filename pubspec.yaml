@@ -113,7 +113,8 @@ dev_dependencies:
   cider: ^0.2.10
 
   # Sentry debug symbol upload
-  sentry_dart_plugin: ^2.3.0
+  # 3.2.0+ needed to upload the Dart obfuscation map (readable issue titles).
+  sentry_dart_plugin: ^3.6.0
 
 flutter_launcher_icons:
   android: true
@@ -128,7 +129,12 @@ sentry:
   upload_source_maps: false
   project: flutter
   org: amar-q0
-  auth_token: $SENTRY_AUTH_TOKEN
+  # No auth_token key: the plugin does not expand "$VAR" and would send the
+  # text as the token. It reads the SENTRY_AUTH_TOKEN env var by itself.
+  # Matches --split-debug-info; see scripts/upload_sentry_symbols.sh.
+  symbols_path: build/symbols
+  # Commit association needs a Sentry repository integration.
+  commits: false
   wait_for_processing: false
 
 flutter:

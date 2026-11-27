@@ -143,8 +143,8 @@ jobs:
         uses: shorebirdtech/setup-shorebird@v1
 
       - name: Shorebird Release (APK & AAB)
+        id: shorebird_release
         env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
         # `--artifact apk` also produces the .aab in the same run (Shorebird docs).
         # Flags after `--` pass straight through to the underlying `flutter build`,
@@ -196,3 +196,12 @@ jobs:
           track: production
           status: completed
           whatsNewDirectory: distribution/whatsnew
+
+      # Keep this step last: a failed upload turns the job red but never blocks
+      # the build from being distributed. It still runs if a distribution step
+      # fails, as long as the build itself succeeded.
+      - name: Upload Dart symbols to Sentry
+        if: ${{ !cancelled() && steps.shorebird_release.outcome == 'success' }}
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        run: bash scripts/upload_sentry_symbols.sh "${{ env.NEW_VERSION }}" build/shorebird/obfuscation_map.json

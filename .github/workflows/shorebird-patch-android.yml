@@ -88,14 +88,18 @@ jobs:
         uses: shorebirdtech/setup-shorebird@v1
 
       - name: Shorebird Patch (Android)
+        id: shorebird_patch
         env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
         # No --flutter-version here: unlike `release`, `patch` doesn't accept
         # it — it builds against whatever Flutter revision the target release
         # was built with. --obfuscate is intentionally omitted: Shorebird
         # applies it automatically when the release was built with it and
         # warns if passed again.
+        # --save-obfuscation-map: a patch loads the release's map but does not
+        # save its own, which Sentry needs to name obfuscated types in patch
+        # crashes. A patch's symbols differ from its release's, so every patch
+        # uploads its own (last step).
         # --no-tree-shake-icons matches the release build (see
         # build-and-distribute-android.yml) so MaterialIcons-Regular.otf is
         # byte-identical between release and patch builds.
@@ -114,4 +118,21 @@ jobs:
             --allow-asset-diffs \
             ${{ inputs.allow_native_diffs && '--allow-native-diffs' || '' }} \
             -- --split-debug-info=build/symbols \
+            --extra-gen-snapshot-options=--save-obfuscation-map=build/app/obfuscation.map.json \
             --no-tree-shake-icons
+
+      # Keep this step last. It runs only after the patch was published, so a
+      # failed upload turns the job red without undoing the patch.
+      - name: Upload Dart symbols to Sentry
+        if: ${{ !cancelled() && steps.shorebird_patch.outcome == 'success' }}
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          INPUT_RELEASE_VERSION: ${{ inputs.release_version }}
+        run: |
+          # Sentry matches symbols to crashes by build ID, so the release name
+          # only labels the upload. For "latest", use the version on this ref.
+          RELEASE="$INPUT_RELEASE_VERSION"
+          if [ "$RELEASE" = "latest" ]; then
+            RELEASE=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+          fi
+          bash scripts/upload_sentry_symbols.sh "$RELEASE" build/app/obfuscation.map.json
