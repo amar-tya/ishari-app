@@ -1,5 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
+import 'package:ishari/core/errors/error_mapper.dart';
 import 'package:ishari/core/errors/exceptions.dart';
 import 'package:ishari/core/errors/failures.dart';
 import 'package:ishari/core/network/network_info.dart';
@@ -57,8 +58,8 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
               .toList(),
         );
       }
-    } on ServerException catch (e) {
-      return left(ServerFailure(message: e.message));
+    } on ServerException catch (e, stackTrace) {
+      return left(mapErrorToFailure(e, stackTrace));
     }
   }
 
@@ -76,8 +77,8 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
         notificationIds: notificationIds,
       );
       return right(unit);
-    } on ServerException catch (e) {
-      return left(ServerFailure(message: e.message));
+    } on ServerException catch (e, stackTrace) {
+      return left(mapErrorToFailure(e, stackTrace));
     }
   }
 

@@ -2,9 +2,18 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:ishari/core/errors/exceptions.dart';
+import 'package:ishari/core/errors/failures.dart';
+import 'package:ishari/core/network/network_info.dart';
+import 'package:ishari/features/muhud/data/repositories/muhud_repository_impl.dart';
 import 'package:ishari/features/muhud/data/datasources/muhud_remote_datasource.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+class _Online implements NetworkInfo {
+  @override
+  Future<bool> get isConnected async => true;
+}
 
 typedef _Request = ({String method, String table, Map<String, String> query});
 typedef _Response = ({int status, Object? body});
@@ -206,6 +215,44 @@ void main() {
       await expectLater(
         dataSource.toggleBookmark(5, 'u'),
         throwsA(isA<ServerException>()),
+      );
+    });
+
+    test('a failure keeps the database error as its cause only', () async {
+      server.responses['POST bookmarks'] = (
+        status: 403,
+        body: {
+          'code': '42501',
+          'message': 'permission denied for table bookmarks',
+        },
+      );
+
+      final error = await dataSource
+          .toggleBookmark(5, 'u')
+          .then<Object>((_) => fail('expected an error'), onError: (Object e) => e);
+
+      expect(error, isA<ServerException>());
+      final exception = error as ServerException;
+      expect(exception.cause, isA<PostgrestException>());
+      expect(exception.message, isNot(contains('bookmarks')));
+      expect(exception.toString(), isNot(contains('permission denied')));
+    });
+
+    test('the repository shows a readable text for that failure', () async {
+      server.responses['POST bookmarks'] = (
+        status: 403,
+        body: {
+          'code': '42501',
+          'message': 'permission denied for table bookmarks',
+        },
+      );
+      final repository = MuhudRepositoryImpl(dataSource, _Online());
+
+      final result = await repository.toggleBookmark(5, 'u');
+
+      expect(
+        result.getLeft().toNullable(),
+        const ServerFailure(message: FailureMessages.forbidden),
       );
     });
   });

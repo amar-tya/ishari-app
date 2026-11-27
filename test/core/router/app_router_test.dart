@@ -378,7 +378,7 @@ void main() {
       await pumpRouter(tester, location: '/notifications/a');
       await tester.pumpAndSettle();
 
-      expect(find.text('No internet connection'), findsOneWidget);
+      expect(find.text(FailureMessages.network), findsOneWidget);
       expect(find.byType(CircularProgressIndicator), findsNothing);
       expect(repository.loadUserIds, hasLength(1));
 

@@ -1,5 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
+import 'package:ishari/core/errors/error_mapper.dart';
 import 'package:ishari/core/errors/exceptions.dart';
 import 'package:ishari/core/errors/failures.dart';
 import 'package:ishari/core/network/network_info.dart';
@@ -22,8 +23,8 @@ class TatananRepositoryImpl implements TatananRepository {
     if (!await _networkInfo.isConnected) return left(const NetworkFailure());
     try {
       return right(await _remote.getTatananList(userId));
-    } on ServerException catch (e) {
-      return left(ServerFailure(message: e.message));
+    } on ServerException catch (e, stackTrace) {
+      return left(mapErrorToFailure(e, stackTrace));
     }
   }
 
@@ -34,8 +35,8 @@ class TatananRepositoryImpl implements TatananRepository {
     if (!await _networkInfo.isConnected) return left(const NetworkFailure());
     try {
       return right(await _remote.getTatananById(tatananId));
-    } on ServerException catch (e) {
-      return left(ServerFailure(message: e.message));
+    } on ServerException catch (e, stackTrace) {
+      return left(mapErrorToFailure(e, stackTrace));
     }
   }
 
@@ -46,8 +47,8 @@ class TatananRepositoryImpl implements TatananRepository {
     if (!await _networkInfo.isConnected) return left(const NetworkFailure());
     try {
       return right(await _remote.getTatananDetail(tatananId));
-    } on ServerException catch (e) {
-      return left(ServerFailure(message: e.message));
+    } on ServerException catch (e, stackTrace) {
+      return left(mapErrorToFailure(e, stackTrace));
     }
   }
 
@@ -67,8 +68,8 @@ class TatananRepositoryImpl implements TatananRepository {
         description: description,
       );
       return right(id);
-    } on ServerException catch (e) {
-      return left(ServerFailure(message: e.message));
+    } on ServerException catch (e, stackTrace) {
+      return left(mapErrorToFailure(e, stackTrace));
     }
   }
 
@@ -78,8 +79,8 @@ class TatananRepositoryImpl implements TatananRepository {
     try {
       await _remote.deleteTatanan(tatananId);
       return right(null);
-    } on ServerException catch (e) {
-      return left(ServerFailure(message: e.message));
+    } on ServerException catch (e, stackTrace) {
+      return left(mapErrorToFailure(e, stackTrace));
     }
   }
 
@@ -97,8 +98,8 @@ class TatananRepositoryImpl implements TatananRepository {
         position: position,
       );
       return right(null);
-    } on ServerException catch (e) {
-      return left(ServerFailure(message: e.message));
+    } on ServerException catch (e, stackTrace) {
+      return left(mapErrorToFailure(e, stackTrace));
     }
   }
 
@@ -114,8 +115,8 @@ class TatananRepositoryImpl implements TatananRepository {
         verseId: verseId,
       );
       return right(null);
-    } on ServerException catch (e) {
-      return left(ServerFailure(message: e.message));
+    } on ServerException catch (e, stackTrace) {
+      return left(mapErrorToFailure(e, stackTrace));
     }
   }
 
@@ -131,8 +132,8 @@ class TatananRepositoryImpl implements TatananRepository {
         updates: updates,
       );
       return right(null);
-    } on ServerException catch (e) {
-      return left(ServerFailure(message: e.message));
+    } on ServerException catch (e, stackTrace) {
+      return left(mapErrorToFailure(e, stackTrace));
     }
   }
 }

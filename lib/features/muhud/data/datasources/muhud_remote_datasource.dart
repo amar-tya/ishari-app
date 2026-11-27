@@ -1,5 +1,6 @@
 import 'package:injectable/injectable.dart';
 import 'package:ishari/core/errors/exceptions.dart';
+import 'package:ishari/core/errors/failures.dart';
 import 'package:ishari/core/utils/app_logger.dart';
 import 'package:ishari/features/home/domain/entities/chapter_entity.dart';
 import 'package:ishari/features/muhud/data/models/translation_model.dart';
@@ -60,8 +61,8 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
           number: number,
         );
       }).toList();
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } catch (e, stackTrace) {
+      throw ServerException.from(e, stackTrace);
     }
   }
 
@@ -99,9 +100,9 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
         number: number,
       );
       return result;
-    } catch (e) {
+    } catch (e, stackTrace) {
       appLogger.e('[RemoteDataSource] getChapterById ERROR', error: e);
-      throw ServerException(message: e.toString());
+      throw ServerException.from(e, stackTrace);
     }
   }
 
@@ -147,7 +148,7 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
         error: e,
         stackTrace: stackTrace,
       );
-      throw ServerException(message: e.toString());
+      throw ServerException.from(e, stackTrace);
     }
   }
 
@@ -165,7 +166,7 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
   Future<int> _getPublicUserId() async {
     final email = _supabaseClient.auth.currentUser?.email;
     if (email == null) {
-      throw const ServerException(message: 'Not authenticated');
+      throw const ServerException(message: FailureMessages.signInRequired);
     }
     final data = await _supabaseClient
         .from('users')
@@ -213,8 +214,8 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
         }
         return true;
       }
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } catch (e, stackTrace) {
+      throw ServerException.from(e, stackTrace);
     }
   }
 
@@ -231,8 +232,8 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
         data as List<dynamic>,
         (row) => _toInt(row['verse_id']),
       );
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } catch (e, stackTrace) {
+      throw ServerException.from(e, stackTrace);
     }
   }
 
@@ -251,8 +252,8 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
           .order('created_at', ascending: false);
 
       return _parseRows(data as List<dynamic>, _parseBookmarkedVerse);
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } catch (e, stackTrace) {
+      throw ServerException.from(e, stackTrace);
     }
   }
 
@@ -306,8 +307,8 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
           .eq('verse_id', verseId)
           .eq('user_id', publicUserId)
           .isFilter('deleted_at', null);
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } catch (e, stackTrace) {
+      throw ServerException.from(e, stackTrace);
     }
   }
 }

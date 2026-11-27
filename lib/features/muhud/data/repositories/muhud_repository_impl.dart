@@ -1,5 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
+import 'package:ishari/core/errors/error_mapper.dart';
 import 'package:ishari/core/errors/exceptions.dart';
 import 'package:ishari/core/errors/failures.dart';
 import 'package:ishari/core/network/network_info.dart';
@@ -24,8 +25,8 @@ class MuhudRepositoryImpl implements MuhudRepository {
     try {
       final result = await _remote.getAllChapters();
       return right(result);
-    } on ServerException catch (e) {
-      return left(ServerFailure(message: e.message));
+    } on ServerException catch (e, stackTrace) {
+      return left(mapErrorToFailure(e, stackTrace));
     }
   }
 
@@ -37,8 +38,8 @@ class MuhudRepositoryImpl implements MuhudRepository {
     try {
       final result = await _remote.getChapterById(chapterId);
       return right(result);
-    } on ServerException catch (e) {
-      return left(ServerFailure(message: e.message));
+    } on ServerException catch (e, stackTrace) {
+      return left(mapErrorToFailure(e, stackTrace));
     }
   }
 
@@ -52,8 +53,8 @@ class MuhudRepositoryImpl implements MuhudRepository {
     try {
       final models = await _remote.getVersesByChapter(chapterId);
       return right(models.map((m) => m.toEntity()).toList());
-    } on ServerException catch (e) {
-      return left(ServerFailure(message: e.message));
+    } on ServerException catch (e, stackTrace) {
+      return left(mapErrorToFailure(e, stackTrace));
     }
   }
 
@@ -69,8 +70,8 @@ class MuhudRepositoryImpl implements MuhudRepository {
     try {
       final result = await _remote.toggleBookmark(verseId, userId, note: note);
       return right(result);
-    } on ServerException catch (e) {
-      return left(ServerFailure(message: e.message));
+    } on ServerException catch (e, stackTrace) {
+      return left(mapErrorToFailure(e, stackTrace));
     }
   }
 
@@ -84,8 +85,8 @@ class MuhudRepositoryImpl implements MuhudRepository {
     try {
       final result = await _remote.getBookmarkedVerseIds(userId);
       return right(result);
-    } on ServerException catch (e) {
-      return left(ServerFailure(message: e.message));
+    } on ServerException catch (e, stackTrace) {
+      return left(mapErrorToFailure(e, stackTrace));
     }
   }
 
@@ -99,8 +100,8 @@ class MuhudRepositoryImpl implements MuhudRepository {
     try {
       final result = await _remote.getBookmarkedVerses(userId);
       return right(result);
-    } on ServerException catch (e) {
-      return left(ServerFailure(message: e.message));
+    } on ServerException catch (e, stackTrace) {
+      return left(mapErrorToFailure(e, stackTrace));
     }
   }
 
@@ -115,8 +116,8 @@ class MuhudRepositoryImpl implements MuhudRepository {
     try {
       await _remote.updateBookmarkNote(verseId, note);
       return right(null);
-    } on ServerException catch (e) {
-      return left(ServerFailure(message: e.message));
+    } on ServerException catch (e, stackTrace) {
+      return left(mapErrorToFailure(e, stackTrace));
     }
   }
 }

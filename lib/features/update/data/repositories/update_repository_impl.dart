@@ -1,6 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
-import 'package:ishari/core/errors/exceptions.dart';
+import 'package:ishari/core/errors/error_mapper.dart';
 import 'package:ishari/core/errors/failures.dart';
 import 'package:ishari/features/update/data/datasources/update_remote_datasource.dart';
 import 'package:ishari/features/update/data/models/app_version_model.dart';
@@ -20,10 +20,8 @@ class UpdateRepositoryImpl implements UpdateRepository {
     try {
       final model = await _remote.getAppVersion(platform);
       return right(model.toEntity());
-    } on ServerException catch (e) {
-      return left(ServerFailure(message: e.message));
-    } catch (e) {
-      return left(UnknownFailure(message: e.toString()));
+    } catch (e, stackTrace) {
+      return left(mapErrorToFailure(e, stackTrace));
     }
   }
 }

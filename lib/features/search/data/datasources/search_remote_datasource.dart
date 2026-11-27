@@ -37,8 +37,8 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
 
       final data = await q.order('chapter_number', ascending: true);
       return data.map(ChapterModel.fromJson).toList();
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } catch (e, stackTrace) {
+      throw ServerException.from(e, stackTrace);
     }
   }
 }

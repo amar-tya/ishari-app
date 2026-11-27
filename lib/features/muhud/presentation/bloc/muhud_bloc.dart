@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:ishari/core/analytics/analytics_service.dart';
 import 'package:ishari/core/audio/audio_session_coordinator.dart';
+import 'package:ishari/core/errors/failures.dart';
 import 'package:ishari/core/utils/app_logger.dart';
 import 'package:ishari/features/audio/domain/entities/audio_playback_request.dart';
 import 'package:ishari/features/audio/domain/services/audio_playback_service.dart';
@@ -163,7 +164,7 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
         error: e,
         stackTrace: stackTrace,
       );
-      emit(MuhudState.error(message: 'Error: $e'));
+      emit(const MuhudState.error(message: FailureMessages.unknown));
     }
   }
 

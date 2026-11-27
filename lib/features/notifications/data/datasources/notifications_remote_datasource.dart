@@ -30,8 +30,8 @@ class NotificationsRemoteDatasourceImpl
           .eq('is_active', true)
           .order('published_at', ascending: false);
       return data.map(NotificationModel.fromJson).toList();
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } catch (e, stackTrace) {
+      throw ServerException.from(e, stackTrace);
     }
   }
 
@@ -45,8 +45,8 @@ class NotificationsRemoteDatasourceImpl
       return data
           .map((r) => r['notification_id'] as String)
           .toSet();
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } catch (e, stackTrace) {
+      throw ServerException.from(e, stackTrace);
     }
   }
 
@@ -64,8 +64,8 @@ class NotificationsRemoteDatasourceImpl
                 )
                 .toList(),
           );
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } catch (e, stackTrace) {
+      throw ServerException.from(e, stackTrace);
     }
   }
 }

@@ -26,8 +26,8 @@ class KitabRemoteDataSourceImpl implements KitabRemoteDataSource {
           .isFilter('deleted_at', null)
           .order('id');
       return data.map(BookModel.fromJson).toList();
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } catch (e, stackTrace) {
+      throw ServerException.from(e, stackTrace);
     }
   }
 
@@ -64,8 +64,8 @@ class KitabRemoteDataSourceImpl implements KitabRemoteDataSource {
           number: number,
         );
       }).toList();
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } catch (e, stackTrace) {
+      throw ServerException.from(e, stackTrace);
     }
   }
 
@@ -78,8 +78,8 @@ class KitabRemoteDataSourceImpl implements KitabRemoteDataSource {
           .eq('chapter_id', chapterId)
           .order('page_number', ascending: true);
       return data.map(BookPageModel.fromJson).toList();
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } catch (e, stackTrace) {
+      throw ServerException.from(e, stackTrace);
     }
   }
 }
