@@ -9,10 +9,9 @@ extension SafeNavigationX on BuildContext {
   ///
   /// A bare `context.pop()` throws `GoError: There is nothing to pop` whenever
   /// the current page is the only entry in the stack. That happens on every
-  /// deep-link entry: `GoRouter.go()` (used by the FCM notification-tap
-  /// handler and by `initialLocation` on cold start) *replaces* the stack
-  /// instead of pushing onto it, so a page opened that way has no page
-  /// underneath it — yet it still renders its own back button.
+  /// deep-link entry: `GoRouter.go()` and `initialLocation` on cold start
+  /// *replace* the stack instead of pushing onto it, so a page opened that way
+  /// has no page underneath it — yet it still renders its own back button.
   ///
   /// Use this for any back button on a route that can be reached by deep link.
   void popOrHome() {

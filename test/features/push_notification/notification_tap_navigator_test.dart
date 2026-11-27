@@ -2,11 +2,27 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:go_router/go_router.dart';
+import 'package:ishari/core/audio/audio_session_coordinator.dart';
+import 'package:ishari/core/errors/failures.dart';
 import 'package:ishari/core/router/app_router.dart';
 import 'package:ishari/core/wakelock/screen_wakelock.dart';
+import 'package:ishari/features/audio/domain/entities/audio_track_entity.dart';
+import 'package:ishari/features/audio/domain/repositories/audio_repository.dart';
+import 'package:ishari/features/audio/domain/usecases/get_all_audio_tracks.dart';
+import 'package:ishari/features/audio/presentation/bloc/audio_list_bloc.dart';
 import 'package:ishari/features/push_notification/presentation/notification_tap_navigator.dart';
 import 'package:ishari/shared/widgets/keep_screen_on.dart';
+
+import '../audio/fakes/fake_audio_playback_service.dart';
+
+/// Reloading the real list is covered in notification_audio_refresh_test.dart.
+class _EmptyAudioRepository implements AudioRepository {
+  @override
+  Future<Either<Failure, List<AudioTrackEntity>>> getAllAudioTracks() async =>
+      right(const []);
+}
 
 /// A page whose State identity tells whether it was rebuilt from scratch.
 class _Page extends StatefulWidget {
@@ -79,7 +95,15 @@ void main() {
   late NotificationTapNavigator navigator;
   late GoRouter router;
 
-  setUp(() => navigator = NotificationTapNavigator());
+  setUp(
+    () => navigator = NotificationTapNavigator(
+      AudioListBloc(
+        getAllAudioTracks: GetAllAudioTracks(_EmptyAudioRepository()),
+        playbackService: FakeAudioPlaybackService(),
+        sessionCoordinator: AudioSessionCoordinator(),
+      ),
+    ),
+  );
 
   tearDown(() => navigator.dispose());
 

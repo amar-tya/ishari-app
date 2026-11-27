@@ -140,10 +140,6 @@ Future<_i174.GetIt> initDependencies(
   gh.lazySingleton<_i1047.FeatureFlagsService>(
     () => _i1047.FeatureFlagsService(),
   );
-  gh.lazySingleton<_i58.NotificationTapNavigator>(
-    () => _i58.NotificationTapNavigator(),
-    dispose: (i) => i.dispose(),
-  );
   gh.lazySingleton<_i454.SupabaseClient>(() => registerModule.supabaseClient);
   gh.lazySingleton<_i161.InternetConnection>(
     () => registerModule.internetConnection,
@@ -177,13 +173,6 @@ Future<_i174.GetIt> initDependencies(
   );
   gh.lazySingleton<_i1035.AudioRemoteDataSource>(
     () => _i1035.AudioRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
-  );
-  gh.lazySingleton<_i480.FcmService>(
-    () => _i480.FcmService(
-      gh<_i68.PushMessagingClient>(),
-      gh<_i274.LocalNotificationsClient>(),
-      gh<_i58.NotificationTapNavigator>(),
-    ),
   );
   gh.lazySingleton<_i588.AuthRemoteDataSource>(
     () => _i588.AuthRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
@@ -404,6 +393,10 @@ Future<_i174.GetIt> initDependencies(
   gh.factory<_i242.ChapterListBloc>(
     () => _i242.ChapterListBloc(getAllChapters: gh<_i183.GetAllChapters>()),
   );
+  gh.lazySingleton<_i58.NotificationTapNavigator>(
+    () => _i58.NotificationTapNavigator(gh<_i606.AudioListBloc>()),
+    dispose: (i) => i.dispose(),
+  );
   gh.lazySingleton<_i191.GetCurrentUser>(
     () => _i191.GetCurrentUser(gh<_i1015.AuthRepository>()),
   );
@@ -444,6 +437,13 @@ Future<_i174.GetIt> initDependencies(
       gh<_i872.SignOut>(),
       gh<_i191.GetCurrentUser>(),
       gh<_i931.AnalyticsService>(),
+    ),
+  );
+  gh.lazySingleton<_i480.FcmService>(
+    () => _i480.FcmService(
+      gh<_i68.PushMessagingClient>(),
+      gh<_i274.LocalNotificationsClient>(),
+      gh<_i58.NotificationTapNavigator>(),
     ),
   );
   return getIt;

@@ -2,6 +2,8 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
 import 'package:ishari/core/router/app_router.dart';
+import 'package:ishari/features/audio/presentation/bloc/audio_list_bloc.dart';
+import 'package:ishari/features/audio/presentation/bloc/audio_list_event.dart';
 import 'package:ishari/features/audio/presentation/pages/audio_list_page.dart';
 import 'package:ishari/features/auth/presentation/pages/home_page.dart';
 import 'package:ishari/features/introduction/presentation/pages/introduction_page.dart';
@@ -14,6 +16,9 @@ import 'package:ishari/features/update/presentation/pages/force_update_page.dart
 /// is held, in memory only, until the router is there.
 @lazySingleton
 class NotificationTapNavigator {
+  NotificationTapNavigator(this._audioList);
+
+  final AudioListBloc _audioList;
   String? _pending;
 
   /// The router delegate being watched while [_pending] cannot be opened yet.
@@ -98,8 +103,20 @@ class NotificationTapNavigator {
     }
 
     _forget();
-    // Apart from the reset above, pages are never removed to reach the target:
-    // they may hold input that is not saved yet.
+    // The list already loaded may predate the recording being announced. This
+    // has to be added before the page asks for its own, cached, load.
+    if (target.path == AudioListPage.routePath) {
+      _audioList.add(
+        const AudioListEvent.loadAll(
+          forceRefresh: true,
+          keepListOnFailure: true,
+        ),
+      );
+    }
+    // Apart from the reset above, no page below the top one is removed to reach
+    // the target. The top page is replaced only for a newer version of itself.
+    // That does not protect what it holds: its state, and any sheet or dialog
+    // opened over it, go with it.
     if (samePage) {
       router.pushReplacement<void>(path).ignore();
     } else {

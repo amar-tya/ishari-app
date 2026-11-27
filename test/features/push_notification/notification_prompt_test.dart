@@ -19,7 +19,8 @@ import 'fakes.dart';
 const _title = 'Dapatkan notifikasi audio baru';
 const _accept = 'Aktifkan';
 const _later = 'Nanti saja';
-const _settingsHint = 'Pengaturan > Aplikasi > Ishari > Notifikasi';
+const _settingsHint =
+    'Pengaturan > Aplikasi > Sholawat Hadrah Ishari > Notifikasi';
 const _countKey = 'notification_prompt_count';
 
 class _GatedMessaging extends FakePushMessagingClient {

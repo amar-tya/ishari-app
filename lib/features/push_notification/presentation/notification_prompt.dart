@@ -8,7 +8,7 @@ const _kSubtle = Color(0xFF79747E);
 
 const _deniedMessage =
     'Notifikasi belum aktif. Aktifkan lewat '
-    'Pengaturan > Aplikasi > Ishari > Notifikasi.';
+    'Pengaturan > Aplikasi > Sholawat Hadrah Ishari > Notifikasi.';
 
 /// Explains the "audio baru" notifications over the page of [context], and asks
 /// the system for the permission only if the user chooses to turn them on.

@@ -22,7 +22,11 @@ class AudioListBloc extends Bloc<AudioListEvent, AudioListState> {
   }) : super(const AudioListState()) {
     on<AudioListEvent>((event, emit) async {
       await event.when(
-        loadAll: (forceRefresh) => _onLoadAll(emit, forceRefresh: forceRefresh),
+        loadAll: (forceRefresh, keepListOnFailure) => _onLoadAll(
+          emit,
+          forceRefresh: forceRefresh,
+          keepListOnFailure: keepListOnFailure,
+        ),
         searchChanged: (query) async => emit(state.copyWith(query: query)),
         sortChanged: (sort) async => emit(state.copyWith(sort: sort)),
         openFilterSheet: () async => emit(
@@ -81,6 +85,9 @@ class AudioListBloc extends Bloc<AudioListEvent, AudioListState> {
   late final StreamSubscription<void> _completedSubscription;
   late final VoidCallback _ownerListener;
 
+  /// Number of the latest fetch started by [_onLoadAll].
+  int _latestLoad = 0;
+
   bool get _isOwner =>
       sessionCoordinator.owner.value == AudioSessionOwner.audioCatalog;
 
@@ -103,6 +110,7 @@ class AudioListBloc extends Bloc<AudioListEvent, AudioListState> {
   Future<void> _onLoadAll(
     Emitter<AudioListState> emit, {
     required bool forceRefresh,
+    required bool keepListOnFailure,
   }) async {
     if (!forceRefresh &&
         (state.status == AudioListStatus.loaded ||
@@ -113,15 +121,23 @@ class AudioListBloc extends Bloc<AudioListEvent, AudioListState> {
       emit(state.copyWith(status: AudioListStatus.loading));
     }
 
+    final load = ++_latestLoad;
     final result = await getAllAudioTracks(const NoParams());
+    // Events run concurrently: an older fetch can finish after a newer one,
+    // with an older list.
+    if (load != _latestLoad) return;
     result.fold(
-      (failure) => emit(
-        state.copyWith(
-          status: AudioListStatus.error,
-          errorMessage: failure.message,
-          refreshTick: state.refreshTick + 1,
-        ),
-      ),
+      (failure) {
+        final keep =
+            keepListOnFailure && state.status == AudioListStatus.loaded;
+        emit(
+          state.copyWith(
+            status: keep ? AudioListStatus.loaded : AudioListStatus.error,
+            errorMessage: keep ? null : failure.message,
+            refreshTick: state.refreshTick + 1,
+          ),
+        );
+      },
       (tracks) => emit(
         state.copyWith(
           status: AudioListStatus.loaded,
