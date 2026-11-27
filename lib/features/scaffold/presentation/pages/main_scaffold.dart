@@ -12,6 +12,7 @@ import 'package:ishari/features/bookmark/presentation/pages/bookmark_tab.dart';
 import 'package:ishari/features/home/presentation/pages/home_page.dart';
 import 'package:ishari/features/kitab/presentation/pages/kitab_tab.dart';
 import 'package:ishari/features/lainnya/presentation/pages/lainnya_tab.dart';
+import 'package:ishari/features/push_notification/presentation/home_notification_prompt.dart';
 import 'package:ishari/features/search/presentation/pages/search_tab.dart';
 import 'package:ishari/features/tatanan/presentation/pages/tatanan_tab.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
@@ -37,6 +38,10 @@ class _MainScaffoldState extends State<MainScaffold> with RouteAware {
   // Wizard
   final List<GlobalKey> _tabKeys = List.generate(6, (_) => GlobalKey());
   bool _tabWizardShown = false;
+
+  /// Completes once the wizard knows whether its tour has to run; the
+  /// notification prompt waits for it.
+  final _wizardReady = Completer<void>();
 
   @override
   void initState() {
@@ -92,6 +97,7 @@ class _MainScaffoldState extends State<MainScaffold> with RouteAware {
   Future<void> _initWizard() async {
     if (!mounted) return;
     await context.read<WizardCubit>().init();
+    _wizardReady.complete();
     // Navigasi ke /chapter/2 ditangani EKSKLUSIF oleh BlocListener di bawah.
     // Jangan push di sini — menyebabkan double push karena BlocListener juga
     // menerima WizardActive(muhudSplit) yang di-emit oleh init(), sehingga
@@ -235,7 +241,12 @@ class _MainScaffoldState extends State<MainScaffold> with RouteAware {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => HomeNotificationPrompt(
+    wizardReady: _wizardReady.future,
+    child: _buildShell(context),
+  );
+
+  Widget _buildShell(BuildContext context) {
     return BlocListener<WizardCubit, WizardState>(
       listener: (ctx, state) {
         if (state is WizardActive) {

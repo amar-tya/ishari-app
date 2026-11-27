@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,6 +11,7 @@ import 'package:ishari/features/audio/presentation/bloc/audio_list_state.dart';
 import 'package:ishari/features/audio/presentation/bloc/audio_sort.dart';
 import 'package:ishari/features/audio/presentation/utils/format_duration.dart';
 import 'package:ishari/features/audio/presentation/widgets/audio_filter_sheet.dart';
+import 'package:ishari/features/push_notification/presentation/notification_prompt.dart';
 import 'package:ishari/injection_container.dart';
 import 'package:ishari/shared/widgets/native_ad_card.dart';
 
@@ -39,6 +42,14 @@ class _AudioListBody extends StatefulWidget {
 
 class _AudioListBodyState extends State<_AudioListBody> {
   final _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) unawaited(offerNotificationPrompt(context));
+    });
+  }
 
   @override
   void dispose() {

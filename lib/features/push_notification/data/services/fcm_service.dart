@@ -3,19 +3,17 @@ import 'dart:convert';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
-import 'package:ishari/core/router/app_router.dart';
 import 'package:ishari/core/router/route_guards.dart';
 import 'package:ishari/features/audio/presentation/pages/audio_list_page.dart';
+import 'package:ishari/features/push_notification/data/services/local_notifications_client.dart';
+import 'package:ishari/features/push_notification/data/services/push_error_report.dart';
+import 'package:ishari/features/push_notification/data/services/push_messaging_client.dart';
+import 'package:ishari/features/push_notification/presentation/notification_tap_navigator.dart';
 import 'package:ishari/firebase_options.dart';
 
 const _newAudioTopic = 'new_audio';
-const _channelId = 'new_audio_channel';
-const _channelName = 'Audio Baru';
-const _channelDescription = 'Notifikasi saat ada audio Hadi baru';
 
 /// Route to open for a tapped "audio baru" notification, or `null` when the
 /// payload carries neither id.
@@ -39,97 +37,97 @@ String? fcmTargetPath(String? chapterId, {String? verseId}) {
   return '/chapter/$chapter?verseId=${Uri.encodeQueryComponent(verseId)}';
 }
 
-/// Wraps [FirebaseMessaging] + [FlutterLocalNotificationsPlugin] to deliver
-/// "audio baru" push notifications (topic-based FCM — see AMA-60 PRD for
-/// why topics were chosen over per-device-token sends).
+/// Wraps FCM and local notifications to deliver "audio baru" push
+/// notifications (topic-based FCM — see AMA-60 PRD for why topics were chosen
+/// over per-device-token sends).
+///
+/// Asking for the notification permission is not done here; see
+/// `NotificationPermissionPrompter`.
 @lazySingleton
 class FcmService {
-  final FirebaseMessaging _messaging = FirebaseMessaging.instance;
-  final FlutterLocalNotificationsPlugin _localNotifications =
-      FlutterLocalNotificationsPlugin();
+  // Called only by the generated DI config, which analysis does not see.
+  // ignore: unreachable_from_main
+  FcmService(this._messaging, this._localNotifications, this._navigator);
 
+  final PushMessagingClient _messaging;
+  final LocalNotificationsClient _localNotifications;
+  final NotificationTapNavigator _navigator;
+
+  @visibleForTesting
+  void Function(Object error, StackTrace stack) reportError = reportPushError;
+
+  /// Call once per app launch. Every step runs on its own, so that one failing
+  /// does not cost the others, and nothing here needs the permission.
   Future<void> init() async {
-    await _messaging.requestPermission();
-    await _initLocalNotifications();
-    await _messaging.subscribeToTopic(_newAudioTopic);
-
-    FirebaseMessaging.onMessage.listen(_onForegroundMessage);
-    FirebaseMessaging.onMessageOpenedApp.listen(_onNotificationTap);
-
-    final initialMessage = await _messaging.getInitialMessage();
-    if (initialMessage != null) _onNotificationTap(initialMessage);
+    await _step(_localNotifications.createChannel);
+    await _step(
+      () => _localNotifications.initialize(onTap: _onLocalNotificationTap),
+    );
+    await _step(() async {
+      _messaging.onMessage.listen(_onForegroundMessage);
+    });
+    await _step(() async {
+      _messaging.onMessageOpenedApp.listen(_onNotificationTap);
+    });
+    // The tap that launched a terminated app, by kind of notification.
+    await _step(() async {
+      final message = await _messaging.getInitialMessage();
+      if (message != null) _onNotificationTap(message);
+    });
+    await _step(() async {
+      _onLocalNotificationTap(await _localNotifications.launchPayload());
+    });
+    // Last: offline it can stay pending for a long time.
+    await _step(() => _messaging.subscribeToTopic(_newAudioTopic));
   }
 
-  Future<void> _initLocalNotifications() async {
-    const androidChannel = AndroidNotificationChannel(
-      _channelId,
-      _channelName,
-      description: _channelDescription,
-      importance: Importance.high,
-    );
-    await _localNotifications
-        .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
-        >()
-        ?.createNotificationChannel(androidChannel);
-
-    const initSettings = InitializationSettings(
-      android: AndroidInitializationSettings('@drawable/ic_stat_notify'),
-    );
-    await _localNotifications.initialize(
-      settings: initSettings,
-      onDidReceiveNotificationResponse: (response) {
-        final payload = response.payload;
-        if (payload == null || payload.isEmpty) return;
-        final data = jsonDecode(payload) as Map<String, dynamic>;
-        _navigateToTarget(
-          data['chapterId'] as String?,
-          verseId: data['verseId'] as String?,
-        );
-      },
-    );
+  Future<void> _step(Future<void> Function() step) async {
+    try {
+      await step();
+    } on Object catch (error, stack) {
+      reportError(error, stack);
+    }
   }
 
   void _onForegroundMessage(RemoteMessage message) {
     final notification = message.notification;
     if (notification == null) return;
     unawaited(
-      _localNotifications.show(
-        id: notification.hashCode,
-        title: notification.title,
-        body: notification.body,
-        notificationDetails: const NotificationDetails(
-          android: AndroidNotificationDetails(_channelId, _channelName),
+      _step(
+        () => _localNotifications.show(
+          id: notification.hashCode,
+          title: notification.title,
+          body: notification.body,
+          payload: jsonEncode({
+            'chapterId': message.data['chapterId'],
+            'verseId': message.data['verseId'],
+          }),
         ),
-        payload: jsonEncode({
-          'chapterId': message.data['chapterId'],
-          'verseId': message.data['verseId'],
-        }),
       ),
     );
   }
 
-  void _onNotificationTap(RemoteMessage message) {
-    _navigateToTarget(
-      message.data['chapterId'] as String?,
-      verseId: message.data['verseId'] as String?,
-    );
+  void _onNotificationTap(RemoteMessage message) => _openTarget(message.data);
+
+  void _onLocalNotificationTap(String? payload) {
+    if (payload == null || payload.isEmpty) return;
+    final Object? data;
+    try {
+      data = jsonDecode(payload);
+    } on FormatException {
+      return;
+    }
+    if (data is Map<String, dynamic>) _openTarget(data);
   }
 
-  void _navigateToTarget(String? chapterId, {String? verseId}) {
-    final path = fcmTargetPath(chapterId, verseId: verseId);
-    if (path == null) return;
-
-    void attempt() {
-      final context = rootNavigatorKey.currentContext;
-      if (context != null && context.mounted) {
-        GoRouter.of(context).go(path);
-      } else {
-        WidgetsBinding.instance.addPostFrameCallback((_) => attempt());
-      }
+  void _openTarget(Map<String, dynamic> data) {
+    String? read(String key) {
+      final value = data[key];
+      return value is String ? value : null;
     }
 
-    attempt();
+    final path = fcmTargetPath(read('chapterId'), verseId: read('verseId'));
+    if (path != null) _navigator.open(path);
   }
 }
 

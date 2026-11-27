@@ -2,6 +2,7 @@
 // at the bloc level in audio_list_bloc_test.dart. Keeps the sample dataset
 // under 5 items so the native ad slot (AdMob platform channel) never
 // renders either.
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
@@ -13,8 +14,11 @@ import 'package:ishari/features/audio/domain/repositories/audio_repository.dart'
 import 'package:ishari/features/audio/domain/usecases/get_all_audio_tracks.dart';
 import 'package:ishari/features/audio/presentation/bloc/audio_list_bloc.dart';
 import 'package:ishari/features/audio/presentation/pages/audio_list_page.dart';
+import 'package:ishari/features/push_notification/data/services/notification_permission_prompter.dart';
 import 'package:ishari/injection_container.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../push_notification/fakes.dart';
 import '../../fakes/fake_audio_playback_service.dart';
 
 class _FakeAudioRepository implements AudioRepository {
@@ -47,7 +51,19 @@ void main() {
     GoogleFonts.config.allowRuntimeFetching = false;
   });
 
-  setUp(() {
+  late FakePushMessagingClient messaging;
+
+  setUp(() async {
+    SharedPreferences.setMockInitialValues({});
+    // Allowed already, so the notification sheet stays out of the way.
+    messaging = FakePushMessagingClient()
+      ..status = AuthorizationStatus.authorized;
+    sl.registerSingleton<NotificationPermissionPrompter>(
+      NotificationPermissionPrompter(
+        messaging,
+        await SharedPreferences.getInstance(),
+      ),
+    );
     sl.registerFactory<AudioListBloc>(
       () => AudioListBloc(
         getAllAudioTracks: GetAllAudioTracks(
@@ -60,9 +76,17 @@ void main() {
   });
 
   tearDown(() async {
-    if (sl.isRegistered<AudioListBloc>()) {
-      await sl.unregister<AudioListBloc>();
-    }
+    await sl.reset();
+  });
+
+  testWidgets('offers notifications when it is opened', (tester) async {
+    messaging.status = AuthorizationStatus.denied;
+
+    await tester.pumpWidget(const MaterialApp(home: AudioListPage()));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Dapatkan notifikasi audio baru'), findsOneWidget);
+    expect(messaging.permissionRequests, 0);
   });
 
   testWidgets('renders track titles once loaded', (tester) async {
