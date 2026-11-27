@@ -14,6 +14,7 @@ import 'package:ishari/core/ads/interstitial_ad_manager.dart';
 import 'package:ishari/core/app_state.dart';
 import 'package:ishari/core/env/app_env.dart';
 import 'package:ishari/core/feature_flags/feature_flags_service.dart';
+import 'package:ishari/core/guest/guest_mode_store.dart';
 import 'package:ishari/core/router/app_router.dart';
 import 'package:ishari/core/wizard/wizard_cubit.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
@@ -31,6 +32,7 @@ import 'package:ishari/features/update/presentation/widgets/soft_update_dialog.d
 import 'package:ishari/firebase_options.dart';
 import 'package:ishari/injection_container.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 // Hide conflicting names exported by third-party packages.
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
 
@@ -58,6 +60,10 @@ class _AppLoaderState extends State<AppLoader> {
   bool _navigating = false;
 
   late final StartupController _startup;
+
+  /// Set by the `guest_mode` startup step. Null when the controller is
+  /// replaced in tests.
+  GuestModeStore? _guestMode;
 
   Widget? _app;
 
@@ -155,6 +161,13 @@ class _AppLoaderState extends State<AppLoader> {
           WizardCubit(sl<FlutterSecureStorage>()),
         );
       }),
+    );
+    // Before the app is shown, so the first route already knows whether the
+    // user chose "Continue as Guest". The read is from memory (the preferences
+    // were loaded with the dependencies) and cannot fail the startup.
+    await steps.runOnce(
+      'guest_mode',
+      () async => _guestMode = GuestModeStore(sl<SharedPreferences>())..start(),
     );
   }
 
@@ -274,6 +287,8 @@ class _AppLoaderState extends State<AppLoader> {
 
     if (!mounted) return;
 
+    // A restored session wins over a guest flag left from before it.
+    _guestMode?.settle(authBloc.state);
     final hasAccess =
         authBloc.state.maybeWhen(
           authenticated: (_) => true,
