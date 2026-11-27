@@ -142,14 +142,14 @@ class _MainScaffoldState extends State<MainScaffold> with RouteAware {
         identify: 'tab_beranda',
         step: '3/4',
         title: 'Beranda',
-        body: 'Jelajahi daftar shalawat, diba\', rowi, dan muradah pilihan.',
+        body: "Jelajahi daftar shalawat, diba', rowi, dan muradah pilihan.",
       ),
       _tabTarget(
         key: _tabKeys[1],
         identify: 'tab_cari',
         step: '3/4',
         title: 'Cari',
-        body: 'Cari shalawat, diba\', rowi, atau muradah dengan cepat.',
+        body: "Cari shalawat, diba', rowi, atau muradah dengan cepat.",
       ),
       _tabTarget(
         key: _tabKeys[2],
