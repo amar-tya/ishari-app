@@ -127,7 +127,7 @@ class _MainScaffoldState extends State<MainScaffold> with RouteAware {
     );
   }
 
-  // ── Wizard tab tour ─────────────────────────────────────────────────────────
+  // ── Wizard tab tour ────────────────────────────────────────────────────────
 
   void _startTabTour() {
     if (!mounted || _tabWizardShown) return;
@@ -164,7 +164,8 @@ class _MainScaffoldState extends State<MainScaffold> with RouteAware {
         step: '3/4',
         title: 'Bookmark',
         body: isGuest
-            ? 'Simpan ayat favorit dan akses kapan saja.\n\n🔒 Login untuk mengakses fitur ini.'
+            ? 'Simpan ayat favorit dan akses kapan saja.\n\n'
+                  '🔒 Login untuk mengakses fitur ini.'
             : 'Simpan ayat favorit dan akses kapan saja.',
       ),
       _tabTarget(
@@ -173,7 +174,8 @@ class _MainScaffoldState extends State<MainScaffold> with RouteAware {
         step: '3/4',
         title: 'Tatanan',
         body: isGuest
-            ? 'Buat susunan shalawat sendiri sesuai kebutuhanmu.\n\n🔒 Login untuk mengakses fitur ini.'
+            ? 'Buat susunan shalawat sendiri sesuai kebutuhanmu.\n\n'
+                  '🔒 Login untuk mengakses fitur ini.'
             : 'Buat susunan shalawat sendiri sesuai kebutuhanmu.',
       ),
     ];
