@@ -7,6 +7,7 @@ import 'package:ishari/features/tatanan/presentation/bloc/tatanan_detail/tatanan
 import 'package:ishari/features/tatanan/presentation/bloc/tatanan_settings_cubit.dart';
 import 'package:ishari/features/tatanan/presentation/widgets/tatanan_reader_body.dart';
 import 'package:ishari/injection_container.dart';
+import 'package:ishari/shared/widgets/keep_screen_on.dart';
 
 class TatananDetailPage extends StatelessWidget {
   const TatananDetailPage({required this.tatananId, super.key});
@@ -17,21 +18,23 @@ class TatananDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (_) => sl<TatananDetailBloc>()
-            ..add(TatananDetailEvent.load(tatananId: tatananId)),
-        ),
-        BlocProvider(
-          create: (_) => SplitPanelCubit(
-            getAllChapters: sl<GetAllChapters>(),
-            getVersesByChapter: sl<GetVersesByChapter>(),
+    return KeepScreenOn(
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (_) => sl<TatananDetailBloc>()
+              ..add(TatananDetailEvent.load(tatananId: tatananId)),
           ),
-        ),
-        BlocProvider(create: (_) => TatananSettingsCubit()),
-      ],
-      child: TatananReaderBody(tatananId: tatananId),
+          BlocProvider(
+            create: (_) => SplitPanelCubit(
+              getAllChapters: sl<GetAllChapters>(),
+              getVersesByChapter: sl<GetVersesByChapter>(),
+            ),
+          ),
+          BlocProvider(create: (_) => TatananSettingsCubit()),
+        ],
+        child: TatananReaderBody(tatananId: tatananId),
+      ),
     );
   }
 }

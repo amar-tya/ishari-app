@@ -33,7 +33,6 @@ import 'package:ishari/injection_container.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 // Hide conflicting names exported by third-party packages.
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
-import 'package:wakelock_plus/wakelock_plus.dart';
 
 const _bg = Color(0xFFF0F5EE);
 const _dark = Color(0xFF111111);
@@ -83,7 +82,6 @@ class _AppLoaderState extends State<AppLoader> {
     // the notification permission dialog.
     backgroundTasks: {
       'ads': _initAds,
-      'wakelock': WakelockPlus.enable,
       'fcm': () => sl<FcmService>().init(),
       'feature_flags': () => sl<FeatureFlagsService>().initialize(),
     },

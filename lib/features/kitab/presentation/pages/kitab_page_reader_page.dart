@@ -10,6 +10,7 @@ import 'package:ishari/features/kitab/domain/usecases/get_pages_by_chapter.dart'
 import 'package:ishari/features/kitab/presentation/bloc/book_chapters_cubit.dart';
 import 'package:ishari/features/kitab/presentation/bloc/kitab_page_reader_cubit.dart';
 import 'package:ishari/injection_container.dart';
+import 'package:ishari/shared/widgets/keep_screen_on.dart';
 
 const _kDark = Color(0xFF111111);
 const _kLime = Color(0xFFCAFF00);
@@ -90,158 +91,163 @@ class _KitabPageReaderPageState extends State<KitabPageReaderPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider.value(value: _readerCubit),
-        if (_chaptersCubit != null) BlocProvider.value(value: _chaptersCubit!),
-      ],
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: SafeArea(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-                child: Row(
-                  children: [
-                    _IconBtn(
-                      icon: Icons.arrow_back_ios_new_rounded,
-                      onTap: () => context.popOrHome(),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _chaptersCubit == null
-                          ? const SizedBox.shrink()
-                          : BlocBuilder<BookChaptersCubit, BookChaptersState>(
-                              builder: (context, state) {
-                                if (state is! BookChaptersLoaded) {
-                                  return const SizedBox.shrink();
-                                }
-                                return _ChapterDropdown(
-                                  chapters: state.chapters,
-                                  currentChapterId: _currentChapterId,
-                                  onSelected: _switchChapter,
-                                );
-                              },
-                            ),
-                    ),
-                    const SizedBox(width: 8),
-                    BlocBuilder<KitabPageReaderCubit, KitabPageReaderState>(
-                      builder: (context, state) {
-                        if (state is! KitabPageReaderLoaded ||
-                            state.pages.isEmpty) {
-                          return const SizedBox.shrink();
-                        }
-                        return _PageBadge(
-                          current: _currentPage + 1,
-                          total: state.pages.length,
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child:
-                    BlocBuilder<KitabPageReaderCubit, KitabPageReaderState>(
-                  builder: (context, state) {
-                    return switch (state) {
-                      KitabPageReaderInitial() ||
-                      KitabPageReaderLoading() => const Center(
-                        child: CircularProgressIndicator(color: _kLime),
+    return KeepScreenOn(
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider.value(value: _readerCubit),
+          if (_chaptersCubit != null)
+            BlocProvider.value(value: _chaptersCubit!),
+        ],
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          body: SafeArea(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+                  child: Row(
+                    children: [
+                      _IconBtn(
+                        icon: Icons.arrow_back_ios_new_rounded,
+                        onTap: () => context.popOrHome(),
                       ),
-                      KitabPageReaderError(:final message) => Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(24),
-                          child: Text(
-                            message,
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.dmSans(color: _kMuted),
-                          ),
-                        ),
-                      ),
-                      KitabPageReaderLoaded(:final pages) when pages.isEmpty =>
-                        Center(
-                          child: Text(
-                            'Halaman belum tersedia untuk bab ini.',
-                            style: GoogleFonts.dmSans(color: _kMuted),
-                          ),
-                        ),
-                      KitabPageReaderLoaded(:final pages) => PageView.builder(
-                        key: ValueKey(_currentChapterId),
-                        controller: _pageController,
-                        itemCount: pages.length,
-                        onPageChanged: (i) => setState(() => _currentPage = i),
-                        itemBuilder: (context, index) {
-                          final page = pages[index];
-                          return InteractiveViewer(
-                            minScale: 1,
-                            maxScale: 4,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),
-                              child: Image.network(
-                                page.imageUrl,
-                                fit: BoxFit.contain,
-                                width: double.infinity,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    Center(
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          const Icon(
-                                            Icons.error_outline,
-                                            size: 48,
-                                            color: _kMuted,
-                                          ),
-                                          const SizedBox(height: 12),
-                                          Text(
-                                            'Gagal memuat halaman '
-                                            '${page.pageNumber}',
-                                            style: GoogleFonts.dmSans(
-                                              color: _kMuted,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                loadingBuilder: (context, child, progress) {
-                                  if (progress == null) return child;
-                                  return const Center(
-                                    child: CircularProgressIndicator(
-                                      color: _kLime,
-                                    ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: _chaptersCubit == null
+                            ? const SizedBox.shrink()
+                            : BlocBuilder<BookChaptersCubit, BookChaptersState>(
+                                builder: (context, state) {
+                                  if (state is! BookChaptersLoaded) {
+                                    return const SizedBox.shrink();
+                                  }
+                                  return _ChapterDropdown(
+                                    chapters: state.chapters,
+                                    currentChapterId: _currentChapterId,
+                                    onSelected: _switchChapter,
                                   );
                                 },
                               ),
-                            ),
+                      ),
+                      const SizedBox(width: 8),
+                      BlocBuilder<KitabPageReaderCubit, KitabPageReaderState>(
+                        builder: (context, state) {
+                          if (state is! KitabPageReaderLoaded ||
+                              state.pages.isEmpty) {
+                            return const SizedBox.shrink();
+                          }
+                          return _PageBadge(
+                            current: _currentPage + 1,
+                            total: state.pages.length,
                           );
                         },
                       ),
-                    };
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child:
+                      BlocBuilder<KitabPageReaderCubit, KitabPageReaderState>(
+                    builder: (context, state) {
+                      return switch (state) {
+                        KitabPageReaderInitial() ||
+                        KitabPageReaderLoading() => const Center(
+                          child: CircularProgressIndicator(color: _kLime),
+                        ),
+                        KitabPageReaderError(:final message) => Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(24),
+                            child: Text(
+                              message,
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.dmSans(color: _kMuted),
+                            ),
+                          ),
+                        ),
+                        KitabPageReaderLoaded(:final pages)
+                            when pages.isEmpty =>
+                          Center(
+                            child: Text(
+                              'Halaman belum tersedia untuk bab ini.',
+                              style: GoogleFonts.dmSans(color: _kMuted),
+                            ),
+                          ),
+                        KitabPageReaderLoaded(:final pages) => PageView.builder(
+                          key: ValueKey(_currentChapterId),
+                          controller: _pageController,
+                          itemCount: pages.length,
+                          onPageChanged: (i) =>
+                              setState(() => _currentPage = i),
+                          itemBuilder: (context, index) {
+                            final page = pages[index];
+                            return InteractiveViewer(
+                              minScale: 1,
+                              maxScale: 4,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                ),
+                                child: Image.network(
+                                  page.imageUrl,
+                                  fit: BoxFit.contain,
+                                  width: double.infinity,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      Center(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const Icon(
+                                              Icons.error_outline,
+                                              size: 48,
+                                              color: _kMuted,
+                                            ),
+                                            const SizedBox(height: 12),
+                                            Text(
+                                              'Gagal memuat halaman '
+                                              '${page.pageNumber}',
+                                              style: GoogleFonts.dmSans(
+                                                color: _kMuted,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                  loadingBuilder: (context, child, progress) {
+                                    if (progress == null) return child;
+                                    return const Center(
+                                      child: CircularProgressIndicator(
+                                        color: _kLime,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      };
+                    },
+                  ),
+                ),
+                BlocBuilder<KitabPageReaderCubit, KitabPageReaderState>(
+                  builder: (context, state) {
+                    if (state is! KitabPageReaderLoaded ||
+                        state.pages.length < 2) {
+                      return const SizedBox.shrink();
+                    }
+                    return _BottomPageNav(
+                      current: _currentPage,
+                      total: state.pages.length,
+                      onPrev: _currentPage > 0
+                          ? () => _goToPage(_currentPage - 1)
+                          : null,
+                      onNext: _currentPage < state.pages.length - 1
+                          ? () => _goToPage(_currentPage + 1)
+                          : null,
+                    );
                   },
                 ),
-              ),
-              BlocBuilder<KitabPageReaderCubit, KitabPageReaderState>(
-                builder: (context, state) {
-                  if (state is! KitabPageReaderLoaded ||
-                      state.pages.length < 2) {
-                    return const SizedBox.shrink();
-                  }
-                  return _BottomPageNav(
-                    current: _currentPage,
-                    total: state.pages.length,
-                    onPrev: _currentPage > 0
-                        ? () => _goToPage(_currentPage - 1)
-                        : null,
-                    onNext: _currentPage < state.pages.length - 1
-                        ? () => _goToPage(_currentPage + 1)
-                        : null,
-                  );
-                },
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
