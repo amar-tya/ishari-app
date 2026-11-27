@@ -141,7 +141,7 @@ class _ChapterReaderBodyState extends State<ChapterReaderBody>
     }
   }
 
-  // ── Wizard coach marks ──────────────────────────────────────────────────────
+  // ── Wizard coach marks ─────────────────────────────────────────────────────
 
   @override
   WizardStep get coachStep => WizardStep.muhudSplit;
@@ -252,7 +252,7 @@ class _ChapterReaderBodyState extends State<ChapterReaderBody>
     );
   }
 
-  // ── Build ───────────────────────────────────────────────────────────────────
+  // ── Build ──────────────────────────────────────────────────────────────────
 
   Widget _verseSliver({int? targetVerseId}) {
     return VerseList(

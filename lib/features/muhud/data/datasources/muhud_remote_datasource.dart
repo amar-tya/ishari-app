@@ -246,7 +246,9 @@ class MuhudRemoteDataSourceImpl implements MuhudRemoteDataSource {
       final data = await _supabaseClient
           .from('bookmarks')
           .select(
-            'note, created_at, verses(id, verse_number, arabic_text, transliteration, chapters(id, title, category))',
+            'note, created_at, '
+            'verses(id, verse_number, arabic_text, transliteration, '
+            'chapters(id, title, category))',
           )
           .isFilter('deleted_at', null)
           .order('created_at', ascending: false);
