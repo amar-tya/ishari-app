@@ -99,9 +99,11 @@ jobs:
       # terpasang di device test, tapi gak masuk Shorebird release channel
       # karena snapshot bukan artifact yang perlu dipatch nanti.
       - name: Build APK
+        id: build_apk
         run: |
           flutter build apk \
             --obfuscate --split-debug-info=build/symbols \
+            --extra-gen-snapshot-options=--save-obfuscation-map=build/app/obfuscation.map.json \
             --no-tree-shake-icons
 
       - name: Upload APK Artifact
@@ -121,3 +123,12 @@ jobs:
             Commit: ${{ github.sha }}
             Version: ${{ env.STAGING_VERSION }}
           file: build/app/outputs/flutter-apk/app-release.apk
+
+      # Keep this step last: a failed upload turns the job red but never blocks
+      # the build from being distributed. It still runs if a distribution step
+      # fails, as long as the build itself succeeded.
+      - name: Upload Dart symbols to Sentry
+        if: ${{ !cancelled() && steps.build_apk.outcome == 'success' }}
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        run: bash scripts/upload_sentry_symbols.sh "${{ env.STAGING_VERSION }}" build/app/obfuscation.map.json

@@ -82,6 +82,13 @@ flutter run             # development
 flutter build apk       # production APK
 ```
 
+**Release signing:** build release butuh `android/key.properties` (upload keystore). Tanpa file itu build release **gagal** (task `verifyReleaseSigning`) — tidak ada fallback diam-diam ke debug key. Debug/profile build dan `flutter test` tidak terpengaruh. Khusus testing lokal, opt-in tanda tangan debug:
+```bash
+ORG_GRADLE_PROJECT_allowDebugSigning=true flutter build apk   # Git Bash
+# Gradle langsung: ./gradlew :app:assembleRelease -PallowDebugSigning
+```
+Artifact debug-signed jangan didistribusikan. Jangan set opt-in ini di CI — semua workflow build sudah menulis `android/key.properties` sendiri. Test guard: `GRADLE=<path gradle> scripts/test_release_signing.sh`.
+
 ### Code Generation
 Required after modifying any `@freezed`, `@injectable`, or `@JsonSerializable` class:
 ```bash
@@ -102,6 +109,20 @@ shorebird patch android --release-version <version+build>
 # contoh: shorebird patch android --release-version 1.2.6+19
 ```
 `<version+build>` harus persis sama dengan versi di `pubspec.yaml` pas rilis yang mau di-patch. Device pull patch otomatis pas app restart berikutnya — no store update needed.
+
+### Sentry Debug Symbols
+Build release di-obfuscate, jadi stack trace Sentry cuma terbaca kalau Dart symbols + obfuscation map di-upload. Semua workflow build (release, build-and-distribute, staging, patch) menjalankan `scripts/upload_sentry_symbols.sh` sebagai step **terakhir**. Cuma menyetel `SENTRY_AUTH_TOKEN` tidak meng-upload apa pun.
+
+- **Secret GitHub:** `SENTRY_AUTH_TOKEN` (Sentry organization auth token, org `amar-q0`, project `flutter`). Dipegang pemilik akun.
+- Token kosong/salah atau upload gagal → job **merah** dengan pesan `Sentry symbols not uploaded`, tapi distribusi/rilis yang sudah jalan tidak dibatalkan. **Jangan re-run job rilis** untuk memperbaikinya: rilisnya sudah terbit, dan symbols ikut hilang bersama runner.
+- Setiap patch punya symbols sendiri, jadi patch workflow juga upload.
+- Patch/release manual dari mesin lokal harus upload sendiri, langsung setelah build (build berikutnya menimpa `build/symbols`). Patch butuh flag tambahan setelah `--`: `--split-debug-info=build/symbols --extra-gen-snapshot-options=--save-obfuscation-map=build/app/obfuscation.map.json`, lalu:
+  ```bash
+  SENTRY_AUTH_TOKEN=... bash scripts/upload_sentry_symbols.sh <version+build> build/app/obfuscation.map.json
+  # untuk `shorebird release`, map-nya di build/shorebird/obfuscation_map.json
+  ```
+  Script memanggil `dart`, jadi harus ada di PATH (pengguna fvm: tambahkan folder `bin` SDK Flutter fvm).
+- Test script upload (stub, tidak upload apa pun): `bash scripts/test_upload_sentry_symbols.sh`.
 
 **Jangan pakai patch untuk:** perubahan native (Android/iOS code, plugin baru), perubahan asset, atau perubahan yang butuh permission baru — semua itu tetap wajib lewat rilis penuh (Play Store).
 

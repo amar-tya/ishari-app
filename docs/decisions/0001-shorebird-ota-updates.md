@@ -43,6 +43,17 @@ Adopt [Shorebird](https://shorebird.dev) for Android OTA code push:
   API Keys — `shorebird login:ci` was removed in CLI 1.6.115) is held as a
   GitHub Actions secret, set up by the account owner outside of CI.
 
+- Obfuscated builds need their Dart symbols and obfuscation map in Sentry.
+  After each release or patch, CI runs `scripts/upload_sentry_symbols.sh` as
+  its last step, using the `SENTRY_AUTH_TOKEN` GitHub Actions secret. An
+  Android patch replaces the compiled Dart code, so every patch uploads its own
+  symbols ([Shorebird: Uploading
+  Symbols](https://docs.shorebird.dev/code-push/crash-reporting/uploading-symbols/)).
+  A failed upload fails the job but does not block the release. CI keeps no
+  copy of the symbols or the obfuscation map (they are deliberately not stored
+  as GitHub Actions artifacts), so a failed upload cannot be redone once the
+  runner is gone.
+
 ## Alternatives Considered
 
 - **Full Play Store release for every hotfix** — status quo. Rejected:

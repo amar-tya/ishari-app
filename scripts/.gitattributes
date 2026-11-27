@@ -1,0 +1,2 @@
+# CI runs these with bash, which fails on CRLF line endings.
+*.sh text eol=lf
