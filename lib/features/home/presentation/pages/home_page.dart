@@ -73,7 +73,8 @@ class _HomeTabBodyState extends State<_HomeTabBody> {
           initial: () => const SizedBox.shrink(),
           loading: () {
             // During pull-to-refresh, keep showing the loaded content so the
-            // RefreshIndicator widget stays mounted and its spinner keeps running.
+            // RefreshIndicator widget stays mounted and its spinner keeps
+            // running.
             final chapters = _cachedChapters;
             final category = _cachedCategory;
             if (chapters != null && category != null) {

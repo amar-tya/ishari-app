@@ -333,8 +333,7 @@ class _ReadingModeSheetState extends State<_ReadingModeSheet> {
         child: BlocBuilder<BookChaptersCubit, BookChaptersState>(
           builder: (context, state) {
             return switch (state) {
-              BookChaptersInitial() ||
-              BookChaptersLoading() => const Padding(
+              BookChaptersInitial() || BookChaptersLoading() => const Padding(
                 padding: EdgeInsets.all(40),
                 child: Center(
                   child: CircularProgressIndicator(color: _kLime),
@@ -345,19 +344,19 @@ class _ReadingModeSheetState extends State<_ReadingModeSheet> {
               ),
               BookChaptersLoaded(:final chapters) when chapters.isEmpty =>
                 _UnderDevelopmentSheet(title: widget.book.title),
-              BookChaptersLoaded(:final chapters) => _selectedChapter == null
-                  ? _ChapterPicker(
-                      chapters: chapters,
-                      onSelected: (c) =>
-                          setState(() => _selectedChapter = c),
-                    )
-                  : _ModePicker(
-                      chapter: _selectedChapter!,
-                      bookId: widget.book.id,
-                      onBack: chapters.length > 1
-                          ? () => setState(() => _selectedChapter = null)
-                          : null,
-                    ),
+              BookChaptersLoaded(:final chapters) =>
+                _selectedChapter == null
+                    ? _ChapterPicker(
+                        chapters: chapters,
+                        onSelected: (c) => setState(() => _selectedChapter = c),
+                      )
+                    : _ModePicker(
+                        chapter: _selectedChapter!,
+                        bookId: widget.book.id,
+                        onBack: chapters.length > 1
+                            ? () => setState(() => _selectedChapter = null)
+                            : null,
+                      ),
             };
           },
         ),
@@ -574,7 +573,8 @@ class _UnderDevelopmentSheet extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Kitab "$title" sedang kami siapkan.\nNantikan pembaruan selanjutnya.',
+            'Kitab "$title" sedang kami siapkan.\n'
+            'Nantikan pembaruan selanjutnya.',
             textAlign: TextAlign.center,
             style: GoogleFonts.dmSans(
               fontSize: 13,

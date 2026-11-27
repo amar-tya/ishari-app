@@ -6,10 +6,10 @@ import 'package:url_launcher/url_launcher.dart';
 /// User can dismiss with "Nanti" or go to the store with "Update Sekarang".
 class SoftUpdateDialog extends StatelessWidget {
   const SoftUpdateDialog({
-    super.key,
     required this.latestVersion,
     required this.storeUrl,
     required this.releaseNotes,
+    super.key,
   });
 
   final String latestVersion;
@@ -24,7 +24,6 @@ class SoftUpdateDialog extends StatelessWidget {
   }) {
     return showDialog<void>(
       context: context,
-      barrierDismissible: true,
       builder: (_) => SoftUpdateDialog(
         latestVersion: latestVersion,
         storeUrl: storeUrl,
@@ -40,10 +39,17 @@ class SoftUpdateDialog extends StatelessWidget {
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Ada Versi Terbaru!', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const Text(
+            'Ada Versi Terbaru!',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
           Text(
             'v$latestVersion tersedia',
-            style: TextStyle(fontSize: 13, color: Colors.grey[600], fontWeight: FontWeight.normal),
+            style: TextStyle(
+              fontSize: 13,
+              color: Colors.grey[600],
+              fontWeight: FontWeight.normal,
+            ),
           ),
         ],
       ),
@@ -58,7 +64,10 @@ class SoftUpdateDialog extends StatelessWidget {
         FilledButton(
           onPressed: () {
             Navigator.of(context).pop();
-            launchUrl(Uri.parse(storeUrl), mode: LaunchMode.externalApplication);
+            launchUrl(
+              Uri.parse(storeUrl),
+              mode: LaunchMode.externalApplication,
+            );
           },
           child: const Text('Update Sekarang'),
         ),

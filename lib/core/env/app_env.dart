@@ -55,7 +55,11 @@ abstract final class AppEnv {
   static List<String> get admobTestDeviceIds {
     final raw = Env.admobTestDeviceIds?.trim() ?? '';
     if (raw.isEmpty) return [];
-    return raw.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+    return raw
+        .split(',')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
   }
 
   // ---------------------------------------------------------------------------

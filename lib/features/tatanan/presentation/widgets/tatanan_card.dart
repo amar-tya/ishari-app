@@ -36,7 +36,8 @@ class TatananCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bgColor = _categoryColors[tatanan.category] ?? const Color(0xFFF5F5F5);
+    final bgColor =
+        _categoryColors[tatanan.category] ?? const Color(0xFFF5F5F5);
     final textColor =
         _categoryTextColors[tatanan.category] ?? const Color(0xFF424242);
 
@@ -132,62 +133,66 @@ class TatananCard extends StatelessWidget {
   }
 
   void _showOptions(BuildContext context) {
-    unawaited(showModalBottomSheet<void>(
-      context: context,
-      builder: (_) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.delete_outline, color: Colors.red),
-                title: Text(
-                  'Hapus Tatanan',
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w600,
-                    color: Colors.red,
+    unawaited(
+      showModalBottomSheet<void>(
+        context: context,
+        builder: (_) => SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.delete_outline, color: Colors.red),
+                  title: Text(
+                    'Hapus Tatanan',
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.red,
+                    ),
                   ),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _confirmDelete(context);
+                  },
                 ),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  _confirmDelete(context);
-                },
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
-    ));
+    );
   }
 
   void _confirmDelete(BuildContext context) {
-    unawaited(showDialog<void>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(
-          'Hapus Tatanan?',
-          style: GoogleFonts.poppins(fontWeight: FontWeight.w700),
-        ),
-        content: Text(
-          'Tatanan "${tatanan.name}" dan semua ayatnya akan dihapus.',
-          style: GoogleFonts.poppins(fontSize: 13),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text('Batal', style: GoogleFonts.poppins()),
+    unawaited(
+      showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(
+            'Hapus Tatanan?',
+            style: GoogleFonts.poppins(fontWeight: FontWeight.w700),
           ),
-          FilledButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              onDelete();
-            },
-            style: FilledButton.styleFrom(backgroundColor: Colors.red),
-            child: Text('Hapus', style: GoogleFonts.poppins()),
+          content: Text(
+            'Tatanan "${tatanan.name}" dan semua ayatnya akan dihapus.',
+            style: GoogleFonts.poppins(fontSize: 13),
           ),
-        ],
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: Text('Batal', style: GoogleFonts.poppins()),
+            ),
+            FilledButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                onDelete();
+              },
+              style: FilledButton.styleFrom(backgroundColor: Colors.red),
+              child: Text('Hapus', style: GoogleFonts.poppins()),
+            ),
+          ],
+        ),
       ),
-    ));
+    );
   }
 }

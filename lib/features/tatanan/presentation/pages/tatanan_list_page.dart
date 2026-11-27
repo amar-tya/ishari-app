@@ -63,16 +63,14 @@ class _TatananListPageState extends State<TatananListPage> {
           identify: 'add_btn',
           keyTarget: _addBtnKey,
           shape: ShapeLightFocus.Circle,
-          enableOverlayTab: false,
-          enableTargetTab: true,
           contents: [
             TargetContent(
-              align: ContentAlign.bottom,
-              builder: (_, __) => _TatananTooltip(
+              builder: (_, _) => const _TatananTooltip(
                 step: '4/4',
                 title: 'Buat Tatanan',
                 body:
-                    'Tap tombol + untuk membuat tatanan shalawat pertamamu. Susun ayat sesuai keinginan.',
+                    'Tap tombol + untuk membuat tatanan shalawat pertamamu. '
+                    'Susun ayat sesuai keinginan.',
                 hint: 'Tap untuk membuka form',
               ),
             ),
@@ -127,8 +125,9 @@ class _TatananListPageState extends State<TatananListPage> {
             state.step == WizardStep.tatananCreate &&
             !_wizardShown) {
           _wizardShown = true;
-          WidgetsBinding.instance
-              .addPostFrameCallback((_) => _showCreateCoach());
+          WidgetsBinding.instance.addPostFrameCallback(
+            (_) => _showCreateCoach(),
+          );
         }
       },
       child: BlocListener<TatananListBloc, TatananListState>(
@@ -177,7 +176,7 @@ class _TatananListPageState extends State<TatananListPage> {
                       ),
                       GestureDetector(
                         key: _addBtnKey,
-                        onTap: () => _openCreateSheet(),
+                        onTap: _openCreateSheet,
                         child: Container(
                           width: 36,
                           height: 36,
@@ -204,7 +203,7 @@ class _TatananListPageState extends State<TatananListPage> {
                         ),
                         loaded: (tatanans) => tatanans.isEmpty
                             ? _EmptyState(
-                                onCreateTap: () => _openCreateSheet(),
+                                onCreateTap: _openCreateSheet,
                               )
                             : ListView.builder(
                                 padding: const EdgeInsets.fromLTRB(
@@ -225,18 +224,20 @@ class _TatananListPageState extends State<TatananListPage> {
                                   }
                                   final dataIndex =
                                       _withAd(tatanans.length) && i > 4
-                                          ? i - 1
-                                          : i;
+                                      ? i - 1
+                                      : i;
                                   final t = tatanans[dataIndex];
                                   return Padding(
                                     padding: const EdgeInsets.only(bottom: 10),
                                     child: TatananCard(
                                       tatanan: t,
-                                      onTap: () =>
-                                          InterstitialAdManager.instance
-                                              .showIfReady(
-                                        () => context.push('/tatanan/${t.id}'),
-                                      ),
+                                      onTap: () => InterstitialAdManager
+                                          .instance
+                                          .showIfReady(
+                                            () => context.push(
+                                              '/tatanan/${t.id}',
+                                            ),
+                                          ),
                                       onDelete: () =>
                                           context.read<TatananListBloc>().add(
                                             TatananListEvent.delete(
@@ -418,7 +419,8 @@ class _EmptyState extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Buat tatanan pertamamu dan susun\nayat shalawat sesuai keinginan.',
+              'Buat tatanan pertamamu dan susun\n'
+              'ayat shalawat sesuai keinginan.',
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
                 fontSize: 13,

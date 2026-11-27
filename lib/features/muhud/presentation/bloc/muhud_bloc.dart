@@ -137,7 +137,7 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
               );
               unawaited(
                 analytics.logChapterOpened(
-                  chapterId: chapter.id.toString(),
+                  chapterId: chapter.id,
                   chapterTitle: chapter.title,
                 ),
               );
@@ -266,7 +266,7 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
         );
         if (isBookmarked && !wasBookmarked) {
           final chapterId =
-              state.mapOrNull(loaded: (l) => l.chapter.id.toString()) ?? '';
+              state.mapOrNull(loaded: (l) => l.chapter.id) ?? '';
           unawaited(
             analytics.logVerseBookmarked(
               chapterId: chapterId,
@@ -305,7 +305,7 @@ class MuhudBloc extends Bloc<MuhudEvent, MuhudState> {
           emit(l.copyWith(playingVerseId: verseId, isAudioLoading: false));
           unawaited(
             analytics.logVerseAudioPlayed(
-              chapterId: l.chapter.id.toString(),
+              chapterId: l.chapter.id,
               verseId: verseId,
               recitationType: recitationType,
             ),

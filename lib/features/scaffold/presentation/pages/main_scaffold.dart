@@ -127,7 +127,7 @@ class _MainScaffoldState extends State<MainScaffold> with RouteAware {
     );
   }
 
-  // ── Wizard tab tour ─────────────────────────────────────────────────────────
+  // ── Wizard tab tour ────────────────────────────────────────────────────────
 
   void _startTabTour() {
     if (!mounted || _tabWizardShown) return;
@@ -142,14 +142,14 @@ class _MainScaffoldState extends State<MainScaffold> with RouteAware {
         identify: 'tab_beranda',
         step: '3/4',
         title: 'Beranda',
-        body: 'Jelajahi daftar shalawat, diba\', rowi, dan muradah pilihan.',
+        body: "Jelajahi daftar shalawat, diba', rowi, dan muradah pilihan.",
       ),
       _tabTarget(
         key: _tabKeys[1],
         identify: 'tab_cari',
         step: '3/4',
         title: 'Cari',
-        body: 'Cari shalawat, diba\', rowi, atau muradah dengan cepat.',
+        body: "Cari shalawat, diba', rowi, atau muradah dengan cepat.",
       ),
       _tabTarget(
         key: _tabKeys[2],
@@ -164,7 +164,8 @@ class _MainScaffoldState extends State<MainScaffold> with RouteAware {
         step: '3/4',
         title: 'Bookmark',
         body: isGuest
-            ? 'Simpan ayat favorit dan akses kapan saja.\n\n🔒 Login untuk mengakses fitur ini.'
+            ? 'Simpan ayat favorit dan akses kapan saja.\n\n'
+                  '🔒 Login untuk mengakses fitur ini.'
             : 'Simpan ayat favorit dan akses kapan saja.',
       ),
       _tabTarget(
@@ -173,7 +174,8 @@ class _MainScaffoldState extends State<MainScaffold> with RouteAware {
         step: '3/4',
         title: 'Tatanan',
         body: isGuest
-            ? 'Buat susunan shalawat sendiri sesuai kebutuhanmu.\n\n🔒 Login untuk mengakses fitur ini.'
+            ? 'Buat susunan shalawat sendiri sesuai kebutuhanmu.\n\n'
+                  '🔒 Login untuk mengakses fitur ini.'
             : 'Buat susunan shalawat sendiri sesuai kebutuhanmu.',
       ),
     ];
@@ -225,12 +227,10 @@ class _MainScaffoldState extends State<MainScaffold> with RouteAware {
       keyTarget: key,
       shape: ShapeLightFocus.RRect,
       radius: 30,
-      enableOverlayTab: false,
-      enableTargetTab: true,
       contents: [
         TargetContent(
           align: ContentAlign.top,
-          builder: (_, __) => _TabTooltip(
+          builder: (_, _) => _TabTooltip(
             step: step,
             title: title,
             body: body,

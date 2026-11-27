@@ -44,7 +44,10 @@ class TatananRemoteDataSourceImpl implements TatananRemoteDataSource {
     try {
       final data = await _client
           .from('tatanan')
-          .select('*, chapters!inner(title, category, chapter_number), tatanan_verses(id)')
+          .select(
+            '*, chapters!inner(title, category, chapter_number), '
+            'tatanan_verses(id)',
+          )
           .eq('user_id', userId)
           .order('updated_at', ascending: false);
 
@@ -64,7 +67,10 @@ class TatananRemoteDataSourceImpl implements TatananRemoteDataSource {
     try {
       final data = await _client
           .from('tatanan')
-          .select('*, chapters!inner(title, category, chapter_number), tatanan_verses(id)')
+          .select(
+            '*, chapters!inner(title, category, chapter_number), '
+            'tatanan_verses(id)',
+          )
           .eq('id', tatananId)
           .single();
 
@@ -80,7 +86,8 @@ class TatananRemoteDataSourceImpl implements TatananRemoteDataSource {
       final data = await _client
           .from('tatanan_verses')
           .select(
-            'id, tatanan_id, verse_id, position, created_at, verses!inner(verse_number, arabic_text, transliteration)',
+            'id, tatanan_id, verse_id, position, created_at, '
+            'verses!inner(verse_number, arabic_text, transliteration)',
           )
           .eq('tatanan_id', tatananId)
           .order('position', ascending: true);
