@@ -22,8 +22,8 @@ class UpdateRemoteDataSourceImpl implements UpdateRemoteDataSource {
           .eq('platform', platform)
           .single();
       return AppVersionModel.fromJson(data);
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } catch (e, stackTrace) {
+      throw ServerException.from(e, stackTrace);
     }
   }
 }

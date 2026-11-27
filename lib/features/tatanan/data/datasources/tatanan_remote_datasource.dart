@@ -54,8 +54,8 @@ class TatananRemoteDataSourceImpl implements TatananRemoteDataSource {
                 TatananModel.fromJson(item as Map<String, dynamic>).toEntity(),
           )
           .toList();
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } catch (e, stackTrace) {
+      throw ServerException.from(e, stackTrace);
     }
   }
 
@@ -69,8 +69,8 @@ class TatananRemoteDataSourceImpl implements TatananRemoteDataSource {
           .single();
 
       return TatananModel.fromJson(data).toEntity();
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } catch (e, stackTrace) {
+      throw ServerException.from(e, stackTrace);
     }
   }
 
@@ -92,8 +92,8 @@ class TatananRemoteDataSourceImpl implements TatananRemoteDataSource {
             ).toEntity(),
           )
           .toList();
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } catch (e, stackTrace) {
+      throw ServerException.from(e, stackTrace);
     }
   }
 
@@ -117,8 +117,8 @@ class TatananRemoteDataSourceImpl implements TatananRemoteDataSource {
           .single();
 
       return data['id'] as String;
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } catch (e, stackTrace) {
+      throw ServerException.from(e, stackTrace);
     }
   }
 
@@ -126,8 +126,8 @@ class TatananRemoteDataSourceImpl implements TatananRemoteDataSource {
   Future<void> deleteTatanan(String tatananId) async {
     try {
       await _client.from('tatanan').delete().eq('id', tatananId);
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } catch (e, stackTrace) {
+      throw ServerException.from(e, stackTrace);
     }
   }
 
@@ -143,8 +143,8 @@ class TatananRemoteDataSourceImpl implements TatananRemoteDataSource {
         'verse_id': verseId,
         'position': position,
       });
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } catch (e, stackTrace) {
+      throw ServerException.from(e, stackTrace);
     }
   }
 
@@ -159,8 +159,8 @@ class TatananRemoteDataSourceImpl implements TatananRemoteDataSource {
           .delete()
           .eq('tatanan_id', tatananId)
           .eq('verse_id', verseId);
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } catch (e, stackTrace) {
+      throw ServerException.from(e, stackTrace);
     }
   }
 
@@ -179,8 +179,8 @@ class TatananRemoteDataSourceImpl implements TatananRemoteDataSource {
               .eq('verse_id', u.verseId),
         ),
       );
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } catch (e, stackTrace) {
+      throw ServerException.from(e, stackTrace);
     }
   }
 }

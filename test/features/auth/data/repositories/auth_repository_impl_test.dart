@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -149,6 +150,17 @@ void main() {
       expect(result.getLeft().toNullable(), isA<NetworkFailure>());
     });
 
+    test('a lost connection reads as a network failure', () async {
+      remote.signInError = ServerException.from(
+        const SocketException('Failed host lookup: abcdefgh.supabase.co'),
+        StackTrace.current,
+      );
+
+      final result = await repository.signInWithGoogle();
+
+      expect(result.getLeft().toNullable(), const NetworkFailure());
+    });
+
     test('cancel and server errors map to failures', () async {
       remote.signInError = const CanceledSignInException();
       final canceled = await repository.signInWithGoogle();
@@ -254,6 +266,17 @@ void main() {
         const ServerFailure(message: 'boom'),
       );
       expect(storage.values, isNot(contains(_cacheKey)));
+    });
+
+    test('a failing local sign-out is a readable failure', () async {
+      remote.signOutError = ServerException.from(
+        StateError('storage broken'),
+        StackTrace.current,
+      );
+
+      final result = await repository.signOut();
+
+      expect(result.getLeft().toNullable(), const UnknownFailure());
     });
 
     test('succeeds when the cache clear fails', () async {

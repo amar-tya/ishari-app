@@ -2,6 +2,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:injectable/injectable.dart';
 import 'package:ishari/core/env/app_env.dart';
 import 'package:ishari/core/errors/exceptions.dart';
+import 'package:ishari/core/errors/failures.dart';
 import 'package:ishari/core/utils/app_logger.dart';
 import 'package:ishari/features/auth/data/models/user_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -107,9 +108,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       // accessToken moved to authorizationClient in v7 — not needed for Supabase idToken exchange
 
       if (idToken == null) {
+        // Usually a wrong serverClientId (Web Client ID) in Google Cloud
+        // Console. For the developer only: the user gets a general text.
+        appLogger.e('[GoogleSignIn] No idToken returned');
         throw const ServerException(
-          message:
-              'Gagal mendapatkan Google idToken. Pastikan serverClientId (Web Client ID) sudah benar di Google Cloud Console.',
+          message: FailureMessages.googleSignInFailed,
         );
       }
 
@@ -122,8 +125,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final user = response.user;
 
       if (user == null) {
+        appLogger.e('[GoogleSignIn] Supabase returned no user');
         throw const ServerException(
-          message: 'Supabase authentication failed — no user returned',
+          message: FailureMessages.googleSignInFailed,
         );
       }
 
@@ -142,13 +146,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       appLogger.e('[GoogleSignIn] GoogleSignInException code=${e.code} desc=${e.description}', error: e);
       // Error code 10 = DEVELOPER_ERROR (SHA-1 not registered or OAuth misconfiguration)
       // Other codes = possible network or service error
-      throw ServerException(
-        message: 'Gagal login dengan Google (${e.description ?? e.code.name}). '
-            'Jika masalah berlanjut, hubungi pengembang.',
-      );
+      throw const ServerException(message: FailureMessages.googleSignInFailed);
     } catch (e, stackTrace) {
       appLogger.e('[GoogleSignIn] ERROR', error: e, stackTrace: stackTrace);
-      throw ServerException(message: e.toString());
+      throw ServerException.from(e, stackTrace);
     }
   }
 
@@ -171,8 +172,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         error: e,
         stackTrace: stackTrace,
       );
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } catch (e, stackTrace) {
+      throw ServerException.from(e, stackTrace);
     }
   }
 
@@ -218,8 +219,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final user = _supabaseClient.auth.currentUser;
       if (user == null) return null;
       return UserModel.fromSupabaseUser(user.toJson());
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } catch (e, stackTrace) {
+      throw ServerException.from(e, stackTrace);
     }
   }
 

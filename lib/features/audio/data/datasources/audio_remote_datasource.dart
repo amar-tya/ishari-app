@@ -30,8 +30,8 @@ class AudioRemoteDataSourceImpl implements AudioRemoteDataSource {
             ),
           )
           .toList();
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } catch (e, stackTrace) {
+      throw ServerException.from(e, stackTrace);
     }
   }
 }

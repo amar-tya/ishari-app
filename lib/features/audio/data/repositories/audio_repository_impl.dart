@@ -1,5 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
+import 'package:ishari/core/errors/error_mapper.dart';
 import 'package:ishari/core/errors/exceptions.dart';
 import 'package:ishari/core/errors/failures.dart';
 import 'package:ishari/core/network/network_info.dart';
@@ -22,8 +23,8 @@ class AudioRepositoryImpl implements AudioRepository {
     try {
       final models = await _remote.getAllAudioTracks();
       return right(models.map((m) => m.toEntity()).toList());
-    } on ServerException catch (e) {
-      return left(ServerFailure(message: e.message));
+    } on ServerException catch (e, stackTrace) {
+      return left(mapErrorToFailure(e, stackTrace));
     }
   }
 }

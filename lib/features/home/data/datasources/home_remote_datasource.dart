@@ -37,8 +37,8 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
             .single();
       }
       return ChapterModel.fromJson(data);
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } catch (e, stackTrace) {
+      throw ServerException.from(e, stackTrace);
     }
   }
 
@@ -51,8 +51,8 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
           .eq('category', category)
           .order('chapter_number', ascending: true);
       return data.map(ChapterModel.fromJson).toList();
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } catch (e, stackTrace) {
+      throw ServerException.from(e, stackTrace);
     }
   }
 
@@ -61,8 +61,8 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
     try {
       final data = await _supabaseClient.from('hadi').select();
       return data.map(HadiModel.fromJson).toList();
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } catch (e, stackTrace) {
+      throw ServerException.from(e, stackTrace);
     }
   }
 }

@@ -24,8 +24,8 @@ class HadiRemoteDataSourceImpl implements HadiRemoteDataSource {
             (item) => HadiSummaryModel.fromJson(item as Map<String, dynamic>),
           )
           .toList();
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } catch (e, stackTrace) {
+      throw ServerException.from(e, stackTrace);
     }
   }
 
@@ -40,8 +40,8 @@ class HadiRemoteDataSourceImpl implements HadiRemoteDataSource {
       return (data as List<dynamic>)
           .map((item) => HadiAudioModel.fromJson(item as Map<String, dynamic>))
           .toList();
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } catch (e, stackTrace) {
+      throw ServerException.from(e, stackTrace);
     }
   }
 }

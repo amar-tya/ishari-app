@@ -1,5 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
+import 'package:ishari/core/errors/error_mapper.dart';
 import 'package:ishari/core/errors/exceptions.dart';
 import 'package:ishari/core/errors/failures.dart';
 import 'package:ishari/core/network/network_info.dart';
@@ -36,8 +37,8 @@ class AuthRepositoryImpl implements AuthRepository {
       return right(model.toEntity());
     } on CanceledSignInException {
       return left(const CanceledFailure());
-    } on ServerException catch (e) {
-      return left(ServerFailure(message: e.message));
+    } on ServerException catch (e, stackTrace) {
+      return left(mapErrorToFailure(e, stackTrace));
     }
   }
 
@@ -46,8 +47,8 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       await _remote.signOut();
       return right(unit);
-    } on ServerException catch (e) {
-      return left(ServerFailure(message: e.message));
+    } on ServerException catch (e, stackTrace) {
+      return left(mapErrorToFailure(e, stackTrace));
     } finally {
       await _clearLegacyCache();
     }
@@ -59,8 +60,8 @@ class AuthRepositoryImpl implements AuthRepository {
       final model = await _remote.getCurrentUser();
       if (model == null) await _clearLegacyCache();
       return right(model?.toEntity());
-    } on ServerException catch (e) {
-      return left(ServerFailure(message: e.message));
+    } on ServerException catch (e, stackTrace) {
+      return left(mapErrorToFailure(e, stackTrace));
     }
   }
 
