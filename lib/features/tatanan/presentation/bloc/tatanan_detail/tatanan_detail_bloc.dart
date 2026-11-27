@@ -127,8 +127,10 @@ class TatananDetailBloc extends Bloc<TatananDetailEvent, TatananDetailState> {
         if (reNumbered.isNotEmpty) {
           final updates = reNumbered
               .map(
-                (v) =>
-                    VersePositionUpdate(verseId: v.verseId, position: v.position),
+                (v) => VersePositionUpdate(
+                  verseId: v.verseId,
+                  position: v.position,
+                ),
               )
               .toList();
           await _reorderTatananVerses(
@@ -149,10 +151,11 @@ class TatananDetailBloc extends Bloc<TatananDetailEvent, TatananDetailState> {
 
     // Optimistic update
     final posMap = {for (final u in event.updates) u.verseId: u.position};
-    final updated = loaded.verses
-        .map((v) => v.copyWith(position: posMap[v.verseId] ?? v.position))
-        .toList()
-      ..sort((a, b) => a.position.compareTo(b.position));
+    final updated =
+        loaded.verses
+            .map((v) => v.copyWith(position: posMap[v.verseId] ?? v.position))
+            .toList()
+          ..sort((a, b) => a.position.compareTo(b.position));
 
     emit(loaded.copyWith(verses: updated));
 
