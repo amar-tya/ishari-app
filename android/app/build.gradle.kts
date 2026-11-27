@@ -14,8 +14,16 @@ plugins {
 val keystorePropertiesFile = rootProject.file("key.properties")
 val keystoreProperties = Properties()
 if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(keystorePropertiesFile.inputStream())
+    // use {} closes the stream; the Gradle daemon would otherwise keep the file locked.
+    keystorePropertiesFile.inputStream().use { keystoreProperties.load(it) }
 }
+
+// Local testing only: lets a release build be signed with the debug key when
+// key.properties is absent. Pass -PallowDebugSigning, or set the env var
+// ORG_GRADLE_PROJECT_allowDebugSigning=true for `flutter build`. Never set it in CI.
+val allowDebugSigning = providers.gradleProperty("allowDebugSigning")
+    .map { it.isEmpty() || it == "true" }
+    .getOrElse(false)
 
 // Read AdMob App ID from env/current.env for manifest placeholder injection
 val envFile = rootProject.file("../env/current.env")
@@ -67,10 +75,11 @@ android {
 
     buildTypes {
         release {
-            signingConfig = if (keystorePropertiesFile.exists()) {
-                signingConfigs.getByName("release")
-            } else {
-                signingConfigs.getByName("debug")
+            signingConfig = when {
+                keystorePropertiesFile.exists() -> signingConfigs.getByName("release")
+                allowDebugSigning -> signingConfigs.getByName("debug")
+                // No fallback: verifyReleaseSigning below stops the build.
+                else -> null
             }
             isMinifyEnabled = true
             isShrinkResources = true
@@ -80,6 +89,27 @@ android {
             )
         }
     }
+}
+
+// Checked when a release build runs, not at configuration time, so debug and
+// profile builds and IDE sync work without key.properties.
+val releaseSigningReady = keystorePropertiesFile.exists() || allowDebugSigning
+val verifyReleaseSigning = tasks.register("verifyReleaseSigning") {
+    val ready = releaseSigningReady
+    doLast {
+        if (!ready) {
+            throw GradleException(
+                "Release signing is not configured: android/key.properties is missing.\n" +
+                    "Add android/key.properties with your upload keystore, or, for local " +
+                    "testing only, sign with the debug key: pass -PallowDebugSigning to " +
+                    "Gradle or set ORG_GRADLE_PROJECT_allowDebugSigning=true. " +
+                    "A debug-signed build must never be distributed.",
+            )
+        }
+    }
+}
+tasks.matching { it.name == "preReleaseBuild" }.configureEach {
+    dependsOn(verifyReleaseSigning)
 }
 
 flutter {

@@ -82,6 +82,13 @@ flutter run             # development
 flutter build apk       # production APK
 ```
 
+**Release signing:** build release butuh `android/key.properties` (upload keystore). Tanpa file itu build release **gagal** (task `verifyReleaseSigning`) — tidak ada fallback diam-diam ke debug key. Debug/profile build dan `flutter test` tidak terpengaruh. Khusus testing lokal, opt-in tanda tangan debug:
+```bash
+ORG_GRADLE_PROJECT_allowDebugSigning=true flutter build apk   # Git Bash
+# Gradle langsung: ./gradlew :app:assembleRelease -PallowDebugSigning
+```
+Artifact debug-signed jangan didistribusikan. Jangan set opt-in ini di CI — semua workflow build sudah menulis `android/key.properties` sendiri. Test guard: `GRADLE=<path gradle> scripts/test_release_signing.sh`.
+
 ### Code Generation
 Required after modifying any `@freezed`, `@injectable`, or `@JsonSerializable` class:
 ```bash
