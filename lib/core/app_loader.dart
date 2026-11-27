@@ -78,8 +78,9 @@ class _AppLoaderState extends State<AppLoader> {
     initialize: _initialize,
     createAuthBloc: sl.get<AuthBloc>,
     resolveUpdateCubit: sl.get<UpdateCubit>,
-    // Non-critical and never awaited — don't block splash. FCM init waits on
-    // the notification permission dialog.
+    // Non-critical and never awaited — don't block splash. FCM init ends with
+    // the topic subscription, which can stay pending while offline. It never
+    // asks for the notification permission.
     backgroundTasks: {
       'ads': _initAds,
       'fcm': () => sl<FcmService>().init(),

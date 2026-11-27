@@ -6,8 +6,12 @@ part 'audio_list_event.freezed.dart';
 
 @freezed
 sealed class AudioListEvent with _$AudioListEvent {
-  const factory AudioListEvent.loadAll({@Default(false) bool forceRefresh}) =
-      _LoadAll;
+  /// [keepListOnFailure] is for a refresh the user did not ask for: if it
+  /// fails, a list that is already loaded stays instead of the error.
+  const factory AudioListEvent.loadAll({
+    @Default(false) bool forceRefresh,
+    @Default(false) bool keepListOnFailure,
+  }) = _LoadAll;
 
   const factory AudioListEvent.searchChanged(String query) = _SearchChanged;
 

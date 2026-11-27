@@ -158,10 +158,10 @@ return playingChanged(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( bool forceRefresh)?  loadAll,TResult Function( String query)?  searchChanged,TResult Function( AudioSort sort)?  sortChanged,TResult Function()?  openFilterSheet,TResult Function()?  resetFilterDraft,TResult Function()?  applyFilter,TResult Function( AudioCategory category,  String value)?  toggleDraftChip,TResult Function( String trackId)?  playTrack,TResult Function()?  stopAudio,TResult Function()?  ownershipLost,TResult Function( Duration offset)?  seekBy,TResult Function( Duration position)?  seekTo,TResult Function( Duration position)?  positionChanged,TResult Function( Duration? duration)?  durationChanged,TResult Function( bool isPlaying)?  playingChanged,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( bool forceRefresh,  bool keepListOnFailure)?  loadAll,TResult Function( String query)?  searchChanged,TResult Function( AudioSort sort)?  sortChanged,TResult Function()?  openFilterSheet,TResult Function()?  resetFilterDraft,TResult Function()?  applyFilter,TResult Function( AudioCategory category,  String value)?  toggleDraftChip,TResult Function( String trackId)?  playTrack,TResult Function()?  stopAudio,TResult Function()?  ownershipLost,TResult Function( Duration offset)?  seekBy,TResult Function( Duration position)?  seekTo,TResult Function( Duration position)?  positionChanged,TResult Function( Duration? duration)?  durationChanged,TResult Function( bool isPlaying)?  playingChanged,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LoadAll() when loadAll != null:
-return loadAll(_that.forceRefresh);case _SearchChanged() when searchChanged != null:
+return loadAll(_that.forceRefresh,_that.keepListOnFailure);case _SearchChanged() when searchChanged != null:
 return searchChanged(_that.query);case _SortChanged() when sortChanged != null:
 return sortChanged(_that.sort);case _OpenFilterSheet() when openFilterSheet != null:
 return openFilterSheet();case _ResetFilterDraft() when resetFilterDraft != null:
@@ -193,10 +193,10 @@ return playingChanged(_that.isPlaying);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( bool forceRefresh)  loadAll,required TResult Function( String query)  searchChanged,required TResult Function( AudioSort sort)  sortChanged,required TResult Function()  openFilterSheet,required TResult Function()  resetFilterDraft,required TResult Function()  applyFilter,required TResult Function( AudioCategory category,  String value)  toggleDraftChip,required TResult Function( String trackId)  playTrack,required TResult Function()  stopAudio,required TResult Function()  ownershipLost,required TResult Function( Duration offset)  seekBy,required TResult Function( Duration position)  seekTo,required TResult Function( Duration position)  positionChanged,required TResult Function( Duration? duration)  durationChanged,required TResult Function( bool isPlaying)  playingChanged,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( bool forceRefresh,  bool keepListOnFailure)  loadAll,required TResult Function( String query)  searchChanged,required TResult Function( AudioSort sort)  sortChanged,required TResult Function()  openFilterSheet,required TResult Function()  resetFilterDraft,required TResult Function()  applyFilter,required TResult Function( AudioCategory category,  String value)  toggleDraftChip,required TResult Function( String trackId)  playTrack,required TResult Function()  stopAudio,required TResult Function()  ownershipLost,required TResult Function( Duration offset)  seekBy,required TResult Function( Duration position)  seekTo,required TResult Function( Duration position)  positionChanged,required TResult Function( Duration? duration)  durationChanged,required TResult Function( bool isPlaying)  playingChanged,}) {final _that = this;
 switch (_that) {
 case _LoadAll():
-return loadAll(_that.forceRefresh);case _SearchChanged():
+return loadAll(_that.forceRefresh,_that.keepListOnFailure);case _SearchChanged():
 return searchChanged(_that.query);case _SortChanged():
 return sortChanged(_that.sort);case _OpenFilterSheet():
 return openFilterSheet();case _ResetFilterDraft():
@@ -224,10 +224,10 @@ return playingChanged(_that.isPlaying);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( bool forceRefresh)?  loadAll,TResult? Function( String query)?  searchChanged,TResult? Function( AudioSort sort)?  sortChanged,TResult? Function()?  openFilterSheet,TResult? Function()?  resetFilterDraft,TResult? Function()?  applyFilter,TResult? Function( AudioCategory category,  String value)?  toggleDraftChip,TResult? Function( String trackId)?  playTrack,TResult? Function()?  stopAudio,TResult? Function()?  ownershipLost,TResult? Function( Duration offset)?  seekBy,TResult? Function( Duration position)?  seekTo,TResult? Function( Duration position)?  positionChanged,TResult? Function( Duration? duration)?  durationChanged,TResult? Function( bool isPlaying)?  playingChanged,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( bool forceRefresh,  bool keepListOnFailure)?  loadAll,TResult? Function( String query)?  searchChanged,TResult? Function( AudioSort sort)?  sortChanged,TResult? Function()?  openFilterSheet,TResult? Function()?  resetFilterDraft,TResult? Function()?  applyFilter,TResult? Function( AudioCategory category,  String value)?  toggleDraftChip,TResult? Function( String trackId)?  playTrack,TResult? Function()?  stopAudio,TResult? Function()?  ownershipLost,TResult? Function( Duration offset)?  seekBy,TResult? Function( Duration position)?  seekTo,TResult? Function( Duration position)?  positionChanged,TResult? Function( Duration? duration)?  durationChanged,TResult? Function( bool isPlaying)?  playingChanged,}) {final _that = this;
 switch (_that) {
 case _LoadAll() when loadAll != null:
-return loadAll(_that.forceRefresh);case _SearchChanged() when searchChanged != null:
+return loadAll(_that.forceRefresh,_that.keepListOnFailure);case _SearchChanged() when searchChanged != null:
 return searchChanged(_that.query);case _SortChanged() when sortChanged != null:
 return sortChanged(_that.sort);case _OpenFilterSheet() when openFilterSheet != null:
 return openFilterSheet();case _ResetFilterDraft() when resetFilterDraft != null:
@@ -253,10 +253,11 @@ return playingChanged(_that.isPlaying);case _:
 
 
 class _LoadAll implements AudioListEvent {
-  const _LoadAll({this.forceRefresh = false});
+  const _LoadAll({this.forceRefresh = false, this.keepListOnFailure = false});
   
 
 @JsonKey() final  bool forceRefresh;
+@JsonKey() final  bool keepListOnFailure;
 
 /// Create a copy of AudioListEvent
 /// with the given fields replaced by the non-null parameter values.
@@ -268,16 +269,16 @@ _$LoadAllCopyWith<_LoadAll> get copyWith => __$LoadAllCopyWithImpl<_LoadAll>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoadAll&&(identical(other.forceRefresh, forceRefresh) || other.forceRefresh == forceRefresh));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoadAll&&(identical(other.forceRefresh, forceRefresh) || other.forceRefresh == forceRefresh)&&(identical(other.keepListOnFailure, keepListOnFailure) || other.keepListOnFailure == keepListOnFailure));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,forceRefresh);
+int get hashCode => Object.hash(runtimeType,forceRefresh,keepListOnFailure);
 
 @override
 String toString() {
-  return 'AudioListEvent.loadAll(forceRefresh: $forceRefresh)';
+  return 'AudioListEvent.loadAll(forceRefresh: $forceRefresh, keepListOnFailure: $keepListOnFailure)';
 }
 
 
@@ -288,7 +289,7 @@ abstract mixin class _$LoadAllCopyWith<$Res> implements $AudioListEventCopyWith<
   factory _$LoadAllCopyWith(_LoadAll value, $Res Function(_LoadAll) _then) = __$LoadAllCopyWithImpl;
 @useResult
 $Res call({
- bool forceRefresh
+ bool forceRefresh, bool keepListOnFailure
 });
 
 
@@ -305,9 +306,10 @@ class __$LoadAllCopyWithImpl<$Res>
 
 /// Create a copy of AudioListEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? forceRefresh = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? forceRefresh = null,Object? keepListOnFailure = null,}) {
   return _then(_LoadAll(
 forceRefresh: null == forceRefresh ? _self.forceRefresh : forceRefresh // ignore: cast_nullable_to_non_nullable
+as bool,keepListOnFailure: null == keepListOnFailure ? _self.keepListOnFailure : keepListOnFailure // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }

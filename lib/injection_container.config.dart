@@ -81,6 +81,14 @@ import 'features/notifications/domain/usecases/mark_all_notifications_read.dart'
 import 'features/notifications/presentation/bloc/notifications_bloc.dart'
     as _i772;
 import 'features/push_notification/data/services/fcm_service.dart' as _i480;
+import 'features/push_notification/data/services/local_notifications_client.dart'
+    as _i274;
+import 'features/push_notification/data/services/notification_permission_prompter.dart'
+    as _i861;
+import 'features/push_notification/data/services/push_messaging_client.dart'
+    as _i68;
+import 'features/push_notification/presentation/notification_tap_navigator.dart'
+    as _i58;
 import 'features/search/data/datasources/search_remote_datasource.dart'
     as _i647;
 import 'features/search/data/repositories/search_repository_impl.dart' as _i967;
@@ -132,13 +140,18 @@ Future<_i174.GetIt> initDependencies(
   gh.lazySingleton<_i1047.FeatureFlagsService>(
     () => _i1047.FeatureFlagsService(),
   );
-  gh.lazySingleton<_i480.FcmService>(() => _i480.FcmService());
   gh.lazySingleton<_i454.SupabaseClient>(() => registerModule.supabaseClient);
   gh.lazySingleton<_i161.InternetConnection>(
     () => registerModule.internetConnection,
   );
   gh.lazySingleton<_i558.FlutterSecureStorage>(
     () => registerModule.secureStorage,
+  );
+  gh.lazySingleton<_i274.LocalNotificationsClient>(
+    () => _i274.PluginLocalNotificationsClient(),
+  );
+  gh.lazySingleton<_i68.PushMessagingClient>(
+    () => _i68.FirebasePushMessagingClient(),
   );
   gh.lazySingleton<_i555.NotificationsRemoteDatasource>(
     () => _i555.NotificationsRemoteDatasourceImpl(gh<_i454.SupabaseClient>()),
@@ -163,6 +176,12 @@ Future<_i174.GetIt> initDependencies(
   );
   gh.lazySingleton<_i588.AuthRemoteDataSource>(
     () => _i588.AuthRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
+  );
+  gh.lazySingleton<_i861.NotificationPermissionPrompter>(
+    () => _i861.NotificationPermissionPrompter(
+      gh<_i68.PushMessagingClient>(),
+      gh<_i460.SharedPreferences>(),
+    ),
   );
   gh.lazySingleton<_i289.CheckForUpdate>(
     () => _i289.CheckForUpdate(gh<_i549.UpdateRepository>()),
@@ -374,6 +393,10 @@ Future<_i174.GetIt> initDependencies(
   gh.factory<_i242.ChapterListBloc>(
     () => _i242.ChapterListBloc(getAllChapters: gh<_i183.GetAllChapters>()),
   );
+  gh.lazySingleton<_i58.NotificationTapNavigator>(
+    () => _i58.NotificationTapNavigator(gh<_i606.AudioListBloc>()),
+    dispose: (i) => i.dispose(),
+  );
   gh.lazySingleton<_i191.GetCurrentUser>(
     () => _i191.GetCurrentUser(gh<_i1015.AuthRepository>()),
   );
@@ -414,6 +437,13 @@ Future<_i174.GetIt> initDependencies(
       gh<_i872.SignOut>(),
       gh<_i191.GetCurrentUser>(),
       gh<_i931.AnalyticsService>(),
+    ),
+  );
+  gh.lazySingleton<_i480.FcmService>(
+    () => _i480.FcmService(
+      gh<_i68.PushMessagingClient>(),
+      gh<_i274.LocalNotificationsClient>(),
+      gh<_i58.NotificationTapNavigator>(),
     ),
   );
   return getIt;
