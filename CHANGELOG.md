@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.6.0](https://github.com/amar-tya/ishari-app/compare/v1.5.2...v1.6.0) (2026-11-27)
+
+
+### Features
+
+* **auth:** persist guest mode across restarts ([#56](https://github.com/amar-tya/ishari-app/issues/56)) ([b51205c](https://github.com/amar-tya/ishari-app/commit/b51205cdf0c60c4c68f818ff20f1eab4e9413968)), closes [#34](https://github.com/amar-tya/ishari-app/issues/34)
+* **push:** ask for notification permission in context and push on tap ([#52](https://github.com/amar-tya/ishari-app/issues/52)) ([03c41f9](https://github.com/amar-tya/ishari-app/commit/03c41f95a5b19dd95008781700fb6146e9144ab2)), closes [#39](https://github.com/amar-tya/ishari-app/issues/39)
+
+
+### Bug Fixes
+
+* **auth:** follow the Supabase session and make sign-out reliable ([#54](https://github.com/amar-tya/ishari-app/issues/54)) ([aa07d65](https://github.com/amar-tya/ishari-app/commit/aa07d654e642c42ccff974e406dd230970a98068)), closes [#33](https://github.com/amar-tya/ishari-app/issues/33)
+* **bookmark:** stop toggle race and tolerate bad bookmark rows ([#47](https://github.com/amar-tya/ishari-app/issues/47)) ([7d34e5b](https://github.com/amar-tya/ishari-app/commit/7d34e5bd3acfddc4da76f4bd4023cf05b4d09233)), closes [#35](https://github.com/amar-tya/ishari-app/issues/35)
+* **ci:** require release signing and upload Dart symbols to Sentry ([#51](https://github.com/amar-tya/ishari-app/issues/51)) ([f8e8333](https://github.com/amar-tya/ishari-app/commit/f8e8333eb517669c7a2966b87ae0b7ffcbbeef34)), closes [#37](https://github.com/amar-tya/ishari-app/issues/37) [#43](https://github.com/amar-tya/ishari-app/issues/43)
+* **hadi:** play hadi audio through the shared playback service ([#46](https://github.com/amar-tya/ishari-app/issues/46)) ([f1e5787](https://github.com/amar-tya/ishari-app/commit/f1e57873e36eb2380a822a05f4af598ac7417781)), closes [#29](https://github.com/amar-tya/ishari-app/issues/29)
+* **router:** handle invalid ids and missing route extra ([#48](https://github.com/amar-tya/ishari-app/issues/48)) ([8a0b9a4](https://github.com/amar-tya/ishari-app/commit/8a0b9a4ec67784b8886cb569563749f1a56720aa)), closes [#30](https://github.com/amar-tya/ishari-app/issues/30)
+* **search:** stop debounce after close and add bloc error breadcrumbs ([#53](https://github.com/amar-tya/ishari-app/issues/53)) ([2265662](https://github.com/amar-tya/ishari-app/commit/22656621b671334ea1824e16b36b9cc2e17e85dd)), closes [#45](https://github.com/amar-tya/ishari-app/issues/45)
+* **startup:** prevent splash hang and keep screen on only while reading ([#49](https://github.com/amar-tya/ishari-app/issues/49)) ([c1400a1](https://github.com/amar-tya/ishari-app/commit/c1400a1d3ede68f971f73cf790115d0ec3385e0f)), closes [#31](https://github.com/amar-tya/ishari-app/issues/31) [#32](https://github.com/amar-tya/ishari-app/issues/32)
+
 ## [1.5.2](https://github.com/amar-tya/ishari-app/compare/v1.5.1...v1.5.2) (2026-10-08)
 
 
