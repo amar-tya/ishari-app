@@ -35,6 +35,7 @@ import 'features/auth/domain/repositories/auth_repository.dart' as _i1015;
 import 'features/auth/domain/usecases/get_current_user.dart' as _i191;
 import 'features/auth/domain/usecases/sign_in_with_google.dart' as _i648;
 import 'features/auth/domain/usecases/sign_out.dart' as _i872;
+import 'features/auth/domain/usecases/watch_auth_state.dart' as _i711;
 import 'features/auth/presentation/bloc/auth_bloc.dart' as _i363;
 import 'features/bookmark/presentation/bloc/bookmark_bloc.dart' as _i560;
 import 'features/hadi/data/datasources/hadi_remote_datasource.dart' as _i237;
@@ -406,6 +407,9 @@ Future<_i174.GetIt> initDependencies(
   gh.lazySingleton<_i872.SignOut>(
     () => _i872.SignOut(gh<_i1015.AuthRepository>()),
   );
+  gh.lazySingleton<_i711.WatchAuthState>(
+    () => _i711.WatchAuthState(gh<_i1015.AuthRepository>()),
+  );
   gh.factory<_i873.TatananListBloc>(
     () => _i873.TatananListBloc(
       gh<_i203.GetTatananList>(),
@@ -437,6 +441,7 @@ Future<_i174.GetIt> initDependencies(
       gh<_i872.SignOut>(),
       gh<_i191.GetCurrentUser>(),
       gh<_i931.AnalyticsService>(),
+      gh<_i711.WatchAuthState>(),
     ),
   );
   gh.lazySingleton<_i480.FcmService>(

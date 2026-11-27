@@ -129,6 +129,18 @@ class _IntroductionPageState extends State<IntroductionPage> {
   void initState() {
     super.initState();
     _slides = _buildSlides();
+    // A lost session redirects here, so a fresh page is where it is explained.
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _showSessionExpiredNotice(),
+    );
+  }
+
+  void _showSessionExpiredNotice() {
+    if (!mounted) return;
+    if (!context.read<AuthBloc>().takeSessionExpiredNotice()) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Sesi berakhir, silakan masuk lagi')),
+    );
   }
 
   @override

@@ -9,6 +9,7 @@ import 'package:ishari/features/auth/domain/repositories/auth_repository.dart';
 import 'package:ishari/features/auth/domain/usecases/get_current_user.dart';
 import 'package:ishari/features/auth/domain/usecases/sign_in_with_google.dart';
 import 'package:ishari/features/auth/domain/usecases/sign_out.dart';
+import 'package:ishari/features/auth/domain/usecases/watch_auth_state.dart';
 import 'package:ishari/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ishari/features/update/domain/entities/app_version_entity.dart';
 import 'package:ishari/features/update/domain/repositories/update_repository.dart';
@@ -28,6 +29,9 @@ class FakeAuthRepository extends Fake implements AuthRepository {
 
   @override
   CurrentUserResult getCurrentUser() => currentUser();
+
+  @override
+  Stream<UserEntity?> get authStateChanges => const Stream.empty();
 }
 
 class FakeAnalyticsService extends Fake implements AnalyticsService {}
@@ -37,6 +41,7 @@ AuthBloc buildAuthBloc(FakeAuthRepository repository) => AuthBloc(
   SignOut(repository),
   GetCurrentUser(repository),
   FakeAnalyticsService(),
+  WatchAuthState(repository),
 );
 
 const currentVersion = AppVersionEntity(

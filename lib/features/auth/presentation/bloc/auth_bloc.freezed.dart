@@ -55,13 +55,14 @@ extension AuthEventPatterns on AuthEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _CheckAuthStatus value)?  checkAuthStatus,TResult Function( _SignInWithGoogle value)?  signInWithGoogle,TResult Function( _SignOut value)?  signOut,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _CheckAuthStatus value)?  checkAuthStatus,TResult Function( _SignInWithGoogle value)?  signInWithGoogle,TResult Function( _SignOut value)?  signOut,TResult Function( _AuthUserChanged value)?  authUserChanged,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _CheckAuthStatus() when checkAuthStatus != null:
 return checkAuthStatus(_that);case _SignInWithGoogle() when signInWithGoogle != null:
 return signInWithGoogle(_that);case _SignOut() when signOut != null:
-return signOut(_that);case _:
+return signOut(_that);case _AuthUserChanged() when authUserChanged != null:
+return authUserChanged(_that);case _:
   return orElse();
 
 }
@@ -79,13 +80,14 @@ return signOut(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _CheckAuthStatus value)  checkAuthStatus,required TResult Function( _SignInWithGoogle value)  signInWithGoogle,required TResult Function( _SignOut value)  signOut,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _CheckAuthStatus value)  checkAuthStatus,required TResult Function( _SignInWithGoogle value)  signInWithGoogle,required TResult Function( _SignOut value)  signOut,required TResult Function( _AuthUserChanged value)  authUserChanged,}){
 final _that = this;
 switch (_that) {
 case _CheckAuthStatus():
 return checkAuthStatus(_that);case _SignInWithGoogle():
 return signInWithGoogle(_that);case _SignOut():
-return signOut(_that);case _:
+return signOut(_that);case _AuthUserChanged():
+return authUserChanged(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -102,13 +104,14 @@ return signOut(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _CheckAuthStatus value)?  checkAuthStatus,TResult? Function( _SignInWithGoogle value)?  signInWithGoogle,TResult? Function( _SignOut value)?  signOut,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _CheckAuthStatus value)?  checkAuthStatus,TResult? Function( _SignInWithGoogle value)?  signInWithGoogle,TResult? Function( _SignOut value)?  signOut,TResult? Function( _AuthUserChanged value)?  authUserChanged,}){
 final _that = this;
 switch (_that) {
 case _CheckAuthStatus() when checkAuthStatus != null:
 return checkAuthStatus(_that);case _SignInWithGoogle() when signInWithGoogle != null:
 return signInWithGoogle(_that);case _SignOut() when signOut != null:
-return signOut(_that);case _:
+return signOut(_that);case _AuthUserChanged() when authUserChanged != null:
+return authUserChanged(_that);case _:
   return null;
 
 }
@@ -125,12 +128,13 @@ return signOut(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  checkAuthStatus,TResult Function()?  signInWithGoogle,TResult Function()?  signOut,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  checkAuthStatus,TResult Function()?  signInWithGoogle,TResult Function()?  signOut,TResult Function( UserEntity? user)?  authUserChanged,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CheckAuthStatus() when checkAuthStatus != null:
 return checkAuthStatus();case _SignInWithGoogle() when signInWithGoogle != null:
 return signInWithGoogle();case _SignOut() when signOut != null:
-return signOut();case _:
+return signOut();case _AuthUserChanged() when authUserChanged != null:
+return authUserChanged(_that.user);case _:
   return orElse();
 
 }
@@ -148,12 +152,13 @@ return signOut();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  checkAuthStatus,required TResult Function()  signInWithGoogle,required TResult Function()  signOut,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  checkAuthStatus,required TResult Function()  signInWithGoogle,required TResult Function()  signOut,required TResult Function( UserEntity? user)  authUserChanged,}) {final _that = this;
 switch (_that) {
 case _CheckAuthStatus():
 return checkAuthStatus();case _SignInWithGoogle():
 return signInWithGoogle();case _SignOut():
-return signOut();case _:
+return signOut();case _AuthUserChanged():
+return authUserChanged(_that.user);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -170,12 +175,13 @@ return signOut();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  checkAuthStatus,TResult? Function()?  signInWithGoogle,TResult? Function()?  signOut,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  checkAuthStatus,TResult? Function()?  signInWithGoogle,TResult? Function()?  signOut,TResult? Function( UserEntity? user)?  authUserChanged,}) {final _that = this;
 switch (_that) {
 case _CheckAuthStatus() when checkAuthStatus != null:
 return checkAuthStatus();case _SignInWithGoogle() when signInWithGoogle != null:
 return signInWithGoogle();case _SignOut() when signOut != null:
-return signOut();case _:
+return signOut();case _AuthUserChanged() when authUserChanged != null:
+return authUserChanged(_that.user);case _:
   return null;
 
 }
@@ -278,6 +284,84 @@ String toString() {
 
 
 
+
+/// @nodoc
+
+
+class _AuthUserChanged implements AuthEvent {
+  const _AuthUserChanged(this.user);
+  
+
+ final  UserEntity? user;
+
+/// Create a copy of AuthEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$AuthUserChangedCopyWith<_AuthUserChanged> get copyWith => __$AuthUserChangedCopyWithImpl<_AuthUserChanged>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthUserChanged&&(identical(other.user, user) || other.user == user));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,user);
+
+@override
+String toString() {
+  return 'AuthEvent.authUserChanged(user: $user)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$AuthUserChangedCopyWith<$Res> implements $AuthEventCopyWith<$Res> {
+  factory _$AuthUserChangedCopyWith(_AuthUserChanged value, $Res Function(_AuthUserChanged) _then) = __$AuthUserChangedCopyWithImpl;
+@useResult
+$Res call({
+ UserEntity? user
+});
+
+
+$UserEntityCopyWith<$Res>? get user;
+
+}
+/// @nodoc
+class __$AuthUserChangedCopyWithImpl<$Res>
+    implements _$AuthUserChangedCopyWith<$Res> {
+  __$AuthUserChangedCopyWithImpl(this._self, this._then);
+
+  final _AuthUserChanged _self;
+  final $Res Function(_AuthUserChanged) _then;
+
+/// Create a copy of AuthEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? user = freezed,}) {
+  return _then(_AuthUserChanged(
+freezed == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
+as UserEntity?,
+  ));
+}
+
+/// Create a copy of AuthEvent
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$UserEntityCopyWith<$Res>? get user {
+    if (_self.user == null) {
+    return null;
+  }
+
+  return $UserEntityCopyWith<$Res>(_self.user!, (value) {
+    return _then(_self.copyWith(user: value));
+  });
+}
+}
 
 /// @nodoc
 mixin _$AuthState {

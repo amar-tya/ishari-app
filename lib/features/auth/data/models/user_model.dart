@@ -6,7 +6,6 @@ part 'user_model.g.dart';
 
 /// Data Transfer Object (DTO) for [UserEntity].
 ///
-/// Serializes to/from JSON for secure-storage caching.
 /// The domain layer never imports this model.
 @freezed
 abstract class UserModel with _$UserModel {

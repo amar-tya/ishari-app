@@ -96,6 +96,9 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  # Fakes the Google Sign-In platform in auth datasource tests
+  google_sign_in_platform_interface: ^3.1.0
+
   # Linting
   very_good_analysis: ^10.2.0
 
